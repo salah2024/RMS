@@ -1,0 +1,108 @@
+﻿body {
+    direction: rtl;
+    text-align: right;
+    font-family: Arial, sans-serif;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: right;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+
+
+th, td {
+    border: 1px solid black;
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle;
+    position: relative;
+}
+
+.hashed {
+    background-image: repeating-linear-gradient( 135deg, #000 0, #000 1px, #fff 1px, #fff 10px );
+    color: black;
+}
+
+
+.number {
+    position: relative;
+    z-index: 1;
+    font-weight: bold;
+    background-color: rgba(255,255,255,0.7);
+    padding: 2px 5px;
+    border-radius: 4px;
+}
+
+.vertical-header {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    white-space: nowrap;
+    font-weight: bold;
+}
+
+.subtext {
+    font-size: 12px;
+    margin-top: 4px;
+    display: block;
+}
+
+.complex-header {
+    position: relative;
+    min-width: 120px;
+    height: 130px;
+}
+
+.main-title {
+    font-weight: bold;
+    font-size: 14px;
+    position: absolute;
+    top: 20px;
+    left: 10px;
+    right: 10px;
+    text-align: center;
+}
+
+.side-vertical {
+    position: absolute;
+    top: 10px;
+    right: -20px;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: 13px;
+    font-weight: bold;
+    height: 100%;
+}
+
+.bottom-label {
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    right: 0;
+    font-size: 13px;
+    font-weight: bold;
+    text-align: center;
+}
+
+
+.math-container {
+    text-align: left; /* چپ‌چین کردن محتوا */
+    direction: ltr; /* اطمینان از ترتیب درست نوشتار */
+    display: flex; /* استفاده از Flexbox برای چیدمان بهتر */
+    justify-content: flex-start; /* چپ‌چین کردن محتوا */
+}
+
+.formula {
+    text-align: left;
+    direction: ltr;
+}

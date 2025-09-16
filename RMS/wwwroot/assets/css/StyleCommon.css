@@ -1,0 +1,49 @@
+﻿
+.HasEnteringValue {
+}
+
+input.HasEnteringValue:not(:disabled) {
+    border: 1px solid #dfaef5 !important;
+}
+
+.table thead th {
+    color: #150236;
+}
+
+.row-with-rizmetre {
+    background-color: #e7f4ff; /* آبی ملایم */
+}
+
+.fixed-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+    .fixed-table td,
+    .fixed-table th {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+/* ستون شرح استثنائاً اجازه شکستن متن داره */
+.desc-cell {
+    white-space: normal !important;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+
+@media screen and (max-width: 768px) {
+    .desc-cell {
+        width: auto !important;
+    }
+}
+
+@media screen and (min-width: 769px) {
+    .desc-cell1 {
+        width: 250px;
+    }
+}
+
+

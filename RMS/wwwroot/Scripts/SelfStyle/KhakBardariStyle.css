@@ -1,0 +1,110 @@
+﻿.khakbardari-container {
+    direction: rtl; /* چون متن فارسیه */
+    margin: 20px 0;
+    font-family: Vazirmatn, Tahoma, sans-serif;
+}
+
+.khakbardari-box {
+    align-items: center;
+    text-align:center;
+}
+
+.label-col {
+    text-align: left;
+    font-weight: 500;
+    color: #444;
+}
+
+.unit-col {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.action-col {
+    text-align: center;
+}
+
+.save-btn {
+    border-radius: 6px;
+    padding: 5px 15px;
+    font-weight: bold;
+}
+
+.khakbardari-view {
+    margin-top: 5px;
+}
+
+.form-control_1 {
+    display: block;
+    width: 100%;
+    height: 20px;
+    padding: 0px 8px;
+    font-size: 16px;
+    line-height: 1.42857143;
+    color: #110186;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #e9ddee;
+    border-radius: 3px;
+    -webkit-box-shadow: unset;
+    box-shadow: unset;
+    -webkit-transition: unset;
+    -o-transition: unset;
+    transition: unset;
+}
+
+.khakbardariTextStyle {
+    text-align: center;
+    padding: 0;
+    border: 1px solid #f0ccff;
+}
+
+.titleKhakBardariStyle {
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    background: #f5e0ff;
+    margin: 5px;
+}
+
+.SaveButtonStyle {
+    background-color: #c27b21;
+    padding: 1px 15px;
+    color: #fff;
+}
+
+.ViewButtonStyle {
+    background-color: #704ea2;
+    padding: 1px 15px;
+    color: #fff;
+}
+
+.ExistKhBHeaderStyle {
+    text-align: center;
+    background-color: #6e2d97;
+    border: #6e2d97;
+    color: #fff;
+    margin-right: 0px;
+    margin-left: 0px;
+}
+
+
+.ExistKhBStyle {
+    margin-right: 0px;
+    margin-left: 0px;
+    padding-right: 0px;
+    padding-left: 0px;
+}
+
+.ExistKhBStyle:hover{
+    cursor:pointer;
+}
+
+.ExistKMHeaderStyle {
+    background-color: #e4d4ff;
+    padding-top: 5px;
+    margin-right: 0px;
+    margin-left: 0px;
+}

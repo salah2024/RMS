@@ -1,0 +1,367 @@
+﻿@font-face {
+    font-family: 'BTitrBold';
+    src: url('/Scripts/Fonts/PersianFonts/BTitrBold.eot'),
+         url('/Scripts/Fonts/PersianFonts/BTitrBold.ttf'),
+         url('/Scripts/Fonts/PersianFonts/BTitrBold.woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'BMahsa';
+    src: url('/Scripts/Fonts/PersianFonts/BMahsa.eot'),
+url('/Scripts/Fonts/PersianFonts/BMahsa.ttf'),
+url('/Scripts/Fonts/PersianFonts/BMahsa.woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'BMehrBold';
+    src: url('/Scripts/Fonts/PersianFonts/BMehrBold.eot'),
+url('/Scripts/Fonts/PersianFonts/BMehrBold.ttf'),
+url('/Scripts/Fonts/PersianFonts/BMehrBold.woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Yekan';
+    src: url('/Scripts/Fonts/PersianFonts/Yekan.eot'),
+         url('/Scripts/Fonts/PersianFonts/Yekan.ttf'),
+         url('/Scripts/Fonts/PersianFonts/Yekan.woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'BMitra';
+    src: url('/Scripts/Fonts/PersianFonts/BMitra.eot'),
+         url('/Scripts/Fonts/PersianFonts/BMitra.ttf'),
+         url('/Scripts/Fonts/PersianFonts/BMitra.woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'BMorvarid';
+    src: url('/Scripts/Fonts/PersianFonts/BMorvarid.eot'),
+url('/Scripts/Fonts/PersianFonts/BMorvarid.ttf'),
+url('/Scripts/Fonts/PersianFonts/BMorvarid.woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'BYekan';
+    src: url('/Scripts/Fonts/PersianFonts/BYekan.eot'),
+url('/Scripts/Fonts/PersianFonts/BYekan.ttf'),
+url('/Scripts/Fonts/PersianFonts/BYekan.woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'irsans';
+    src: url('/Scripts/Fonts/PersianFonts/irsans.eot'),
+url('/Scripts/Fonts/PersianFonts/irsans.ttf'),
+url('/Scripts/Fonts/PersianFonts/irsans.woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'BNazanin';
+    src: url('/Scripts/Fonts/PersianFonts/BNazanin.eot'),
+         url('/Scripts/Fonts/PersianFonts/BNazanin.ttf'),
+         url('/Scripts/Fonts/PersianFonts/BNazanin.woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.spanUserName{
+    font-size: 16px;
+    font-family: irsans,serif;
+}
+
+.spanPassword{
+    font-size: 16px;
+    font-family: irsans,serif;
+}
+
+.SlideTitle {
+    font-family: BTitrBold,serif;
+}
+
+.Menu {
+    font-family: irsans,serif;
+    font-size: 13px !important;
+}
+
+.MenuLarge {
+    font-family: BTitrBold,serif;
+    font-size: 22px;
+}
+
+.h3Style {
+    font-family: BTitrBold,serif;
+    font-size: 20px;
+}
+.SectionTitle {
+    font-family: BMehrBold,serif;
+    font-size: 20px;
+}
+
+
+.spanStyleMitraSmall {
+    font-size: 16px;
+    font-family: BMitra,serif;
+}
+
+.spanStyleMitraMedium {
+    font-size: 18px;
+    font-family: BMitra,serif;
+}
+
+.spanStyleFooterLink {
+    font-size: 17px;
+    font-family: BMitra,serif;
+}
+
+.spanStyleSmall {
+    font-size: 11px;
+    font-family: BMehrBold,serif;
+}
+.spanStyle {
+    font-size: 14px;
+    font-family: BMehrBold,serif;
+}
+
+.spanStyleDetail {
+    font-size: 13px !important;
+    font-family: Yekan,Arial;
+}
+
+.menu-link {
+    font-size: 12px !important;
+    /* font-family: BTitrBold; */
+    color: #fff;
+    /*font-weight: 600;*/
+}
+
+.spanStyleLarge {
+    font-size: 16px;
+    font-family: BTitrBold,serif;
+}
+
+.spanStyleLogin {
+    font-size: 13px;
+    font-family: BYekan,serif;
+}
+
+.spanStyleLoginIcon {
+    font-size: 15px;
+    font-family: BYekan,serif;
+}
+
+.spanStyleBascket {
+    font-size: 14px;
+    font-family: irsans,serif;
+}
+
+.spanStyleHugeDetail {
+    font-size: 22px;
+    font-family: BMitra,serif;
+}
+
+.spanStyledblHugeDetail {
+    font-size: 24px;
+    font-family: BMitra,serif;
+}
+
+.spanStyleMDetail {
+    font-size: 17px;
+    font-family: BNazanin,serif;
+    font-weight: 500;
+}
+
+.spanStyleMedium {
+    font-size: 14px;
+    font-family: BMehrBold,monospace;
+    color: #21216F;
+}
+
+.spanStyleMediumDetailEn {
+    font-size: 13px;
+    font-family: BMitra,monospace;
+    color: #21216F;
+}
+.spanStyleSmallDetail {
+    font-size:18px;
+    font-family: BNazanin,monospace;
+}
+.spanStyleMediumDetail {
+    font-size:20px;
+    font-family: BNazanin,monospace;
+}
+
+.spanStyleSmallMediumDetail {
+    font-size:12px;
+    font-family: irsans,Arial;
+}
+
+.spanStyleSmallDetail {
+    font-size:14px;
+    font-family: BNazanin,monospace;
+}
+.spanStyleUserInfo {
+    font-size:16px;
+    font-family: irsans,monospace;
+}
+
+.spanStyleTinyDetail {
+    font-size: 16px;
+    font-family: BNazanin,monospace;
+}
+
+.spanStyleLargeDetail {
+    font-size: 19px;
+    font-family: BNazanin,monospace;
+}
+
+.spanStyleVLargeDetail {
+    font-size: 18px;
+    font-family: irsans,monospace;
+}
+
+.spanStyleLargeMPrice {
+    font-size: 17px;
+    font-family: BMitra,monospace;
+}
+
+.spanStyleLargeDetailPrice {
+    font-size: 20px;
+    font-family: BMitra,monospace;
+}
+
+.spanStyleSubMenu {
+    font-size: 17px;
+    font-family: BMitra,monospace;
+    color: #21216F;
+    background-color: rgb(127, 221, 239);
+}
+
+.spanStyleHugeDetailAboutUs {
+    font-size: 30px;
+    font-family: BMitra,monospace;
+    color:#fff;
+}
+
+.UserFontStyle
+{
+    font-family: BTitrBold,monospace;
+}
+
+h3 {
+    font-size: 25px;
+    padding-right: 30px;
+    font-family: BMitra,monospace;
+    color: #667cba;
+}
+
+.btnStyleLogin {
+    background-color: #b1a1e3;
+    padding-right: 20px;
+    padding-left: 20px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    font-family: BMitra,serif;
+    font-size:21px;
+    border: 1px solid #8e89e9;
+}
+
+.btnStyleLogin:hover {
+    background-color: #9d86e9;
+}
+
+.btnStyleReg {
+    background-color: #4caf50;
+    padding-right: 20px;
+    padding-left: 20px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    font-family: BMitra,serif;
+    font-size:21px;
+    border: 1px solid #4caf50;
+}
+
+.btnStyleReg:hover {
+    background-color: #3a923e;
+}
+
+.btnStyleClose {
+    background-color: #e79ab0;
+    padding-right: 20px;
+    padding-left: 20px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    font-family: BMitra,serif;
+    font-size:21px;
+    border: 1px solid #d14979;
+    color:#fff;
+}
+
+.btnStyleClose:hover {
+    background-color: #e386a1;
+}
+
+.txtStyleLogin {
+    height: 28px !important;
+    width:60%;
+    font-family: BMitra,serif;
+    font-size: 19px !important;
+}
+
+.titleStyle {
+    text-align: right;
+    font-size: 14px;
+    font-family: BTitrBold,serif;
+    color:#2a11b5;
+    padding: 10px;
+    margin: 0px;
+    background-color: #ecf3f7;
+}
+
+.StyleMenu {
+    font-family: BMitra,serif;
+    font-size: 19px !important;
+    padding: 0 20px 0 20px ;
+}
+    .StyleMenu:hover {
+        cursor: pointer;
+        font-family: BMitra,serif;
+        font-size: 19px !important;
+        color: #04047b;
+    padding: 0 20px 0 20px ;
+    }
+.StyleMenuactive {
+    cursor: pointer;
+    font-family: BMitra,serif;
+    font-size: 19px !important;
+    background-color:#04047b;
+    color: #fff;
+    padding: 0 20px 0 20px ;
+    border-bottom-left-radius:10px;
+    border-top-right-radius:10px;
+}
+    .StyleMenuactive:hover {
+        cursor: pointer;
+        font-family: BMitra,serif;
+        font-size: 19px !important;
+        background-color: #0707bc;
+        color: #fff;
+        padding: 0 20px 0 20px;
+        border-bottom-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+
+

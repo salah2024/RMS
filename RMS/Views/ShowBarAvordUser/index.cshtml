@@ -1,0 +1,160 @@
+﻿@using RMS.Models.Entity
+
+
+<html>
+<head>
+	<style>
+
+		.table-alt {
+			background-color: #f9f9f9;
+			cursor: pointer;
+		}
+
+		/* نشانگر موس برای کل ردیف‌ها */
+		#fosoulTable tbody tr {
+			cursor: pointer;
+		}
+
+		.table .table {
+			background-color: #efeaff;
+		}
+
+
+		.table-responsive {
+			max-height: 400px; /* ارتفاع دلخواه برای محتوای جدول */
+			overflow-y: auto;
+			overflow-x: hidden; /* برای جلوگیری از اسکرول عرضی */
+			position: relative;
+		}
+
+			.table-responsive table thead th {
+				position: sticky;
+				top: 0;
+				z-index: 10;
+				box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+			}
+
+		.ShowNoneZeroClass{
+
+		}
+
+		.ShowNoneZeroClass:hover{
+			cursor:pointer;
+		}
+	</style>
+
+	<link href="~/Scripts/font-awesome/all.min.css" rel="stylesheet">
+	<link href="~/Scripts/font-awesome/fontawesome.min.css" rel="stylesheet">
+
+	<script src="~/Scripts/font-awesome/fontawesome.min.js"></script>
+
+
+	<link href="~/Scripts/jsTree/style.min.css" rel="stylesheet">
+	<link href="~/Scripts/jsTree/my-treeStyle.css" rel="stylesheet">
+
+	<script src="~/Scripts/jsTree/jstree.min.js"></script>
+	<script src="~/Scripts/jsTree/myTree.js"></script>
+	<script src="~/Scripts/FaniSection/DrawingPol.js"></script>
+	<script src="~/Scripts/FaniSection/DrawingPlan2.js"></script>
+	<script src="~/Scripts/FaniSection/AbnieFani.js"></script>
+	<script src="~/Scripts/FaniSection/AmalyateKhaki.js"></script>
+	<script src="~/Scripts/FaniSection/AmalyateKhakiEzafeBaha.js"></script>
+	<script src="~/Scripts/FaniSection/AmalyateKhakiGharzeh.js"></script>
+	<script src="~/Scripts/FaniSection/ShowBarAvordScript.js"></script>
+
+
+	<link rel="stylesheet" href="~/Scripts/SelfStyle/FosoulDesStyle.css" />
+
+	<script>
+			$(document).ready(function () {
+				  GetViewBag();
+			});
+
+		function GetViewBag() {
+			 $.ajax({
+				type: "Get",
+					url: "/BaseInfo/GetViewBag",
+						  data: JSON.stringify(''),
+						  contentType: "application/json; charset=utf-8",
+						  dataType: "json",
+						  success: function (response) {
+							  var xmlDoc = $.parseXML(response);
+							  var xml = $(xmlDoc);
+							  Table1 = xml.find("Table1");
+							  $.each(Table1, function () {
+								  $('#HDFBarAvordUserID').val($(this).find("BAId").text());
+								  $('#HDFYear').val($(this).find("Year").text());
+								  $('#HDFNoeFB').val($(this).find("NoeFB").text());
+							  });
+							  GetFosoul();
+						  },
+						  error: function (response) {
+							  toastr.error('خطا', 'خطا');
+						  }
+			  });
+		}
+	</script>
+</head>
+
+<body>
+	<div class="row">
+		<div class="col-12">
+			<div class="table-responsive">
+				<table id="fosoulTable" class="table table-bordered fixed-table">
+					<thead>
+						<tr>
+							<th style="width: 10%; display:none;">شماره فصل</th>
+							<th style="width: 30%;color: #3a007a;font-size: 16px;">فصول - فهرست راه و باند و فرودگاه - 1404</th>
+							<th style="text-align:center;color: #3a007a;font-size: 16px;" class="desc-cell">
+								جمع فصل
+								<label class="ShowNoneZeroClass" style="font-weight:normal; font-size: 10px;">
+									<input type="checkbox" id="chkNonZeroMeghdarFasl" style="margin-right: 5px;" />
+									نمایش مقادیر غیر صفر
+								</label>
+							</th>
+							<th style="text-align:center;color: #3a007a;font-size: 16px;" class="desc-cell">جمع فصل با ضرایب</th>
+							@* <th style="width:10%;">توضیحات</th> *@
+						</tr>
+					</thead>
+					<tbody id="FaslBody">
+						<!-- Rows will be added here dynamically -->
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+
+	<a id="aViewDes" class="" data-toggle="modal" href="#PopupViewDes"></a>
+	<div class="modal fade" id="PopupViewDes" tabindex="-1" role="dialog" style="z-index:5000"
+		 aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header" style="direction: ltr;">
+					<button id="btnClose" type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 style="margin-top: 10px;margin-bottom: 0px;margin-right: 20px;" id="ModalTitle">
+					</h4>
+				</div>
+				<div class="modal-body" style="overflow:auto;max-height:600px">
+					<div class="row" id="TableFosoul">
+						<div class="col-12">
+							<div id="ShowDes" style="direction:rtl">
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+
+
+
+<input type="hidden" id="HDFBarAvordUserID" name="name" value="" />
+<input type="hidden" id="HDFYear" name="name" value="" />
+<input type="hidden" id="HDFNoeFB" name="name" value="" />
+<input type="hidden" id="HDFFaslSelected" name="name" value="" />

@@ -1,0 +1,338 @@
+﻿@using Newtonsoft.Json
+
+@{
+	ViewBag.Title = "My View";
+	Layout = "_Layout";
+}
+
+@* لینک به استایل‌ها *@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
+
+@* فرم اصلی *@
+<form id="form1" class="">
+	<input type="button" value="GetStatusOfDateInPeriod" onclick="ddddd()" style="display:none" />
+	<input type="button" value="sfdgdsfdg" onclick="a123()" style="display:none" />
+	<input type="button" value="www" onclick="AppOperationInfoMain()" style="display:block" />
+	<input type="file" id="fi1" name="name" style="display:none" />
+
+	<div id="jstree" style="margin:20px">
+	</div>
+	<a id="aShow" style="display:none" data-toggle="modal" href="#FormShow"></a>
+	<div class="modal fade" id="FormShow" tabindex="-1" role="dialog"
+		 aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h2 class="modal-title" id="largeModalLabel">ریز متره</h2>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="form-horizontal popStyle" id="divShowRizMetre">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	@* <div style="direction: rtl;margin:30px;padding-left:0px;padding-right:0px">
+		<ul id="Tree" class="tree spanStyleMitraMedium">
+		</ul>
+	</div> *@
+
+	@* لینک‌ها و مودال‌ها *@
+	<a id="aViewNextRutin" class="displayNone" data-toggle="modal" href="#PopupViewNextRutin"></a>
+	<a id="aViewAllRizMetre" class="displayNone" data-toggle="modal" href="#PopupViewAllRizMetre"></a>
+	<a id="aAddRizMetre" class="displayNone" data-toggle="modal" href="#PopupAddRizMetre"></a>
+	<a id="aItemsCondition" class="displayNone" data-toggle="modal" href="#PopupItemsCondition"></a>
+
+	@* تعریف مودال‌ها *@
+	<div id="PopupViewAllRizMetre" class="modal fade" tabindex="-1" data-width="90%">
+		<div class="modal-header">
+			<h4 class="modal-title">
+				<span data-dismiss="modal" class="btn red btn-default" style="padding: 2px 7px;">X</span>
+				<span id="spanViewRizMetre"></span>
+			</h4>
+		</div>
+		<div class="row PageHeaderStyle" style="margin-right: 0px; margin-left: 0px;">
+			<div class="col-md-2">
+				<button id="btnConfirm" type="button" class="btn green btn-default" onclick="Confirm()">تایید</button>
+			</div>
+			<div class="col-md-2">
+				<button id="btnAddRizMetre" type="button" class="btn green btn-default" onclick="AddRizMetre()">افزودن ریزه متره</button>
+			</div>
+			<div class="col-md-2">
+				<button id="btnEditRizMetre" type="button" class="btn blue btn-default" onclick="EditRizMetreClick()">ویرایش ریزه متره</button>
+			</div>
+			<div class="col-md-2">
+				<button id="btnDeleteRizMetre" type="button" class="btn red btn-default" onclick="DelRizMetre()">حذف</button>
+			</div>
+			<div class="col-md-2">
+				<button id="btnCancelViewRizMetre" type="button" data-dismiss="modal" class="btn red btn-default">انصراف</button>
+			</div>
+		</div>
+		<div class="row PageHeaderStyle2 labelStyle" style="margin-right: 0px; margin-left: 0px; color: #0000bc;">
+			<label id="lblSumAllMeghdarRizMetre" class="col-md-4 control-label" />
+		</div>
+		<div style="padding-bottom: 10px; overflow: auto; min-height: 200px">
+			<div class="form-horizontal">
+				<div class="" id="divRizMetre" style="text-align: center">
+				</div>
+			</div>
+		</div>
+	</div>
+
+	@* سایر مودال‌ها *@
+	<div id="PopupAddRizMetre" class="modal fade" tabindex="-1" data-width="50%">
+		<div class="modal-header">
+			<h4 class="modal-title">
+				<span data-dismiss="modal" class="btn red btn-default" style="padding: 2px 7px;">X</span>
+				افزودن ریزه متره
+			</h4>
+		</div>
+		<div class="row PageHeaderStyle" style="margin-right: 0px; margin-left: 0px;">
+			<div class="col-md-4">
+				<button style="margin-top: 1px" type="button" class="btn green btn-default" onclick="ConfirmRizMetre()">ثبت ریزه متره</button>
+			</div>
+			<div class="col-md-4">
+				<button style="margin-top: 1px" id="btnCancelAddRizMetre" type="button" data-dismiss="modal" class="btn red btn-default">انصراف</button>
+			</div>
+		</div>
+		<div class="modal-body" style="overflow: auto !important; height: 400px">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="form-horizontal">
+						<div class="form-group">
+							<label class="col-md-3 control-label">شماره :</label>
+							<div class="col-md-6">
+								<input type="text" disabled="disabled" class="form-control input-sm" id="txtShomarehRizMetre" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-3 control-label">شرح :</label>
+							<div class="col-md-6">
+								<textarea class="form-control input-sm" rows="10" id="txtSharhRizMetre" style="width: 100%; height: 100px"></textarea>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-3 control-label">تعداد :</label>
+							<div class="col-md-6">
+								<input type="text" class="form-control input-sm" id="txtTedad" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-3 control-label">طول :</label>
+							<div class="col-md-6">
+								<input type="text" class="form-control input-sm" id="txtToolRizMetre" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-3 control-label">عرض :</label>
+							<div class="col-md-6">
+								<input type="text" class="form-control input-sm" id="txtArzRizMetre" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-3 control-label">ارتفاع :</label>
+							<div class="col-md-6">
+								<input type="text" class="form-control input-sm" id="txtErtefaRizMetre" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-3 control-label">وزن :</label>
+							<div class="col-md-6">
+								<input type="text" class="form-control input-sm" id="txtVaznRizMetre" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-3 control-label">توضیحات :</label>
+							<div class="col-md-6">
+								<textarea class="form-control input-sm" rows="10" id="txtDes" style="width: 100%; height: 100px"></textarea>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	@* سایر HiddenFieldها *@
+	@Html.Hidden("HDFBarAvordID")
+	@Html.Hidden("HDFProjectID")
+	@Html.Hidden("HDFType")
+	@Html.Hidden("HDFSVNum")
+	@Html.Hidden("HDFItemsFBShomareh")
+	@Html.Hidden("HDFFBID")
+	@Html.Hidden("HDFOperationId")
+	@Html.Hidden("HDFOperationIdN")
+	@Html.Hidden("HDFRizMetreId")
+	@Html.Hidden("HDFSaveEdit")
+	@Html.Hidden("HDFIsFromAddedOperation")
+	@Html.Hidden("HDFOperationHasAddedOperations")
+	@Html.Hidden("HDFCurrentTabOpen")
+	@Html.Hidden("HDFStatePolSaveOrEdit")
+	@Html.Hidden("HDFStateAmalyateKhakiSaveOrEdit")
+	@Html.Hidden("HDFPolIdForEdit")
+	@Html.Hidden("HDFKMAmalyateKhakiIdForEdit")
+</form>
+
+
+<script type="text/javascript">
+
+	function OperationClick(Operation) {
+		Type = 234;
+		$('#HDFOperationId').val(Operation);
+		ItemsFBShomareh = $('#HDFItemsFBShomareh').val();
+
+		if (!$('#a' + Operation).hasClass('OpenMenu')) {
+			// BarAvordID = $('#<%=HDFBarAvordID.ClientID%>').val();
+			// ProjectId = $('#<%=HDFProjectID.ClientID%>').val();
+
+			var url = '@Url.Action("GetOperation_ItemsFB", "Operation_ItemsFB")';
+
+			$.ajax({
+				type: "POST",
+				url: url,
+				data: JSON.stringify({
+					Operation: Operation,
+					BarAvordUserId: 'b1200123-db11-44de-a006-45abad9fb1ed',
+					NoeFB: 234,
+					Year: 1397
+				}),
+				contentType: "application/json; charset=utf-8",
+				dataType: "json",
+				success: function (response) {
+					info = response.split('_');
+					if (info[0] == "OK") {
+						$('#a' + Operation).addClass('OpenMenu');
+						$('#HDFFBID').val(info[1]);
+
+						$('#uldiva' + Operation).html(info[2]);
+						$('#divShowRizMetre').html($('#uldiva' + Operation).html());
+						$('#aShow').click();
+
+					}
+					else {
+						toastr.error('مشکل در محاسبه جمع کل فصل انتخابی', 'خطا');
+					}
+				},
+				error: function (response) {
+					alert('c');
+
+					toastr.error('مشکل در محاسبه جمع کل فصل انتخابی', 'خطا');
+				}
+			});
+		}
+		else {
+			$('#a' + Operation).removeClass('OpenMenu');
+		}
+	}
+
+
+		function AddRizMetreUsers(OperationId, FBId, Array) {
+		ArraySplit = Array.split(',');
+		$('#HDFOperationId').val(OperationId);
+		$('#HDFFBID').val(FBId);
+		$('#HDFIsFromAddedOperation').val('false');
+		$('.NoRizMetre').addClass('displayNone');
+		var str = '';
+		str += "<div id=\"divNewRow\" class=\"row styleRowTable\"><div class=\"col-md-1\"></div>";
+		str += "<div class=\"col-md-2\"><input type=\"text\" class=\"form-control spanStyleMitraSmall\" id=\"txtSharh\" value=\"\"/></div>";
+		str += "<div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[0] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtTedad\" value=\"\"/></div>";
+		str += " <div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[1] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtTool\" value=\"\"/></div>";
+		str += "<div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[2] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtArz\" value=\"\"/></div>";
+		str += "<div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[3] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtErtefa\" value=\"\"/></div>";
+		str += "<div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[4] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtVazn\" value=\"\"/></div>";
+		str += "<div class=\"col-md-1\">0</div>";
+		str += "<div class=\"col-md-2\"><input type=\"text\" class=\"form-control spanStyleMitraSmall\" id=\"txtDes\" value=\"\"/></div>";
+		str += "<div class=\"col-md-1\"><button type=\"button\" onclick=\"SaveRMUClick($(this),'" + FBId + "','false','" + OperationId + "')\" class=\"ButtonRowsSaveStyle\"><i id=\"iSave\" class=\"fa fa-save SaveRMUStyle\"></i></button></div></div>";
+		$('#uldiva' + OperationId).append(str);
+
+		$('#uldiva' + OperationId + ' #divNewRow').find('input[type=text]').each(function () {
+			$(this).click(function () {
+				if (!($(this).is(':focus')))
+					$(this).select();
+			});
+			$(this).focus(function () {
+				$(this).select();
+			});
+
+			$(this).on("keypress", function (e) {
+				/* ENTER PRESSED */
+				if (e.keyCode == 13) {
+					/* FOCUS ELEMENT */
+					var inputs = $(this).parent().parent().find("input[Type=text],button");
+					var idx = inputs.index(this);
+					if (idx == inputs.length - 1) {
+						inputs[0].focus();
+						inputs[0].select();
+					} else {
+						while (inputs[idx + 1].disabled == true) {
+							idx++;
+						}
+						inputs[idx + 1].focus(); //  handles submit buttons
+						inputs[idx + 1].select();
+					}
+					return false;
+				}
+			});
+		})
+	}
+
+
+
+	$(document).ready(function() {
+	var operations = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Operations));
+	var itemsKholaseh = @Html.Raw(JsonConvert.SerializeObject(ViewBag.ItemsKholaseh));
+		function createTree(operations, parentId) {
+			var treeHtml = [];
+			$.each(operations, function(index, operation) {
+				if (operation.ParentId == parentId) {
+					var itemHtml = {};
+					if (operation.ItemsFBShomareh == "") {
+						if (operation.FunctionCall.trim() != "") {
+							itemHtml = {
+								text: operation.OperationName,
+								a_attr: { "onclick": operation.FunctionCall + "('" + operation.Id + "')" },
+								id: "a" + operation.Id,
+								children: []
+							};
+						} else {
+							itemHtml = {
+								text: operation.OperationName,
+								id: "a" + operation.Id,
+								children: createTree(operations, operation.Id)
+							};
+						}
+					} else {
+						var itemKholaseh = itemsKholaseh.find(x => x.Shomareh.trim() === operation.ItemsFBShomareh.trim());
+						itemHtml = {
+							text: operation.ItemsFBShomareh.trim() + " - " + (itemKholaseh ? itemKholaseh.Sharh : ''),
+							a_attr: { "onclick": "OperationClick('" + operation.Id + "')" },
+							id: "a" + operation.Id
+						};
+					}
+
+					treeHtml.push(itemHtml);
+				}
+			});
+
+			return treeHtml;
+		}
+
+		$('#Tree').jstree({
+			'core': {
+				'data': createTree(operations, 0),
+				'themes': {
+					'icons': false
+				}
+			}
+		});
+
+	});
+
+
+</script>

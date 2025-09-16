@@ -1,0 +1,1557 @@
+﻿body{
+     
+}
+
+@font-face {
+    font-family: 'BMitra';
+    src: url('../fonts/BMitra.eot'), url('../fonts/BMitra.ttf'), url('../fonts/BMitra.woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'BTitrBold';
+    src: url('../fonts/BTitrBold.eot'), url('../fonts/BTitrBold.ttf'), url('../fonts/BTitrBold.woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'BBaran';
+    src: url('../fonts/BBaran.eot'), url('../fonts/BBaran.ttf'), url('../fonts/BBaran.woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'BHoma';
+    src: url('../fonts/BHoma.eot'), url('../fonts/BHoma.ttf'), url('../fonts/BHoma.woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'irSans';
+    src: url('../Fonts/PersianFonts/Iranian Sans.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+#divNewRow {
+    background-color: #e9dfff;
+    border-bottom: 1px solid #c4c1d0 !important;
+}
+
+.modal-title{
+     font-family: 'irSans';
+    font-size:14px;
+}
+.popStyle{
+    font-family: 'irSans';
+    font-size:12px;
+}
+.popStyle .row {
+margin-left:0px;
+margin-right:0px;
+}
+    .popStyle .col-md-1 ,.popStyle .col-md-2 {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+.top-menu ul li a{color: #fff }
+.top-menu ul li a:hover{background-color:#4e5d76; }
+.page-content .title{    color: rgb(51, 51, 51);
+    margin-top: -24px;
+    padding: 8px;
+    box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.3);
+    margin-left: -20px;
+    margin-right: -20px;}
+    .page-content .title i {
+        color: #1CAF9A;
+        font-size:17px;
+        margin:0 5px
+    }
+.page-footer a{color: #fff }
+.page-footer a:hover{color: #fc0 }
+
+.page-logo{ 
+    background:url(../img/logo-bg.jpg) no-repeat top right!important;
+}
+.tabbable-custom.tabbable-full-width > .nav-tabs > li > a {
+    font-size: 17px;
+    font-family:BMitra;
+}
+.navbar-nav > li > a {
+    padding-top: 15px;
+    padding-bottom: 10px;
+}
+/******** tab ************/
+.tabWithScroll .nav-tabs, .nav-pills {
+    margin-bottom: 10px;
+    white-space: nowrap;
+}
+
+.tabWithScroll .nav-tabs > li {
+    margin-bottom: -20px;
+    display: inline-block;
+    float: none;
+}
+
+.tabWithScroll .nav-tabs, .nav-pills {
+    margin-bottom: 10px;
+    white-space: nowrap !important;
+    padding-right: 20px;
+    padding-left: 20px;
+}
+.tabWithScroll .tabscroll{overflow: hidden;border-bottom: solid 0px #ddd;
+}
+
+.tabWithScroll .tab-move-next {
+    position: absolute;
+    z-index: 1000;
+    left: 0px;
+    padding: 17px 2px;
+    background-color: #5C5CB0;
+    color: #fff;
+}
+
+.tabWithScroll .tab-move-next:hover {
+    cursor:pointer;
+        background-color:#6E6ED2;
+}
+
+.tabWithScroll .tab-move-prev {
+    position: absolute;
+    z-index: 1000;
+    padding: 17px 2px;
+    background-color: #5C5CB0;
+    color: #fff;
+    right: 0px;
+}
+
+.tabWithScroll .tab-move-prev:hover {
+    cursor:pointer;
+        background-color:#6E6ED2;
+}
+
+.tabWithScroll .tab-move-nextR{
+    position: absolute;
+    z-index: 1000;
+    left: 0px;
+    padding: 17px 2px;
+    background-color: #5C5CB0;
+    color: #fff;
+}
+
+.tabWithScroll .tab-move-nextR:hover {
+    cursor:pointer;
+        background-color:#6E6ED2;
+}
+
+
+.tabWithScroll .tab-move-prevR {
+    position: absolute;
+    z-index: 1000;
+    padding: 17px 2px;
+    background-color: #5C5CB0;
+    color: #fff;
+    right: 0px;
+}
+
+.tabWithScroll .tab-move-prevR:hover {
+    cursor:pointer;
+    background-color:#6E6ED2;
+}
+
+.tabWithScroll .tab-move-nextA {
+    position: absolute;
+    z-index: 1000;
+    left: 0px;
+    padding: 17px 2px;
+    background-color: #5C5CB0;
+    color: #fff;
+}
+
+    .tabWithScroll .tab-move-nextA:hover {
+        cursor: pointer;
+        background-color: #6E6ED2;
+    }
+
+
+.tabWithScroll .tab-move-prevA {
+    position: absolute;
+    z-index: 1000;
+    padding: 17px 2px;
+    background-color: #5C5CB0;
+    color: #fff;
+    right: 0px;
+}
+
+.tabWithScroll .tab-move-prevA:hover {
+    cursor:pointer;
+        background-color:#6E6ED2;
+}
+.tabWithScroll .tab-content {
+    border: none;
+}
+.nav-tabs {
+    border-bottom: 0px solid #DDD;
+}
+
+
+.lblR {
+    font-size: 12px;
+    color: #D10023;
+    font-family: Tahoma;
+    display: inline-block;
+    margin: 4px 0;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+.checkbox-list{
+    /*border: 1px solid rgb(204, 204, 204);*/
+}
+    .checkbox-list table {
+        margin-left: 25px;
+        margin-right: 5px;
+    }
+.form-horizontal .radio{
+    min-height:0px;
+}
+.form-horizontal .radio-list .radio {
+    padding-top: 15px;
+}
+.tabscroll .nav-tabs > li > a,.tabscroll .nav-pills > li > a {
+    font-size: 17px;
+}
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+    cursor: default;
+    -moz-border-top-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    border-image: none;
+    color: #555;
+    border-top-width: 3px;
+    background-color: #fff;
+}
+
+.Clock {
+    color: black;
+    width:90px
+}
+
+.lblStyle {
+    background-color: #788292;
+    font-size: 10px;
+    color: #fff;
+    height: 25px;
+    text-align: center;
+}
+
+.lblMinStyle1 {
+    height:7px;
+    border-right:1px solid #788292;
+    border-bottom:1px solid #788292;
+}
+
+.lblMinStyle2 {
+    height:10px;
+    border-right:1px solid #788292;
+    border-bottom:1px solid #788292;
+}
+.lblMinStyle3 {
+    height:10px;
+    border-right:1px solid #788292;
+}
+.warning {
+    color: orange;
+}
+
+hr {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.txt {
+    font-size: 11px;
+    width: 95%;
+    margin: 2%;
+    padding: 2px;
+    border: 1px solid #8F9599;
+}
+.txtDate-sm {
+    font-size: 11px;
+    width: 95%;
+    margin: 2%;
+    padding: 2px;
+    border: 1px solid #8F9599;
+}
+
+.form-control-border {
+    background-color: #F4F7FE;
+    border: 1px solid #7E5B5B;
+}
+
+.txtMeghdar {
+    text-align: right;
+}
+
+.bkStyle {
+    background-color: #555; 
+    width: 100%; 
+    height: 100%;
+    position:absolute;
+    background-color: #364150;
+    opacity: 0.8;
+    z-index: 999999;
+}
+.input-sm {
+    /*text-align:right;*/
+}
+.ob_gMCont {
+    position: relative;
+    overflow: hidden;
+    width: 100% !important;
+    border: none !important;
+    direction: rtl !important;
+}
+
+.MsgModal {
+    width:90%;border:1px solid rgb(229, 229, 229);padding:5px;margin-right:5%
+}
+
+.page-header.navbar .top-menu .navbar-nav > li.dropdown .dropdown-menu > li > a:hover {
+    color: #fff;
+}
+
+.page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-menu > li:hover {
+    color: #fff;
+}
+
+.PageHeaderStyle {
+    background-image: url(images/cartographer.png);
+    background-color: rgb(224, 228, 234);
+    padding: 2px 0px;
+}
+
+.PageHeaderStyle2{
+    background-color: rgb(202, 213, 227);
+    /*padding: 5px 20px;*/
+}
+
+.PageHeaderStyle3{
+    background-color: rgb(172, 216, 231);
+    padding: 5px 20px;
+}
+
+.PageHeaderStyle4{
+    background-color: rgb(180, 196, 216);
+}
+
+.HeaderReportStyle {
+    background-color:#d6ebff;
+    border: 1px solid #4d6692;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-size: 13px;
+    margin-bottom: 0px;
+}
+
+.BodyReportStyle {
+    border-left: 1px solid #4d6692;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-size: 13px;
+    color: blue;
+    margin-bottom: 0px;
+    height: 100%;
+}
+
+.BodyReportStyleChecked {
+    border-left: 1px solid #4d6692;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-size: 13px;
+    color: #01ba01;
+    margin-bottom: 0px;
+    height: 100%;
+}
+
+.BodyReportStyleUnChecked {
+    border-left: 1px solid #4d6692;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-size: 13px;
+    color: red;
+    margin-bottom: 0px;
+    height: 100%;
+}
+.IconReportStyle
+{
+    font-size:15px;
+}
+
+.Pager span {
+    text-align: center;
+    color: #fff;
+    display: inline-block;
+    width: 20px;
+    background-color: #026F84;
+    margin-right: 3px;
+    line-height: 150%;
+    border: 1px solid #032A32;
+    padding-top: 4px;
+}
+
+.Pager a {
+    text-align: center;
+    display: inline-block;
+    width: 20px;
+    background-color: #3C8DBC;
+    color: #fff;
+    border: 1px solid #1E7586;
+    margin-right: 3px;
+    line-height: 150%;
+    text-decoration: none;
+    padding-top: 4px;
+}
+
+    .Pager a:hover
+    {
+        background-color: #3789B9;
+        color: #fff;
+        border: 1px solid #1E7586;
+    }
+.mypanel-header {
+    background-color: #bfd6e1;
+    padding: 5px;
+}
+
+
+.table thead {
+    background: #8498b3 none repeat scroll 0% 0%;
+    color: #fff;
+    border-bottom: 1px solid #4D7488 !important;
+    font-weight: 400 !important;
+    font-family:BTitrBold;
+    font-size: 14px;
+    padding-top:6px !important;
+    padding-bottom:6px !important;
+}
+
+.table td {
+    font-weight: 400 !important;
+    font-family: irSans;
+    font-size: 12px;
+}
+
+
+.table tbody tr:nth-of-type(odd) {
+    background-color: #FAFBFB;
+}
+.table tbody tr:hover {
+    background-color: #DBEFF3;
+    cursor:pointer;
+}
+
+.spanStyleEnteringValue {
+    color: #000;
+    font-size: 17px;
+    font-family: BMitra, serif;
+}
+
+.rowSelected {
+    color: #090B45;
+    background-color: #cdd6e1 !important;
+    border-bottom: 1px solid #4D7488 !important;
+}
+
+.rowSelected1 {
+    color: #090B45;
+    background-color: #cdd6e1 !important;
+    border-bottom: 1px solid #4D7488 !important;
+}
+
+.rowSum {
+    color: #090B45;
+    background-color: #7e9fcc !important;
+    border-bottom: 1px solid #26739B !important;
+}
+.labelStyle
+{
+    font-family:BMitra;
+    font-size: 18px;
+}
+
+.labelStyleNum{
+    font-family:BHoma;
+    font-size: 16px;
+}
+
+.labelStyleDes{
+    font-family:BHoma;
+    font-size: 16px;
+}
+
+.SubMenuTitleStyle {
+    font-family: BMitra;
+    font-size: 17px !important;
+}
+
+.MenuTitleStyle {
+    font-family: BMitra;
+    font-size: 20px !important;
+}
+
+.HeaderTitleTopStyle {
+    font-family: BMitra;
+    color: rgb(32, 82, 155);
+    font-size: 18px !important;
+    padding-right: 10px;
+}
+
+.HeaderTitleMainStyle {
+    font-family:BMitra;
+    color: rgb(25, 74, 146);
+    font-size: 18px !important;
+    padding-right: 5px;
+    padding-bottom: 5px;
+}
+
+.spanConditionDes {
+    color: #3826cd;
+    font-size: 12px;
+    text-decoration: underline;
+}
+
+    .spanConditionDes:hover {
+        color: #0f027c;
+        cursor: pointer;
+    }
+
+.spanLogoStyle {
+    color: #fff;
+    font-family: BMitra;
+    font-size: 22px;
+}
+
+.spanStyleProfile
+{
+    color:#fff;
+    font-family:BMitra;
+    font-size:22px !important;
+}
+
+.spanStyleProfile:hover
+{
+    color:#fff !important;
+    font-family:BMitra;
+    font-size:22px !important;
+}
+.dropdownMenuStyle{
+    font-family:BMitra;
+    font-size:18px;
+}
+
+    .dropdownMenuStyle:hover {
+            border-radius:3px !important;
+    }
+
+.divRadioStyle {
+    border: 1px solid #ccc;
+    border-radius: 5px !important;
+}
+
+.divStepStyle {
+    background-color: #b7cddd;
+    padding: 6px;
+}
+
+    .divStepStyle:hover {
+        cursor: pointer;
+    }
+
+    .divStepStyle:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        border-top: 16px solid #e0e4ea;
+        border-right: 16px solid #b7cddd;
+        border-bottom: 15px solid #e0e4ea;
+        width: 0;
+    }
+
+    .divStepStyleDisabled {
+    background-color: #b7cddd;
+    padding: 6px;
+    color:#4fabbf;
+}
+
+    .divStepStyleDisabled:hover {
+        cursor: default;
+    }
+
+    .divStepStyleDisabled:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        border-top: 16px solid #e0e4ea;
+        border-right: 16px solid #b7cddd;
+        border-bottom: 15px solid #e0e4ea;
+        width: 0;
+    }
+
+.divStepStyleActive {
+    background-color: #7c9bbd;
+    color: #fff;
+    padding: 6px;
+}
+    .divStepStyleActive:hover {
+        cursor: pointer;
+    }
+
+    .divStepStyleActive:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        border-top: 16px solid #e0e4ea;
+        border-right: 16px solid #7c9bbd;
+        border-bottom: 15px solid #e0e4ea;
+        width: 0;
+    }
+
+.btnStepsStyle {
+    color: #1e00b7;
+    background-color: #5cc6ea;
+    border-width: 0px;
+    padding: 2px 13px;
+    border-radius: 0px !important;
+}
+
+    .btnStepsStyle:hover {
+        color: #fff;
+        background-color: #1e00b7;
+    }
+
+.btnStepsStyleDeactive {
+    color: #a39ebc;
+    background-color: #a0d8ec;
+    border-width: 0px;
+    padding: 2px 13px;
+    border-radius: 0px !important;
+}
+
+.btnStepsStyleDeactive:hover {
+    color: #a39ebc;
+    background-color: #a0d8ec;
+    border-width: 0px;
+    padding: 2px 13px;
+    border-radius: 0px !important;
+    cursor:default;
+}
+
+.ErrorValueStyle {
+    border: 1px solid #950a0a !important;
+}
+
+.bodyBackGround {
+    background-image: url(images/22.png);
+    background-color: #f6e8e8;
+}
+
+.ItemNotFoundStyle {
+    padding-top: 15px;
+    text-align: center;
+    padding-bottom: 15px;
+    background-color: #dff9ff;
+    color: #00a;
+}
+
+.ChangePriorityInTdStyle {
+    color: #768dad;
+    font-size: 16px !important;
+}
+.ChangePriorityInTdStyle:hover {
+    color: #8aa0bf;
+}
+
+.NotifiStyle {
+    background-color: #eaa5a5;
+    height: 18px;
+    width: 24px;
+    top: 4px;
+    position: absolute;
+    border-radius: 10px !important;
+    right: 0px;
+    text-align:center;
+}
+
+.NotifiDropDownStyle {
+    position: absolute;
+    left: -100px;
+    padding: 1px 0 0 0;
+    width: 280px;
+    margin-top: 0;
+    box-shadow: none;
+    list-style: none;
+    background-color: #fff;
+    padding: 0px 0px 5px 0px;
+    border: 1px solid #d5e5ed;
+    line-height: 1.8;
+    background-color: #e6f3ff;
+    max-height: 200px;
+    overflow: auto;
+}
+
+.notifiBodyStyleChecked {
+    padding: 1px 5px;
+    margin-top: 2px;
+    border-radius: 3px !important;
+    background-color: #f9f9f9;
+    font-size: 12px;
+    color: #b7b0d2;
+}
+.notifiBodyStyleChecked:hover{
+    cursor:pointer;
+}
+
+.notifiBodyStyle {
+    padding: 1px 5px;
+    margin-top: 2px;
+    border-radius: 3px !important;
+    background-color: #edf9ff;
+    font-size: 12px;
+}
+.notifiBodyStyle:hover{
+    background-color: #fff;
+    cursor:pointer;
+}
+
+.NotifiImgUserStyle {
+    background-color: #fff;
+    height: 120px;
+    width: 120px;
+    top: -4px;
+    border-radius: 60px !important;
+    right: -8px;
+    text-align:center;
+}
+
+.NotifiImgStyle{
+}
+
+    .NotifiImgStyle:hover {
+        cursor: pointer;
+        background-color: #576577 !important;
+    }
+
+    .NotifiImgStyle:focus {
+        background-color: #576577 !important;
+    }
+
+.imgUserStyleSmall {
+    height: 25px !important;
+    float: left !important;
+    margin-left: 20px;
+    margin-top: -2px !important;
+    border-radius: 15px !important;
+}
+
+.ProfileStyle {
+    position: absolute;
+    left: 0;
+    right: auto;
+    padding: 1px 0 0 0;
+    border-top-width: 0;
+    width: 280px;
+    margin-top: 0;
+    float: left;
+    text-align: right;
+    box-shadow: none;
+    z-index: 1000;
+    min-width: 160px;
+    margin: 2px 0 0;
+    list-style: none;
+    background-color: #fff;
+    margin-top: 0px;
+}
+
+.user-header {
+    height: 175px;
+    padding: 10px;
+    text-align: center;
+    background-color: #2b3643;
+    box-sizing: border-box;
+}
+
+.user-body {
+    padding: 15px;
+    border-bottom: 1px solid #f4f4f4;
+    border-top: 1px solid #dddddd;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+    box-sizing: border-box;
+    text-align: center;
+    border-right: 1px solid #f9f1f1;
+}
+
+.user-footer {
+    background-color: #f9f9f9;
+    padding: 10px;
+    height: 50px;
+    border: 1px solid #f9f1f1;
+}
+
+.ProfileheaderStyle {
+    padding: 12px 30px 12px 0 !important;
+    width: 250px;
+}
+
+.ProfileheaderStyle:hover{
+    background-color:#576577 !important;
+}
+
+.ProfileheaderStyle:focus{
+    background-color:#576577 !important;
+}
+
+.notifiBackStyleChecked {
+    background-color: #ddeaf8;
+    color: #2b3643;
+    padding: 1px 10px;
+    border-radius: 4px !important;
+}
+
+.notifiBackStyle {
+    background-color: #e9f4ff;
+    color: #2b3643;
+    padding: 1px 10px;
+    border-radius: 4px !important;
+}
+.notifiTitleStyleChecked {
+    padding: 1px 10px;
+    border-radius: 4px !important;
+    background-color: #bfd2de;
+    margin: 5px 0px 5px 0px;
+    color: #fff;
+    font-size: 11px;
+}
+
+.notifiTitleStyleChecked:hover
+{
+    cursor:pointer;
+}
+
+.notifiTitleStyle {
+    padding: 1px 10px;
+    border-radius: 4px !important;
+    background-color: #8cadc5;
+    margin: 5px 0px 5px 0px;
+    color: #fff;
+    font-size: 11px;
+}
+
+.notifiTitleStyle:hover
+{
+    background-color: #82a3bc;
+    cursor:pointer;
+}
+
+.notifiHeaderStyle {
+    border-bottom: 1px solid #fff;
+    color: #eae2e2;
+    margin-right: 0px;
+    margin-left: 0px;
+    background-color: #2b3643;
+    padding:5px 0px;
+}
+
+.divEventButtonStyle {
+    text-align: center;
+    padding: 10px 0px 5px 3px;
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+.IsCheckedStyle {
+    color: #00164d;
+    padding: 3px 10px;
+    border-radius: 5px !important;
+    font-size: 12px;
+}
+
+.DateEventStyle {
+    font-size: 10px;
+    background-color: #fff;
+    border-radius: 4px !important;
+    padding: 5px;
+    color: blue;
+}
+
+.spanStyleMeghdarBlue {
+    padding: 0px 10px;
+    background-color: #cfcfff;
+    border-radius: 3px !important;
+    color: #0000b9;
+}
+
+.spanStyleMeghdarRed {
+    padding: 0px 10px;
+    background-color: #ffe1e1;
+    border-radius: 3px !important;
+    color: #ad0000;
+}
+
+.spanStyleMeghdarGreen {
+    padding: 0px 10px;
+    background-color: #c2e1c2;
+    border-radius: 3px !important;
+    color: #005600;
+}
+
+.styleTickMinsMeghdar {
+    padding: 0px 0px 0px 3px;
+    color: #00bc00;
+}
+
+.styleTickMinsMeghdarRed {
+    padding: 0px 0px 0px 3px;
+    color: #ff6363;
+}
+
+.styleHeaderTable {
+    background-color: #d9d9d9;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-top: 1px solid #fff;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    color: #28038e;
+}
+
+.styleFieldTable {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-top: 1px solid #fff;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    color: #28038e;
+}
+
+.styleHeaderTable1 {
+    background-color: #f1f2ff;
+    padding: 5px;
+    border-top: 1px solid #fff;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    color: #fff;
+}
+.styleRowTable {
+    border-bottom: 1px solid #ececec !important;
+    margin-bottom: 0px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-left: 0px;
+    margin-right: 0px;
+    /*font-size: 13px;*/
+    font-weight: normal;
+}
+
+/*.styleRowTable:hover{
+    cursor:pointer;
+}*/
+
+.ItemsFBStyle{
+
+}
+
+.ItemsFBStyle:hover{
+    background-color:#e9f9ff;
+    cursor:pointer;
+}
+
+.lblWarningStyle {
+    color: rgb(255, 255, 255);
+    background-color: rgb(207, 30, 61);
+    padding: 10px 20px;
+    height: 100px;
+    border-radius: 10px !important;
+}
+
+.WarningStyleForEnterDataType {
+    background-color: #e1edff;
+    line-height: 2.1;
+    padding: 10px;
+    color: #3e0000;
+}
+
+.MehvarForEnterDataTypeStyle {
+    padding-top: 10px;
+    padding-bottom: 5px;
+    margin: 2px;
+}
+
+.WarningStyleForEnterDataTypeAreYouSure {
+    background-color: #db9090;
+    padding: 3px;
+    color: #f0f0f0;
+}
+
+.CheckBoxSpanStyle{
+
+}
+
+.CheckBoxSpanStyle:hover{
+    cursor:pointer;
+}
+
+.spanStyleCKIsEnterToOneBA{
+
+}
+.spanStyleCKIsEnterToOneBA{
+    cursor:pointer;
+    color:#7d5001;
+}
+
+.IconStyleInDashBoard
+{
+    border: 1px solid #a29eb7;
+    border-radius: 30px !important;
+    padding: 5px 23px;
+    background-color: #c0f3ff;
+    color: #3420a7;
+    font-size: 30px;
+}
+
+    .IconStyleInDashBoard:hover {
+        cursor: pointer;
+        background-color: #b0ebf9;
+        color: #4c32e2;
+    }
+
+.TextStyleInDashBoard {
+    color: #3420a7;
+}
+
+    .TextStyleInDashBoard:hover {
+        color: #4c32e2;
+        cursor: pointer;
+    }
+
+    .IconStyleInDashBoard2
+{
+    border: 1px solid #a29eb7;
+    border-radius: 30px !important;
+    padding: 5px 15px;
+    background-color: #f3ead5;
+    color: #3420a7;
+    font-size: 30px;
+}
+
+    .IconStyleInDashBoard2:hover {
+        cursor: pointer;
+        background-color: #efe5d0;
+        color: #4c32e2;
+    }
+
+.ReportTitle {
+    padding: 2px 20px;
+    font-size: 20px;
+    border-radius: 20px 0px !important;
+    background-color: #fce7ff;
+    color: #3b1890;
+    border: 1px solid #efd2f3;
+}
+
+.IconStyleInDashBoard3 {
+    border-radius: 30px !important;
+    padding: 5px 15px;
+    background-color: #6050b5;
+    color: #ffffff;
+    font-size: 30px;
+}
+
+    .IconStyleInDashBoard3:hover {
+        cursor: pointer;
+        background-color: #7464c7;
+        color: #fffff0;
+    }
+
+.HamlStyleLink {
+    padding: 5px 10px;
+    background-color: #587a9b;
+    border-radius: 5px !important;
+    color: #fff;
+}
+
+    .HamlStyleLink:hover {
+        background-color: #6c8cab;
+        cursor: pointer;
+    }
+
+.divStyleKM {
+    border: 1px solid #7b87ab;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.saveStyleHaml {
+    right: 5px;
+    font-size: 18px;
+    color: #edffcf;
+    text-shadow: 1px 1px 2px #a5d555;
+}
+.saveStyleHaml:hover{
+    cursor:pointer;
+    color: #26fe26;
+}
+
+.OpMenuStyle {
+    font-weight:normal;
+    /*padding: 0px 5px;*/
+    white-space: normal;
+}
+
+    .OpMenuStyle:hover {
+        background-color: #c5e6ed;
+        border-radius: 3px !important;
+        cursor:pointer;
+    }
+
+.EditRMUStyle {
+    font-size: 16px;
+    color: #496aba;
+    padding: 3px;
+}
+
+    .EditRMUStyle:hover{
+        cursor:pointer;
+        color: #103ca6;
+    }
+
+.DelRMUStyle{
+        font-size:16px;
+        color:red;
+        padding:3px
+}
+
+    .DelRMUStyle:hover{
+        cursor:pointer;
+        color:#d50000;
+    }
+
+.SaveRMUStyle {
+    font-size: 16px;
+    color: #469233;
+    padding: 3px;
+}
+
+.SaveRMUStyle:hover {
+    cursor:pointer;
+    color: #297515;
+}
+
+    .RizMetreUsersAddStyle{
+        padding:2px 6px;
+        background-color:#686da8;
+        border-radius:5px !important;
+        color:#fff;
+    }
+
+.RizMetreUsersAddStyle:hover{
+        background-color:#7d81b9;
+        cursor:pointer;
+    }
+
+.tdStyle{
+        padding: 0px 0px;
+}
+
+.ViewItemsRizMetreStyle {
+    background-color: #c8dcf5;
+    padding: 5px 25px;
+    color: #000b5f;
+    border-radius: 15px !important;
+}
+
+.ViewItemsRizMetreStyle:hover{
+    cursor:pointer;
+    background-color: #bcd3f0;
+}
+
+.conditionElementStyle {
+    white-space: normal;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.spanFrameNameStyle {
+    background-color: rgb(129, 173, 201);
+    color:#fff;
+    padding: 1px 5px;
+    border-radius: 3px !important;
+    /*bottom: -10px;*/
+    position: relative;
+    z-index: 1;
+    float: right;
+    right: 15px;
+    width:100%;
+}
+
+.spanFrameNameStyle:hover {
+    cursor:pointer;
+}
+
+.ButtonRowsSaveStyle {
+    background-color: unset;
+    padding: 1px 5px;
+    border-radius: 3px !important;
+    z-index: 1;
+    float: right;
+    right: 15px;
+    border:0px solid;
+    height:25px;
+}
+
+.ButtonRowsSaveStyle:focus {
+    box-shadow: 0 4px 8px 0 rgba(135, 201, 23, 0.5),0 6px 20px 0 rgba(139, 180, 27, 0.2);
+    background-color: #8ec78e;
+    cursor:pointer; 
+}
+
+.ButtonRowsEditStyle {
+    background-color: #679dd4;
+    padding: 1px 5px;
+    border-radius: 3px !important;
+    z-index: 1;
+    float: right;
+    right: 15px;
+    border:0px solid;
+}
+
+.ButtonRowsEditStyle:focus {
+    box-shadow: 0 4px 8px 0 rgba(135, 201, 23, 0.5),0 6px 20px 0 rgba(139, 180, 27, 0.2);
+    background-color: #4a85c0;
+    cursor:pointer; 
+}
+
+.spanStyleItemHasConditionDetails {
+    margin-right:10px;
+}
+
+.spanStyleItemHasConditionDetails:hover{
+    cursor:pointer;
+}
+
+.spanStyleAddedItems{
+
+}
+
+.spanStyleAddedItems:hover{
+    cursor:pointer;
+}
+.VahedStyle {
+    font-size: 10px;
+    color: #062060;
+}
+
+
+
+.spanLakeGiriStyle {
+    color: #07118c;
+    margin-right: 10px;
+}
+
+.spanLakeGiriStyle:hover {
+    cursor:pointer;
+}
+
+.PlanTableStyle{
+    border:1px solid #b7cddd;
+}
+
+.PlanTableTextBox {
+    padding: 1px;
+    height: 100%;
+    text-align: center;
+}
+
+.PlanTableActiveTab{
+    background-color: rgb(46, 112, 155);
+}
+
+.ManabeFbItems{
+
+}
+
+.ManabeFbItems:hover{
+    cursor:pointer;
+}
+
+.btnSavePlanStyle {
+    background-color: #516b92;
+    padding: 1px 5px;
+    border-radius: 3px !important;
+    border: 0px solid;
+    color: #fff;
+}
+
+.btnSavePlanStyle:hover {
+    background-color: #647c9f;
+}
+
+.ExsitingPolStyle{
+    padding:0px 5px;
+    border-radius:5px !important;
+}
+
+.ExsitingPolStyle:hover{
+    background-color:#E5E1EF;
+    color:#28069f;
+    cursor:pointer;
+}
+
+.NewPolStyle {
+    padding: 5px 20px;
+    border-radius: 5px !important;
+    margin-right: 10px;
+    background-color: #427c00;
+    color: #fff !important;
+}
+
+    .NewPolStyle:hover {
+        background-color: #417704;
+        cursor: pointer;
+        color: #fff;
+    }
+
+.NoeRahStyle {
+
+}
+
+.NoeRahStyle:hover {
+    cursor:pointer;
+}
+
+.spanCheckBoxStyle {
+
+}
+
+.spanCheckBoxStyle:hover {
+    cursor:pointer;
+}
+
+.spanStyleKhakBardariItems{
+}
+
+.ViewPathInMapStyle{
+
+}
+
+.ViewPathInMapStyle:hover{
+    cursor:pointer;
+    background-color:#ccc;
+}
+
+.rowOfPathForViewHistoryStyle {
+}
+
+    .rowOfPathForViewHistoryStyle:hover {
+        cursor: pointer;
+        background-color: #e4e5ff;
+        border-bottom: 1px solid #6E6ED2;
+    }
+
+.rowOfPathStyle{
+}
+
+.rowOfPathStyleActive{
+        background-color: #c5c6e0;
+        border-bottom: 1px solid #e4e5ff;
+        padding:10px 0px;
+        margin-top:5px
+}
+
+    .rowOfPathStyle:hover {
+        cursor: pointer;
+        background-color: #ecf6ff;
+        border-bottom: 1px solid #6E6ED2;
+        padding:10px 0px;
+        margin-top:5px
+    }
+
+    .UserBarAvordClass{}
+
+    .UserBarAvordClass:hover{
+        cursor:pointer;
+    }
+
+.form-control {
+    display: block;
+    width: 100%;
+    height: 20px;
+    padding: 0px 8px;
+    font-size: 16px;
+    line-height: 1.42857143;
+    color: #110186;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #e9ddee;
+    border-radius: 3px;
+    -webkit-box-shadow: unset;
+    box-shadow: unset;
+    -webkit-transition: unset;
+    -o-transition: unset;
+    transition: unset;
+}
+
+.form-control[disabled]{
+    background-color: #f9f9f9;
+}
+
+.btn {
+  border-width: 0;
+  padding: 2px 4px;
+  font-size: 18px;
+  font-family: BMitra,tahoma;
+  background-image: none !important;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  border-radius: 4px !important;
+  box-shadow: none;
+  text-shadow: none;
+}
+
+.btn-default {
+  border-width: 0px;
+  padding: 2px 13px;
+}
+.btn-default:hover, .btn-default:focus, .btn-default:active, .btn-default.active {
+  color: #333333;
+  background-color: #ededed;
+  border-color: #005a0e;
+}
+.btn-primary {
+  color: white;
+  background-color: #428bca;
+  border-color: #357ebd;
+}
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active {
+  color: white;
+  background-color: #3379b5;
+  border-color: #2a6496;
+}
+
+
+.blue.btn {
+  color: white;
+  background-color: #2063d4;
+}
+.blue.btn:hover, .blue.btn:focus, .blue.btn:active, .blue.btn.active {
+  color: white;
+  background-color: #1256c9;
+}
+
+/*****************/
+.parpel.btn {
+  color: white;
+  background-color: #0041ab;
+}
+.parpel.btn:hover, .parpel.btn:focus, .parpel.btn:active, .parpel.btn.active {
+  color: white;
+  background-color: #022c71;
+}
+
+
+
+/***********
+Red Colors
+************/
+/***
+Red Default
+***/
+/* Button */
+.red.btn {
+  color: white;
+  background-color: #d84a38;
+  border-color: "";
+}
+.red.btn:hover, .red.btn:focus, .red.btn:active, .red.btn.active {
+  color: white;
+  background-color: #c63927;
+}
+
+.green.btn {
+  color: white;
+  background-color: #318a31;
+}
+.green.btn:hover, .green.btn:focus, .green.btn:active, .green.btn.active {
+  color: white;
+  background-color: #428d42;
+}
+
+.red-light.btn {
+    color: #7d0303;
+    background-color: #e8d4d1;
+    border-color: "";
+}
+.red-light.btn:hover, .red-light.btn:focus, .red-light.btn:active, .red-light.btn.active {
+  color: #7d0303;
+  background-color: #e0c8c4;
+}
+
+.open .red.btn.dropdown-toggle {
+  color: white;
+  background-color: #c63927;
+}
+.red.btn:active, .red.btn.active {
+  background-image: none;
+  background-color: #b03223;
+}
+.red.btn:active:hover, .red.btn.active:hover {
+  background-color: #b93524;
+}
+.open .red.btn.dropdown-toggle {
+  background-image: none;
+}
+.red.btn.disabled, .red.btn.disabled:hover, .red.btn.disabled:focus, .red.btn.disabled:active, .red.btn.disabled.active, .red.btn[disabled], .red.btn[disabled]:hover, .red.btn[disabled]:focus, .red.btn[disabled]:active, .red.btn[disabled].active, fieldset[disabled] .red.btn, fieldset[disabled] .red.btn:hover, fieldset[disabled] .red.btn:focus, fieldset[disabled] .red.btn:active, fieldset[disabled] .red.btn.active {
+  background-color: #d84a38;
+}
+.red.btn .badge {
+  color: #d84a38;
+  background-color: white;
+}
+
+.table td {
+    padding: 0.7rem !important;
+}
+
+.blinking {
+    animation: blink 1s infinite;
+    border: 2px solid red;
+}
+
+@keyframes blink {
+    0%, 100% {
+        background-color: white;
+    }
+
+    50% {
+        background-color: deepskyblue; /* رنگ ملایم صورتی داخل input */
+    }
+}
+
+
+.ReturnItemsStar {
+   border:0px;
+}
+   
+    .ReturnItemsStar:hover {
+        cursor: pointer;
+    }

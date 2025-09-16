@@ -1,0 +1,26 @@
+﻿
+
+
+@font-face {
+    font-family: 'irSans';
+    src: url('../Fonts/PersianFonts/Iranian Sans.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'bZar';
+    src: url('../Fonts/PersianFonts/BZar/B Zar_0.ttf');
+    font-weight:bold;
+    font-style: normal;
+}
+
+a {
+    font-family: 'bZar';
+    font-size: 22px;
+    color: #1e27b5;
+    text-decoration: none;
+}
+a:hover{
+        text-decoration:none;
+}

@@ -1,0 +1,30 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+
+<nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top shadow">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">داشبورد</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarUser" aria-controls="navbarUser" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-end" id="navbarUser">
+            <ul class="navbar-nav mb-2 mb-lg-0">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="https://i.pravatar.cc/40?img=3" alt="Avatar" class="rounded-circle me-2" width="36" height="36">
+                        <span class="text-white fw-bold">@User.Identity?.Name</span>
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-end text-end shadow">
+                        <li><h6 class="dropdown-header">👋 خوش آمدید، @User.Identity?.Name</h6></li>
+                        <li><a class="dropdown-item" href="#">پروفایل من</a></li>
+                        <li><a class="dropdown-item" href="#">تنظیمات</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="/Account/Logout">🚪 خروج</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
