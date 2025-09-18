@@ -2,7 +2,7 @@
 ////////////////////
 ///////////////////
 function KhakRiziWithBarAvordClick(OpId, BarAvordUserId) {
-    ShowSelctionKhakRizi(1, 0, 0, "'" + BarAvordUserId + "'", 0, 0, 0, 0, 0, OpId);
+    ShowSelctionKhakRizi(1, 0, 0, BarAvordUserId, 0, 0, 0, 0, 0, OpId);
 
     //str = '';
     //str += '<div class=\'\' style=\'margin-top:3px;\'><div class=\'col-md-6 row\'><div class=\'col-md-5\'><a class=\'NewPolStyle\' onclick=\"ShowSelctionKhakRizi(1,0,0,' + "'" + BarAvordUserId + "'" + ',0,0,0,0,0)\">کیلومتراژ جدید</a></div><div class=\'col-md-5\'><a class=\'NewPolStyle\' onclick=\"ShowExistingKMKhakRizi(' + BarAvordUserId + ')\">لیست خاکریزی ها</a></div></div>';
@@ -101,7 +101,7 @@ function ShowSelctionKhakRizi(IsNew, KMExistingId, KMNum, BarAvordUserId, FromKM
   </div>
 </div>
 
-<div class="row col-12" id="divKhakRiziInfoDetails" style="margin-top:10px;padding:0;text-align:center;display:none"></div>
+<div class="row col-12" id="divKhakRiziInfoDetails" style="margin-top:10px;padding:0;text-align:center;display:none;margin-right: 0px;margin-left: 0px;"></div>
 `;
 
     //str = '<div class=\'\'>';
@@ -150,7 +150,7 @@ function ShowSelctionKhakRizi(IsNew, KMExistingId, KMNum, BarAvordUserId, FromKM
             $(this).removeClass('blinking');
     });
 
-    $ViewKhakRizi.find('#txtDarsadKRDDaneh').change(function () {
+    $('#txtDarsadKRDDaneh').change(function () {
         if (!$.isNumeric($(this).val())) {
             toastr.info('مقدار وارد شده نامعتبر میباشد', 'اطلاع');
             $(this).addClass('blinking');
@@ -159,7 +159,8 @@ function ShowSelctionKhakRizi(IsNew, KMExistingId, KMNum, BarAvordUserId, FromKM
             $(this).removeClass('blinking');
     });
     /////////////
-    $ViewKhakRizi.find('#txtHajmBetween0To30').change(function () {
+    $('#txtHajmBetween0To30').change(function () {
+        debugger;
         if (!$.isNumeric($(this).val())) {
             toastr.info('مقدار وارد شده نامعتبر میباشد', 'اطلاع');
             $(this).addClass('blinking');
@@ -170,7 +171,7 @@ function ShowSelctionKhakRizi(IsNew, KMExistingId, KMNum, BarAvordUserId, FromKM
         }
     });
 
-    $ViewKhakRizi.find('#txtHajmBetween30To100').change(function () {
+    $('#txtHajmBetween30To100').change(function () {
         if (!$.isNumeric($(this).val())) {
             toastr.info('مقدار وارد شده نامعتبر میباشد', 'اطلاع');
             $(this).addClass('blinking');
@@ -181,7 +182,7 @@ function ShowSelctionKhakRizi(IsNew, KMExistingId, KMNum, BarAvordUserId, FromKM
         }
     });
 
-    $ViewKhakRizi.find('#txtHajmBetweenTo100').change(function () {
+    $('#txtHajmBetweenTo100').change(function () {
         if (!$.isNumeric($(this).val())) {
             toastr.info('مقدار وارد شده نامعتبر میباشد', 'اطلاع');
             $(this).addClass('blinking');
@@ -190,19 +191,19 @@ function ShowSelctionKhakRizi(IsNew, KMExistingId, KMNum, BarAvordUserId, FromKM
             $(this).removeClass('blinking');
     });
     /////////////
-    $ViewKhakRizi.find('#txtDarsadKRDDaneh').change(function () {
+    $('#txtDarsadKRDDaneh').change(function () {
         DarsadKRRDaneh = 100 - parseFloat($(this).val());
         $('#txtDarsadKRRDaneh').val(DarsadKRRDaneh.toFixed(2));
         ShowBestarKhakRizi()
     });
 
-    $ViewKhakRizi.find('#txtDarsadKRRDaneh').change(function () {
+    $('#txtDarsadKRRDaneh').change(function () {
         DarsadKRDDaneh = 100 - parseFloat($(this).val());
         $('#txtDarsadKRDDaneh').val(DarsadKRDDaneh.toFixed(2));
         ShowBestarKhakRizi();
     });
 
-    $ViewKhakRizi.find('#txtHajmRizeshBardari').change(function () {
+    $('#txtHajmRizeshBardari').change(function () {
         HRB = parseFloat($(this).val());
         if (!$.isNumeric(HRB)) {
             toastr.info('حجم ریزش وارد شده نامعتبر میباشد', 'اطلاع');
@@ -233,7 +234,7 @@ function ShowSelctionKhakRizi(IsNew, KMExistingId, KMNum, BarAvordUserId, FromKM
         }
     });
 
-    $ViewKhakRizi.find('#txtFromKMForRizeshbardari').change(function () {
+    $('#txtFromKMForRizeshbardari').change(function () {
         var KM = $(this).val();
         var KMSplit = KM.split('+');
         if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
@@ -244,7 +245,7 @@ function ShowSelctionKhakRizi(IsNew, KMExistingId, KMNum, BarAvordUserId, FromKM
             $(this).removeClass('blinking');
     });
 
-    $ViewKhakRizi.find('#txtToKMForRizeshbardari').change(function () {
+    $('#txtToKMForRizeshbardari').change(function () {
         var KM = $(this).val();
         var KMSplit = KM.split('+');
         if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
@@ -264,16 +265,16 @@ function ShowSelctionKhakRizi(IsNew, KMExistingId, KMNum, BarAvordUserId, FromKM
             $('#txtToKMForKhakbardari').removeClass('blinking');
     });
 
-    $ViewKhakRizi.find('#radioNoeRahKhakRizi1').change(function () {
+    $('#radioNoeRahKhakRizi1').change(function () {
         ShowBestarKhakRizi();
     });
-    $ViewKhakRizi.find('#radioNoeRahKhakRizi2').change(function () {
+    $('#radioNoeRahKhakRizi2').change(function () {
         ShowBestarKhakRizi();
     });
     if (IsNew == 0) {
-        $ViewKhakRizi.find('#txtFromKMForKhakRizi').val(FromKMSplit);
-        $ViewKhakRizi.find('#txtToKMForKhakRizi').val(ToKMSplit);
-        $ViewKhakRizi.find('#txtHajmKhakRizi').val(Value);
+        $('#txtFromKMForKhakRizi').val(FromKMSplit);
+        $('#txtToKMForKhakRizi').val(ToKMSplit);
+        $('#txtHajmKhakRizi').val(Value);
 
         $('#HDFStateAmalyateKhakiSaveOrEdit').val('Edit');
         $('#btnCloseExistingKMAmalyateKhaki').click();
@@ -424,16 +425,16 @@ function ShowBestarKhakRizi() {
     ////////////////
     str = '';
     if ((strParamNewSplit.length - 1) != 0) {
-        str += '<div class=\'col-md-12\'><div class=\'col-md-12\' style=\'background-color: #ffe8eb;border: 1px solid #ffa6c7;border-radius: 5px !important;\'>';
+        str += '<div class=\'row col-12\'><div class=\'row col-12\' style=\'background-color: #ffe8eb;border: 1px solid #ffa6c7;border-radius: 5px !important;\'>';
         str += '<div class=\'col-md-6\'>آب پاشي و کوبيدن بستر خاکريزها يا کـف ترانشه ها و مانند آنها</div>';
         str += '<div class=\'col-md-1\' style=\'padding: 0px;\'><div class=\'row\'><span style=\'border-bottom:1px solid #ccc\'>طول</span></div><div class=\'row\'><span>متر</span></div></div>';
         str += '<div class=\'col-md-1\' style=\'padding: 0px;\'><div class=\'row\'><span style=\'border-bottom:1px solid #ccc\'>عرض</span></div><div class=\'row\'><span>متر</span></div></div>';
         str += '<div class=\'col-md-2\'><div class=\'row\'><span>شخم زدن زمین غیر</span></div><div class=\'row\'>سنگی تا 15 سانتیمتر</div></div>';
         str += '<div class=\'col-md-2\'><div class=\'row\'><span>تسطیح بستر خاکریزی</span></div><div class=\'row\'>با گریدر</div></div>';
         str += '</div>';
-        str += '<div class=\'col-md-12\' style=\'border: 1px solid #ffa6c7;margin-top:2px\'>';
+        str += '<div class=\'row col-12\' style=\'border: 1px solid #ffa6c7;margin-top:2px\'>';
         for (var i = 0; i < strParamNewSplit.length - 1; i++) {
-            str += '<div class=\'col-md-12\' style=\'text-align: center;margin-top:5px\'>';
+            str += '<div class=\'row col-12\' style=\'text-align: center;margin-top:5px\'>';
             str += '<div class=\'col-md-6\'>' + ActivityTitle[strParamNewSplit[i]] + '</div>';
             str += '<div class=\'col-md-1\' style=\'padding:0px 3px;\'><input style=\'text-align:center;padding-left:0px;padding-right:0px;\' type=\'text\' class=\'form-control input-sm\' id=\'txtTool' + strParamNewSplit[i] + '\' value=\'0\'/></div>';
             str += '<div class=\'col-md-1\' style=\'padding:0px 3px;\'><input style=\'text-align:center;padding-left:0px;padding-right:0px;\' type=\'text\' class=\'form-control input-sm\' id=\'txtArz' + strParamNewSplit[i] + '\' value=\'0\'/></div>';
@@ -563,6 +564,7 @@ function ShowExistingKMKhakRizi(BarAvordUserId) {
 }
 
 function SaveKhakRiziInfo(BarAvordUserId) {
+    debugger;
     check = false;
     //////////
     var KM = $('#txtFromKMForKhakRizi').val();
