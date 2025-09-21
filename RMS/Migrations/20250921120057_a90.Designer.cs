@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace RMS.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250921120057_a90")]
+    partial class a90
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1849,8 +1852,8 @@ namespace RMS.Migrations
                     b.Property<int>("NoeDaneBandi")
                         .HasColumnType("int");
 
-                    b.Property<string>("NoeHajmKhakRizi_Value")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("NoeHajmKhakRizi")
+                        .HasColumnType("int");
 
                     b.Property<int>("NoeRah")
                         .HasColumnType("int");
@@ -1867,6 +1870,9 @@ namespace RMS.Migrations
 
                     b.Property<Guid?>("UserRemover")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("Value")
+                        .HasColumnType("decimal(18,4)");
 
                     b.HasKey("ID");
 

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace RMS.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250920120306_a89")]
+    partial class a89
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1833,34 +1836,23 @@ namespace RMS.Migrations
                     b.Property<Guid>("BarAvordId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("FromKM")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("InsertDateTime")
                         .HasColumnType("datetime2");
 
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<int>("KMNum")
-                        .HasColumnType("int");
-
                     b.Property<int>("NoeDaneBandi")
                         .HasColumnType("int");
 
-                    b.Property<string>("NoeHajmKhakRizi_Value")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("NoeHajmKhakRizi")
+                        .HasColumnType("int");
 
                     b.Property<int>("NoeRah")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("RemoveDateTime")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("ToKM")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("UserInserter")
                         .HasColumnType("uniqueidentifier");

@@ -1,0 +1,105 @@
+﻿/* بلوک کلی بخش خاکریزی */
+.khak-section {
+    direction: rtl;
+}
+
+/* هدر کیلومتراژ */
+.khak-header {
+    border: 1px solid #c0c4e2;
+    border-radius: 6px;
+    padding: 8px 10px;
+    background: #f9f9ff;
+}
+
+/* کارت/کادرهای داخلی (عنوان‌ها و محتوا) */
+.khak-card {
+    background: #ede7ff;
+    border: 1px solid #d5bfff;
+    border-radius: 6px;
+    padding: 6px 8px;
+    text-align: center;
+}
+
+/* گروه رادیوها */
+.khak-radios {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* هر آیتم رادیو */
+.khak-radio {
+    margin-bottom: 4px;
+}
+
+/* دکمه ذخیره پایین چپ (اجباری به چپ حتی در RTL) */
+.khak-save-row {
+    border-top: 1px solid #c0c4e2;
+    padding-top: 12px;
+}
+
+    .khak-save-row .force-left {
+        text-align: left !important; /* در RTL هم چپ */
+        direction: ltr; /* برای اطمینان از سمت چپ */
+    }
+
+.khak-save-btn {
+    border-radius: 8px;
+    padding: 6px 14px;
+}
+
+/* ورودی‌ها */
+.khak-input {
+    text-align: center;
+    padding: 0;
+    font-size: 16px;
+}
+
+/* هایلایت خطا دور خود دکمهٔ رادیو */
+.form-check-input.radio-invalid {
+    /* برای همهٔ مرورگرها */
+    box-shadow: 0 0 0 .18rem rgba(220,53,69,.55);
+    border-color: #dc3545 !important;
+    outline: none;
+}
+
+/* اگر مرورگر پشتیبانی کند، رنگ خود رادیو هم قرمز شود */
+.form-check-input.radio-invalid {
+    accent-color: #dc3545;
+}
+
+    /* اگر خواستی متن هم کمی اخطار بگیرد */
+    .form-check-input.radio-invalid + .form-check-label {
+        /* اختیاری */
+        /* color: #dc3545; */
+    }
+
+
+/* ردیف کوچک مقدار + لیبل واحد: ورودی راست، لیبلِ "مترمکعب" چپ */
+.hajm-inline {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    /* برای ورود عددی راحت‌تر، چیدمان LTR؛ با row-reverse لیبل می‌رود سمت چپِ input */
+    direction: ltr;
+    flex-direction: row-reverse;
+    max-width: 260px;
+}
+
+
+.hajm-unit {
+    white-space: nowrap;
+    font-size: .9rem;
+    color: #444;
+    user-select: none;
+}
+
+.hajm-input {
+    text-align: center;
+}
+
+    .hajm-input.blinking {
+        box-shadow: 0 0 0 .18rem rgba(220,53,69,.55);
+        border-color: #dc3545 !important;
+    }
+

@@ -83,6 +83,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<clsAmalyateKhakiInfoForBarAvordEzafeBahaRizMetre> AmalyateKhakiInfoForBarAvordEzafeBahaRizMetres { get; set; }
     public DbSet<clsNoeKhakBardariEzafeBaha> NoeKhakBardariEzafeBahas { get; set; }
     public DbSet<clsNoeKhakBardari_NoeKhakBardariEzafeBaha> NoeKhakBardari_NoeKhakBardariEzafeBahas { get; set; }
+    public DbSet<clsKhakRiziDarsad> KhakRiziDarsads { get; set; }
+    public DbSet<clsKhakRiziItem> KhakRiziItems { get; set; }
+    public DbSet<clsKhakRiziBarAvord> KhakRiziBarAvords { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
