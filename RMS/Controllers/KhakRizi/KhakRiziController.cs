@@ -1,9 +1,12 @@
 ﻿
 using System.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using RMS.Controllers.AmalyateKhaki.Dto;
 using RMS.Controllers.KhakRizi.Common;
 using RMS.Controllers.KhakRizi.Dto;
 using RMS.Controllers.KhakRizi.EnumKhakRizi;
+using RMS.Controllers.Operation.Dto;
 using RMS.Models.Common;
 using RMS.Models.Entity;
 using static RMS.Models.Common.EnumForEntity;
@@ -89,13 +92,14 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
         //try
         //{
 
+        DateTime Now = DateTime.Now;
         Guid BarAvordUserId = request.BarAvordUserId;
-        long FromKM = request.FromKM;
-        long ToKM = request.ToKM;
-        int RoadTypeId = request.RoadTypeId;
-        int NoeDaneBandiId = request.NoeDaneBandiId;
-        int HajmKhakRiziId = request.HajmKhakRiziId;
-        decimal HajmKhakRiziValue = request.HajmKhakRiziValue;
+        string FromKM = request.FromKM.ToString("D6"); ;
+        string ToKM = request.ToKM.ToString("D6"); ;
+        EnumRoadType RoadTypeId = request.RoadTypeId;
+        EnumNoeDaneBandi NoeDaneBandiId = request.NoeDaneBandiId;
+        string? HajmKhakRiziValue = request.HajmKhakRiziValues;
+        long Year = request.Year;
 
         int intKMNum = 1;
         clsKhakRiziBarAvord? currentKMNum = _context.KhakRiziBarAvords.FirstOrDefault(x => x.BarAvordId == BarAvordUserId);
@@ -104,24 +108,127 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
             intKMNum = currentKMNum.KMNum + 1;
         }
 
+        clsKhakRiziBarAvord khakRiziBarAvord = new clsKhakRiziBarAvord
+        {
+            BarAvordId = BarAvordUserId,
+            FromKM = FromKM,
+            ToKM = ToKM,
+            KMNum = intKMNum,
+            NoeDaneBandi = NoeDaneBandiId,
+            NoeRah = RoadTypeId,
+            NoeHajmKhakRizi_Value = HajmKhakRiziValue,
+        };
+        _context.KhakRiziBarAvords.Add(khakRiziBarAvord);
+
+
+        List<clsKhakRiziDarsad> lstKhakRiziDarsad = _context.KhakRiziDarsads.Where(x => x.NoeRah == RoadTypeId && x.NoeDaneBandi == NoeDaneBandiId && x.Year == Year).ToList();
+
+        List<HajmKhakRiziValueDto> lstHajmKhakRiziValue = new List<HajmKhakRiziValueDto>();
+        if (HajmKhakRiziValue != null)
+        {
+            string[] HajmKhakRiziValueSplit = HajmKhakRiziValue.Split(",");
+            foreach (var item in HajmKhakRiziValueSplit)
+            {
+                string[] strItem = item.Split("_");
+                if (strItem[1].Trim() != "0")
+                {
+                    long HajmKhakRiziId = long.Parse(strItem[0].Trim());
+                    decimal dValue = decimal.Parse(strItem[1].Trim());
+
+                    lstHajmKhakRiziValue.Add(new HajmKhakRiziValueDto
+                    {
+                        Id = HajmKhakRiziId,
+                        Value = dValue,
+                    });
+                }
+            }
+        }
+
+        List<long> HajmKhakRiziIds = lstHajmKhakRiziValue.Select(x => x.Id).ToList();
+
+
+        List<clsKhakRiziDarsad> lstKhakRiziDarsad1 = lstKhakRiziDarsad.Where(x => HajmKhakRiziIds.Contains(x.Id)).ToList();
+
+        List<clsKhakRiziItem> lstKhakRiziItem = _context.KhakRiziItems.Where(x => x.Year == Year).ToList();
+
+
+        long Shomareh = 1;
+        clsRizMetreUsers? rizMetreUser = _context.RizMetreUserses.Include(x => x.FB).OrderByDescending(x => x.Shomareh).FirstOrDefault(x => x.FB.BarAvordId == BarAvordUserId);
+        if (rizMetreUser != null)
+        {
+            Shomareh = rizMetreUser.Shomareh + 1;
+        }
 
 
 
-        //RequestSaveRizMetreKhakRiziDto requestSaveRizMetreKhakRizi = new RequestSaveRizMetreKhakRiziDto
-        //{
-        //    BarAvordUserID = BarAvordUserId,
-        //    KMId = Id,
-        //    KMNum = intKMNum,
-        //    KMS = FromKM.ToString("D6"),
-        //    KME = ToKM.ToString("D6"),
-        //    radioNoeRahKhakRizi = radioNoeRahKhakRizi,
-        //    DarsadKRDDaneh = dDarsadKRDDaneh,
-        //    DarsadKRRDaneh = dDarsadKRRDaneh,
-        //    HajmBetween0To30 = dHajmBetween0To30,
-        //    HajmBetween30To100 = dHajmBetween30To100,
-        //    HajmBetweenTo100 = dHajmBetweenTo100,
-        //    EzafeBahaKRKhakMosalah = EzafeBahaKRKhakMosalah
-        //};
+
+        foreach (var itemDarsad in lstKhakRiziDarsad1)
+        {
+            string ItemFBShomareh = "";
+            foreach (var KhakRiziItem in lstKhakRiziItem)
+            {
+                string strCondition = KhakRiziItem.Condition.Trim();
+                if (strCondition != "")
+                {
+                    string strConditionOp = strCondition.Replace("x", itemDarsad.Darsad.ToString().Trim());
+                    StringToFormula StringToFormula = new StringToFormula();
+                    bool blnCheck = StringToFormula.RelationalExpression2(strConditionOp);
+                    if (blnCheck)
+                    {
+                        ItemFBShomareh = KhakRiziItem.ItemFBShomareh;
+                        break;
+                    }
+                }
+            }
+
+
+            clsFB? FB = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordUserId && x.Shomareh == ItemFBShomareh);
+            Guid gFBId = new Guid();
+            if (FB != null)
+            {
+                gFBId = FB.ID;
+            }
+            else
+            {
+                clsFB newFB = new clsFB
+                {
+                    BarAvordId = BarAvordUserId,
+                    InsertDateTime = Now,
+                    Shomareh = ItemFBShomareh
+                };
+                _context.FBs.Add(newFB);
+                gFBId = newFB.ID;
+            }
+
+            clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+            RizMetre.Shomareh = Shomareh++;
+            RizMetre.Sharh = "";
+            RizMetre.Tedad = null;
+            RizMetre.Tool = null;
+            RizMetre.Arz = null;
+            RizMetre.Ertefa = null;
+            RizMetre.Vazn = null;
+            RizMetre.Des = "کیلومتراژ " + FromKM + " تا " + ToKM;
+            RizMetre.FBId = gFBId;
+            RizMetre.OperationsOfHamlId = 1;
+            RizMetre.Type = "1";
+            RizMetre.ForItem = "";
+            RizMetre.UseItem = "";
+
+            RizMetre.MeghdarJoz = null;
+
+            _context.RizMetreUserses.Add(RizMetre);
+
+            clsKhakRiziBarAvordRizMetre KhakRiziBarAvordRizMetre
+                = new clsKhakRiziBarAvordRizMetre
+                {
+                    KhakRiziBarAvordId = khakRiziBarAvord.ID,
+                    RizMetreUserId = RizMetre.ID
+                };
+            _context.KhakRiziBarAvordRizMetres.Add(KhakRiziBarAvordRizMetre);
+        }
+
+
 
         //KhakRiziCommon khakRiziCommon = new KhakRiziCommon();
 
@@ -359,6 +466,88 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
         //}
     }
 
+    public JsonResult GetRizMetreForKhakRizi([FromBody] GetRizMetreForKhakRiziDto request)
+    {
+        Guid BarAvordId = request.BarAvordId;
+        NoeFehrestBaha NoeFB = request.NoeFB;
+        long Year = request.Year;
+
+        List<clsKhakRiziBarAvord> lstKhakRiziBarAvord = _context.KhakRiziBarAvords.Where(x => x.BarAvordId == BarAvordId).ToList();
+        List<Guid> lstKhakRiziBarAvordIds = lstKhakRiziBarAvord.Select(x => x.ID).ToList();
+
+        List<clsKhakRiziBarAvordRizMetre> lstKhakRiziRizMetre =
+            _context.KhakRiziBarAvordRizMetres.Where(x => lstKhakRiziBarAvordIds.Contains(x.KhakRiziBarAvordId)).ToList();
+
+        List<ItemFBShomarehForGetAndShowAddItemsFieldsDto> lstItemFields = _context.ItemsFieldses.Where(x => x.NoeFB == NoeFB).Select(x => new ItemFBShomarehForGetAndShowAddItemsFieldsDto
+        {
+            Shomareh = x.ItemShomareh,
+            FieldType = x.FieldType,
+            Vahed = x.Vahed,
+            IsEnteringValue = x.IsEnteringValue
+        }).ToList();
+
+
+        List<Guid> lstRizMetreIds = lstKhakRiziRizMetre.Select(x => x.RizMetreUserId).ToList();
+        List<KhakRiziRizMetreDto> rizMetreUsers = _context.RizMetreUserses.Include(x => x.FB)
+            .Where(x => lstRizMetreIds.Contains(x.ID)).Select(x => new KhakRiziRizMetreDto
+            {
+                Shomareh = x.Shomareh,
+                ShomarehNew = x.ShomarehNew,
+                Sharh = x.Sharh,
+                Tedad = x.Tedad,
+                Tool = x.Tool,
+                Arz = x.Arz,
+                Ertefa = x.Ertefa,
+                Vazn = x.Vazn,
+                MeghdarJoz = x.MeghdarJoz,
+                Des = x.Des,
+                FBId = x.FBId,
+                ForItem = x.ForItem,
+                Type = x.Type,
+                UseItem = x.Type,
+                ItemFBShomareh = x.FB.Shomareh
+            }).ToList();
+
+        List<string> lstItemFBShomareh = rizMetreUsers.Select(x => x.ItemFBShomareh).ToList();
+
+
+        List<clsFehrestBaha> lstFehrestBahas = _context.FehrestBahas.Where(x => x.Sal == Year && x.NoeFB == NoeFB && lstItemFBShomareh.Contains(x.Shomareh.Trim())).ToList();
+        List<ItemFBShomarehForGetAndShowAddItemsDto> lstItemFBShomarehForGet = new List<ItemFBShomarehForGetAndShowAddItemsDto>();
+
+        List<ItemFBShomarehForGetAndShowAddItemsFieldsDto> ItemFields = new List<ItemFBShomarehForGetAndShowAddItemsFieldsDto>();
+
+        foreach (var item in lstItemFBShomareh)
+        {
+            clsFehrestBaha fehrestBaha = lstFehrestBahas.First(x => x.Shomareh == item);
+
+            ItemFields = lstItemFields.Where(x => x.Shomareh.Trim() == item).ToList();
+            ItemFBShomarehForGetAndShowAddItemsDto ItemFBShomarehForGet = new ItemFBShomarehForGetAndShowAddItemsDto
+            {
+                ItemFBShomareh = item,
+                Des = fehrestBaha.Sharh,
+                ItemFields = ItemFields
+
+            };
+            lstItemFBShomarehForGet.Add(ItemFBShomarehForGet);
+        }
+
+        var result = new
+        {
+            lstItemFBShomarehForGet,
+            rizMetreUsers
+        };
+
+        return new JsonResult(result);
+    }
+
+    public JsonResult GetExistKhakRizi([FromBody] RequestGetExistKhakRiziDto Request)
+    {
+        Guid BarAvordId = Request.BarAvordId;
+        List<clsKhakRiziBarAvord> lstKhakRizi = _context.KhakRiziBarAvords.Where(x => x.BarAvordId == BarAvordId).ToList();
+
+        return new JsonResult(lstKhakRizi);
+
+    }
     public JsonResult GetDataForKhakRizi()
     {
         var ListRoadType = EnumExtensions.GetEnumList<EnumRoadType>();
