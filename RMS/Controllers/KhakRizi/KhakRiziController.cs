@@ -1,5 +1,6 @@
 ﻿
 using System.Data;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RMS.Controllers.AmalyateKhaki.Dto;
@@ -87,15 +88,15 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
     }
 
 
-    public JsonResult SaveKhakRiziInfoForBarAvord(RequestSaveKhakRiziInfoForBarAvordDto request)
+    public JsonResult SaveKhakRiziInfoForBarAvord([FromBody] RequestSaveKhakRiziInfoForBarAvordDto request)
     {
         //try
         //{
 
         DateTime Now = DateTime.Now;
         Guid BarAvordUserId = request.BarAvordUserId;
-        string FromKM = request.FromKM.ToString("D6"); ;
-        string ToKM = request.ToKM.ToString("D6"); ;
+        string FromKM = request.FromKM.ToString("D6");
+        string ToKM = request.ToKM.ToString("D6");
         EnumRoadType RoadTypeId = request.RoadTypeId;
         EnumNoeDaneBandi NoeDaneBandiId = request.NoeDaneBandiId;
         string? HajmKhakRiziValue = request.HajmKhakRiziValues;
@@ -129,25 +130,35 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
             string[] HajmKhakRiziValueSplit = HajmKhakRiziValue.Split(",");
             foreach (var item in HajmKhakRiziValueSplit)
             {
-                string[] strItem = item.Split("_");
-                if (strItem[1].Trim() != "0")
+                if (item.Trim() != "")
                 {
-                    long HajmKhakRiziId = long.Parse(strItem[0].Trim());
-                    decimal dValue = decimal.Parse(strItem[1].Trim());
-
-                    lstHajmKhakRiziValue.Add(new HajmKhakRiziValueDto
+                    string[] strItem = item.Split("_");
+                    if (strItem[1].Trim() != "0")
                     {
-                        Id = HajmKhakRiziId,
-                        Value = dValue,
-                    });
+                        long HajmKhakRiziId = long.Parse(strItem[0].Trim());
+                        decimal dValue = decimal.Parse(strItem[1].Trim());
+
+                        lstHajmKhakRiziValue.Add(new HajmKhakRiziValueDto
+                        {
+                            Id = HajmKhakRiziId,
+                            Value = dValue,
+                        });
+                    }
                 }
             }
+
         }
 
-        List<long> HajmKhakRiziIds = lstHajmKhakRiziValue.Select(x => x.Id).ToList();
+        //List<long> HajmKhakRiziIds = lstHajmKhakRiziValue.Select(x => x.Id).ToList();
 
+        List<EnumHajmKhakRizi> hajmKhakRiziEnums =
+            lstHajmKhakRiziValue
+        .Where(x => Enum.IsDefined(typeof(EnumHajmKhakRizi), (int)x.Id))
+        .Select(x => (EnumHajmKhakRizi)(int)x.Id)
+        .ToList();
 
-        List<clsKhakRiziDarsad> lstKhakRiziDarsad1 = lstKhakRiziDarsad.Where(x => HajmKhakRiziIds.Contains(x.Id)).ToList();
+        List<clsKhakRiziDarsad> lstKhakRiziDarsad1 = lstKhakRiziDarsad.Where(x => hajmKhakRiziEnums.Contains(x.NoeHajmKhakRizi)).ToList();
+
 
         List<clsKhakRiziItem> lstKhakRiziItem = _context.KhakRiziItems.Where(x => x.Year == Year).ToList();
 
@@ -228,7 +239,7 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
             _context.KhakRiziBarAvordRizMetres.Add(KhakRiziBarAvordRizMetre);
         }
 
-
+        _context.SaveChanges();
 
         //KhakRiziCommon khakRiziCommon = new KhakRiziCommon();
 
@@ -540,12 +551,90 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
         return new JsonResult(result);
     }
 
+
+    static string Normalize(string input)
+    {
+        if (string.IsNullOrWhiteSpace(input))
+            return "000+000";
+
+        // حذف پیشوند اختیاری
+        input = input.Trim();
+        if (input.StartsWith("fromKM=", StringComparison.OrdinalIgnoreCase))
+            input = input.Substring("fromKM=".Length);
+
+        // الگو: عدد یا عدد+عدد
+        var m = Regex.Match(input, @"^\s*(\d+)\s*(?:\+\s*(\d+)\s*)?$");
+        if (!m.Success)
+            return "000+000"; // یا می‌تونی همون ورودی رو برگردونی
+
+        try
+        {
+            long totalMeters;
+            if (m.Groups[2].Success)
+            {
+                // ورودی به صورت km+m بوده
+                long km = long.Parse(m.Groups[1].Value);
+                long ms = long.Parse(m.Groups[2].Value);
+                totalMeters = km * 1000 + ms;
+            }
+            else
+            {
+                // ورودی فقط متر بوده
+                totalMeters = long.Parse(m.Groups[1].Value);
+            }
+
+            if (totalMeters < 0) totalMeters = 0;
+
+            long kmN = totalMeters / 1000;
+            long mN = totalMeters % 1000;
+
+            // km حداقل 3 رقم (بیشتر هم لازم شد خودش بزرگ‌تر می‌شود)
+            // m دقیقا 3 رقم
+            string kmStr = kmN.ToString("000");
+            string mStr = mN.ToString("000");
+
+            return $"{kmStr}+{mStr}";
+        }
+        catch
+        {
+            return "000+000";
+        }
+    }
     public JsonResult GetExistKhakRizi([FromBody] RequestGetExistKhakRiziDto Request)
     {
         Guid BarAvordId = Request.BarAvordId;
-        List<clsKhakRiziBarAvord> lstKhakRizi = _context.KhakRiziBarAvords.Where(x => x.BarAvordId == BarAvordId).ToList();
 
-        return new JsonResult(lstKhakRizi);
+        var ListRoadType = EnumExtensions.GetEnumList<EnumRoadType>();
+        var ListNoeDaneBandi = EnumExtensions.GetEnumList<EnumNoeDaneBandi>();
+        var ListHajmKhakRizi = EnumExtensions.GetEnumList<EnumHajmKhakRizi>();
+
+        List<GetExistKhakRiziDto> lstKhakRizi = _context.KhakRiziBarAvords.Where(x => x.BarAvordId == BarAvordId).Select(x => new GetExistKhakRiziDto
+        {
+            BarAvordId = x.BarAvordId,
+            FromKM = x.FromKM,
+            KMNum = x.KMNum,
+            NoeDaneBandi = x.NoeDaneBandi,
+            ToKM = x.ToKM,
+            NoeRah = x.NoeRah,
+            NoeHajmKhakRizi_Value = x.NoeHajmKhakRizi_Value,
+        }).ToList();
+
+        foreach (var item in lstKhakRizi)
+        {
+            item.FromKMSplit = Normalize(item.FromKM);
+            item.ToKMSplit = Normalize(item.ToKM);
+        }
+
+
+        var result = new
+        {
+            ListRoadType,
+            ListNoeDaneBandi,
+            ListHajmKhakRizi,
+            lstKhakRizi
+        };
+
+        return new JsonResult(result);
 
     }
     public JsonResult GetDataForKhakRizi()
