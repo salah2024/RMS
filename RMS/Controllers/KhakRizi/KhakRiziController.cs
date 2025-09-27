@@ -261,220 +261,183 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
         //khakRiziCommon.SaveRizMetreGharzeh(BarAvordUserId);
 
         return new JsonResult("OK_" + intKMNum);
-
-
     }
 
-    public JsonResult UpdateKhakRiziInfoForBarAvord(requestUpdateKhakRiziInfoForBarAvordDto request)
+    public JsonResult UpdateKhakRiziInfoForBarAvord([FromBody] requestUpdateKhakRiziInfoForBarAvordDto request)
     {
-        //try
-        //{
+        DateTime Now = DateTime.Now;
 
+        Guid KhakRiziId = request.KhakRiziId;
         Guid BarAvordUserId = request.BarAvordUserId;
-        Guid KMKhakRiziId = request.KMKhakRiziId;
-        int KMNum = request.KMNum;
-        long FromKM = request.FromKM;
-        long ToKM = request.ToKM;
-        short radioNoeRahKhakRizi = request.radioNoeRahKhakRizi;
-        string DarsadKRDDaneh = request.DarsadKRDDaneh;
-        string DarsadKRRDaneh = request.DarsadKRRDaneh;
-        string HajmBetween0To30 = request.HajmBetween0To30;
-        string HajmBetween30To100 = request.HajmBetween30To100;
-        string HajmBetweenTo100 = request.HajmBetweenTo100;
-        bool EzafeBahaKRKhakMosalah = request.EzafeBahaKRKhakMosalah;
-        string KhakRiziInfoDetails = request.KhakRiziInfoDetails;
-        string KhakRiziInfoDetailsCheckBox = request.KhakRiziInfoDetailsCheckBox;
+        string FromKM = request.FromKM.ToString("D6");
+        string ToKM = request.ToKM.ToString("D6");
+        EnumRoadType RoadTypeId = request.RoadTypeId;
+        EnumNoeDaneBandi NoeDaneBandiId = request.NoeDaneBandiId;
+        string? HajmKhakRiziValue = request.HajmKhakRiziValues;
+        long Year = request.Year;
 
-        //clsAmalyateKhakiInfoForBarAvord AmalyateKhakiInfoForBarAvord = new clsAmalyateKhakiInfoForBarAvord();
-        //AmalyateKhakiInfoForBarAvord.FromKM = FromKM.ToString("D6");
-        //AmalyateKhakiInfoForBarAvord.ToKM = ToKM.ToString("D6");
-
-        clsAmalyateKhakiInfoForBarAvord? currentAmalyateKhakiInfoForBarAvord = _context.AmalyateKhakiInfoForBarAvords.FirstOrDefault(x => x.ID == KMKhakRiziId);
-
-        if (currentAmalyateKhakiInfoForBarAvord != null)
+        clsKhakRiziBarAvord? currentKhakRiziBarAvord = _context.KhakRiziBarAvords.Where(x => x.ID == KhakRiziId).FirstOrDefault();
+        if (currentKhakRiziBarAvord != null)
         {
-            _context.Entry(currentAmalyateKhakiInfoForBarAvord).CurrentValues.SetValues(new
+            _context.Entry(currentKhakRiziBarAvord).CurrentValues.SetValues(new
             {
-                FromKM = FromKM.ToString("D6"),
-                ToKM = ToKM.ToString("D6"),
+                FromKM = FromKM,
+                ToKM = ToKM,
+                NoeRah = RoadTypeId,
+                NoeDaneBandi = NoeDaneBandiId,
+                NoeHajmKhakRizi_Value = HajmKhakRiziValue,
             });
-        }
 
-        //if (AmalyateKhakiInfoForBarAvord.Update(KMKhakRiziId))
-        //{
-        var varAmalyateKhakiInfoForBarAvordDetails = _context.AmalyateKhakiInfoForBarAvordDetailses.Where(x => x.AmalyateKhakiInfoForBarAvordId == KMKhakRiziId).ToList();
-        if (varAmalyateKhakiInfoForBarAvordDetails.Count != 0)
-        {
-            _context.AmalyateKhakiInfoForBarAvordDetailses.RemoveRange(varAmalyateKhakiInfoForBarAvordDetails);
-            //_context.SaveChanges();
-        }
-        //clsAmalyateKhakiInfoForBarAvordDetails.DelWithParameter("AmalyateKhakiInfoForBarAvordId=" + KMKhakRiziId);
-        var varAmalyateKhakiInfoForBarAvordMore = _context.AmalyateKhakiInfoForBarAvordMores.Where(x => x.AmalyateKhakiInfoForBarAvordId == KMKhakRiziId).ToList();
-        if (varAmalyateKhakiInfoForBarAvordMore.Count != 0)
-        {
-            _context.AmalyateKhakiInfoForBarAvordMores.RemoveRange(varAmalyateKhakiInfoForBarAvordMore);
-            //rmsContext.SaveChanges();
-        }
-        //clsAmalyateKhakiInfoForBarAvord.DelMoreWithParameter("AmalyateKhakiInfoForBarAvordId=" + KMKhakRiziId);
-        /////////////
-        /////////////
-        ///////////
+            _context.SaveChanges();
 
-        decimal dDarsadKRDDaneh = decimal.Parse(DarsadKRDDaneh.Trim());
-        decimal dDarsadKRRDaneh = decimal.Parse(DarsadKRRDaneh.Trim());
-        decimal dHajmBetween0To30 = decimal.Parse(HajmBetween0To30.Trim());
-        decimal dHajmBetween30To100 = decimal.Parse(HajmBetween30To100.Trim());
-        decimal dHajmBetweenTo100 = decimal.Parse(HajmBetweenTo100.Trim());
+            ////قبلی های ثبت شده بایستی حذف گردند
+            ///
 
-        clsAmalyateKhakiInfoForBarAvordMore AmalyateKhakiInfoForBarAvordMore = new clsAmalyateKhakiInfoForBarAvordMore();
-        AmalyateKhakiInfoForBarAvordMore.AmalyateKhakiInfoForBarAvordId = KMKhakRiziId;
-
-        AmalyateKhakiInfoForBarAvordMore.Value = radioNoeRahKhakRizi;
-        AmalyateKhakiInfoForBarAvordMore.Name = "radioNoeRahKhakRizi";
-        _context.AmalyateKhakiInfoForBarAvordMores.Add(AmalyateKhakiInfoForBarAvordMore);
-        //rmsContext.SaveChanges();
-        //AmalyateKhakiInfoForBarAvord.SaveMore(KMKhakRiziId);
-        ///////////
-        AmalyateKhakiInfoForBarAvordMore = new clsAmalyateKhakiInfoForBarAvordMore();
-        AmalyateKhakiInfoForBarAvordMore.AmalyateKhakiInfoForBarAvordId = KMKhakRiziId;
-        AmalyateKhakiInfoForBarAvordMore.Value = dDarsadKRDDaneh;
-        AmalyateKhakiInfoForBarAvordMore.Name = "DarsadKRDDaneh";
-        _context.AmalyateKhakiInfoForBarAvordMores.Add(AmalyateKhakiInfoForBarAvordMore);
-        //rmsContext.SaveChanges();
-        //AmalyateKhakiInfoForBarAvord.Value = dDarsadKRDDaneh;
-        //AmalyateKhakiInfoForBarAvord.Name = "DarsadKRDDaneh";
-        //AmalyateKhakiInfoForBarAvord.SaveMore(KMKhakRiziId);
-        ///////////
-        AmalyateKhakiInfoForBarAvordMore = new clsAmalyateKhakiInfoForBarAvordMore();
-        AmalyateKhakiInfoForBarAvordMore.AmalyateKhakiInfoForBarAvordId = KMKhakRiziId;
-        AmalyateKhakiInfoForBarAvordMore.Value = dDarsadKRRDaneh;
-        AmalyateKhakiInfoForBarAvordMore.Name = "DarsadKRRDaneh";
-        _context.AmalyateKhakiInfoForBarAvordMores.Add(AmalyateKhakiInfoForBarAvordMore);
-        //rmsContext.SaveChanges();
-
-        //AmalyateKhakiInfoForBarAvord.Value = dDarsadKRRDaneh;
-        //AmalyateKhakiInfoForBarAvord.Name = "DarsadKRRDaneh";
-        //AmalyateKhakiInfoForBarAvord.SaveMore(KMKhakRiziId);
-        ///////////
-        AmalyateKhakiInfoForBarAvordMore = new clsAmalyateKhakiInfoForBarAvordMore();
-        AmalyateKhakiInfoForBarAvordMore.AmalyateKhakiInfoForBarAvordId = KMKhakRiziId;
-        AmalyateKhakiInfoForBarAvordMore.Value = dHajmBetween0To30;
-        AmalyateKhakiInfoForBarAvordMore.Name = "HajmBetween0To30";
-        _context.AmalyateKhakiInfoForBarAvordMores.Add(AmalyateKhakiInfoForBarAvordMore);
-        //rmsContext.SaveChanges();
-
-        //AmalyateKhakiInfoForBarAvord.Value = dHajmBetween0To30;
-        //AmalyateKhakiInfoForBarAvord.Name = "HajmBetween0To30";
-        //AmalyateKhakiInfoForBarAvord.SaveMore(KMKhakRiziId);
-        ///////////
-        AmalyateKhakiInfoForBarAvordMore = new clsAmalyateKhakiInfoForBarAvordMore();
-        AmalyateKhakiInfoForBarAvordMore.AmalyateKhakiInfoForBarAvordId = KMKhakRiziId;
-        AmalyateKhakiInfoForBarAvordMore.Value = dHajmBetween30To100;
-        AmalyateKhakiInfoForBarAvordMore.Name = "HajmBetween30To100";
-        _context.AmalyateKhakiInfoForBarAvordMores.Add(AmalyateKhakiInfoForBarAvordMore);
-        //rmsContext.SaveChanges();
-
-        //AmalyateKhakiInfoForBarAvord.Value = dHajmBetween30To100;
-        //AmalyateKhakiInfoForBarAvord.Name = "HajmBetween30To100";
-        //AmalyateKhakiInfoForBarAvord.SaveMore(KMKhakRiziId);
-        ///////////
-        AmalyateKhakiInfoForBarAvordMore = new clsAmalyateKhakiInfoForBarAvordMore();
-        AmalyateKhakiInfoForBarAvordMore.AmalyateKhakiInfoForBarAvordId = KMKhakRiziId;
-        AmalyateKhakiInfoForBarAvordMore.Value = dHajmBetweenTo100;
-        AmalyateKhakiInfoForBarAvordMore.Name = "HajmBetweenTo100";
-        _context.AmalyateKhakiInfoForBarAvordMores.Add(AmalyateKhakiInfoForBarAvordMore);
-        //rmsContext.SaveChanges();
-
-        clsAmalyateKhakiInfoForBarAvordDetails AmalyateKhakiInfoForBarAvordDetails = new clsAmalyateKhakiInfoForBarAvordDetails();
-        AmalyateKhakiInfoForBarAvordDetails.AmalyateKhakiInfoForBarAvordId = KMKhakRiziId;
-        //بررسی شود
-        //AmalyateKhakiInfoForBarAvordDetails.Type = 1;
-        Guid AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetails.ID;
-        _context.AmalyateKhakiInfoForBarAvordDetailses.Add(AmalyateKhakiInfoForBarAvordDetails);
-        //rmsContext.SaveChanges();
-        //AmalyateKhakiInfoForBarAvord.Value = dHajmBetweenTo100;
-        //AmalyateKhakiInfoForBarAvord.Name = "HajmBetweenTo100";
-        //AmalyateKhakiInfoForBarAvord.SaveMore(KMKhakRiziId);
-        /////////
-        //long AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetails.Save();
+            List<clsKhakRiziBarAvordRizMetre> lstKhakRiziBarAvordRizMetre = _context.KhakRiziBarAvordRizMetres.Where(x => x.KhakRiziBarAvordId == currentKhakRiziBarAvord.ID).ToList();
+            List<Guid> lstKhakRiziId = lstKhakRiziBarAvordRizMetre.Select(x => x.RizMetreUserId).ToList();
+            _context.KhakRiziBarAvordRizMetres.RemoveRange(lstKhakRiziBarAvordRizMetre);
+            List<clsRizMetreUsers> lstRiziMetre = _context.RizMetreUserses.Where(x => lstKhakRiziId.Contains(x.ID)).ToList();
+            _context.RizMetreUserses.RemoveRange(lstRiziMetre);
 
 
-        //بررسی شود
-        //tblAmalyateKhakiInfoForBarAvordDetailsEzafeBaha AmalyateKhakiInfoForBarAvordDetailsEzafeBaha = new tblAmalyateKhakiInfoForBarAvordDetailsEzafeBaha();
-        //AmalyateKhakiInfoForBarAvordDetailsEzafeBaha._Name = "KREzafeBahaKhakMosalah";
-        //AmalyateKhakiInfoForBarAvordDetailsEzafeBaha._Value = EzafeBahaKRKhakMosalah;
-        //AmalyateKhakiInfoForBarAvordDetailsEzafeBaha._AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
-        //rmsContext.AmalyateKhakiInfoForBarAvordDetailsEzafeBahas.Add(AmalyateKhakiInfoForBarAvordDetailsEzafeBaha);
-        //rmsContext.SaveChanges();
-
-        //AmalyateKhakiInfoForBarAvordDetails.SaveEzafeBaha(AmalyateKhakiInfoForBarAvordDetailsId);
-        Guid gCheckId = new Guid();
-        //if (AmalyateKhakiInfoForBarAvordDetailsId > 0)
-        if (AmalyateKhakiInfoForBarAvordDetailsId != gCheckId)
-        {
-            string[] KhakRiziInfoDetailsSplit = KhakRiziInfoDetails.Split('$');
-            for (int i = 0; i < KhakRiziInfoDetailsSplit.Length - 1; i++)
-            {
-                string[] KhakRiziInfoDetailsSplitSplit = KhakRiziInfoDetailsSplit[i].Split('_');
-                AmalyateKhakiInfoForBarAvordMore = new clsAmalyateKhakiInfoForBarAvordMore();
-                AmalyateKhakiInfoForBarAvordMore.AmalyateKhakiInfoForBarAvordId = KMKhakRiziId;
-                AmalyateKhakiInfoForBarAvordMore.Name = KhakRiziInfoDetailsSplitSplit[0];
-                AmalyateKhakiInfoForBarAvordMore.Value = decimal.Parse(KhakRiziInfoDetailsSplitSplit[1]);
-                _context.AmalyateKhakiInfoForBarAvordMores.Add(AmalyateKhakiInfoForBarAvordMore);
-                //rmsContext.SaveChanges();
-                //AmalyateKhakiInfoForBarAvordDetails.Name = KhakRiziInfoDetailsSplitSplit[0];
-                //AmalyateKhakiInfoForBarAvordDetails.Value = decimal.Parse(KhakRiziInfoDetailsSplitSplit[1]);
-                //AmalyateKhakiInfoForBarAvordDetails.SaveMore(AmalyateKhakiInfoForBarAvordDetailsId);
-            }
-            /////////
-            //string[] KhakRiziInfoDetailsCheckBoxSplit = KhakRiziInfoDetailsCheckBox.Split('$');
-            //for (int i = 0; i < KhakRiziInfoDetailsCheckBoxSplit.Length - 1; i++)
+            //int intKMNum = 1;
+            //clsKhakRiziBarAvord? currentKMNum = _context.KhakRiziBarAvords.FirstOrDefault(x => x.BarAvordId == BarAvordUserId);
+            //if (currentKMNum != null)
             //{
-            //    string[] KhakRiziInfoDetailsCheckBoxSplitSplit = KhakRiziInfoDetailsCheckBoxSplit[i].Split('_');
-            //    AmalyateKhakiInfoForBarAvordDetailsEzafeBaha = new tblAmalyateKhakiInfoForBarAvordDetailsEzafeBaha();
-            //    AmalyateKhakiInfoForBarAvordDetailsEzafeBaha._Name = KhakRiziInfoDetailsCheckBoxSplitSplit[0];
-            //    AmalyateKhakiInfoForBarAvordDetailsEzafeBaha._Value = KhakRiziInfoDetailsCheckBoxSplitSplit[1].Trim() == "true" ? true : false;
-            //    AmalyateKhakiInfoForBarAvordDetailsEzafeBaha._AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
-            //    rmsContext.AmalyateKhakiInfoForBarAvordDetailsEzafeBahas.Add(AmalyateKhakiInfoForBarAvordDetailsEzafeBaha);
-            //    rmsContext.SaveChanges();
-            //    //AmalyateKhakiInfoForBarAvordDetails.Name = KhakRiziInfoDetailsCheckBoxSplitSplit[0];
-            //    //AmalyateKhakiInfoForBarAvordDetails.boolValue = KhakRiziInfoDetailsCheckBoxSplitSplit[1].Trim() == "true" ? true : false;
-            //    //AmalyateKhakiInfoForBarAvordDetails.SaveEzafeBaha(AmalyateKhakiInfoForBarAvordDetailsId);
+            //    intKMNum = currentKMNum.KMNum + 1;
             //}
-            //}
-            /////////////
 
-            //tblRizMetreUser.Delete("_BarAvordUserId='" + BarAvordUserId + "' and (SUBSTRING(ltrim(rtrim(_Type)),1,2) in('42','43')) and SUBSTRING(ltrim(rtrim(_Type)),4,3)='" + KMNum.ToString("D3") + "'");
-            //AmalyateKhakiInfoForBarAvord.SaveRizMetreKhakRizi(BarAvordUserId, KMKhakRiziId, KMNum, FromKM.ToString("D6")
-            //    , ToKM.ToString("D6"), radioNoeRahKhakRizi, dDarsadKRDDaneh, dDarsadKRRDaneh, dHajmBetween0To30, dHajmBetween30To100
-            //    , dHajmBetweenTo100, EzafeBahaKRKhakMosalah);
+            //clsKhakRiziBarAvord khakRiziBarAvord = new clsKhakRiziBarAvord
+            //{
+            //    BarAvordId = BarAvordUserId,
+            //    FromKM = FromKM,
+            //    ToKM = ToKM,
+            //    KMNum = intKMNum,
+            //    NoeDaneBandi = NoeDaneBandiId,
+            //    NoeRah = RoadTypeId,
+            //    NoeHajmKhakRizi_Value = HajmKhakRiziValue,
+            //};
+            //_context.KhakRiziBarAvords.Add(khakRiziBarAvord);
 
-            KhakRiziCommon riziCommon = new KhakRiziCommon();
 
+            List<clsKhakRiziDarsad> lstKhakRiziDarsad = _context.KhakRiziDarsads.Where(x => x.NoeRah == RoadTypeId && x.NoeDaneBandi == NoeDaneBandiId && x.Year == Year).ToList();
 
-            RequestSaveRizMetreBestarKhakRiziDto requestSaveRizMetreBestarKhakRizi = new RequestSaveRizMetreBestarKhakRiziDto
+            List<HajmKhakRiziValueDto> lstHajmKhakRiziValue = new List<HajmKhakRiziValueDto>();
+            if (HajmKhakRiziValue != null)
             {
-                BarAvordUserID = BarAvordUserId,
-                KMId = KMKhakRiziId,
-                KMNum = KMNum,
-                KMS = FromKM.ToString("D6"),
-                KME = ToKM.ToString("D6"),
-                KhakRiziInfoDetails = KhakRiziInfoDetails,
-                KhakRiziInfoDetailsCheckBox = KhakRiziInfoDetailsCheckBox,
-            };
-            riziCommon.SaveRizMetreBestarKhakRizi(requestSaveRizMetreBestarKhakRizi, _context);
+                string[] HajmKhakRiziValueSplit = HajmKhakRiziValue.Split(",");
+                foreach (var item in HajmKhakRiziValueSplit)
+                {
+                    if (item.Trim() != "")
+                    {
+                        string[] strItem = item.Split("_");
+                        if (strItem[1].Trim() != "0")
+                        {
+                            long HajmKhakRiziId = long.Parse(strItem[0].Trim());
+                            decimal dValue = decimal.Parse(strItem[1].Trim());
 
-            //AmalyateKhakiInfoForBarAvord.SaveRizMetreGharzeh(BarAvordUserId);
+                            lstHajmKhakRiziValue.Add(new HajmKhakRiziValueDto
+                            {
+                                Id = HajmKhakRiziId,
+                                Value = dValue,
+                            });
+                        }
+                    }
+                }
 
+            }
+
+            //List<long> HajmKhakRiziIds = lstHajmKhakRiziValue.Select(x => x.Id).ToList();
+
+            List<EnumHajmKhakRizi> hajmKhakRiziEnums =
+                lstHajmKhakRiziValue
+            .Where(x => Enum.IsDefined(typeof(EnumHajmKhakRizi), (int)x.Id))
+            .Select(x => (EnumHajmKhakRizi)(int)x.Id)
+            .ToList();
+
+            List<clsKhakRiziDarsad> lstKhakRiziDarsad1 = lstKhakRiziDarsad.Where(x => hajmKhakRiziEnums.Contains(x.NoeHajmKhakRizi)).ToList();
+
+
+            List<clsKhakRiziItem> lstKhakRiziItem = _context.KhakRiziItems.Where(x => x.Year == Year).ToList();
+
+
+            long Shomareh = 1;
+            clsRizMetreUsers? rizMetreUser = _context.RizMetreUserses.Include(x => x.FB).OrderByDescending(x => x.Shomareh).FirstOrDefault(x => x.FB.BarAvordId == BarAvordUserId);
+            if (rizMetreUser != null)
+            {
+                Shomareh = rizMetreUser.Shomareh + 1;
+            }
+
+            foreach (var itemDarsad in lstKhakRiziDarsad1)
+            {
+                string ItemFBShomareh = "";
+                foreach (var KhakRiziItem in lstKhakRiziItem)
+                {
+                    string strCondition = KhakRiziItem.Condition.Trim();
+                    if (strCondition != "")
+                    {
+                        string strConditionOp = strCondition.Replace("x", itemDarsad.Darsad.ToString().Trim());
+                        StringToFormula StringToFormula = new StringToFormula();
+                        bool blnCheck = StringToFormula.RelationalExpression2(strConditionOp);
+                        if (blnCheck)
+                        {
+                            ItemFBShomareh = KhakRiziItem.ItemFBShomareh;
+                            break;
+                        }
+                    }
+                }
+
+
+                clsFB? FB = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordUserId && x.Shomareh == ItemFBShomareh);
+                Guid gFBId = new Guid();
+                if (FB != null)
+                {
+                    gFBId = FB.ID;
+                }
+                else
+                {
+                    clsFB newFB = new clsFB
+                    {
+                        BarAvordId = BarAvordUserId,
+                        InsertDateTime = Now,
+                        Shomareh = ItemFBShomareh
+                    };
+                    _context.FBs.Add(newFB);
+                    gFBId = newFB.ID;
+                }
+
+                clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                RizMetre.Shomareh = Shomareh++;
+                RizMetre.Sharh = "";
+                RizMetre.Tedad = null;
+                RizMetre.Tool = null;
+                RizMetre.Arz = null;
+                RizMetre.Ertefa = null;
+                RizMetre.Vazn = null;
+                RizMetre.Des = "کیلومتراژ " + FromKM + " تا " + ToKM;
+                RizMetre.FBId = gFBId;
+                RizMetre.OperationsOfHamlId = 1;
+                RizMetre.Type = "1";
+                RizMetre.ForItem = "";
+                RizMetre.UseItem = "";
+
+                RizMetre.MeghdarJoz = null;
+
+                _context.RizMetreUserses.Add(RizMetre);
+
+                clsKhakRiziBarAvordRizMetre KhakRiziBarAvordRizMetre
+                    = new clsKhakRiziBarAvordRizMetre
+                    {
+                        KhakRiziBarAvordId = currentKhakRiziBarAvord.ID,
+                        RizMetreUserId = RizMetre.ID
+                    };
+                _context.KhakRiziBarAvordRizMetres.Add(KhakRiziBarAvordRizMetre);
+            }
         }
+
+        _context.SaveChanges();
+
         return new JsonResult("OK");
-        //return "OK";
-        //}
-        //catch (Exception)
-        //{
-        //    return Json("NOK", JsonRequestBehavior.AllowGet);
-        //    //return "NOK";
-        //}
     }
 
     public JsonResult GetRizMetreForKhakRizi([FromBody] GetRizMetreForKhakRiziDto request)
@@ -610,6 +573,7 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
 
         List<GetExistKhakRiziDto> lstKhakRizi = _context.KhakRiziBarAvords.Where(x => x.BarAvordId == BarAvordId).Select(x => new GetExistKhakRiziDto
         {
+            KhakRiziID = x.ID,
             BarAvordId = x.BarAvordId,
             FromKM = x.FromKM,
             KMNum = x.KMNum,
@@ -653,4 +617,22 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
         return new JsonResult(result);
     }
 
+    public JsonResult GetEzafeBahaKhakRizi([FromBody] requestGetEzafeBahaKhakRiziDto request)
+    {
+        List<GetEzafeBahaKhakRiziDto> EzafeBahaKhakRizi = _context.EzafeBahaKhakRizis.Include(x => x.ConditionContext).ThenInclude(x => x.ConditionGroup)
+            .Where(x => x.Year == request.Year)
+            .Select(x => new GetEzafeBahaKhakRiziDto
+              {
+                  Id = x.ConditionContext.Id,
+                  GroupContext = x.ConditionContext.ConditionGroup.ConditionGroupName,
+                  ConditionGroupId = x.ConditionContext.ConditionGroupId,
+                  Context = x.ConditionContext.Context
+              }).ToList();
+        var result = new
+        {
+            EzafeBahaKhakRizi
+        };
+
+        return new JsonResult(result);
+    }
 }

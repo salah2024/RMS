@@ -148,8 +148,9 @@ function validateKmFieldsForEdit(num) {
 
 // --- بررسی انتخاب رادیوهای هر گروه
 function validateRadioGroupsForEdit(num) {
+
     let ok = true;
-    ['roadType' + num, 'noeDaneBandi' + num].forEach(g => {
+    [`roadType${num}`, `noeDaneBandi${num}`].forEach(g => {
         const selected = $(`input[name="${g}"]:checked`).length > 0;
         markGroupInvalid(g, !selected); // همان تابعی که radio-invalid می‌گذاشت
         if (!selected) ok = false;
@@ -158,7 +159,8 @@ function validateRadioGroupsForEdit(num) {
 }
 
 function validateHajmInputsOnEdit(num) {
-    const $inputs = $('[id^="txtHajmKhRizi' + num + '"]');
+    debugger;
+    const $inputs = $('[id^="txtHajmKhRizi_' + num + '"]');
     let anyValid = false;
 
     $inputs.each(function () {
@@ -183,7 +185,7 @@ function validateHajmInputsOnEdit(num) {
 }
 
 
-function UpdateKhakRiziInfo(barAvordUserId, num) {
+function UpdateKhakRiziInfo(khakRiziID, barAvordUserId, num) {
     const kmOk = validateKmFieldsForEdit(num);
     const radiosOk = validateRadioGroupsForEdit(num);  // برای roadType و noeDaneBandi
     const hajmOk = validateHajmInputsOnEdit(num);
@@ -202,18 +204,17 @@ function UpdateKhakRiziInfo(barAvordUserId, num) {
         if (raw !== '') {
             const v = normalizeDecimal4(raw);
             const id = parseInt($(this).data('id'), 10);
-            hajmValues = id + '_' + v + ',';
+            hajmValues += id + '_' + v + ',';
         }
     });
 
-
-
     var vardata = {
+        KhakRiziId: khakRiziID,
         FromKm: parseFloat($('#txtFromKMForKhakRizi' + num).val().replace('+', '')),
         ToKm: parseFloat($('#txtToKMForKhakRizi' + num).val().replace('+', '')),
 
-        RoadTypeId: parseInt($('input[name="roadType"]:checked').val(), 10),
-        NoeDaneBandiId: parseInt($('input[name="noeDaneBandi"]:checked').val(), 10),
+        RoadTypeId: parseInt($('input[name="roadType' + num + '"]:checked').val(), 10),
+        NoeDaneBandiId: parseInt($('input[name="noeDaneBandi' + num + '"]:checked').val(), 10),
 
         // تغییر اصلی: به‌جای Id/Value تکی، مجموعه را می‌فرستیم
         HajmKhakRiziValues: hajmValues,  // ← لیست {Id, Value}
@@ -221,10 +222,11 @@ function UpdateKhakRiziInfo(barAvordUserId, num) {
         BarAvordUserId: barAvordUserId,
         Year: Year = parseInt($('#HDFYear').val())
     };
+    debugger;
 
     $.ajax({
         type: "POST",
-        url: "/KhakRizi/SaveKhakRiziInfoForBarAvord",
+        url: "/KhakRizi/UpdateKhakRiziInfoForBarAvord",
         data: JSON.stringify(vardata),
         contentType: "application/json; charset=utf-8",
         dataType: "json",

@@ -5,6 +5,7 @@ namespace RMS.Controllers.KhakRizi.Dto;
 
 public class GetExistKhakRiziDto
 {
+    public Guid KhakRiziID { get; set; }
     public Guid BarAvordId { get; set; }
     public int KMNum { get; set; }
     public string FromKM { get; set; }

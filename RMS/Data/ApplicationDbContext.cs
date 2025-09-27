@@ -87,6 +87,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<clsKhakRiziItem> KhakRiziItems { get; set; }
     public DbSet<clsKhakRiziBarAvord> KhakRiziBarAvords { get; set; }
     public DbSet<clsKhakRiziBarAvordRizMetre> KhakRiziBarAvordRizMetres { get; set; }
+    public DbSet<clsEzafeBahaKhakRizi> EzafeBahaKhakRizis { get; set; }
+    public DbSet<clsEzafeBahaKhakRiziAddItems> EzafeBahaKhakRiziAddItemses { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
