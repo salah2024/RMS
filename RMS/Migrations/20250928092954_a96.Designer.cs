@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace RMS.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250928092954_a96")]
+    partial class a96
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1324,12 +1327,6 @@ namespace RMS.Migrations
                     b.Property<long>("Year")
                         .HasColumnType("bigint");
 
-                    b.Property<bool?>("hasDelButton")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("hasEditButton")
-                        .HasColumnType("bit");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ConditionContextId");
@@ -2031,42 +2028,6 @@ namespace RMS.Migrations
                     b.HasIndex("EzafeBahaKhakRiziId");
 
                     b.ToTable("tblKhakRiziEzafeBahaBarAvord");
-                });
-
-            modelBuilder.Entity("RMS.Models.Entity.clsKhakRiziEzafeBahaBarAvordRizMetre", b =>
-                {
-                    b.Property<Guid>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("InsertDateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool?>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("KhakRiziEzafeBahaBarAvordId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("RemoveDateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("RizMetreUserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("UserInserter")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("UserRemover")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("KhakRiziEzafeBahaBarAvordId");
-
-                    b.HasIndex("RizMetreUserId");
-
-                    b.ToTable("KhakRiziEzafeBahaBarAvordRizMetres");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsKhakRiziItem", b =>
@@ -3623,25 +3584,6 @@ namespace RMS.Migrations
                     b.Navigation("EzafeBahaKhakRizi");
                 });
 
-            modelBuilder.Entity("RMS.Models.Entity.clsKhakRiziEzafeBahaBarAvordRizMetre", b =>
-                {
-                    b.HasOne("RMS.Models.Entity.clsKhakRiziEzafeBahaBarAvord", "KhakRiziEzafeBahaBarAvord")
-                        .WithMany("KhakRiziEzafeBahaBarAvordRizMetres")
-                        .HasForeignKey("KhakRiziEzafeBahaBarAvordId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RMS.Models.Entity.clsRizMetreUsers", "RizMetreUser")
-                        .WithMany()
-                        .HasForeignKey("RizMetreUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("KhakRiziEzafeBahaBarAvord");
-
-                    b.Navigation("RizMetreUser");
-                });
-
             modelBuilder.Entity("RMS.Models.Entity.clsKiloMetrazhOfHaml", b =>
                 {
                     b.HasOne("RMS.Models.Entity.clsBaravordUser", "BarAvordUser")
@@ -3958,11 +3900,6 @@ namespace RMS.Migrations
             modelBuilder.Entity("RMS.Models.Entity.clsAmalyateKhakiInfoForBarAvordEzafeBaha", b =>
                 {
                     b.Navigation("lstAKhInfoForEBRizMetre");
-                });
-
-            modelBuilder.Entity("RMS.Models.Entity.clsKhakRiziEzafeBahaBarAvord", b =>
-                {
-                    b.Navigation("KhakRiziEzafeBahaBarAvordRizMetres");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsOperation", b =>

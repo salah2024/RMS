@@ -8,7 +8,7 @@ public class clsEzafeBahaKhakRiziAddItems
 {
     [Key]
     public long Id {get;set;}
-    public string? ItemFBShomareh { get; set;}
+    public string ItemFBShomareh { get; set;}
     [ForeignKey("EzafeBahaKhakRizi")]
     public long EzafeBahaKhakRiziId { get; set;}
     public clsEzafeBahaKhakRizi EzafeBahaKhakRizi { get; set;}

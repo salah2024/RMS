@@ -12,4 +12,6 @@ public class clsEzafeBahaKhakRizi
     public long ConditionContextId { get; set; }
     public clsConditionContext ConditionContext { get; set; }
     public long Year { get; set; }
+    public bool? hasEditButton { get; set; }
+    public bool? hasDelButton { get; set; }
 }

@@ -5,7 +5,7 @@ function KhakRiziWithBarAvordClick(OpId, BarAvordUserId) {
 
     str = `
                 <div id="ExistKhakRizi"></div>
-            <div id="divViewKhakRizi" class="container-fluid khak-section">
+            <div id="divViewKhakRizi" class="khak-section">
             </div>
     `
     $('#ula' + OpId).html(str);
@@ -109,7 +109,7 @@ function ShowSelctionKhakRizi(IsNew, KMExistingId, KMNum, BarAvordUserId, FromKM
         success: function (data) {
             const str = `
   <!-- هدر کیلومتراژ -->
-  <div class="row mb-3 khak-header">
+  <div class="row mb-3 khak-header" onclick="toggleKhakRiziNew()">
     <div class="col-auto d-flex align-items-center">
       <span>از کیلومتراژ:</span>
     </div>
@@ -128,6 +128,7 @@ function ShowSelctionKhakRizi(IsNew, KMExistingId, KMNum, BarAvordUserId, FromKM
   </div>
 
   <!-- محتوای اصلی (رادیوها با jQuery ساخته می‌شوند) -->
+  <div id="divulaSomeOpId" style="display:none">
   <div id="ulaSomeOpId"></div>
 
   <!-- دکمه ذخیره پایین چپ -->
@@ -138,6 +139,7 @@ function ShowSelctionKhakRizi(IsNew, KMExistingId, KMNum, BarAvordUserId, FromKM
       <a class="NewPolStyle btn buttonStyleBoard"
          onclick="SaveKhakRiziInfo('${BarAvordUserId}')">ذخیره</a>
     </div>
+  </div>
   </div>
 `;
 
@@ -627,6 +629,7 @@ function normalizeDecimal4(v) {
 
 // --- تابع ذخیره (امضایش با دکمه شما سازگار است)
 function SaveKhakRiziInfo(barAvordUserId) {
+    debugger;
     const kmOk = validateKmFields();
     const radiosOk = validateRadioGroups();  // برای roadType و noeDaneBandi
     const hajmOk = validateHajmInputsOnSave();
@@ -701,7 +704,7 @@ function GetExistKhakRizi(BarAvordUserId) {
                 const str = `
 <div id="divExistKhakRizi"${i}>
   <!-- هدر کیلومتراژ -->
-  <div onclick="showKhakRiziDetails(${i},'${BarAvordUserId}')">
+  <div onclick="toggleKhakRiziDetails(${i},'${BarAvordUserId}')">
   <div class="row mb-3 khak-header">
     <div class="col-auto d-flex align-items-center">
       <span>از کیلومتراژ:</span>
@@ -736,6 +739,8 @@ function GetExistKhakRizi(BarAvordUserId) {
     </div>
   </div>
   <div id="divExistKhakRizi_RizMetre${i}">
+  </div>
+  <div id="divKhakRiziEzafeBaha${i}">
   </div>
   </div>
   </div>
@@ -810,6 +815,28 @@ function GetExistKhakRizi(BarAvordUserId) {
     });
 }
 
+
+function toggleKhakRiziDetails(num, BarAvordUserId) {
+    var $div = $('#divExistKhakRiziD' + num);
+
+    if ($div.is(':visible')) {
+        // اگه باز باشه فقط ببند
+        $div.slideUp(500);
+    } else {
+        // اگه بسته باشه، تابع رو اجرا کن و بازش کن
+        showKhakRiziDetails(num, BarAvordUserId);
+    }
+}
+function toggleKhakRiziNew() {
+    var $div = $('#divulaSomeOpId');
+
+    if ($div.is(':visible')) {
+        $div.slideUp(500);
+    } else {
+        $div.slideDown(500);
+    }
+}
+
 function showKhakRiziDetails(num, BarAvordUserId) {
     $('#divExistKhakRiziD' + num).slideDown(500);
 
@@ -828,11 +855,19 @@ function showKhakRiziDetails(num, BarAvordUserId) {
         dataType: "json",
         success: function (response) {
             ezafeBahaKhakRizi = response.ezafeBahaKhakRizi;
+            lstKhakRiziEzafeBahaBarAvord = response.lstKhakRiziEzafeBahaBarAvord;
 
-            debugger;
 
-            var $container = $('#divExistKhakRizi_RizMetre' + num);
+
+
+            var $container = $('#divKhakRiziEzafeBaha' + num);
             $container.empty();
+
+            var preselectedIds = new Set(
+                (lstKhakRiziEzafeBahaBarAvord || []).map(x => Number(x.conditionContextId))
+            );
+
+            var pickedRadioByGroup = {};
 
             var groups = {};
             ezafeBahaKhakRizi.forEach(function (it) {
@@ -867,6 +902,15 @@ function showKhakRiziDetails(num, BarAvordUserId) {
                     $wrap.append($input).append(" ").append($label).append($panel);
                     $container.append($wrap);
 
+                    if (preselectedIds.has(Number(it.id))) {
+                        $input.prop('checked', true);
+                        $panel.show(); // اگر باید با تیک باز شود
+                        // اگر هندلر change دارید و می‌خواهید آن هم اجرا شود:
+                        // $input.trigger('change');
+
+                        LoadRizMetreEzafeBahaKhakRizi(it.id, BarAvordUserId);
+                    }
+
                 } else {
                     // چند آیتم با ConditionGroupId یکسان => گروه رادیویی
                     var groupName = "cg_" + key;
@@ -893,7 +937,20 @@ function showKhakRiziDetails(num, BarAvordUserId) {
 
                         $row.append($input).append(" ").append($label).append($panel);
                         $fs.append($row);
+
+                        if (preselectedIds.has(Number(it.id))) {
+                            // فقط یک انتخاب در هر گروه رادیویی مجاز است؛ اولین مورد را نگه می‌داریم
+                            if (!pickedRadioByGroup[groupName]) {
+                                pickedRadioByGroup[groupName] = it.id;
+                                $input.prop('checked', true);
+                                $panel.show();
+
+                                LoadRizMetreEzafeBahaKhakRizi(it.id, BarAvordUserId);
+                                // $input.trigger('change'); // در صورت نیاز به اجرای هندلرها
+                            }
+                        }
                     });
+
                     $container.append($fs);
                 }
             });
@@ -905,18 +962,15 @@ function showKhakRiziDetails(num, BarAvordUserId) {
                 var $panel = $("#divEBKhakRizi" + id);
 
                 if (!$chk.prop("checked")) {
-                    // اگه تیک نداشت → تیک بزن + ذخیره + باز کردن div
                     $chk.prop("checked", true);
-                    //SaveEBRizMetre(id);
-                    $panel.slideDown(150);
+                    SaveEBKhakRizi(id, BarAvordUserId);
+
+                    $('[id^="divEBKhakRizi"]').slideUp(500);
                 } else {
-                    // اگه تیک داشت
                     if ($panel.is(":visible")) {
-                        // اگه div باز بود → ببند + حذف
-                        //DeleteEFRizMetre(id);
                         $panel.slideUp(150);
                     } else {
-                        // اگه div بسته بود → فقط بازش کن
+                        LoadRizMetreEzafeBahaKhakRizi(id, BarAvordUserId);
                         $panel.slideDown(150);
                     }
                 }
@@ -926,43 +980,237 @@ function showKhakRiziDetails(num, BarAvordUserId) {
                 var id = $(this).data("id");
                 var $panel = $("#divEBKhakRizi" + id);
                 if ($(this).prop("checked")) {
-                    //DeleteEFRizMetre(id);
-                    $panel.slideUp(150);
+                    SaveEBKhakRizi(id, BarAvordUserId);
+
+                    $('[id^="divEBKhakRizi"]').slideUp(500);
                 } else {
-                    //SaveEBRizMetre(id);
-                    $panel.slideDown(150);
+                    DeleteEBKhakRizi(id, BarAvordUserId);
+                    $panel.slideUp(150);
                 }
             });
 
-
-            $container.on("click", "label[data-type='radio']", function (e) {
-                 debugger;
-               e.preventDefault();
+            // کلیک روی لیبل رادیو
+            $container.on("click", "label[data-type='radio']", function () {
                 var id = $(this).data("id");
                 var $input = $("#rd_" + id);
                 var $panel = $("#divEBKhakRizi" + id);
-                if ($panel.is(":visible")) {
-                    //DeleteEFRizMetre(id);
-                    $panel.slideUp(150);
-                } else {
-                    // انتخاب رادیو
-                    $input.prop("checked", true).trigger("change");
+
+                if ($input.prop("checked")) {
+                    if ($panel.is(":visible")) {
+                        // اگر باز است، ببند
+                        $panel.stop(true, true).slideUp(150);
+                    } else {
+                        // اگر بسته است، باز کن
+                        LoadRizMetreEzafeBahaKhakRizi(id, BarAvordUserId);
+                        $panel.stop(true, true).slideDown(150);
+                    }
                 }
             });
 
+
             $container.on("change", "input.eb-radio", function () {
                 var id = $(this).data("id");
-                var name = $(this).attr("name");
-                //SaveEBRizMetre(id);
-                $("#divEBKhakRizi" + id).slideDown(150);
-                $("input.eb-radio[name='" + name + "']").not(this).each(function () {
-                    var otherId = $(this).data("id");
-                    //DeleteEFRizMetre(otherId);
-                    $("#divEBKhakRizi" + otherId).slideUp(150);
-                });
-            });
+
+                SaveEBKhakRizi(id, BarAvordUserId);
+
+                $('[id^="divEBKhakRizi"]').slideUp(500);
+             });
+
+
         }, error: function (response) {
             toastr.error('مشکل در بارگذاری اضافه بها خاک ریزی', 'خطا');
+        }
+    });
+}
+
+function LoadRizMetreEzafeBahaKhakRizi(ConditionContextId, BarAvordUserId) {
+
+    Year = $('#HDFYear').val();
+    NoeFB = parseInt($('#HDFNoeFB').val());
+
+    const vardata = {
+        BarAvordId: BarAvordUserId,
+        NoeFB: NoeFB,
+        Year: Year,
+        ConditionContextId: ConditionContextId
+    };
+    $.ajax({
+        type: "POST",
+        url: "/KhakRizi/GetRizMetreEzafeBahaForKhakRizi",
+        data: JSON.stringify(vardata),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (response) {
+            lstItemFBShomarehForGet = response.lstItemFBShomarehForGet;
+            lstkhakRiziEzafeBahaRizMetre = response.lstkhakRiziEzafeBahaRizMetre;
+
+            var str = '';
+
+            // ساخت HTML بر اساس lstItemFBShomarehForGet
+
+            // گروه‌بندی data.lst بر اساس itemFBShomareh
+            let groupedData = {};
+            lstkhakRiziEzafeBahaRizMetre.forEach(function (row) {
+                if (!groupedData[row.itemFBShomareh]) {
+                    groupedData[row.itemFBShomareh] = [];
+                }
+                groupedData[row.itemFBShomareh].push(row);
+            });
+
+            // ساخت HTML بر اساس lstItemFBShomarehForGet
+            if (lstkhakRiziEzafeBahaRizMetre.length != 0) {
+
+                lstItemFBShomarehForGet.forEach(function (itemGroup) {
+
+                    let itemFBShomareh = itemGroup.itemFBShomareh.substring(0, 6);
+                    let des = itemGroup.des;
+                    let ItemFields = itemGroup.itemFields;
+
+                    let rows = groupedData[itemFBShomareh] || [];
+                    if (rows.length != 0) {
+                        // نمایش توضیح گروه
+                        str += "<div class='col-12'><span style='color:#000'>" + itemGroup.itemFBShomareh + " - " + des + "</span></div>";
+
+                        str += "<div class=\"row col-12 styleHeaderTable\" style=\"text-align: center;background-color: #c4bfe3;\">";
+                        str += "<div class=\"col-md-1 spanStyleMitraSmall\" style=\"text-align:center\"><span id=\"spanFieldShomarehName\">ردیف</span></div>";
+                        str += "<div class=\"col-md-2 spanStyleMitraSmall\">شرح</div>";
+
+                        str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
+                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">تعداد</div>";
+                        str += "<div class=\"VahedStyle\">" + (ItemFields[0] != undefined ? ItemFields[0].vahed : "") + "</div>";
+                        str += "</div>";
+
+                        str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
+                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">طول</div>";
+                        str += "<div class=\"VahedStyle\">" + (ItemFields[1] != undefined ? ItemFields[1].vahed : "") + "</div>";
+                        str += "</div>";
+
+                        str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
+                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">عرض</div>";
+                        str += "<div class=\"VahedStyle\">" + (ItemFields[2] != undefined ? ItemFields[2].vahed : "") + "</div>";
+                        str += "</div>";
+
+                        str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
+                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">ارتفاع</div>";
+                        str += "<div class=\"VahedStyle\">" + (ItemFields[3] != undefined ? ItemFields[3].vahed : "") + "</div>";
+                        str += "</div>";
+
+                        str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
+                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">وزن</div>";
+                        str += "<div class=\"VahedStyle\">" + (ItemFields[4] != undefined ? ItemFields[4].vahed : "") + "</div>";
+                        str += "</div>";
+
+                        str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
+                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\"><span>مقدار جزء</span></div>";
+                        str += "<div class=\"VahedStyle\">" + (ItemFields[5] != undefined ? ItemFields[5].vahed : "") + "</div>";
+                        str += "</div>";
+
+                        str += "<div class=\"col-md-2 spanStyleMitraSmall\">توضیحات</div>";
+                        str += "<div class=\"col-md-1 spanStyleMitraSmall\"><span>ویرایش/حذف</span></div>";
+                        str += "</div>";
+                        str += "</div>";
+
+                        str += "<div class='col-12' style='overflow:auto;max-height:400px;padding: 0px;'>";
+
+                        // نمایش ردیف‌های مربوطه
+                        rows.forEach(function (row) {
+                            let id = row.id;
+
+                            let strTedad = parseFloat(row.tedad) === 0 ? "0" : isNaN(parseFloat(row.tedad)) ? "" : parseFloat(row.tedad).toString();
+                            let strTool = parseFloat(row.tool) === 0 ? "0" : isNaN(parseFloat(row.tool)) ? "" : parseFloat(row.tool).toString();
+                            let strArz = parseFloat(row.arz) === 0 ? "0" : isNaN(parseFloat(row.arz)) ? "" : parseFloat(row.arz).toString();
+                            let strErtefa = parseFloat(row.ertefa) === 0 ? "0" : isNaN(parseFloat(row.ertefa)) ? "" : parseFloat(row.ertefa).toString();
+                            let strVazn = parseFloat(row.vazn) === 0 ? "0" : isNaN(parseFloat(row.vazn)) ? "" : parseFloat(row.vazn).toString();
+                            let MeghdarJoz = parseFloat(row.meghdarJoz) === 0 ? "0" : isNaN(parseFloat(row.meghdarJoz)) ? "" : parseFloat(row.meghdarJoz).toString();
+
+
+                            let HasDelButton = row.hasDelButton;
+                            let HasEditButton = row.hasEditButton;
+
+                            str += "<div class='row styleRowTable' style=\"background-color:#fff\" onclick=\"RizMetreSelectClick('" + id + "')\">";
+                            str += "<div class='col-md-1' style=\"text-align:center;color:#000\"><span>" + row.shomareh + "</span></div>";
+
+                            str += "<div class='col-md-2'><input  type='text'" +
+                                " class='form-control spanStyleMitraSmall' id='txtSharh" + id + "' value='" + row.sharh + "' /></div > ";
+
+                            str += "<div class='col-md-1'><input  type='text'" + (ItemFields[0] != undefined ? ItemFields[0].isEnteringValue !== true ? " disabled='disabled'" : "" : "") +
+                                " class='form-control spanStyleMitraSmall " + (ItemFields[0] != undefined ? ItemFields[0].isEnteringValue === true ? " HasEnteringValue " : "" : "") + "' id='txtTedad" + id + "' value = '" + strTedad + "' /></div > ";
+
+                            str += "<div class='col-md-1'><input  type='text'" + (ItemFields[1] != undefined ? ItemFields[1].isEnteringValue !== true ? " disabled='disabled'" : "" : "") +
+                                " class='form-control spanStyleMitraSmall " + (ItemFields[1] != undefined ? ItemFields[1].isEnteringValue === true ? " HasEnteringValue " : "" : "") + "' id='txtTool" + id + "' value='" + strTool + "'/></div>";
+
+                            str += "<div class='col-md-1'><input  type='text'" + (ItemFields[2] != undefined ? ItemFields[2].isEnteringValue !== true ? " disabled='disabled'" : "" : "") +
+                                " class='form-control spanStyleMitraSmall " + (ItemFields[2] != undefined ? ItemFields[2].isEnteringValue === true ? " HasEnteringValue " : "" : "") + "' id='txtArz" + id + "' value='" + strArz + "'/></div>";
+
+                            str += "<div class='col-md-1'><input  type='text'" + (ItemFields[3] != undefined ? ItemFields[3].isEnteringValue !== true ? "disabled='disabled'" : "" : "") +
+                                " class='form-control spanStyleMitraSmall " + (ItemFields[3] != undefined ? ItemFields[3].isEnteringValue === true ? " HasEnteringValue " : "" : "") + "' id='txtErtefa" + id + "' value='" + strErtefa + "'/></div>";
+
+                            str += "<div class='col-md-1'><input type='text'" + (ItemFields[4] != undefined ? ItemFields[4].isEnteringValue !== true ? "disabled='disabled'" : "" : "") +
+                                " class='form-control spanStyleMitraSmall " + (ItemFields[4] != undefined ? ItemFields[4].isEnteringValue === true ? " HasEnteringValue " : "" : "") + "' id='txtVazn" + id + "' value='" + strVazn + "'/></div>";
+
+                            str += "<div class='col-md-1 RMMJozStyle'>" + MeghdarJoz + "</div>";
+
+                            str += "<div class='col-md-2'><input  type='text' title='" + row.des + "' style='font-size:12px' class='form-control input-sm' id='txtDes" + id + "' value='" + row.des + "'/></div>";
+                            if (HasDelButton)
+                                str += "<div class='col-md-1' style='text-align:center;'><i class='fa fa-trash DelRMUStyle' onclick=\"DeleteRMUAddedItemsClick('" + id + "','" + ItemHasConditionId + "'," + ConditionGroupId + ")\"></i></div>";
+                            if (HasEditButton)
+                                str += "<div class='col-md-1' id='iUpdate" + id + "' style='text-align:center;'><i class='fa fa-save SaveRMUStyle' onclick=\"UpdateRMUAddedItemsClick('" + id + "')\"></i></div>";
+
+                            str += "</div>";
+                        });
+                        str += "</div>";
+
+                    }
+                });
+
+
+                $targetDivRizMetreKH = $('#divEBKhakRizi' + ConditionContextId);
+
+                $targetDivRizMetreKH.html(str);
+
+                //$targetDivRizMetreKH.slideDown();
+
+
+
+                $targetDivRizMetreKH.find("input[type='text'].HasEnteringValue")
+                    .filter(function () {
+                        return $(this).val().trim() === "";
+                    })
+                    .addClass("blinking")
+                    .first()
+                    .focus();
+
+
+                $targetDivRizMetreKH.on("change", "input[type='text'].HasEnteringValue", function () {
+                    if ($(this).val().trim() !== "") {
+                        $(this).removeClass("blinking");
+                    }
+                });
+
+
+                $targetDivRizMetreKH.on("keypress", "input[type='text'].HasEnteringValue", function (e) {
+                    /* ENTER PRESSED */
+                    if (e.keyCode == 13) {
+                        /* FOCUS ELEMENT */
+                        var inputs = $(this).parent().parent().find("input[Type=text].HasEnteringValue,button");
+                        var idx = inputs.index(this);
+                        if (idx == inputs.length - 1) {
+                            inputs[0].focus();
+                            inputs[0].select();
+                        } else {
+                            while (inputs[idx + 1].disabled == true) {
+                                idx++;
+                            }
+                            inputs[idx + 1].focus(); //  handles submit buttons
+                            inputs[idx + 1].select();
+                        }
+                        return false;
+                    }
+                });
+            }
+
+        }, error: function (response) {
+            toastr.error('مشکل در بارگذاری ریزمتره اضافه بها', 'خطا');
         }
     });
 }
@@ -1361,6 +1609,55 @@ function ShowExistingKMKhakRizi(BarAvordUserId) {
         },
         error: function (response) {
             toastr.error('مشکل در بارگزاری کیلومتراژهای موجود', 'خطا');
+        }
+    });
+}
+
+function DeleteEBKhakRizi(EBId, BarAvordUserId) {
+    debugger;
+    var vardata = new Object();
+    vardata.BarAvordUserId = BarAvordUserId;
+    vardata.ConditionContextId = EBId;
+    $.ajax({
+        type: "POST",
+        url: "/KhakRizi/DeleteEBKhakRizi",
+        data: JSON.stringify(vardata),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (response) {
+            if (response == "OK") {
+                toastr.success('حذف بدرستی صورت گرفت', 'موفقیت');
+            }
+        },
+        error: function (response) {
+            toastr.error('مشکل در حذف', 'خطا');
+        }
+    });
+
+}
+
+function SaveEBKhakRizi(EBId, BarAvordUserId) {
+    Year = $('#HDFYear').val();
+
+    var vardata = new Object();
+    vardata.BarAvordUserId = BarAvordUserId;
+    vardata.ConditionContextId = EBId;
+    vardata.Year = Year;
+
+    $.ajax({
+        type: "POST",
+        url: "/KhakRizi/SaveEBKhakRizi",
+        data: JSON.stringify(vardata),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (response) {
+
+            LoadRizMetreEzafeBahaKhakRizi(EBId, BarAvordUserId)
+
+            $("#divEBKhakRizi" + EBId).slideDown(500);
+        },
+        error: function (response) {
+            toastr.error('مشکل در بارگزاری اضافه بها خاکریزی', 'خطا');
         }
     });
 }

@@ -487,7 +487,8 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
         NoeFehrestBaha NoeFB = request.NoeFB;
         int Year = request.Year;
 
-        List<clsAmalyateKhakiInfoForBarAvordMore> KMAmalyateKhakiBarAvordMore = context.AmalyateKhakiInfoForBarAvordMores.Where(x => x.AmalyateKhakiInfoForBarAvordId == AmalyateKhakiInfoForBarAvordId).ToList();
+        List<clsAmalyateKhakiInfoForBarAvordMore> KMAmalyateKhakiBarAvordMore = 
+            context.AmalyateKhakiInfoForBarAvordMores.Where(x => x.AmalyateKhakiInfoForBarAvordId == AmalyateKhakiInfoForBarAvordId).ToList();
 
         //List<AmalyateKhakiInfoForBarAvordDetailsDto> KMAmalyateKhakiBarAvordDetails = context.AmalyateKhakiInfoForBarAvordDetailses.Include(x => x.NoeKhakBardari)
         //    .Where(x => x.AmalyateKhakiInfoForBarAvordId == AmalyateKhakiInfoForBarAvordId).Select(x => new AmalyateKhakiInfoForBarAvordDetailsDto
@@ -502,25 +503,24 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
 
 
         List<AmalyateKhakiInfoForBarAvordDetailsDto> KMAmalyateKhakiBarAvordDetails = context.NoeKhakBardaris
-.GroupJoin(
-    context.AmalyateKhakiInfoForBarAvordDetailses
-        .Where(x => x.AmalyateKhakiInfoForBarAvordId == AmalyateKhakiInfoForBarAvordId),
-    noe => noe.Id,
-    detail => detail.NoeKhakBardariId,
-    (noe, details) => new { noe, details }
-)
-.SelectMany(
-    x => x.details.DefaultIfEmpty(),
-    (x, detail) => new AmalyateKhakiInfoForBarAvordDetailsDto
-    {
-        ID = detail != null ? detail.ID : (Guid?)null,
-        AmalyateKhakiInfoForBarAvordId = detail != null ? detail.AmalyateKhakiInfoForBarAvordId : (Guid?)null,
-        NoeKhakBardariId = x.noe.Id,
-        Title = x.noe.Title,
-        Value = detail != null ? detail.Value : (decimal?)null
-    }
-)
-.ToList();
+        .GroupJoin(
+            context.AmalyateKhakiInfoForBarAvordDetailses
+                .Where(x => x.AmalyateKhakiInfoForBarAvordId == AmalyateKhakiInfoForBarAvordId),
+                noe => noe.Id,
+                detail => detail.NoeKhakBardariId,
+                  (noe, details) => new { noe, details }
+                )
+                .SelectMany(
+            x => x.details.DefaultIfEmpty(),
+            (x, detail) => new AmalyateKhakiInfoForBarAvordDetailsDto
+            {
+                ID = detail != null ? detail.ID : (Guid?)null,
+                AmalyateKhakiInfoForBarAvordId = detail != null ? detail.AmalyateKhakiInfoForBarAvordId : (Guid?)null,
+                NoeKhakBardariId = x.noe.Id,
+                Title = x.noe.Title,
+                Value = detail != null ? detail.Value : (decimal?)null
+            }
+            ).ToList();
 
 
         List<Guid> gKMAId = KMAmalyateKhakiBarAvordDetails
@@ -1033,12 +1033,12 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
         long KMS = request.KMS;
         long KME = request.KME;
 
-        List<OverLowKMCheckK_Start_EndDto> lstKMS = 
+        List<OverLowKMCheckK_Start_EndDto> lstKMS =
             lstAKhInfo.Select(x => new OverLowKMCheckK_Start_EndDto
-        {
-            KStart=long.Parse(x.FromKM),
-            KEnd=long.Parse(x.ToKM)
-        }).ToList();
+            {
+                KStart = long.Parse(x.FromKM),
+                KEnd = long.Parse(x.ToKM)
+            }).ToList();
 
         var overlaps = lstKMS.Where(r =>
             Math.Max(r.KStart, KMS) <= Math.Min(r.KEnd, KME)
