@@ -193,6 +193,15 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
                 }
             }
 
+            decimal? MeghdarJoz = null;
+            foreach (var item in lstHajmKhakRiziValue)
+            {
+                if ((EnumHajmKhakRizi)item.Id == itemDarsad.NoeHajmKhakRizi)
+                {
+                    MeghdarJoz = item.Value;
+                }
+            }
+
 
             clsFB? FB = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordUserId && x.Shomareh == ItemFBShomareh);
             Guid gFBId = new Guid();
@@ -227,7 +236,7 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
             RizMetre.ForItem = "";
             RizMetre.UseItem = "";
 
-            RizMetre.MeghdarJoz = null;
+            RizMetre.MeghdarJoz = MeghdarJoz;
 
             _context.RizMetreUserses.Add(RizMetre);
 
@@ -391,7 +400,7 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
                 decimal? MeghdarJoz = null;
                 foreach (var item in lstHajmKhakRiziValue)
                 {
-                    if ((EnumHajmKhakRizi)item.Id== itemDarsad.NoeHajmKhakRizi)
+                    if ((EnumHajmKhakRizi)item.Id == itemDarsad.NoeHajmKhakRizi)
                     {
                         MeghdarJoz = item.Value;
                     }
@@ -675,6 +684,7 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
             .Where(x => x.KhakRiziEzafeBahaBarAvord.EzafeBahaKhakRiziId == ezafeBahaKhakRizi.Id && x.KhakRiziEzafeBahaBarAvord.BarAvordId == BarAvordId)
             .Select(x => new RizMetreForKhakRiziEzafeBahaBarAvordDto
             {
+                Id = x.RizMetreUser.ID,
                 Shomareh = x.RizMetreUser.Shomareh,
                 Arz = x.RizMetreUser.Arz,
                 Des = x.RizMetreUser.Des,
@@ -695,16 +705,22 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
         List<string> lstItemFBShomareh = lstkhakRiziEzafeBahaRizMetre.Select(x => x.ItemFBShomareh).ToList();
 
 
-        List<clsFehrestBaha> lstFehrestBahas = _context.FehrestBahas.Where(x => x.Sal == Year && x.NoeFB == NoeFB && lstItemFBShomareh.Contains(x.Shomareh.Trim())).ToList();
+        List<clsFehrestBaha> lstFehrestBahas = _context.FehrestBahas.Where(x => x.Sal == Year && x.NoeFB == NoeFB && lstItemFBShomareh.Select(x => x.Substring(0, 6)).Contains(x.Shomareh.Substring(0, 6).Trim())).ToList();
         List<ItemFBShomarehForGetAndShowAddItemsDto> lstItemFBShomarehForGet = new List<ItemFBShomarehForGetAndShowAddItemsDto>();
 
         List<ItemFBShomarehForGetAndShowAddItemsFieldsDto> ItemFields = new List<ItemFBShomarehForGetAndShowAddItemsFieldsDto>();
 
         foreach (var item in lstItemFBShomareh)
         {
-            clsFehrestBaha fehrestBaha = lstFehrestBahas.First(x => x.Shomareh == item);
+            string newItem = item.Substring(0, 6);
+            clsFehrestBaha fehrestBaha = lstFehrestBahas.First(x => x.Shomareh == newItem);
 
-            ItemFields = lstItemFields.Where(x => x.Shomareh.Trim() == item).ToList();
+            ItemFields = lstItemFields.Where(x => x.Shomareh.Trim() == newItem).ToList();
+            foreach (var itemF in ItemFields)
+            {
+                if (itemF.FieldType == 2 || itemF.FieldType == 3)
+                    itemF.IsEnteringValue = true;
+            }
             ItemFBShomarehForGetAndShowAddItemsDto ItemFBShomarehForGet = new ItemFBShomarehForGetAndShowAddItemsDto
             {
                 ItemFBShomareh = item,
@@ -725,23 +741,41 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
 
     public JsonResult SaveEBKhakRizi([FromBody] requestSaveEBKhakRiziDto request)
     {
-        DateTime Now = DateTime.Now;
-        long ConditionContextId = request.ConditionContextId;
-        Guid BarAvordUserId = request.BarAvordUserId;
-        long Year = request.Year;
 
-        clsEzafeBahaKhakRizi? ezafeBahaKhakRizi = _context.EzafeBahaKhakRizis.FirstOrDefault(x => x.ConditionContextId == ConditionContextId && x.Year == Year);
 
-        if (ezafeBahaKhakRizi != null)
+        clsKhakRiziBarAvord? currentKhakRiziBar = _context.KhakRiziBarAvords.FirstOrDefault(x => x.BarAvordId == request.BarAvordUserId);
+        if (currentKhakRiziBar == null)
         {
+            return new JsonResult(null);
+        }
+        else
+        {
+
+            long ConditionContextId = request.ConditionContextId;
+
+            clsBaravordUser currentBaravordUser = _context.BaravordUsers.First(x => x.ID == request.BarAvordUserId);
+
+            DateTime Now = DateTime.Now;
+            Guid BarAvordUserId = currentKhakRiziBar.BarAvordId;
+            string FromKM = currentKhakRiziBar.FromKM;
+            string ToKM = currentKhakRiziBar.ToKM;
+            EnumRoadType RoadTypeId = currentKhakRiziBar.NoeRah;
+            EnumNoeDaneBandi NoeDaneBandiId = currentKhakRiziBar.NoeDaneBandi;
+            string? HajmKhakRiziValue = currentKhakRiziBar.NoeHajmKhakRizi_Value;
+            long Year = currentBaravordUser.Year;
+
+            clsEzafeBahaKhakRizi ezafeBahaKhakRizi = _context.EzafeBahaKhakRizis.First(x => x.ConditionContextId == ConditionContextId && x.Year == Year);
+
             List<clsConditionContext> lstConditionContext = _context.ConditionContexts
-                .AsNoTracking()
-                .Where(c =>
-                    _context.ConditionContexts
-                      .Where(x => x.Id == ezafeBahaKhakRizi.ConditionContextId)
-                      .Select(x => x.ConditionGroupId)
-                      .Contains(c.ConditionGroupId))
-                .ToList();
+                    .AsNoTracking()
+                    .Where(c =>
+                        _context.ConditionContexts
+                          .Where(x => x.Id == ezafeBahaKhakRizi.ConditionContextId)
+                          .Select(x => x.ConditionGroupId)
+                          .Contains(c.ConditionGroupId))
+                    .ToList();
+
+
 
             List<long> lstIds = lstConditionContext.Select(x => x.Id).ToList();
 
@@ -763,6 +797,51 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
 
             _context.KhakRiziEzafeBahaBarAvords.Add(khakRiziEzafeBahaBarAvord);
 
+
+
+
+            List<clsKhakRiziDarsad> lstKhakRiziDarsad = _context.KhakRiziDarsads.Where(x => x.NoeRah == RoadTypeId && x.NoeDaneBandi == NoeDaneBandiId && x.Year == Year).ToList();
+
+            List<HajmKhakRiziValueDto> lstHajmKhakRiziValue = new List<HajmKhakRiziValueDto>();
+            if (HajmKhakRiziValue != null)
+            {
+                string[] HajmKhakRiziValueSplit = HajmKhakRiziValue.Split(",");
+                foreach (var item in HajmKhakRiziValueSplit)
+                {
+                    if (item.Trim() != "")
+                    {
+                        string[] strItem = item.Split("_");
+                        if (strItem[1].Trim() != "0")
+                        {
+                            long HajmKhakRiziId = long.Parse(strItem[0].Trim());
+                            decimal dValue = decimal.Parse(strItem[1].Trim());
+
+                            lstHajmKhakRiziValue.Add(new HajmKhakRiziValueDto
+                            {
+                                Id = HajmKhakRiziId,
+                                Value = dValue,
+                            });
+                        }
+                    }
+                }
+
+            }
+
+            //List<long> HajmKhakRiziIds = lstHajmKhakRiziValue.Select(x => x.Id).ToList();
+
+            List<EnumHajmKhakRizi> hajmKhakRiziEnums =
+                lstHajmKhakRiziValue
+            .Where(x => Enum.IsDefined(typeof(EnumHajmKhakRizi), (int)x.Id))
+            .Select(x => (EnumHajmKhakRizi)(int)x.Id)
+            .ToList();
+
+            List<clsKhakRiziDarsad> lstKhakRiziDarsad1 = lstKhakRiziDarsad.Where(x => hajmKhakRiziEnums.Contains(x.NoeHajmKhakRizi)).ToList();
+
+
+            List<clsEzafeBahaKhakRiziAddItems> lstEzafeBahaKhakRiziAddItems =
+                 _context.EzafeBahaKhakRiziAddItemses.Include(x => x.EzafeBahaKhakRizi)
+                 .Where(x => x.EzafeBahaKhakRizi.Year == Year && x.EzafeBahaKhakRiziId == ezafeBahaKhakRizi.Id).ToList();
+
             long Shomareh = 1;
             clsRizMetreUsers? rizMetreUser = _context.RizMetreUserses.Include(x => x.FB).OrderByDescending(x => x.Shomareh).FirstOrDefault(x => x.FB.BarAvordId == BarAvordUserId);
             if (rizMetreUser != null)
@@ -770,14 +849,48 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
                 Shomareh = rizMetreUser.Shomareh + 1;
             }
 
-            long EBKhakRiziId = ezafeBahaKhakRizi.Id;
-            List<clsEzafeBahaKhakRiziAddItems> lstEBKhakRizi = _context.EzafeBahaKhakRiziAddItemses.Where(x => x.EzafeBahaKhakRiziId == EBKhakRiziId).ToList();
-
-            foreach (var item in lstEBKhakRizi)
+            foreach (var itemDarsad in lstKhakRiziDarsad1)
             {
-                string ItemFBShomareh = item.ItemFBShomareh;
+                string ItemFBShomareh = "";
+                string? CharacterPlus = "";
+                foreach (var EzafeBahaKhakRiziAddItem in lstEzafeBahaKhakRiziAddItems)
+                {
+                    string strCondition = EzafeBahaKhakRiziAddItem.Condition != null ? EzafeBahaKhakRiziAddItem.Condition.Trim() : "";
+                    if (strCondition != "")
+                    {
+                        string strConditionOp = strCondition.Replace("x", itemDarsad.Darsad.ToString().Trim());
+                        StringToFormula StringToFormula = new StringToFormula();
+                        bool blnCheck = StringToFormula.RelationalExpression2(strConditionOp);
+                        if (blnCheck)
+                        {
+                            ItemFBShomareh = EzafeBahaKhakRiziAddItem.ItemFBShomareh;
+                            CharacterPlus = EzafeBahaKhakRiziAddItem.CharacterPlus;
+                            break;
+                        }
+                    }
 
-                clsFB? FB = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordUserId && x.Shomareh == ItemFBShomareh);
+
+                    //clsKhakRiziEzafeBahaBarAvord khakRiziEzafeBahaBarAvord = new clsKhakRiziEzafeBahaBarAvord
+                    //{
+                    //    BarAvordId = BarAvordUserId,
+                    //    EzafeBahaKhakRiziId = EzafeBahaKhakRiziAddItem.EzafeBahaKhakRiziId,
+                    //};
+
+                    //_context.KhakRiziEzafeBahaBarAvords.Add(khakRiziEzafeBahaBarAvord);
+
+                }
+
+                //decimal? MeghdarJoz = null;
+                //foreach (var item in lstHajmKhakRiziValue)
+                //{
+                //    if ((EnumHajmKhakRizi)item.Id == itemDarsad.NoeHajmKhakRizi)
+                //    {
+                //        MeghdarJoz = item.Value;
+                //    }
+                //}
+
+
+                clsFB? FB = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordUserId && x.Shomareh == ItemFBShomareh + CharacterPlus);
                 Guid gFBId = new Guid();
                 if (FB != null)
                 {
@@ -789,7 +902,7 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
                     {
                         BarAvordId = BarAvordUserId,
                         InsertDateTime = Now,
-                        Shomareh = ItemFBShomareh
+                        Shomareh = ItemFBShomareh + CharacterPlus
                     };
                     _context.FBs.Add(newFB);
                     gFBId = newFB.ID;
@@ -814,24 +927,235 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
 
                 _context.RizMetreUserses.Add(RizMetre);
 
-                clsKhakRiziBarAvord? khakRiziBarAvord = _context.KhakRiziBarAvords.FirstOrDefault(x => x.BarAvordId == BarAvordUserId);
+                //clsKhakRiziBarAvord? khakRiziBarAvord = _context.KhakRiziBarAvords.FirstOrDefault(x => x.BarAvordId == BarAvordUserId);
 
-                if (khakRiziBarAvord != null)
+                if (khakRiziEzafeBahaBarAvord != null)
                 {
-                    clsKhakRiziEzafeBahaBarAvordRizMetre KhakRiziEzafeBahaBarAvordRizMetre
+                    clsKhakRiziEzafeBahaBarAvordRizMetre khakriziezafebahabaravordrizmetre
                         = new clsKhakRiziEzafeBahaBarAvordRizMetre
                         {
                             KhakRiziEzafeBahaBarAvordId = khakRiziEzafeBahaBarAvord.ID,
                             RizMetreUserId = RizMetre.ID
                         };
-                    _context.KhakRiziEzafeBahaBarAvordRizMetres.Add(KhakRiziEzafeBahaBarAvordRizMetre);
+                    _context.KhakRiziEzafeBahaBarAvordRizMetres.Add(khakriziezafebahabaravordrizmetre);
                 }
             }
+
+
+
+
+
+
+
+
+
+            //DateTime Now = DateTime.Now;
+            //long ConditionContextId = request.ConditionContextId;
+            //Guid BarAvordUserId = request.BarAvordUserId;
+            //long Year = request.Year;
+
+            //clsEzafeBahaKhakRizi? ezafeBahaKhakRizi = _context.EzafeBahaKhakRizis.FirstOrDefault(x => x.ConditionContextId == ConditionContextId && x.Year == Year);
+
+            //if (ezafeBahaKhakRizi != null)
+            //{
+            //    List<clsConditionContext> lstConditionContext = _context.ConditionContexts
+            //        .AsNoTracking()
+            //        .Where(c =>
+            //            _context.ConditionContexts
+            //              .Where(x => x.Id == ezafeBahaKhakRizi.ConditionContextId)
+            //              .Select(x => x.ConditionGroupId)
+            //              .Contains(c.ConditionGroupId))
+            //        .ToList();
+
+
+
+            //    List<long> lstIds = lstConditionContext.Select(x => x.Id).ToList();
+
+            //    List<clsEzafeBahaKhakRizi> lstEzafeBahaKhakRizi = _context.EzafeBahaKhakRizis.Where(x => lstIds.Contains(x.ConditionContextId)).ToList();
+
+            //    List<clsKhakRiziEzafeBahaBarAvord> lstKhakRiziEzafeBahaBarAvord =
+            //        _context.KhakRiziEzafeBahaBarAvords.Include(x => x.KhakRiziEzafeBahaBarAvordRizMetres)
+            //         .Where(x => x.BarAvordId == BarAvordUserId && (lstEzafeBahaKhakRizi.Select(x => x.Id)).Contains(x.EzafeBahaKhakRiziId))
+            //         .ToList();
+
+            //    _context.KhakRiziEzafeBahaBarAvords.RemoveRange(lstKhakRiziEzafeBahaBarAvord);
+
+
+            //    clsKhakRiziEzafeBahaBarAvord khakRiziEzafeBahaBarAvord = new clsKhakRiziEzafeBahaBarAvord
+            //    {
+            //        BarAvordId = BarAvordUserId,
+            //        EzafeBahaKhakRiziId = ezafeBahaKhakRizi.Id,
+            //    };
+
+            //    _context.KhakRiziEzafeBahaBarAvords.Add(khakRiziEzafeBahaBarAvord);
+
+            //    long Shomareh = 1;
+            //    clsRizMetreUsers? rizMetreUser = _context.RizMetreUserses.Include(x => x.FB).OrderByDescending(x => x.Shomareh).FirstOrDefault(x => x.FB.BarAvordId == BarAvordUserId);
+            //    if (rizMetreUser != null)
+            //    {
+            //        Shomareh = rizMetreUser.Shomareh + 1;
+            //    }
+
+            //    long EBKhakRiziId = ezafeBahaKhakRizi.Id;
+            //    List<clsEzafeBahaKhakRiziAddItems> lstEBKhakRizi = _context.EzafeBahaKhakRiziAddItemses.Where(x => x.EzafeBahaKhakRiziId == EBKhakRiziId).ToList();
+
+            //    foreach (var item in lstEBKhakRizi)
+            //    {
+            //        string ItemFBShomareh = item.ItemFBShomareh;
+
+            //        clsFB? FB = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordUserId && x.Shomareh == ItemFBShomareh);
+            //        Guid gFBId = new Guid();
+            //        if (FB != null)
+            //        {
+            //            gFBId = FB.ID;
+            //        }
+            //        else
+            //        {
+            //            clsFB newFB = new clsFB
+            //            {
+            //                BarAvordId = BarAvordUserId,
+            //                InsertDateTime = Now,
+            //                Shomareh = ItemFBShomareh
+            //            };
+            //            _context.FBs.Add(newFB);
+            //            gFBId = newFB.ID;
+            //        }
+
+            //        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+            //        RizMetre.Shomareh = Shomareh++;
+            //        RizMetre.Sharh = "";
+            //        RizMetre.Tedad = null;
+            //        RizMetre.Tool = null;
+            //        RizMetre.Arz = null;
+            //        RizMetre.Ertefa = null;
+            //        RizMetre.Vazn = null;
+            //        RizMetre.Des = "";
+            //        RizMetre.FBId = gFBId;
+            //        RizMetre.OperationsOfHamlId = 1;
+            //        RizMetre.Type = "2";
+            //        RizMetre.ForItem = "";
+            //        RizMetre.UseItem = "";
+
+            //        RizMetre.MeghdarJoz = null;
+
+            //        _context.RizMetreUserses.Add(RizMetre);
+
+            //        clsKhakRiziBarAvord? khakRiziBarAvord = _context.KhakRiziBarAvords.FirstOrDefault(x => x.BarAvordId == BarAvordUserId);
+
+            //        if (khakRiziBarAvord != null)
+            //        {
+            //            clsKhakRiziEzafeBahaBarAvordRizMetre KhakRiziEzafeBahaBarAvordRizMetre
+            //                = new clsKhakRiziEzafeBahaBarAvordRizMetre
+            //                {
+            //                    KhakRiziEzafeBahaBarAvordId = khakRiziEzafeBahaBarAvord.ID,
+            //                    RizMetreUserId = RizMetre.ID
+            //                };
+            //            _context.KhakRiziEzafeBahaBarAvordRizMetres.Add(KhakRiziEzafeBahaBarAvordRizMetre);
+            //        }
+            //    }
+            //}
+
+            _context.SaveChanges();
+
+            return new JsonResult("OK");
         }
+    }
 
-        _context.SaveChanges();
+    [HttpPost]
+    public JsonResult UpdateRizMetreKhakRiziEzafeBaha([FromBody] UpdateRizMetreAKhEzafeBaha request)
+    {
+        try
+        {
 
-        return new JsonResult("OK");
+            Guid Id = request.Id;
+
+            clsRizMetreUsers? clsRizMetreUsers1 = context.RizMetreUserses.Where(x => x.ID == Id).FirstOrDefault();
+
+
+            string Sharh = request.Sharh;
+            decimal? Tedad = request.Tedad;
+            decimal? Tool = request.Tool;
+            decimal? Arz = request.Arz;
+            decimal? Ertefa = request.Ertefa;
+            decimal? Vazn = request.Vazn;
+            string? Des = request.Des;
+            DastyarCommon DastyarCommon = new DastyarCommon(context);
+
+            DataTable DtRizMetreUsers = new DataTable();
+            var varRizMetreUsers = (from RizMetreUsers in context.RizMetreUserses
+                                    join FB in context.FBs on RizMetreUsers.FBId equals FB.ID
+                                    select new
+                                    {
+                                        ID = RizMetreUsers.ID,
+                                        Shomareh = RizMetreUsers.Shomareh,
+                                        Tedad = RizMetreUsers.Tedad,
+                                        Tool = RizMetreUsers.Tool,
+                                        Arz = RizMetreUsers.Arz,
+                                        Ertefa = RizMetreUsers.Ertefa,
+                                        Vazn = RizMetreUsers.Vazn,
+                                        Des = RizMetreUsers.Des,
+                                        FBId = RizMetreUsers.FBId,
+                                        OperationsOfHamlId = RizMetreUsers.OperationsOfHamlId,
+                                        ForItem = RizMetreUsers.ForItem,
+                                        Type = RizMetreUsers.Type,
+                                        UseItem = RizMetreUsers.UseItem,
+                                        BarAvordId = FB.BarAvordId
+                                    }).Where(x => x.ID == Id).OrderBy(x => x.Shomareh).ToList();
+            DtRizMetreUsers = clsConvert.ToDataTable(varRizMetreUsers);
+
+
+            clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+            RizMetre.Tedad = Tedad;
+            RizMetre.Tool = Tool;
+            RizMetre.Arz = Arz;
+
+            RizMetre.Ertefa = Ertefa;
+            RizMetre.Vazn = Vazn;
+
+            RizMetre.ID = Id;
+            RizMetre.Sharh = Sharh.Trim();
+            //RizMetre.Tedad = Tedad;
+            //RizMetre.Tool = Tool;
+            //RizMetre.Arz = Arz;
+            //RizMetre.Ertefa = Ertefa;
+            //RizMetre.Vazn = Vazn;
+            RizMetre.Des = Des.Trim();
+            RizMetre.Type = "2";
+
+            decimal dMeghdarJoz = 0;
+            if (Tedad == null && Tool == null && Arz == null && Ertefa == null && Vazn == null)
+                dMeghdarJoz = 0;
+            else
+                dMeghdarJoz += (Tedad == null ? 1 : Tedad.Value) * (Tool == null ? 1 : Tool.Value) *
+                (Arz == null ? 1 : Arz.Value) * (Ertefa == null ? 1 : Ertefa.Value) * (Vazn == null ? 1 : Vazn.Value);
+
+            RizMetre.MeghdarJoz = dMeghdarJoz;
+
+
+
+
+            if (clsRizMetreUsers1 != null)
+            {
+                RizMetre.FBId = clsRizMetreUsers1.FBId;
+                RizMetre.Shomareh = clsRizMetreUsers1.Shomareh;
+                RizMetre.ShomarehNew = clsRizMetreUsers1.ShomarehNew;
+                RizMetre.OperationsOfHamlId = 1;
+                try
+                {
+                    context.Entry(clsRizMetreUsers1).CurrentValues.SetValues(RizMetre);
+                    context.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    throw e;
+                }
+            }
+            return new JsonResult("OK");
+        }
+        catch (Exception)
+        {
+            return new JsonResult("NOK");
+        }
     }
 
     public JsonResult DeleteEBKhakRizi([FromBody] requestSaveEBKhakRiziDto request)

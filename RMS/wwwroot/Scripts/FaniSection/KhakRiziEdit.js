@@ -185,6 +185,149 @@ function validateHajmInputsOnEdit(num) {
 }
 
 
+function UpdateRMKhakRiziAddedItemsClick(Id) {
+    ////////////
+    debugger;
+    Obj = $('#iUpdate' + Id);
+    Obj.prop('disabled', true);
+    FBId = $('#HDFFBID').val();
+    OperationId = $('#HDFOperationId').val();
+
+    NoeFB = parseInt($('#HDFNoeFB').val());
+    Year = $('#HDFYear').val();
+    var Sharh, Tedad, Tool, Arz, Ertefa, Vazn, Des, Check = true;
+    Sharh = $('#txtSharh' + Id).val();
+    Des = $('#txtDes' + Id).val();
+
+    //if ($('#txtTedad' + Id).hasClass('HasEnteringValue')) {
+    //    if ($.isNumeric(parseFloat($('#txtTedad' + Id).val()))) {
+    //        Tedad = $('#txtTedad' + Id).val().replace(/\,/g, '');
+    //    }
+    //    else {
+    //        $('#txtTedad' + Id).addClass('ErrorValueStyle');
+    //        Check = false;
+    //    }
+    //}
+    //else Tedad = 0;
+
+    if ($('#txtTedad' + Id).val() != '') {
+        if ($.isNumeric(parseFloat($('#txtTedad' + Id).val()))) {
+            Tedad = $('#txtTedad' + Id).val().replace(/\,/g, '');
+        }
+        else {
+            $('#txtTedad' + Id).addClass('ErrorValueStyle');
+            Check = false;
+        }
+    }
+
+    firstObjectHasFocus = null;
+    if ($('#txtTool' + Id).hasClass('HasEnteringValue')) {
+        if ($.isNumeric(parseFloat($('#txtTool' + Id).val()))) {
+            Tool = $('#txtTool' + Id).val().replace(/\,/g, '');
+            $('#txtTool' + Id).removeClass('ErrorValueStyle');
+        }
+        else {
+            $('#txtTool' + Id).addClass('ErrorValueStyle');
+            $('#txtTool' + Id).removeClass('TextEdit');
+            if (firstObjectHasFocus == null) {
+                firstObjectHasFocus = $('#txtTool' + Id);
+            }
+            Check = false;
+        }
+    }
+    else Tool = undefined;
+
+    if ($('#txtArz' + Id).hasClass('HasEnteringValue')) {
+        if ($.isNumeric(parseFloat($('#txtArz' + Id).val()))) {
+            Arz = $('#txtArz' + Id).val().replace(/\,/g, '');
+            $('#txtArz' + Id).removeClass('ErrorValueStyle');
+
+        }
+        else {
+            $('#txtArz' + Id).addClass('ErrorValueStyle');
+            $('#txtArz' + Id).removeClass('TextEdit');
+            if (firstObjectHasFocus == null) {
+                firstObjectHasFocus = $('#txtArz' + Id);
+            }
+            Check = false;
+        }
+    }
+    else Arz = undefined;
+
+    if ($('#txtErtefa' + Id).hasClass('HasEnteringValue')) {
+        if ($.isNumeric(parseFloat($('#txtErtefa' + Id).val()))) {
+            Ertefa = $('#txtErtefa' + Id).val().replace(/\,/g, '');
+            $('#txtErtefa' + Id).removeClass('ErrorValueStyle');
+
+        }
+        else {
+            $('#txtErtefa' + Id).addClass('ErrorValueStyle');
+            $('#txtErtefa' + Id).removeClass('TextEdit');
+            if (firstObjectHasFocus == null) {
+                firstObjectHasFocus = $('#txtErtefa' + Id);
+            }
+            Check = false;
+        }
+    }
+    else Ertefa = undefined;
+
+    if ($('#txtVazn' + Id).hasClass('HasEnteringValue')) {
+        if ($.isNumeric(parseFloat($('#txtVazn' + Id).val()))) {
+            Vazn = $('#txtVazn' + Id).val().replace(/\,/g, '');
+            $('#txtVazn' + Id).removeClass('ErrorValueStyle');
+
+        }
+        else {
+            $('#txtVazn' + Id).addClass('ErrorValueStyle');
+            $('#txtVazn' + Id).removeClass('TextEdit');
+            if (firstObjectHasFocus == null) {
+                firstObjectHasFocus = $('#txtVazn' + Id);
+            }
+            Check = false;
+        }
+    }
+    else Vazn = undefined;
+
+    debugger;
+    if (firstObjectHasFocus != null)
+        firstObjectHasFocus.focus();
+    var vardata = new Object();
+    vardata.Id = Id;
+    vardata.Sharh = Sharh;
+    vardata.Tedad = Tedad === undefined ? null : Tedad;
+    vardata.Tool = Tool === undefined ? null : Tool;
+    vardata.Arz = Arz === undefined ? null : Arz;
+    vardata.Ertefa = Ertefa === undefined ? null : Ertefa;
+    vardata.Vazn = Vazn === undefined ? null : Vazn;
+    vardata.Des = Des;
+    if (Check) {
+        $.ajax({
+            type: "POST",
+            url: '/KhakRizi/UpdateRizMetreKhakRiziEzafeBaha',
+            dataType: "json",
+            data: JSON.stringify(vardata),
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+
+                if (data == "OK") {
+                    $('#MeghdarJoz' + Id).html(Tool * Arz);
+                    toastr.success('ریزه متره انتخابی بدرستی ویرایش گردید', 'موفقیت');
+                }
+                else
+                    toastr.info('مشکل در ویرایش ریزه متره انتخابی', 'اطلاع');
+                Obj.removeAttr('disabled');
+            },
+            error: function (msg) {
+                toastr.error('مشکل در ویرایش ریزه متره انتخابی', 'خطا');
+            }
+        });
+    }
+    else {
+        Obj.removeAttr('disabled');
+        toastr.warning('مقادیر مشخص شده را وارد نمایید', 'هشدار');
+    }
+}
+
 function UpdateKhakRiziInfo(khakRiziID, barAvordUserId, num) {
     const kmOk = validateKmFieldsForEdit(num);
     const radiosOk = validateRadioGroupsForEdit(num);  // برای roadType و noeDaneBandi

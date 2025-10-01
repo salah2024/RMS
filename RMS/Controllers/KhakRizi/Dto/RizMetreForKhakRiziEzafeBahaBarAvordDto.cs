@@ -5,6 +5,7 @@ namespace RMS.Controllers.KhakRizi.Dto;
 
 public class RizMetreForKhakRiziEzafeBahaBarAvordDto
 {
+    public Guid Id { get; set; }
     public long Shomareh { get; set; }  
     public string Sharh { get; set; } 
     public decimal? Tedad { get; set; }    
