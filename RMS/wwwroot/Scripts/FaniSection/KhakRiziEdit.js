@@ -52,6 +52,7 @@
         const $wrap = $('<div/>', { class: 'form-check khak-radio' })
             .append($input, $label);
 
+
         $container.append($wrap);
     });
 }
