@@ -4,8 +4,8 @@ namespace RMS.Controllers.KhakRizi.Dto;
 
 public class requestUpdateKhakRiziInfoForBarAvordDto
 {
-    public Guid KhakRiziId { get;set; }
     public Guid BarAvordUserId { get; set; }
+    public int Num { get; set; }
     public long FromKM { get; set; }
     public long ToKM { get; set; }
     public EnumRoadType RoadTypeId { get; set; }

@@ -6,12 +6,12 @@ namespace RMS.Models.Entity;
 [Table("tblKhakRiziBarAvord")]
 public class clsKhakRiziBarAvord:clsBaseEntity
 {
-    [ForeignKey("BaravordUser")]
-    public Guid BarAvordId { get; set; }
     public int KMNum { get; set; }
     public string FromKM { get; set; }
     public string ToKM { get; set; }
 
+    [ForeignKey("BaravordUser")]
+    public Guid BarAvordId { get; set; }
     public clsBaravordUser BaravordUser { get; set; }
     public EnumRoadType NoeRah { get; set; }
     public EnumNoeDaneBandi NoeDaneBandi { get; set; }

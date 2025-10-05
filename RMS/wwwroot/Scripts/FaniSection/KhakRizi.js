@@ -10,7 +10,7 @@ function KhakRiziWithBarAvordClick(OpId, BarAvordUserId) {
     `
     $('#ula' + OpId).html(str);
 
-    GetExistKhakRizi(BarAvordUserId);
+    GetExistKhakRizi(BarAvordUserId,0);
     ShowSelctionKhakRizi(1, 0, 0, BarAvordUserId, 0, 0, 0, 0, 0, OpId);
 
     //str = '';
@@ -71,7 +71,7 @@ function renderHajmInputs($container, items) {
     items.forEach((item, idx) => {
         const idVal = item.id ?? item.Id ?? idx;
         const text = (item.description ?? item.Description ?? '').toString();
-        const tid = `txtHajmKhRizi`;
+        const tid = `txtHajmKhRiziNew`;
 
         // col-10: متن توضیح آیتم
         const $colLabel = $('<div/>', { class: 'col-9 d-flex align-items-center' })
@@ -109,7 +109,7 @@ function ShowSelctionKhakRizi(IsNew, KMExistingId, KMNum, BarAvordUserId, FromKM
         success: function (data) {
             const str = `
   <!-- هدر کیلومتراژ -->
-  <div class="row mb-3 khak-header" onclick="toggleKhakRiziNew()">
+  <div id="headerNew" class="row mb-3 khak-header" onclick="toggleKhakRiziNew()">
       <div class="col-auto d-flex align-items-center">
         <i class="fa fa-plus" style="font-size: 20px;color: green;"></i>
     </div>
@@ -118,7 +118,7 @@ function ShowSelctionKhakRizi(IsNew, KMExistingId, KMNum, BarAvordUserId, FromKM
     </div>
     <div class="col-auto">
       <input type="text" class="form-control_1 input-sm khak-input"
-             id="txtFromKMForKhakRizi" value="000+000" />
+             id="txtFromKMForKhakRizi" value="000+000"  onclick="event.stopPropagation();"/>
     </div>
 
     <div class="col-auto d-flex align-items-center">
@@ -126,7 +126,7 @@ function ShowSelctionKhakRizi(IsNew, KMExistingId, KMNum, BarAvordUserId, FromKM
     </div>
     <div class="col-auto">
       <input type="text" class="form-control_1 input-sm khak-input"
-             id="txtToKMForKhakRizi" value="000+000" />
+             id="txtToKMForKhakRizi" value="000+000"  onclick="event.stopPropagation();"/>
     </div>
   </div>
 
@@ -211,229 +211,6 @@ function ShowSelctionKhakRizi(IsNew, KMExistingId, KMNum, BarAvordUserId, FromKM
             toastr.error('مشکل در بارگزاری خاکبرداری', 'خطا');
         }
     });
-
-
-
-
-    $ViewKhakRizi = $('#divViewKhakRizi');
-    $ViewKhakRizi.find('#txtDarsadKRDDaneh').change(function () {
-        if (!$.isNumeric($(this).val())) {
-            toastr.info('مقدار وارد شده نامعتبر میباشد', 'اطلاع');
-            $(this).addClass('blinking');
-        }
-        else
-            $(this).removeClass('blinking');
-    });
-
-    $('#txtDarsadKRDDaneh').change(function () {
-        if (!$.isNumeric($(this).val())) {
-            toastr.info('مقدار وارد شده نامعتبر میباشد', 'اطلاع');
-            $(this).addClass('blinking');
-        }
-        else
-            $(this).removeClass('blinking');
-    });
-    /////////////
-    $('#txtHajmBetween0To30').change(function () {
-
-        if (!$.isNumeric($(this).val())) {
-            toastr.info('مقدار وارد شده نامعتبر میباشد', 'اطلاع');
-            $(this).addClass('blinking');
-        }
-        else {
-            $(this).removeClass('blinking');
-            ShowBestarKhakRizi();
-        }
-    });
-
-    $('#txtHajmBetween30To100').change(function () {
-        if (!$.isNumeric($(this).val())) {
-            toastr.info('مقدار وارد شده نامعتبر میباشد', 'اطلاع');
-            $(this).addClass('blinking');
-        }
-        else {
-            $(this).removeClass('blinking');
-            ShowBestarKhakRizi();
-        }
-    });
-
-    $('#txtHajmBetweenTo100').change(function () {
-        if (!$.isNumeric($(this).val())) {
-            toastr.info('مقدار وارد شده نامعتبر میباشد', 'اطلاع');
-            $(this).addClass('blinking');
-        }
-        else
-            $(this).removeClass('blinking');
-    });
-    /////////////
-    $('#txtDarsadKRDDaneh').change(function () {
-        DarsadKRRDaneh = 100 - parseFloat($(this).val());
-        $('#txtDarsadKRRDaneh').val(DarsadKRRDaneh.toFixed(2));
-        ShowBestarKhakRizi()
-    });
-
-    $('#txtDarsadKRRDaneh').change(function () {
-        DarsadKRDDaneh = 100 - parseFloat($(this).val());
-        $('#txtDarsadKRDDaneh').val(DarsadKRDDaneh.toFixed(2));
-        ShowBestarKhakRizi();
-    });
-
-    $('#txtHajmRizeshBardari').change(function () {
-        HRB = parseFloat($(this).val());
-        if (!$.isNumeric(HRB)) {
-            toastr.info('حجم ریزش وارد شده نامعتبر میباشد', 'اطلاع');
-            $(this).addClass('blinking');
-        }
-        else {
-            $('#divRizeshBardariInfoDetails').show();
-            $(this).removeClass('blinking');
-
-            Darsad1 = parseFloat($('#txtRBDarsad1').val());
-            $('#txtRBDetail1').val((Darsad1 / 100 * HRB).toFixed(2));
-            ReUseDarsad1 = parseFloat($('#txtRBReUseDarsad1').val());
-            $('#txtRBReUseHajm1').val((ReUseDarsad1 / 100 * $('#txtRBDetail1').val()).toFixed(2));
-            DarsadVarizi1 = parseFloat($('#txtRBDarsadVarizi1').val());
-            $('#txtRBVarizi1').val((DarsadVarizi1 / 100 * $('#txtRBDetail1').val()).toFixed(2));
-            DarsadHaml1 = parseFloat($('#txtRBDarsadHaml1').val());
-            $('#txtRBHaml1').val((DarsadHaml1 / 100 * $('#txtRBDetail1').val()).toFixed(2));
-            //////////
-            Darsad2 = parseFloat($('#txtRBDarsad2').val());
-            $('#txtRBDetail2').val((Darsad2 / 100 * HKB).toFixed(2));
-            ReUseDarsad2 = parseFloat($('#txtRBReUseDarsad2').val());
-            $('#txtRBReUseHajm2').val((ReUseDarsad2 / 100 * $('#txtRBDetail2').val()).toFixed(2));
-            DarsadVarizi2 = parseFloat($('#txtRBDarsadVarizi2').val());
-            $('#txtRBVarizi2').val((DarsadVarizi2 / 100 * $('#txtRBDetail2').val()).toFixed(2));
-            DarsadHaml2 = parseFloat($('#txtRBDarsadHaml2').val());
-            $('#txtRBHaml2').val((DarsadHaml2 / 100 * $('#txtRBDetail2').val()).toFixed(2));
-            //////////
-        }
-    });
-
-    $('#txtFromKMForRizeshbardari').change(function () {
-        var KM = $(this).val();
-        var KMSplit = KM.split('+');
-        if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
-            $(this).addClass('blinking');
-            toastr.info('کیلومتراژ شروع وارد شده طبق فرمت نمی باشد', 'فرمت 000+000 می باشد');
-        }
-        else
-            $(this).removeClass('blinking');
-    });
-
-    $('#txtToKMForRizeshbardari').change(function () {
-        var KM = $(this).val();
-        var KMSplit = KM.split('+');
-        if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
-            $(this).addClass('blinking');
-            toastr.info('کیلومتراژ خاتمه وارد شده طبق فرمت نمی باشد', 'فرمت 000+000 می باشد');
-        }
-        else
-            $(this).removeClass('blinking');
-
-        var KME = parseFloat(KM.replace('+', ''));
-        var KMS = parseFloat($('#txtFromKMForKhakbardari').val().replace('+', ''));
-        if (KMS > KME) {
-            toastr.info('کیلومتراژ خاتمه قبل از کیلومتراژ شروع میباشد', 'اطلاع');
-            $('#txtToKMForKhakbardari').addClass('blinking');
-        }
-        else
-            $('#txtToKMForKhakbardari').removeClass('blinking');
-    });
-
-    $('#radioNoeRahKhakRizi1').change(function () {
-        ShowBestarKhakRizi();
-    });
-    $('#radioNoeRahKhakRizi2').change(function () {
-        ShowBestarKhakRizi();
-    });
-    if (IsNew == 0) {
-        $('#txtFromKMForKhakRizi').val(FromKMSplit);
-        $('#txtToKMForKhakRizi').val(ToKMSplit);
-        $('#txtHajmKhakRizi').val(Value);
-
-        $('#HDFStateAmalyateKhakiSaveOrEdit').val('Edit');
-        $('#btnCloseExistingKMAmalyateKhaki').click();
-        var vardata = new Object();
-        vardata.AmalyateKhakiInfoForBarAvordId = KMExistingId;
-        $.ajax({
-            type: "POST",
-            url: "/KhakRizi/GetDetailsOfKMKhakBardariInfoWithKMKhakRiziId",
-            //data: '{AmalyateKhakiInfoForBarAvordId:' + KMExistingId + '}',
-            data: JSON.stringify(vardata),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (response) {
-                var KMAmalyateKhakiBarAvordDetails = response.tblKMAmalyateKhakiBarAvordDetails;
-                var KMAmalyateKhakiBarAvordMore = response.tblKMAmalyateKhakiBarAvordMore;
-                var KMAmalyateKhakiBarAvordDetailsMore = response.tblKMAmalyateKhakiBarAvordDetailsMore;
-                var KMAmalyateKhakiBarAvordDetailsEzafeBaha = response.tblKMAmalyateKhakiBarAvordDetailsEzafeBaha;
-
-                Value = 0;
-                $.each(KMAmalyateKhakiBarAvordMore, function () {
-                    Name = $.trim($(this).name);
-                    if (Name == 'DarsadKRDDaneh') {
-                        Value = $.trim($(this).value);
-                        $('#txtDarsadKRDDaneh').val(Value);
-                    }
-                    if (Name == 'DarsadKRRDaneh') {
-                        Value = $.trim($(this).value);
-                        $('#txtDarsadKRRDaneh').val(Value);
-                    }
-                    if (Name == 'HajmBetween0To30') {
-                        Value = $.trim($(this).value);
-                        $('#txtHajmBetween0To30').val(Value);
-                    }
-                    if (Name == 'HajmBetween30To100') {
-                        Value = $.trim($(this).value);
-                        $('#txtHajmBetween30To100').val(Value);
-                    }
-                    if (Name == 'HajmBetweenTo100') {
-                        Value = $.trim($(this).value);
-                        $('#txtHajmBetweenTo100').val(Value);
-                    }
-                    if (Name == 'radioNoeRahKhakRizi') {
-                        Value = parseInt($.trim($(this).value));
-                        $('#radioNoeRahKhakRizi' + Value).attr('checked', true);
-                    }
-                });
-
-                if (ShowBestarKhakRizi()) {
-                    $.each(KMAmalyateKhakiBarAvordDetails, function () {
-                        Id = $(this).id;
-                        AmalyateKhakiInfoForBarAvordId = $(this).amalyateKhakiInfoForBarAvordId;
-                        Type = $(this).find("_Type").text();
-
-                        $.each(KMAmalyateKhakiBarAvordDetailsMore, function () {
-                            CurrentId = $(this).id;
-                            Name = $.trim($(this).name);
-                            ValueMore = $(this).value;
-                            AmalyateKhakiInfoForBarAvordDetailsId = $(this).amalyateKhakiInfoForBarAvordDetailsId;
-                            if (Id == AmalyateKhakiInfoForBarAvordDetailsId) {
-                                $('#txt' + Name).val(ValueMore);
-                            }
-                        });
-
-                        $.each(KMAmalyateKhakiBarAvordDetailsEzafeBaha, function () {
-                            CurrentId = $(this).id;
-                            Name = $.trim($(this).name);
-                            boolValue = $(this).value == 'true' ? true : false;
-                            AmalyateKhakiInfoForBarAvordDetailsId = $(this).amalyateKhakiInfoForBarAvordDetailsId;
-
-                            if (Id == AmalyateKhakiInfoForBarAvordDetailsId) {
-                                $('#ck' + Name).attr('checked', boolValue);
-                            }
-                        });
-                    });
-                }
-            },
-            error: function (response) {
-                toastr.error('مشکل در بارگذاری کیلومتراژ انتخابی', 'خطا');
-            }
-        });
-    }
-    else {
-        $('#HDFStateAmalyateKhakiSaveOrEdit').val('Add');
-    }
 }
 
 
@@ -598,7 +375,7 @@ wireValidationEvents();
 
 
 function validateHajmInputsOnSave() {
-    const $inputs = $('[id^="txtHajmKhRizi"]');
+    const $inputs = $('[id^="txtHajmKhRiziNew"]');
     let anyValid = false;
 
     $inputs.each(function () {
@@ -626,11 +403,10 @@ function validateHajmInputsOnSave() {
 function normalizeDecimal4(v) {
     const s = toEnglishDigits(String(v || '')).trim().replace(',', '.');
     if (s === '') return null;
-    // اگر خواستی به 4 رقم رُند شود:
+
     return Number(parseFloat(s).toFixed(4));
 }
 
-// --- تابع ذخیره (امضایش با دکمه شما سازگار است)
 function SaveKhakRiziInfo(barAvordUserId) {
     debugger;
     const kmOk = validateKmFields();
@@ -644,9 +420,9 @@ function SaveKhakRiziInfo(barAvordUserId) {
         return;
     }
 
-    // گردآوری مقادیر حجم‌ها (فقط آن‌هایی که مقدار دارند)
-    var hajmValues = '';
-    $('.hajm-input').each(function () {
+
+    hajmValues = '';
+    $('[id^="txtHajmKhRiziNew"]').each(function () {
         const raw = ($(this).val() || '').trim();
         if (raw !== '') {
             const v = normalizeDecimal4(raw);
@@ -678,8 +454,17 @@ function SaveKhakRiziInfo(barAvordUserId) {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (response) {
+            debugger;
+            info = response.split('_');
+            if (info[0] == "OK") {
+                toastr.success('درج بدرستی صورت گرفت', 'موفقیت');
+                GetExistKhakRizi(barAvordUserId, info[1]);
+                $('#divExistKhakRiziD' + info[1]).slideDown();
+                $('#divKhakRiziEzafeBaha' + info[1]).show();
+                ClearContextNew();
+            }
 
-            GetExistKhakRizi(barAvordUserId);
+            //$('#divViewKhakRizi').slideUp();
         },
         error: function () {
             toastr.error('مشکل در ثبت اطلاعات کیلومتراژ', 'خطا');
@@ -687,8 +472,21 @@ function SaveKhakRiziInfo(barAvordUserId) {
     });
 }
 
+function ClearContextNew() {
+    $('#txtFromKMForKhakRizi').val('000+000');
+    $('#txtToKMForKhakRizi').val('000+000');
 
-function GetExistKhakRizi(BarAvordUserId) {
+    $('input[name="roadType"]').prop('checked', false);
+    $('input[name="noeDaneBandi"]').prop('checked', false);
+
+    $('.hajm-input').each(function () {
+        this.value = '';
+    });
+    $('#headerNew').click();
+}
+
+
+function GetExistKhakRizi(BarAvordUserId, num) {
     const vardata = {
         BarAvordId: BarAvordUserId,
     };
@@ -702,19 +500,20 @@ function GetExistKhakRizi(BarAvordUserId) {
         success: function (data) {
             lstKhakRizi = data.lstKhakRizi;
             var str = '';
-            i = 1;
+
+
             $.each(lstKhakRizi, function () {
                 str += `
-<div id="divExistKhakRizi${i}">
+<div id="divExistKhakRizi${this.kmNum}">
   <!-- هدر کیلومتراژ -->
-  <div onclick="toggleKhakRiziDetails(${i},'${BarAvordUserId}')">
+  <div id="header${this.kmNum}" onclick="toggleKhakRiziDetails(${this.kmNum},'${BarAvordUserId}')">
   <div class="row mb-3 khak-header">
     <div class="col-auto d-flex align-items-center">
       <span>از کیلومتراژ:</span>
     </div>
     <div class="col-auto">
       <input type="text" class="form-control_1 input-sm khak-input"
-             id="txtFromKMForKhakRizi${i}" value="${this.fromKMSplit}" />
+             id="txtFromKMForKhakRizi${this.kmNum}" value="${this.fromKMSplit}"  onclick="event.stopPropagation();"/>
     </div>
 
     <div class="col-auto d-flex align-items-center">
@@ -722,15 +521,14 @@ function GetExistKhakRizi(BarAvordUserId) {
     </div>
     <div class="col-auto">
       <input type="text" class="form-control_1 input-sm khak-input"
-             id="txtToKMForKhakRizi${i}" value="${this.toKMSplit}" />
+             id="txtToKMForKhakRizi${this.kmNum}" value="${this.toKMSplit}"  onclick="event.stopPropagation();"/>
     </div>
   </div>
   </div>
 
-  <!-- محتوای اصلی (رادیوها با jQuery ساخته می‌شوند) -->
 
-  <div id="divExistKhakRiziD${i}" style="display:none;border-bottom: 1px solid #d5bfff;margin-bottom: 10px;padding-bottom: 10px;">
-  <div id="ulaSomeOpId${i}">
+  <div id="divExistKhakRiziD${this.kmNum}" style="display:none;border-bottom: 1px solid #d5bfff;margin-bottom: 10px;padding-bottom: 10px;">
+  <div id="ulaSomeOpId${this.kmNum}">
     <div class="row">
         <div class="col-12 khak-card">
             <div class="row">
@@ -754,47 +552,49 @@ function GetExistKhakRizi(BarAvordUserId) {
     </div>
 
             <div class="row">
-                <div class="col-md-4">
-                    <div id="col-roadType${i}" class="khak-radios">
+                <div class="col-md-3">
+                    <div id="col-roadType${this.kmNum}" class="khak-radios">
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div id="col-noeDaneBandi${i}" class="khak-radios">
+                <div class="col-md-4">
+                    <div id="col-noeDaneBandi${this.kmNum}" class="khak-radios">
                     </div>
                 </div>
                  <div class="col-md-5">
-                    <div id="col-hajmKhakRizi${i}" class="khak-radios">
+                    <div id="col-hajmKhakRizi${this.kmNum}" class="khak-radios">
                     </div>
                 </div>
             </div>
   </div>
   <!-- دکمه ذخیره پایین چپ -->
   
-  <div id="divExistKhakRizi_RizMetre${i}">
+  <div id="divExistKhakRizi_RizMetre${this.kmNum}">
   </div>
 <div class="row khak-save-row">
   <div class="col-10">
   </div>
     <div class="col-2 force-left">
       <a class="NewPolStyle btn buttonStyleBoard"
-         onclick="UpdateKhakRiziInfo('${this.khakRiziID}','${BarAvordUserId}',${i})">ذخیره</a>
+         onclick="UpdateKhakRiziInfo('${BarAvordUserId}',${this.kmNum})">ذخیره</a>
     </div>
   </div>
-  <div id="divKhakRiziEzafeBaha${i}">
+  <div id="divKhakRiziEzafeBaha${this.kmNum}">
   </div>
   </div>
   </div>
 `;
                 $('#ExistKhakRizi').html(str);
 
-                $('#divExistKhakRizi' + i).on('input change', '#txtFromKMForKhakRizi, #txtToKMForKhakRizi', function () {
+
+
+                $('#divExistKhakRizi' + this.kmNum).on('input change', '#txtFromKMForKhakRizi, #txtToKMForKhakRizi', function () {
                     // اختیاری: حذف فوریِ ظاهر blinking هنگام تایپ
                     $(this).removeClass('blinking');
                     // و سپس اعتبارسنجی کل جفت
                     validateKmFields();
                 });
 
-                $('#divExistKhakRizi' + i).on('input change', '.hajm-input', function () {
+                $('#divExistKhakRizi' + this.kmNum).on('input change', '.hajm-input', function () {
                     const val = $(this).val();
                     // اگر مقدار خالی است: در حالت تایپ، blinking نداشته باشد
                     if (!val || String(val).trim() === '') { $(this).removeClass('blinking'); return; }
@@ -804,58 +604,34 @@ function GetExistKhakRizi(BarAvordUserId) {
                 });
 
 
-                $('#divExistKhakRizi' + i).on('change', 'input[name="hajmKhakRizi"]', function () {
+                $('#divExistKhakRizi' + this.kmNum).on('change', 'input[name="hajmKhakRizi"]', function () {
                     $('.hajm-input').removeClass('blinking');          // همه را بردار
                     const $txt = $(`#${this.id}-txt`);
                     $txt.addClass('blinking').focus();
                 });
 
-                $('#divExistKhakRizi' + i).on('input change', '.hajm-input', function () {
+                $('#divExistKhakRizi' + this.kmNum).on('input change', '.hajm-input', function () {
                     const ok = isValidDecimal4($(this).val());
                     $(this).toggleClass('blinking', !ok);
                 });
 
                 debugger;
 
-                //const $Container = $('#ulaSomeOpId'+i);
-
-                //// ردیف عنوان‌ها
-                //const $headerRow =
-                //    $('<div/>', { class: 'row' }).append(
-                //        $('<div/>', { class: 'col-12 khak-card' }).append(
-                //            $('<div/>', { class: 'row' })
-                //                .append($('<div/>', { class: 'col-md-4' }).append($('<span/>', { text: 'نوع راه' })))
-                //                .append($('<div/>', { class: 'col-md-3' }).append($('<span/>', { text: 'نوع دانه بندی نوع خاک مصرفی در خاکریزی' })))
-                //                .append($('<div/>', { class: 'col-md-5' }).append($('<span/>', { text: 'حجم خاکریزی' })))
-                //        )
-                //    );
-
-                //// ردیف محتوای رادیوها
-                //const $contentRow =
-                //    $('<div/>', { class: 'row', style: 'margin-top:8px;' })
-                //        .append($('<div/>', { class: 'col-md-4' }).append($('<div/>', { id: 'col-roadType' + i, class: 'khak-radios' })))
-                //        .append($('<div/>', { class: 'col-md-3' }).append($('<div/>', { id: 'col-noeDaneBandi' + i, class: 'khak-radios' })))
-                //        .append($('<div/>', { class: 'col-md-5' }).append($('<div/>', { id: 'col-hajmKhakRizi' + i, class: 'khak-radios' })));
-
-                //debugger;
-                //$Container.append($headerRow, $contentRow);
-
                 // لیست‌ها
-                ShowRiziMetreKhakRizi(BarAvordUserId, i);
-
-                i++;
-
+                ShowRiziMetreKhakRizi(BarAvordUserId, this.kmNum);
             });
 
-            j = 1;
+            if(num!=0)
+                $('#header'+num).click();
+
             $.each(lstKhakRizi, function () {
+                debugger;
                 const ListRoadType = data.listRoadType || [];
                 const ListNoeDaneBandi = data.listNoeDaneBandi || [];
                 const ListHajmKhakRizi = data.listHajmKhakRizi || [];
-                renderRadiosForEdit($('#col-roadType' + j), 'roadType' + j, ListRoadType, this);
-                renderRadiosForEdit($('#col-noeDaneBandi' + j), 'noeDaneBandi' + j, ListNoeDaneBandi, this);
-                renderHajmInputsForEdit($('#col-hajmKhakRizi' + j), ListHajmKhakRizi, this, j);
-                j++;
+                renderRadiosForEdit($('#col-roadType' + this.kmNum), 'roadType' + this.kmNum, ListRoadType, this, this.kmNum);
+                renderRadiosForEdit($('#col-noeDaneBandi' + this.kmNum), 'noeDaneBandi' + this.kmNum, ListNoeDaneBandi, this, this.kmNum);
+                renderHajmInputsForEdit($('#col-hajmKhakRizi' + this.kmNum), ListHajmKhakRizi, this, this.kmNum);
             });
 
         },
@@ -867,7 +643,12 @@ function GetExistKhakRizi(BarAvordUserId) {
 
 
 function toggleKhakRiziDetails(num, BarAvordUserId) {
+    debugger;
+
     var $div = $('#divExistKhakRiziD' + num);
+
+    var $allDivs = $('[id^="divExistKhakRiziD"]');
+    $allDivs.not($div).slideUp(500);
 
     if ($div.is(':visible')) {
         // اگه باز باشه فقط ببند
@@ -894,7 +675,8 @@ function showKhakRiziDetails(num, BarAvordUserId) {
 
     const vardata = {
         BarAvordId: BarAvordUserId,
-        Year: Year
+        Year: Year,
+        Num: num
     };
 
     $.ajax({
@@ -934,7 +716,7 @@ function showKhakRiziDetails(num, BarAvordUserId) {
                 // اگر گروه فقط 1 آیتم دارد => چک‌باکس
                 if (group.length === 1) {
                     var it = group[0];
-                    var inputId = "chk_" + it.id;
+                    var inputId = "chk_" + num + "_" + it.id;
 
                     var $wrap = $('<div class="single-checkbox" style="margin:6px 0;"></div>');
                     var $input = $('<input type="checkbox" class="eb-checkbox">')
@@ -947,8 +729,8 @@ function showKhakRiziDetails(num, BarAvordUserId) {
 
                     // div مخفی زیر لیبل
                     var $panel = $('<div class="ebkhakrizi-panel" style="display:none; padding:8px; border:1px dashed #ccc; border-radius:8px; margin:6px 0 0 0;"></div>')
-                        .attr("id", "divEBKhakRizi" + it.id)
-                        .text("جزئیات Id=" + it.id);
+                        .attr("id", "divEBKhakRizi_" + num + "_" + it.id)
+                        .text("");
 
                     $wrap.append($input).append(" ").append($label).append($panel);
                     $container.append($wrap);
@@ -959,7 +741,7 @@ function showKhakRiziDetails(num, BarAvordUserId) {
                         // اگر هندلر change دارید و می‌خواهید آن هم اجرا شود:
                         // $input.trigger('change');
 
-                        LoadRizMetreEzafeBahaKhakRizi(it.id, BarAvordUserId);
+                        LoadRizMetreEzafeBahaKhakRizi(it.id, BarAvordUserId, num);
                     }
 
                 } else {
@@ -970,7 +752,7 @@ function showKhakRiziDetails(num, BarAvordUserId) {
                     var $fs = $(`
                         <fieldset class="radio-group" style="margin:12px 0; padding:10px; border:1px solid #ddd; border-radius:10px;">
                         <div class="eb-group-header" style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-                            <input type="checkbox" class="eb-group-checkbox" id="grpchk_${key}" data-group="${groupName}">
+                            <input type="checkbox" class="eb-group-checkbox" id="grpchk_${num}_${key}" data-group="${groupName}">
                             <span class="eb-group-title" data-group="${groupName}" style="font-weight:600; user-select:none; cursor:default;"></span>
                         </div>
                         </fieldset>
@@ -980,7 +762,7 @@ function showKhakRiziDetails(num, BarAvordUserId) {
 
 
                     group.forEach(function (it) {
-                        var inputId = "rd_" + it.id;
+                        var inputId = "rd_" + num + "_" + it.id;
                         var $row = $('<div style="margin:6px 0;"></div>');
 
                         var $input = $('<input type="radio" class="eb-radio">')
@@ -992,8 +774,8 @@ function showKhakRiziDetails(num, BarAvordUserId) {
                             .attr("for", inputId).data("id", it.id).text(it.context);
 
                         var $panel = $('<div class="ebkhakrizi-panel" style="display:none; padding:8px; border:1px dashed #ccc; border-radius:8px; margin:6px 0 0 0;"></div>')
-                            .attr("id", "divEBKhakRizi" + it.id)
-                            .text("جزئیات Id=" + it.id);
+                            .attr("id", "divEBKhakRizi_" + num + "_" + it.id)
+                            .text("");
 
                         $row.append($input).append(" ").append($label).append($panel);
                         $fs.append($row);
@@ -1003,8 +785,8 @@ function showKhakRiziDetails(num, BarAvordUserId) {
 
                     var prePick = group.find(it => preselectedIds.has(Number(it.id)));
                     if (prePick) {
-                        var $inp = $("#rd_" + prePick.id);
-                        var $panel = $("#divEBKhakRizi" + prePick.id);
+                        var $inp = $("#rd_" + num + "_" + prePick.id);
+                        var $panel = $("#divEBKhakRizi_" + num + "_" + prePick.id);
 
                         $inp.prop('checked', true);
                         $panel.show();
@@ -1012,9 +794,9 @@ function showKhakRiziDetails(num, BarAvordUserId) {
                         lastSavedByGroup[groupName] = prePick.id;
 
                         // چک‌باکس هدر گروه را تیک بزن
-                        $("#grpchk_" + key).prop("checked", true);
+                        $("#grpchk_" + num + "_" + key).prop("checked", true);
 
-                        LoadRizMetreEzafeBahaKhakRizi(prePick.id, BarAvordUserId);
+                        LoadRizMetreEzafeBahaKhakRizi(prePick.id, BarAvordUserId, num);
                     }
                 }
             });
@@ -1022,19 +804,19 @@ function showKhakRiziDetails(num, BarAvordUserId) {
             $container.on("click", "label[data-type='checkbox']", function (e) {
                 e.preventDefault();
                 var id = $(this).data("id");
-                var $chk = $("#chk_" + id);
-                var $panel = $("#divEBKhakRizi" + id);
+                var $chk = $("#chk_" + num + "_" + id);
+                var $panel = $("#divEBKhakRizi_" + num + "_" + id);
 
                 if (!$chk.prop("checked")) {
                     $chk.prop("checked", true);
-                    SaveEBKhakRizi(id, BarAvordUserId);
+                    SaveEBKhakRizi(id, BarAvordUserId, num);
 
-                    $('[id^="divEBKhakRizi"]').slideUp(500);
+                    $('[id^="divEBKhakRizi_' + num + '"]').slideUp(500);
                 } else {
                     if ($panel.is(":visible")) {
                         $panel.slideUp(150);
                     } else {
-                        LoadRizMetreEzafeBahaKhakRizi(id, BarAvordUserId);
+                        LoadRizMetreEzafeBahaKhakRizi(id, BarAvordUserId, num);
                         $panel.slideDown(150);
                     }
                 }
@@ -1049,7 +831,11 @@ function showKhakRiziDetails(num, BarAvordUserId) {
                 var wasChecked = $chk.is(":checked");
 
                 if (!wasChecked) {
-                    DeleteEBKhakRizi(id, BarAvordUserId);
+                    DeleteEBKhakRizi(id, BarAvordUserId, num);
+                }
+                else {
+                    SaveEBKhakRizi(id, BarAvordUserId, num);
+                    LoadRizMetreEzafeBahaKhakRizi(id, BarAvordUserId, num);
                 }
             });
 
@@ -1071,11 +857,11 @@ function showKhakRiziDetails(num, BarAvordUserId) {
                     var lastId = pickedRadioByGroup[groupName] || lastSavedByGroup[groupName];
 
                     $("input.eb-radio[name='" + groupName + "']").prop("checked", false);
-                    $('[id^="divEBKhakRizi"]').slideUp(300);
+                    $('[id^="divEBKhakRizi_'+num+'"]').slideUp(300);
                     $chk.prop("checked", false);
 
                     if (lastId) {
-                        DeleteEBKhakRizi(lastId, BarAvordUserId);
+                        DeleteEBKhakRizi(lastId, BarAvordUserId, num);
                     }
 
                     delete pickedRadioByGroup[groupName];
@@ -1092,8 +878,8 @@ function showKhakRiziDetails(num, BarAvordUserId) {
             // کلیک روی لیبل رادیو
             $container.on("click", "label[data-type='radio']", function () {
                 var id = $(this).data("id");
-                var $input = $("#rd_" + id);
-                var $panel = $("#divEBKhakRizi" + id);
+                var $input = $("#rd_" + num + "_" + id);
+                var $panel = $("#divEBKhakRizi_" + num + "_" + id);
 
                 if ($input.prop("checked")) {
                     if ($panel.is(":visible")) {
@@ -1101,7 +887,7 @@ function showKhakRiziDetails(num, BarAvordUserId) {
                         $panel.stop(true, true).slideUp(150);
                     } else {
                         // اگر بسته است، باز کن
-                        LoadRizMetreEzafeBahaKhakRizi(id, BarAvordUserId);
+                        LoadRizMetreEzafeBahaKhakRizi(id, BarAvordUserId, num);
                         $panel.stop(true, true).slideDown(150);
                     }
                 }
@@ -1113,16 +899,16 @@ function showKhakRiziDetails(num, BarAvordUserId) {
                 var groupName = $(this).data("group");
 
                 // ذخیره انتخاب
-                SaveEBKhakRizi(id, BarAvordUserId);
+                SaveEBKhakRizi(id, BarAvordUserId, num);
                 pickedRadioByGroup[groupName] = id;
                 lastSavedByGroup[groupName] = id;
 
                 // بستن پنل‌های دیگر
-                $('[id^="divEBKhakRizi"]').slideUp(500);
+                $('[id^="divEBKhakRizi_'+num+'"]').slideUp(500);
 
                 // چک‌باکس هدر گروه را تیک بزن
-                var key = groupName.replace("cg_", ""); // استخراج key
-                $("#grpchk_" + key).prop("checked", true);
+                var key = groupName.replace("cg_"+num, ""); // استخراج key
+                $("#grpchk_" + num + "_" + key).prop("checked", true);
             });
 
 
@@ -1133,16 +919,17 @@ function showKhakRiziDetails(num, BarAvordUserId) {
     });
 }
 
-function LoadRizMetreEzafeBahaKhakRizi(ConditionContextId, BarAvordUserId) {
+function LoadRizMetreEzafeBahaKhakRizi(ConditionContextId, BarAvordUserId, num) {
 
     Year = $('#HDFYear').val();
     NoeFB = parseInt($('#HDFNoeFB').val());
-
+    debugger;
     const vardata = {
         BarAvordId: BarAvordUserId,
         NoeFB: NoeFB,
         Year: Year,
-        ConditionContextId: ConditionContextId
+        ConditionContextId: ConditionContextId,
+        Num: num
     };
     $.ajax({
         type: "POST",
@@ -1274,7 +1061,7 @@ function LoadRizMetreEzafeBahaKhakRizi(ConditionContextId, BarAvordUserId) {
                 });
 
 
-                $targetDivRizMetreKH = $('#divEBKhakRizi' + ConditionContextId);
+                $targetDivRizMetreKH = $('#divEBKhakRizi_' + num + "_" + ConditionContextId);
 
                 $targetDivRizMetreKH.html(str);
 
@@ -1332,7 +1119,8 @@ function ShowRiziMetreKhakRizi(BarAvordUserId, num) {
     const vardata = {
         BarAvordId: BarAvordUserId,
         NoeFB: NoeFB,
-        Year: Year
+        Year: Year,
+        Num: num
     };
 
     $.ajax({
@@ -1518,122 +1306,6 @@ function ShowRiziMetreKhakRizi(BarAvordUserId, num) {
 }
 
 
-
-
-
-function ShowBestarKhakRizi() {
-    HajmBetween0To30 = parseFloat($('#txtHajmBetween0To30').val());
-    HajmBetween30To100 = parseFloat($('#txtHajmBetween30To100').val());
-    HajmBetweenTo100 = parseFloat($('#txtHajmBetweenTo100').val());
-
-    DarsadKRDDaneh = parseFloat($('#txtDarsadKRDDaneh').val());
-    DarsadKRRDaneh = parseFloat($('#txtDarsadKRRDaneh').val());
-
-    strParam = '';
-    if ($('#radioNoeRahKhakRizi1').is(':checked')) {
-        if (HajmBetween0To30 != 0 && HajmBetween0To30 != '') {
-            if (DarsadKRDDaneh != 0) {
-                strParam += '3,';
-            }
-            if (DarsadKRRDaneh != 0) {
-                strParam += '2,';
-            }
-        }
-        if (HajmBetween30To100 != 0 && HajmBetween30To100 != '') {
-            if (DarsadKRDDaneh != 0) {
-                strParam += '2,';
-            }
-            if (DarsadKRRDaneh != 0) {
-                strParam += '1,';
-            }
-        }
-    }
-    else if ($('#radioNoeRahKhakRizi2').is(':checked')) {
-        if (HajmBetween0To30 != 0 && HajmBetween0To30 != '') {
-            if (DarsadKRDDaneh != 0) {
-                strParam += '2,';
-            }
-            if (DarsadKRRDaneh != 0) {
-                strParam += '1,';
-            }
-        }
-        if (HajmBetween30To100 != 0 && HajmBetween30To100 != '') {
-            if (DarsadKRDDaneh != 0) {
-                strParam += '1,';
-            }
-            if (DarsadKRRDaneh != 0) {
-                strParam += '0,';
-            }
-        }
-    }
-
-    strParamNew = '';
-    strParamSplit = strParam.split(',');
-    for (var i = 0; i < 4; i++) {
-        for (var j = 0; j < strParamSplit.length - 1; j++) {
-            if (i == strParamSplit[j]) {
-                strParamNew += i + ',';
-                break;
-            }
-        }
-    }
-    //////////////
-    ActivityTitle = ["با تراکم 85 درصد، به روش آشتو اصلاحي تا عمق 15 سانتيمتر", "با تراکم 90 درصد، به روش آشتو اصلاحي تا عمق 15 سانتيمتر"
-        , "با تراکم 95 درصد، به روش آشتو اصلاحي تا عمق 15 سانتيمتر", "با تراکم 100 درصد، به روش آشتو اصلاحي تا عمق 15 سانتيمتر"];
-    //////////////////
-    strParamNewSplit = strParamNew.split(',');
-    ////////////////
-    str = '';
-    if ((strParamNewSplit.length - 1) != 0) {
-        str += '<div class=\'row col-12\'><div class=\'row col-12\' style=\'background-color: #ffe8eb;border: 1px solid #ffa6c7;border-radius: 5px !important;\'>';
-        str += '<div class=\'col-md-6\'>آب پاشي و کوبيدن بستر خاکريزها يا کـف ترانشه ها و مانند آنها</div>';
-        str += '<div class=\'col-md-1\' style=\'padding: 0px;\'><div class=\'row\'><span style=\'border-bottom:1px solid #ccc\'>طول</span></div><div class=\'row\'><span>متر</span></div></div>';
-        str += '<div class=\'col-md-1\' style=\'padding: 0px;\'><div class=\'row\'><span style=\'border-bottom:1px solid #ccc\'>عرض</span></div><div class=\'row\'><span>متر</span></div></div>';
-        str += '<div class=\'col-md-2\'><div class=\'row\'><span>شخم زدن زمین غیر</span></div><div class=\'row\'>سنگی تا 15 سانتیمتر</div></div>';
-        str += '<div class=\'col-md-2\'><div class=\'row\'><span>تسطیح بستر خاکریزی</span></div><div class=\'row\'>با گریدر</div></div>';
-        str += '</div>';
-        str += '<div class=\'row col-12\' style=\'border: 1px solid #ffa6c7;margin-top:2px\'>';
-        for (var i = 0; i < strParamNewSplit.length - 1; i++) {
-            str += '<div class=\'row col-12\' style=\'text-align: center;margin-top:5px\'>';
-            str += '<div class=\'col-md-6\'>' + ActivityTitle[strParamNewSplit[i]] + '</div>';
-            str += '<div class=\'col-md-1\' style=\'padding:0px 3px;\'><input style=\'text-align:center;padding-left:0px;padding-right:0px;\' type=\'text\' class=\'form-control input-sm\' id=\'txtTool' + strParamNewSplit[i] + '\' value=\'0\'/></div>';
-            str += '<div class=\'col-md-1\' style=\'padding:0px 3px;\'><input style=\'text-align:center;padding-left:0px;padding-right:0px;\' type=\'text\' class=\'form-control input-sm\' id=\'txtArz' + strParamNewSplit[i] + '\' value=\'0\'/></div>';
-            str += '<div class=\'col-md-2\'><input style=\'text-align:center;padding-left:0px;padding-right:0px;\' type=\'checkbox\' id=\'ckKRShokhmZadan' + strParamNewSplit[i] + '\' /></div>';
-            str += '<div class=\'col-md-2\'><input type=\'checkbox\' id=\'ckKRTastih' + strParamNewSplit[i] + '\'/></div>';
-            str += '</div>';
-        }
-        str += '</div>';
-    }
-
-    $('#divKhakRiziInfoDetails').html(str);
-    $('#divKhakRiziInfoDetails').show();
-
-    $('#divKhakRiziInfoDetails input[type="checkbox"]').change(function () {
-        id = $(this).attr('id');
-        idFix = id.substring(0, 15);
-        idShomareh = id.substring(15, id.length);
-
-        if ($(this).is(':checked'))
-            if (idFix == 'ckKRShokhmZadan') {
-                $('#ckKRTastih' + idShomareh).prop("checked", true);
-            }
-    });
-
-    $('#divKhakRiziInfoDetails input[type="text"]').change(function () {
-        ////////////
-        if (!$.isNumeric($(this).val())) {
-            toastr.info('مقدار وارد شده نامعتبر میباشد', 'اطلاع');
-            $(this).addClass('ErrorValueStyle');
-        }
-        else {
-            $(this).removeClass('ErrorValueStyle');
-        }
-        ///////////////
-    });
-
-    return true;
-}
-
 function ShowExistingKMKhakRizi(BarAvordUserId) {
     var vardata = new Object();
     vardata.BarAvordUserId = BarAvordUserId;
@@ -1723,11 +1395,12 @@ function ShowExistingKMKhakRizi(BarAvordUserId) {
     });
 }
 
-function DeleteEBKhakRizi(EBId, BarAvordUserId) {
+function DeleteEBKhakRizi(EBId, BarAvordUserId, Num) {
     debugger;
     var vardata = new Object();
     vardata.BarAvordUserId = BarAvordUserId;
     vardata.ConditionContextId = EBId;
+    vardata.Num = Num;
     $.ajax({
         type: "POST",
         url: "/KhakRizi/DeleteEBKhakRizi",
@@ -1746,13 +1419,14 @@ function DeleteEBKhakRizi(EBId, BarAvordUserId) {
 
 }
 
-function SaveEBKhakRizi(EBId, BarAvordUserId) {
+function SaveEBKhakRizi(EBId, BarAvordUserId, num) {
     Year = $('#HDFYear').val();
-
+    debugger;
     var vardata = new Object();
     vardata.BarAvordUserId = BarAvordUserId;
     vardata.ConditionContextId = EBId;
     vardata.Year = Year;
+    vardata.Num = num;
 
     $.ajax({
         type: "POST",
@@ -1761,10 +1435,11 @@ function SaveEBKhakRizi(EBId, BarAvordUserId) {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (response) {
+            toastr.success('اضافه بها خاکریزی بدرستی درج شد', 'موفقیت');
 
-            LoadRizMetreEzafeBahaKhakRizi(EBId, BarAvordUserId)
+            LoadRizMetreEzafeBahaKhakRizi(EBId, BarAvordUserId, num)
 
-            $("#divEBKhakRizi" + EBId).slideDown(500);
+            $("#divEBKhakRizi_" + num + "_" + EBId).slideDown(500);
         },
         error: function (response) {
             toastr.error('مشکل در بارگزاری اضافه بها خاکریزی', 'خطا');

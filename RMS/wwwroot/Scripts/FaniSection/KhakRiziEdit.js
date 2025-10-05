@@ -1,4 +1,4 @@
-﻿function renderRadiosForEdit($container, groupName, items, KhakRizi) {
+﻿function renderRadiosForEdit($container, groupName, items, KhakRizi,num) {
 
     debugger;
 
@@ -13,15 +13,15 @@
     NoeRah = KhakRizi.noeRah;
 
 
-    const uid = Math.random().toString(36).slice(2, 8);
-
     items.forEach((item, idx) => {
+        debugger;
+
         // پشتیبانی از هر دو حالت PascalCase/camelCase
         const val = (item.id ?? item.Id ?? idx);
         const lbl = (item.description ?? item.Description ?? '').toString();
-        const id = `${groupName}-${uid}-${val}`;
+        const id = `${groupName}_${val}`;
 
-        if (groupName == 'roadType') {
+        if (groupName == 'roadType'+num) {
             $input = $('<input/>', {
                 class: 'form-check-input',
                 type: 'radio',
@@ -75,7 +75,7 @@ function renderHajmInputsForEdit($container, items, KhakRizi, num) {
 
         const idVal = item.id ?? item.Id ?? idx;
         const text = (item.description ?? item.Description ?? '').toString();
-        const tid = `txtHajmKhRizi_${num}`;
+        const tid = `txtHajmKhRiziExist_${num}`;
 
         // col-10: متن توضیح آیتم
         const $colLabel = $('<div/>', { class: 'col-9 d-flex align-items-center' })
@@ -161,7 +161,7 @@ function validateRadioGroupsForEdit(num) {
 
 function validateHajmInputsOnEdit(num) {
     debugger;
-    const $inputs = $('[id^="txtHajmKhRizi_' + num + '"]');
+    const $inputs = $('[id^="txtHajmKhRiziExist_' + num + '"]');
     let anyValid = false;
 
     $inputs.each(function () {
@@ -329,7 +329,8 @@ function UpdateRMKhakRiziAddedItemsClick(Id) {
     }
 }
 
-function UpdateKhakRiziInfo(khakRiziID, barAvordUserId, num) {
+function UpdateKhakRiziInfo(barAvordUserId, num) {
+    debugger;
     const kmOk = validateKmFieldsForEdit(num);
     const radiosOk = validateRadioGroupsForEdit(num);  // برای roadType و noeDaneBandi
     const hajmOk = validateHajmInputsOnEdit(num);
@@ -343,7 +344,7 @@ function UpdateKhakRiziInfo(khakRiziID, barAvordUserId, num) {
 
     // گردآوری مقادیر حجم‌ها (فقط آن‌هایی که مقدار دارند)
     var hajmValues = '';
-    $('.hajm-input').each(function () {
+    $('[id^="txtHajmKhRiziExist_' + num + '"]').each(function () {
         const raw = ($(this).val() || '').trim();
         if (raw !== '') {
             const v = normalizeDecimal4(raw);
@@ -353,9 +354,10 @@ function UpdateKhakRiziInfo(khakRiziID, barAvordUserId, num) {
     });
 
     var vardata = {
-        KhakRiziId: khakRiziID,
-        FromKm: parseFloat($('#txtFromKMForKhakRizi' + num).val().replace('+', '')),
-        ToKm: parseFloat($('#txtToKMForKhakRizi' + num).val().replace('+', '')),
+        BarAvordUserId: barAvordUserId,
+        Num:num,
+        FromKM: parseFloat($('#txtFromKMForKhakRizi' + num).val().replace('+', '')),
+        ToKM: parseFloat($('#txtToKMForKhakRizi' + num).val().replace('+', '')),
 
         RoadTypeId: parseInt($('input[name="roadType' + num + '"]:checked').val(), 10),
         NoeDaneBandiId: parseInt($('input[name="noeDaneBandi' + num + '"]:checked').val(), 10),
@@ -363,8 +365,7 @@ function UpdateKhakRiziInfo(khakRiziID, barAvordUserId, num) {
         // تغییر اصلی: به‌جای Id/Value تکی، مجموعه را می‌فرستیم
         HajmKhakRiziValues: hajmValues,  // ← لیست {Id, Value}
 
-        BarAvordUserId: barAvordUserId,
-        Year: Year = parseInt($('#HDFYear').val())
+        Year: Year = parseInt($('#HDFYear').val()),
     };
     debugger;
 
@@ -375,11 +376,11 @@ function UpdateKhakRiziInfo(khakRiziID, barAvordUserId, num) {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (response) {
-
-            GetExistKhakRizi(barAvordUserId);
+            toastr.success('ویرایش بدرستی انجام گرفت', 'موفقیت');
+            GetExistKhakRizi(barAvordUserId,num);
         },
         error: function () {
-            toastr.error('مشکل در ثبت اطلاعات کیلومتراژ', 'خطا');
+            toastr.error('مشکل در ویرایش اطلاعات', 'خطا');
         }
     });
 }
