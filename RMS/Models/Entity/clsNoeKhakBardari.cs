@@ -11,6 +11,11 @@ namespace RMS.Models.Entity
         public string FBItemShomareh { get; set; }
         public string Title { get; set; }
         public int Year { get; set; }
-
+        /// <summary>
+        /// 1- خاکبرداری
+        /// 2- پی کنی
+        /// 3- کانال کنی
+        /// </summary>
+        public int Type { get; set; }
     }
 }

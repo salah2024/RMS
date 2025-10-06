@@ -482,10 +482,10 @@ function GharzehClick(OpId) {
     GharzehWithBarAvordClick(OpId, BarAvordUserID);
 }
 
-function PayKaniClick(OpId) {
-    BarAvordUserID = $('#HDFBarAvordUserID').val();
-    PayKaniWithBarAvordClick(OpId, BarAvordUserID);
-}
+//function PayKaniClick(OpId) {
+//    BarAvordUserID = $('#HDFBarAvordUserID').val();
+//    PayKaniWithBarAvordClick(OpId, BarAvordUserID);
+//}
 
 function spanOnClick(Id, ConditionGroupId) {
 

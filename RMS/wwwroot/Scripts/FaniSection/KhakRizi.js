@@ -183,17 +183,17 @@ function ShowSelctionKhakRizi(IsNew, KMExistingId, KMNum, BarAvordUserId, FromKM
                 $('<div/>', { class: 'row' }).append(
                     $('<div/>', { class: 'col-12 khak-card' }).append(
                         $('<div/>', { class: 'row' })
-                            .append($('<div/>', { class: 'col-md-4' }).append($('<span/>', { text: 'نوع راه' })))
-                            .append($('<div/>', { class: 'col-md-3' }).append($('<span/>', { text: 'نوع دانه بندی نوع خاک مصرفی در خاکریزی' })))
+                            .append($('<div/>', { class: 'col-md-3' }).append($('<span/>', { text: 'نوع راه' })))
+                            .append($('<div/>', { class: 'col-md-4' }).append($('<span/>', { text: 'نوع دانه بندی نوع خاک مصرفی در خاکریزی' })))
                             .append($('<div/>', { class: 'col-md-5' }).append($('<span/>', { text: 'حجم خاکریزی' })))
                     )
                 );
 
             // ردیف محتوای رادیوها
             const $contentRow =
-                $('<div/>', { class: 'row', style: 'margin-top:8px;' })
-                    .append($('<div/>', { class: 'col-md-4' }).append($('<div/>', { id: 'col-roadType', class: 'khak-radios' })))
-                    .append($('<div/>', { class: 'col-md-3' }).append($('<div/>', { id: 'col-noeDaneBandi', class: 'khak-radios' })))
+                $('<div/>', { class: 'row', style: 'background-color:#ddd4ff;padding:5px;margin-bottom:20px;' })
+                    .append($('<div/>', { class: 'col-md-3' }).append($('<div/>', { id: 'col-roadType', class: 'khak-radios' })))
+                    .append($('<div/>', { class: 'col-md-4' }).append($('<div/>', { id: 'col-noeDaneBandi', class: 'khak-radios' })))
                     .append($('<div/>', { class: 'col-md-5' }).append($('<div/>', { id: 'col-hajmKhakRizi', class: 'khak-radios' })));
 
             $Container.append($headerRow, $contentRow);
@@ -551,7 +551,7 @@ function GetExistKhakRizi(BarAvordUserId, num) {
         </div>
     </div>
 
-            <div class="row">
+            <div class="row" style="background-color: #ddd4ff;padding:5px;margin-bottom: 20px;">
                 <div class="col-md-3">
                     <div id="col-roadType${this.kmNum}" class="khak-radios">
                     </div>
@@ -718,7 +718,7 @@ function showKhakRiziDetails(num, BarAvordUserId) {
                     var it = group[0];
                     var inputId = "chk_" + num + "_" + it.id;
 
-                    var $wrap = $('<div class="single-checkbox" style="margin:6px 0;"></div>');
+                    var $wrap = $('<div class="single-checkbox" style="margin:6px 0;padding:10px;border:1px solid #ddd;border-radius:10px;background-color:#eee7ff;"></div>');
                     var $input = $('<input type="checkbox" class="eb-checkbox">')
                         .attr({ id: inputId, value: it.id })
                         .data("id", it.id);
@@ -750,7 +750,7 @@ function showKhakRiziDetails(num, BarAvordUserId) {
                     var groupLabel = group[0].groupContext || ("گروه " + key);
 
                     var $fs = $(`
-                        <fieldset class="radio-group" style="margin:12px 0; padding:10px; border:1px solid #ddd; border-radius:10px;">
+                        <fieldset class="radio-group" style="margin:12px 0; padding:10px; border:1px solid #ddd; border-radius:10px;background-color:#eee7ff;">
                         <div class="eb-group-header" style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
                             <input type="checkbox" class="eb-group-checkbox" id="grpchk_${num}_${key}" data-group="${groupName}">
                             <span class="eb-group-title" data-group="${groupName}" style="font-weight:600; user-select:none; cursor:default;"></span>
@@ -1301,96 +1301,6 @@ function ShowRiziMetreKhakRizi(BarAvordUserId, num) {
 
         }, error: function (response) {
             toastr.error('مشکل در بارگذاری کیلومتراژ انتخابی', 'خطا');
-        }
-    });
-}
-
-
-function ShowExistingKMKhakRizi(BarAvordUserId) {
-    var vardata = new Object();
-    vardata.BarAvordUserId = BarAvordUserId;
-    vardata.Type = 3;
-    $.ajax({
-        type: "POST",
-        url: "/AmalyateKhakiInfoForBarAvords/GetExistingKMAmalyateKhakiInfoWithBarAvordId",
-        data: JSON.stringify(vardata),
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: function (response) {
-            var KMAmalyateKhakiBarAvord = response;
-            if (KMAmalyateKhakiBarAvord.length > 0) {
-                strSEKB = `
-                 <div class="row col-12 ExistKhBHeaderStyle">
-                        <div class="col-1" style="border-left: 1px solid #ccc;border-right: 1px solid #ccc;"><span>ردیف</span></div>
-                        <div class="col-2" style="border-left: 1px solid #ccc;border-right: 1px solid #ccc;" ><span>از کیلومتراژ</span></div>
-                        <div class="col-2" style="border-left: 1px solid #ccc;border-right: 1px solid #ccc;"><span>تا کیلومتراژ</span></div>
-                        <div class="col-2" style="border-left: 1px solid #ccc;border-right: 1px solid #ccc;"><span>حجم خاکبرداری</span></div>
-                        <div class="col-3" style="border-left: 1px solid #ccc;border-right: 1px solid #ccc;"><span>عملیات</span></div>
-                        <div class="col-2" style="border-left: 1px solid #ccc;border-right: 1px solid #ccc;"></div>
-                </div>
-
-            `;
-                $.each(KMAmalyateKhakiBarAvord, function () {
-                    KMExistingId = this.id;
-                    FromKM = this.fromKM;
-                    ToKM = this.toKM;
-                    FromKMSplit = this.fromKMSplit;
-                    ToKMSplit = this.toKMSplit;
-                    Value = this.value;
-                    KMNum = this.kmNum;
-                    Type = this.type;
-
-                    strSEKB += `
-    <div id="div${KMNum}" class="row col-12 ExistKhBStyle" style="border:1px solid #a99dbd;background-color:#ffe9ff">
-    <div id="divExistKMHeader${KMNum}" class="row col-12 ExistKMHeaderStyle" onclick="ViewKhakBardariInfo('${KMExistingId}'` + ',' + `${KMNum}` + ',' + `'${BarAvordUserId}')">
-    <div class="col-md-1 label-col" style="text-align:center">
-      <span>${KMNum}</span>
-    </div>
-    <!-- از کیلومتراژ -->
-    
-    <div class="col-md-2">
-      <input type="text" class="form-control_1 khakbardariTextStyle  input-sm text-center" id="txtFromKMForKhakbardari${KMNum}" value="${FromKMSplit}" onclick="event.stopPropagation();"/>
-    </div>
-
-    <!-- تا کیلومتراژ -->
-    
-    <div class="col-md-2">
-      <input type="text" class="form-control_1 khakbardariTextStyle input-sm text-center" id="txtToKMForKhakbardari${KMNum}" value="${ToKMSplit}" onclick="event.stopPropagation();"/>
-    </div>
-
-    <!-- حجم خاکبرداری -->
-    
-    <div class="col-md-2">
-      <input type="text" class="form-control_1 khakbardariTextStyle input-sm text-center" id="txtHajmKhakBardari${KMNum}" value="${Value}" onclick="event.stopPropagation();"/>
-    </div>
-        <div class="col-md-3" style="text-align:center">
-        <span>جهت مشاهده جزییات کلیک نمایید</span>
-</div>
-   
-    </div>
-  <!-- بخش نمایش -->
-
-  <div class="row col-12" style="direction:ltr" id="MainViewKhakBardari${KMNum}" class="khakbardari-view">
-    <div id="ViewKhakBardari${KMNum}" class="khakbardari-view" style="direction: rtl;">
-    </div>
-    <div class="col-md-2 action-col">
-      <a class="btn buttonStyleBoard" style="color:#fff" onclick="UpdateKhakBardariInfo('${KMExistingId}'` + ',' + `'${BarAvordUserId}'` + ',' + `${KMNum})" onclick="event.stopPropagation();">
-        ذخیره
-      </a>
-    </div>
-  <div id="ViewRizMetreKHRizi${KMNum}" style="direction: rtl;" class="col-12 khakbardari-view"></div>
-  <div id="ViewKhakRiziEzafeBaha${KMNum}" style="direction: rtl;" class="col-12 khakbardari-view"></div>
-  </div><!-- MainViewKhakBardari -->
-  </div>
-    `;
-                });
-
-                $('#divExistingKMKhakRizi').html(strSEKB);
-                $('#divExistingKMKhakRizi').find('#MainViewKhakRizi' + KMNum).hide();
-            }
-        },
-        error: function (response) {
-            toastr.error('مشکل در بارگزاری کیلومتراژهای موجود', 'خطا');
         }
     });
 }
