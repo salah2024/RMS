@@ -2,14 +2,11 @@
 
 namespace RMS.Controllers.AmalyateKhaki.Dto
 {
-    public class GetDetailsOfKMKhakBardariInfoDto
+    public class GetDetailsOfKMPayKaniInfoDto
     {
-        public Guid AmalyateKhakiInfoForBarAvordId { get; set; }
+        public Guid PayKaniInfoForBarAvordId { get; set; }
         public NoeFehrestBaha NoeFB { get; set; }
         public int Year { get; set; }
-        /// <summary>
-        /// خاکریزی
-        /// </summary>
         public int Type { get; set; }
     }
 }

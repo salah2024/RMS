@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace RMS.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251007101333_a101")]
+    partial class a101
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -286,46 +289,6 @@ namespace RMS.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.ToTable("GetExistingKMAmalyateKhakiInfoWithBarAvordDto");
-                });
-
-            modelBuilder.Entity("RMS.Controllers.AmalyateKhaki.Dto.GetExistingKMPayKaniInfoWithBarAvordDto", b =>
-                {
-                    b.Property<Guid>("BaravordUserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("FromKM")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FromKMSplit")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("ID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("KMNum")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ToKM")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ToKMSplit")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Value")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.ToTable("GetExistingKMPayKaniInfoWithBarAvordDto");
                 });
 
             modelBuilder.Entity("RMS.Controllers.Operation.Dto.ItemsFBShomarehValueShomarehUpdateProcedureDto", b =>

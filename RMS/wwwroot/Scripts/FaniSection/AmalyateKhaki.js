@@ -171,6 +171,8 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
 
     var vardata = new Object();
     vardata.Year = Year;
+    //خاکریزی
+    vardata.Type = 1;
 
     $.ajax({
         type: "POST",
@@ -781,6 +783,9 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
     vardata.AmalyateKhakiInfoForBarAvordId = KMExistingId;
     vardata.NoeFB = NoeFB;
     vardata.Year = Year;
+    vardata.Type = 1;
+
+    debugger;
 
     $.ajax({
         type: "POST",

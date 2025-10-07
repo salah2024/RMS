@@ -3,5 +3,6 @@
     public class ReturnNoeKhakBardariDto
     {
         public int Year { get;set; }
+        public int Type { get; set; }
     }
 }

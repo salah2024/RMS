@@ -18,7 +18,7 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
 
     public JsonResult ReturnNoeKhakBardari([FromBody] ReturnNoeKhakBardariDto request)
     {
-        List<clsNoeKhakBardari> lstNoeKhakBardari = _context.NoeKhakBardaris.Where(x => x.Year == request.Year).ToList();
+        List<clsNoeKhakBardari> lstNoeKhakBardari = _context.NoeKhakBardaris.Where(x => x.Year == request.Year && x.Type == request.Type).ToList();
         return new JsonResult(lstNoeKhakBardari);
     }
 
@@ -486,8 +486,9 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
 
         NoeFehrestBaha NoeFB = request.NoeFB;
         int Year = request.Year;
+        int Type = request.Type;
 
-        List<clsAmalyateKhakiInfoForBarAvordMore> KMAmalyateKhakiBarAvordMore = 
+        List<clsAmalyateKhakiInfoForBarAvordMore> KMAmalyateKhakiBarAvordMore =
             context.AmalyateKhakiInfoForBarAvordMores.Where(x => x.AmalyateKhakiInfoForBarAvordId == AmalyateKhakiInfoForBarAvordId).ToList();
 
         //List<AmalyateKhakiInfoForBarAvordDetailsDto> KMAmalyateKhakiBarAvordDetails = context.AmalyateKhakiInfoForBarAvordDetailses.Include(x => x.NoeKhakBardari)
@@ -509,8 +510,7 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
                 noe => noe.Id,
                 detail => detail.NoeKhakBardariId,
                   (noe, details) => new { noe, details }
-                )
-                .SelectMany(
+                ).SelectMany(
             x => x.details.DefaultIfEmpty(),
             (x, detail) => new AmalyateKhakiInfoForBarAvordDetailsDto
             {
@@ -518,9 +518,9 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
                 AmalyateKhakiInfoForBarAvordId = detail != null ? detail.AmalyateKhakiInfoForBarAvordId : (Guid?)null,
                 NoeKhakBardariId = x.noe.Id,
                 Title = x.noe.Title,
-                Value = detail != null ? detail.Value : (decimal?)null
-            }
-            ).ToList();
+                Value = detail != null ? detail.Value : (decimal?)null,
+                Type = x.noe.Type
+            }).Where(x=>x.Type==Type).ToList();
 
 
         List<Guid> gKMAId = KMAmalyateKhakiBarAvordDetails

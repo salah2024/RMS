@@ -21,6 +21,11 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<clsAmalyateKhakiInfoForBarAvordEzafeBaha> AmalyateKhakiInfoForBarAvordEzafeBahas { get; set; }
     public DbSet<clsAmalyateKhakiInfoForBarAvordDetailsMore> AmalyateKhakiInfoForBarAvordDetailsMores { get; set; }
     public DbSet<clsAmalyateKhakiInfoForBarAvordMore> AmalyateKhakiInfoForBarAvordMores { get; set; }
+    public DbSet<clsPayKaniInfoForBarAvord> PayKaniInfoForBarAvords { get; set; }
+    public DbSet<clsPayKaniInfoForBarAvordDetails> PayKaniInfoForBarAvordDetailses { get; set; }
+    public DbSet<clsPayKaniInfoForBarAvordEzafeBaha> PayKaniInfoForBarAvordEzafeBahas { get; set; }
+    public DbSet<clsPayKaniInfoForBarAvordDetailsMore> PayKaniInfoForBarAvordDetailsMores { get; set; }
+    public DbSet<clsPayKaniInfoForBarAvordMore> PayKaniInfoForBarAvordMores { get; set; }
     public DbSet<clsAnalizBaha> AnalizBahas { get; set; }
     public DbSet<clsAppOperationInfoDetails> AppOperationInfoDetailses { get; set; }
     public DbSet<clsAppOperationInfoMain> AppOperationInfoMains { get; set; }
@@ -81,6 +86,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<clsNoeKhakBardari> NoeKhakBardaris { get; set; }
     public DbSet<clsAmalyateKhakiInfoForBarAvordDetailsRizMetre> AmalyateKhakiInfoForBarAvordDetailsRizMetres { get; set; }
     public DbSet<clsAmalyateKhakiInfoForBarAvordEzafeBahaRizMetre> AmalyateKhakiInfoForBarAvordEzafeBahaRizMetres { get; set; }
+    public DbSet<clsPayKaniInfoForBarAvordDetailsRizMetre> PayKaniInfoForBarAvordDetailsRizMetres { get; set; }
+    public DbSet<clsPayKaniInfoForBarAvordEzafeBahaRizMetre> PayKaniInfoForBarAvordEzafeBahaRizMetres { get; set; }
     public DbSet<clsNoeKhakBardariEzafeBaha> NoeKhakBardariEzafeBahas { get; set; }
     public DbSet<clsNoeKhakBardari_NoeKhakBardariEzafeBaha> NoeKhakBardari_NoeKhakBardariEzafeBahas { get; set; }
     public DbSet<clsKhakRiziDarsad> KhakRiziDarsads { get; set; }
@@ -111,6 +118,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         modelBuilder.Entity<ItemsFBShomarehValueShomarehUpdateProcedureDto>().HasNoKey();
         modelBuilder.Entity<ItemsFBDependQuestionForAbnieFaniForSPDto>().HasNoKey();
         modelBuilder.Entity<GetExistingKMAmalyateKhakiInfoWithBarAvordDto>().HasNoKey();
+        modelBuilder.Entity<GetExistingKMPayKaniInfoWithBarAvordDto>().HasNoKey();
 
         modelBuilder.Entity<clsOperationHasAddedOperations>()
             .HasOne(x => x.Operation)

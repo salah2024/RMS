@@ -1,10 +1,10 @@
 ﻿namespace RMS.Controllers.AmalyateKhaki.Dto
 {
-    public class AmalyateKhakiInfoForBarAvordDetailsDto
+    public class PayKaniInfoForBarAvordDetailsDto
     {
         public Guid? ID { get; set; }
-        public Guid? AmalyateKhakiInfoForBarAvordId;
-        public long NoeKhakBardariId { get; set; }
+        public Guid? PayKaniInfoForBarAvordId;
+        public long NoePayKaniId { get; set; }
         public string Title { get; set; }
         public decimal? Value { get; set; }
         public int Type { get; set; }
