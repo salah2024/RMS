@@ -10,6 +10,7 @@ namespace RMS.Controllers.AmalyateKhaki.Dto
         public long ToKM { get; set; }
         public string HKB { get; set; }
         public long Year { get; set; }
+        public int KMNum { get; set; }
         public List<PayKaniInfoForBarAvordItemsForUpdateDto> lstItems { get; set; }
     }
 

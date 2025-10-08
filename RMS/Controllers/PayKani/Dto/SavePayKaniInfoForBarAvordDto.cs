@@ -5,7 +5,11 @@ namespace RMS.Controllers.AmalyateKhaki.Dto
     public class SavePayKaniInfoForBarAvordDto
     {
         public Guid BarAvordUserId { get; set; }
-        public NoeAmalyatKhaki Type { get; set; }
+        /// <summary>
+        /// 2-پی کنی
+        /// 3- کانال کنی
+        /// </summary>
+        public int Type { get; set; }
         public long FromKM { get; set; }
         public long ToKM { get; set; }
         public string HKB { get; set; }

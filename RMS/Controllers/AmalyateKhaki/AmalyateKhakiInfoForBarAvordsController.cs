@@ -224,6 +224,7 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
             string HKB = request.HKB;
             Guid KMKhakBardariId = request.KMKhakBardariId;
             long Year = request.Year;
+            int Num = request.KMNum;
 
             DateTime Now = DateTime.Now;
             List<KhakBardariInfoForBarAvordItemsForUpdateDto> lstItems = request.lstItems;
@@ -234,7 +235,7 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
 
             decimal dHKB = decimal.Parse(HKB);
 
-            clsAmalyateKhakiInfoForBarAvord? currentAmalyateKhakiInfoForBarAvord = _context.AmalyateKhakiInfoForBarAvords.FirstOrDefault(x => x.BaravordUserId == BarAvordUserId);
+            clsAmalyateKhakiInfoForBarAvord? currentAmalyateKhakiInfoForBarAvord = _context.AmalyateKhakiInfoForBarAvords.FirstOrDefault(x => x.BaravordUserId == BarAvordUserId && x.KMNum==Num);
             if (currentAmalyateKhakiInfoForBarAvord != null)
             {
 

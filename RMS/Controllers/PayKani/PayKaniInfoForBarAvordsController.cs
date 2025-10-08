@@ -26,7 +26,7 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
     {
 
         Guid BarAvordUserId = request.BarAvordUserId;
-        NoeAmalyatKhaki Type = request.Type;
+        int Type = request.Type;
         long FromKM = request.FromKM;
         long ToKM = request.ToKM;
         string HKB = request.HKB;
@@ -53,6 +53,7 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
         PayKaniInfoForBarAvord.Name = "";
         PayKaniInfoForBarAvord.KMNum = intKMNum;
         PayKaniInfoForBarAvord.Value = dHKB;
+        PayKaniInfoForBarAvord.Type = Type;
         _context.PayKaniInfoForBarAvords.Add(PayKaniInfoForBarAvord);
         //_context.SaveChanges();
         Guid Id = PayKaniInfoForBarAvord.ID;
@@ -223,6 +224,7 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
             string HKB = request.HKB;
             Guid KMPayKaniId = request.KMPayKaniId;
             long Year = request.Year;
+            long Num = request.KMNum;
 
             DateTime Now = DateTime.Now;
             List<PayKaniInfoForBarAvordItemsForUpdateDto> lstItems = request.lstItems;
@@ -233,7 +235,7 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
 
             decimal dHKB = decimal.Parse(HKB);
 
-            clsPayKaniInfoForBarAvord? currentPayKaniInfoForBarAvord = _context.PayKaniInfoForBarAvords.FirstOrDefault(x => x.BaravordUserId == BarAvordUserId);
+            clsPayKaniInfoForBarAvord? currentPayKaniInfoForBarAvord = _context.PayKaniInfoForBarAvords.FirstOrDefault(x => x.BaravordUserId == BarAvordUserId && x.KMNum == Num);
             if (currentPayKaniInfoForBarAvord != null)
             {
 
@@ -416,33 +418,33 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
                 /////دریافت اضافه بهاهای درج شده
                 ////
 
-                List<clsPayKaniInfoForBarAvordEzafeBaha> lstAKhForBEB =
-                        _context.PayKaniInfoForBarAvordEzafeBahas.Where(x => x.PayKaniInfoForBarAvordId == currentPayKaniInfoForBarAvord.ID).ToList();
+                //List<clsPayKaniInfoForBarAvordEzafeBaha> lstAKhForBEB =
+                //        _context.PayKaniInfoForBarAvordEzafeBahas.Where(x => x.PayKaniInfoForBarAvordId == currentPayKaniInfoForBarAvord.ID).ToList();
 
-                ///حذف اضافه بهاهای قبلی
-                _context.PayKaniInfoForBarAvordEzafeBahas.RemoveRange(lstAKhForBEB);
+                /////حذف اضافه بهاهای قبلی
+                //_context.PayKaniInfoForBarAvordEzafeBahas.RemoveRange(lstAKhForBEB);
 
 
-                SaveEzafeBahaPayKaniDto request1 = new SaveEzafeBahaPayKaniDto
-                {
-                    PayKaniInfoForBarAvordId = currentPayKaniInfoForBarAvord.ID,
-                    BarAvordUserId = BarAvordUserId,
-                    Year = Year
-                };
-                _context.SaveChanges();
+                //SaveEzafeBahaPayKaniDto request1 = new SaveEzafeBahaPayKaniDto
+                //{
+                //    PayKaniInfoForBarAvordId = currentPayKaniInfoForBarAvord.ID,
+                //    BarAvordUserId = BarAvordUserId,
+                //    Year = Year
+                //};
+                //_context.SaveChanges();
 
-                List<long> lstAKh = lstAKhForBEB.Select(x => x.NoeKhakBardariEzafeBahaId).ToList();
+                //List<long> lstAKh = lstAKhForBEB.Select(x => x.NoeKhakBardariEzafeBahaId).ToList();
 
-                foreach (var item in lstAKh)
-                {
-                    PayKaniCommon common = new PayKaniCommon();
-                    request1.NoeKhakBardariEzafeBahaId = item;
-                    common.SaveEzafeBahaPayKani(request1, context);
-                    //if ()
-                    //    return new JsonResult("OK");
-                    //else
-                    //    return new JsonResult("نوع اضافه بها یافت نشد");
-                }
+                //foreach (var item in lstAKh)
+                //{
+                //    PayKaniCommon common = new PayKaniCommon();
+                //    request1.NoeKhakBardariEzafeBahaId = item;
+                //    common.SaveEzafeBahaPayKani(request1, context);
+                //    //if ()
+                //    //    return new JsonResult("OK");
+                //    //else
+                //    //    return new JsonResult("نوع اضافه بها یافت نشد");
+                //}
 
                 _context.SaveChanges();
 
@@ -458,7 +460,7 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
 
     public JsonResult GetExistingKMPayKaniInfoWithBarAvordId([FromBody] RequestExistingKMPayKaniInfoWithBarAvord request)
     {
-        string strParam1 = "BarAvordUserId='" + request.BaravordId + "'";
+        string strParam1 = "BarAvordUserId='" + request.BaravordId + "' and Type=" + request.Type;
         var Param = new SqlParameter("@Parameter", strParam1);
 
         var GetExistingKMAmalyateKhakiInfoWithBarAvord = _context.Set<GetExistingKMPayKaniInfoWithBarAvordDto>()
