@@ -4,7 +4,7 @@
     {
         public Guid? ID { get; set; }
         public Guid? PayKaniInfoForBarAvordId;
-        public long NoePayKaniId { get; set; }
+        public long NoeKhakBardariId { get; set; }
         public string Title { get; set; }
         public decimal? Value { get; set; }
         public int Type { get; set; }

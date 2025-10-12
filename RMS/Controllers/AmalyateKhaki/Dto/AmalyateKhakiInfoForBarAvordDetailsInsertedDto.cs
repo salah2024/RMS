@@ -7,6 +7,7 @@ namespace RMS.Controllers.AmalyateKhaki.Dto
         public Guid RizMetreId { get; set; }
         public long NoeKhakBardariId { get; set; }
         public string NoeKhakBardariName { get; set; }
+        public string FBShomareh { get; set; }
         public List<clsAmalyateKhakiInfoForBarAvordDetailsMore> lstAmalyateKhakiInfoForBarAvordDetailsMore { get;set; }
     }
 }

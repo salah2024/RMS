@@ -48,8 +48,8 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
 
         clsPayKaniInfoForBarAvord PayKaniInfoForBarAvord = new clsPayKaniInfoForBarAvord();
         PayKaniInfoForBarAvord.BaravordUserId = BarAvordUserId;
-        PayKaniInfoForBarAvord.FromKM = FromKM.ToString("D6");
-        PayKaniInfoForBarAvord.ToKM = ToKM.ToString("D6");
+        PayKaniInfoForBarAvord.FromKM = FromKM.ToString();
+        PayKaniInfoForBarAvord.ToKM = ToKM.ToString();
         PayKaniInfoForBarAvord.Name = "";
         PayKaniInfoForBarAvord.KMNum = intKMNum;
         PayKaniInfoForBarAvord.Value = dHKB;
@@ -241,8 +241,8 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
 
                 _context.Entry(currentPayKaniInfoForBarAvord).CurrentValues.SetValues(new
                 {
-                    FromKM = FromKM.ToString("D6"),
-                    ToKM = ToKM.ToString("D6"),
+                    FromKM = FromKM.ToString(),
+                    ToKM = ToKM.ToString(),
                     Value = dHKB
                 });
 
@@ -460,16 +460,19 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
 
     public JsonResult GetExistingKMPayKaniInfoWithBarAvordId([FromBody] RequestExistingKMPayKaniInfoWithBarAvord request)
     {
-        string strParam1 = "BarAvordUserId='" + request.BaravordId + "' and Type=" + request.Type;
-        var Param = new SqlParameter("@Parameter", strParam1);
 
-        var GetExistingKMAmalyateKhakiInfoWithBarAvord = _context.Set<GetExistingKMPayKaniInfoWithBarAvordDto>()
-            .FromSqlRaw("EXEC PayKaniInfoForBarAvordListWithParameter @Parameter", Param)
-            .ToList();
+        List<clsPayKaniInfoForBarAvord> GetExistingKMPayKaniInfoWithBarAvord = 
+            _context.PayKaniInfoForBarAvords.Where(x => x.BaravordUserId == request.BaravordId && x.Type == request.Type).ToList();
+        //string strParam1 = "BarAvordUserId='" + request.BaravordId + "' and Type=" + request.Type;
+        //var Param = new SqlParameter("@Parameter", strParam1);
 
-        var DtKMAmalyateKhakiBarAvord = GetExistingKMAmalyateKhakiInfoWithBarAvord.ToList();
+        //var GetExistingKMAmalyateKhakiInfoWithBarAvord = _context.Set<GetExistingKMPayKaniInfoWithBarAvordDto>()
+        //    .FromSqlRaw("EXEC PayKaniInfoForBarAvordListWithParameter @Parameter", Param)
+        //    .ToList();
 
-        return new JsonResult(DtKMAmalyateKhakiBarAvord);
+        //var DtKMAmalyateKhakiBarAvord = GetExistingKMAmalyateKhakiInfoWithBarAvord.ToList();
+
+        return new JsonResult(GetExistingKMPayKaniInfoWithBarAvord);
     }
 
 
@@ -510,7 +513,7 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
             {
                 ID = detail != null ? detail.ID : (Guid?)null,
                 PayKaniInfoForBarAvordId = detail != null ? detail.PayKaniInfoForBarAvordId : (Guid?)null,
-                NoePayKaniId = x.noe.Id,
+                NoeKhakBardariId = x.noe.Id,
                 Title = x.noe.Title,
                 Value = detail != null ? detail.Value : (decimal?)null,
                 Type = x.noe.Type

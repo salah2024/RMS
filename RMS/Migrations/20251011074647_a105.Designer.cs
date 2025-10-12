@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace RMS.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251011074647_a105")]
+    partial class a105
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -712,42 +715,6 @@ namespace RMS.Migrations
                     b.HasIndex("RizMetreUserId");
 
                     b.ToTable("tblAmalyateKhakiInfoForBarAvordEzafeBahaRizMetre");
-                });
-
-            modelBuilder.Entity("RMS.Models.Entity.clsAmalyateKhakiInfoForBarAvordHamlRizMetre", b =>
-                {
-                    b.Property<Guid>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("AmalyateKhakiInfoForBarAvordId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("InsertDateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool?>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("RemoveDateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("RizMetreId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("UserInserter")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("UserRemover")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("AmalyateKhakiInfoForBarAvordId");
-
-                    b.HasIndex("RizMetreId");
-
-                    b.ToTable("tblAmalyateKhakiInfoForBarAvordHamlRizMetre");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsAmalyateKhakiInfoForBarAvordMore", b =>
@@ -3697,25 +3664,6 @@ namespace RMS.Migrations
                         .IsRequired();
 
                     b.Navigation("AmalyateKhakiInfoForBarAvordEzafeBaha");
-
-                    b.Navigation("RizMetreUser");
-                });
-
-            modelBuilder.Entity("RMS.Models.Entity.clsAmalyateKhakiInfoForBarAvordHamlRizMetre", b =>
-                {
-                    b.HasOne("RMS.Models.Entity.clsAmalyateKhakiInfoForBarAvord", "AmalyateKhakiInfoForBarAvord")
-                        .WithMany()
-                        .HasForeignKey("AmalyateKhakiInfoForBarAvordId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RMS.Models.Entity.clsRizMetreUsers", "RizMetreUser")
-                        .WithMany()
-                        .HasForeignKey("RizMetreId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AmalyateKhakiInfoForBarAvord");
 
                     b.Navigation("RizMetreUser");
                 });

@@ -23,7 +23,7 @@ function ChanelKaniClick(OpId) {
       <span>از کیلومتراژ:</span>
     </div>
     <div class="col-md-1">
-      <input type="text" class="form-control_1 khakbardariTextStyle  input-sm text-center" id="txtFromKMForChanelKani" value="000+000"/>
+      <input type="text" class="form-control_1 khakbardariTextStyle  input-sm text-center" id="txtFromKMForChanelKani" value="0"/>
     </div>
 
     <!-- تا کیلومتراژ -->
@@ -31,7 +31,7 @@ function ChanelKaniClick(OpId) {
       <span>تا کیلومتراژ:</span>
     </div>
     <div class="col-md-1">
-      <input type="text" class="form-control_1 khakbardariTextStyle input-sm text-center" id="txtToKMForChanelKani" value="000+000"/>
+      <input type="text" class="form-control_1 khakbardariTextStyle input-sm text-center" id="txtToKMForChanelKani" value="0"/>
     </div>
 
     <!-- حجم پی کنی -->
@@ -69,6 +69,23 @@ function ChanelKaniClick(OpId) {
     `;
 
     $('#ula' + OpId).html(str);
+
+    setTimeout(() => { $('#txtFromKMForChanelKani').focus(); }, 200);
+
+    $('#ula' + OpId).off('keydown.Chanelkani').on('keydown.Chanelkani', '.khakbardariTextStyle', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // جلوگیری از submit فرم
+            const inputs = $('.khakbardariTextStyle');
+            const idx = inputs.index(this);
+            if (idx >= 0 && idx < inputs.length - 1) {
+                inputs.eq(idx + 1).focus().select();
+            } else {
+                // اگر آخرین input بود، می‌توانی فوکوس را به دکمه ذخیره بدهی
+                $('.buttonStyleBoard').focus();
+            }
+        }
+    });
+
     ShowExistingKMChanelKani(BarAvordUserId);
 
     ShowSelctionChanelKani(1, 0, 0, BarAvordUserId, 0, 0, 0, 0, 0);
@@ -92,7 +109,7 @@ function ShowExistingKMChanelKani(BarAvordUserId) {
                         <div class="col-1" style="border-left: 1px solid #ccc;border-right: 1px solid #ccc;"><span>ردیف</span></div>
                         <div class="col-2" style="border-left: 1px solid #ccc;border-right: 1px solid #ccc;" ><span>از کیلومتراژ</span></div>
                         <div class="col-2" style="border-left: 1px solid #ccc;border-right: 1px solid #ccc;"><span>تا کیلومتراژ</span></div>
-                        <div class="col-2" style="border-left: 1px solid #ccc;border-right: 1px solid #ccc;"><span>حجم خاکبرداری</span></div>
+                        <div class="col-2" style="border-left: 1px solid #ccc;border-right: 1px solid #ccc;"><span>حجم کانال کنی</span></div>
                         <div class="col-3" style="border-left: 1px solid #ccc;border-right: 1px solid #ccc;"><span>عملیات</span></div>
                         <div class="col-2" style="border-left: 1px solid #ccc;border-right: 1px solid #ccc;"></div>
                 </div>
@@ -103,8 +120,8 @@ function ShowExistingKMChanelKani(BarAvordUserId) {
                     KMExistingId = this.id;
                     FromKM = this.fromKM;
                     ToKM = this.toKM;
-                    FromKMSplit = this.fromKMSplit;
-                    ToKMSplit = this.toKMSplit;
+                    //FromKMSplit = this.fromKMSplit;
+                    //ToKMSplit = this.toKMSplit;
                     Value = this.value;
                     KMNum = this.kmNum;
                     Type = this.type;
@@ -118,13 +135,13 @@ function ShowExistingKMChanelKani(BarAvordUserId) {
     <!-- از کیلومتراژ -->
     
     <div class="col-md-2">
-      <input type="text" class="form-control_1 khakbardariTextStyle  input-sm text-center" id="txtFromKMForChanelKani${KMNum}" value="${FromKMSplit}" onclick="event.stopPropagation();"/>
+      <input type="text" class="form-control_1 khakbardariTextStyle  input-sm text-center" id="txtFromKMForChanelKani${KMNum}" value="${FromKM}" onclick="event.stopPropagation();"/>
     </div>
 
     <!-- تا کیلومتراژ -->
     
     <div class="col-md-2">
-      <input type="text" class="form-control_1 khakbardariTextStyle input-sm text-center" id="txtToKMForChanelKani${KMNum}" value="${ToKMSplit}" onclick="event.stopPropagation();"/>
+      <input type="text" class="form-control_1 khakbardariTextStyle input-sm text-center" id="txtToKMForChanelKani${KMNum}" value="${ToKM}" onclick="event.stopPropagation();"/>
     </div>
 
     <!-- حجم خاکبرداری -->
@@ -265,8 +282,8 @@ function ShowSelctionChanelKani(IsNew, KMExistingId, KMNum, BarAvordId, FromKM, 
 
     var vardata = new Object();
     vardata.Year = Year;
-    //پی کنی
-    vardata.Type = 2;
+    //کانال کنی
+    vardata.Type = 3;
 
     $.ajax({
         type: "POST",
@@ -304,10 +321,10 @@ function ShowSelctionChanelKani(IsNew, KMExistingId, KMNum, BarAvordId, FromKM, 
         <div class="col-3" style="padding:0;">
           <div class="row">
             <div class="col-6" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtKhDetailPK${i + 1}" value="0" />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtKhDetailChK${i + 1}" value="0" />
             </div>
             <div class="col-4" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtDarsadPK${i + 1}" value="0" />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtDarsadChK${i + 1}" value="0" />
             </div>
           </div>
         </div>
@@ -316,10 +333,10 @@ function ShowSelctionChanelKani(IsNew, KMExistingId, KMNum, BarAvordId, FromKM, 
         <div class="col-3" style="padding:0;">
           <div class="row">
             <div class="col-6" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtVariziPK${i + 1}" value="0"  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtVariziChK${i + 1}" value="0"  />
             </div>
             <div class="col-4" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtDarsadVariziPK${i + 1}" value="0"  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtDarsadVariziChK${i + 1}" value="0"  />
             </div>
           </div>
         </div>
@@ -328,10 +345,10 @@ function ShowSelctionChanelKani(IsNew, KMExistingId, KMNum, BarAvordId, FromKM, 
         <div class="col-3" style="padding:0;">
           <div class="row">
             <div class="col-6" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtReUseHajmPK${i + 1}" value="0"  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtReUseHajmChK${i + 1}" value="0"  />
             </div>
             <div class="col-4" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtReUseDarsadPK${i + 1}" value="0"  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtReUseDarsadChK${i + 1}" value="0"  />
             </div>
           </div>
         </div>
@@ -340,10 +357,10 @@ function ShowSelctionChanelKani(IsNew, KMExistingId, KMNum, BarAvordId, FromKM, 
         <div class="col-3" style="padding:0;">
           <div class="row">
             <div class="col-6" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtHamlPK${i + 1}" value="0"  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtHamlChK${i + 1}" value="0"  />
             </div>
             <div class="col-4" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtDarsadHamlPK${i + 1}" value="0"  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtDarsadHamlChK${i + 1}" value="0"  />
             </div>
           </div>
         </div>
@@ -381,35 +398,35 @@ function ShowSelctionChanelKani(IsNew, KMExistingId, KMNum, BarAvordId, FromKM, 
                 }
 
                 // مقادیر اصلی ردیف
-                let khDetail = parseFloat($("#txtKhDetailPK" + i).val()) || 0;
+                let khDetail = parseFloat($("#txtKhDetailChK" + i).val()) || 0;
 
-                let varizi = parseFloat($("#txtVariziPK" + i).val()) || 0;
-                let reuseHajm = parseFloat($("#txtReUseHajmPK" + i).val()) || 0;
-                let haml = parseFloat($("#txtHamlPK" + i).val()) || 0;
+                let varizi = parseFloat($("#txtVariziChK" + i).val()) || 0;
+                let reuseHajm = parseFloat($("#txtReUseHajmChK" + i).val()) || 0;
+                let haml = parseFloat($("#txtHamlChK" + i).val()) || 0;
 
-                let dVarizi = parseFloat($("#txtDarsadVariziPK" + i).val()) || 0;
-                let dReuse = parseFloat($("#txtReUseDarsadPK" + i).val()) || 0;
-                let dHaml = parseFloat($("#txtDarsadHamlPK" + i).val()) || 0;
+                let dVarizi = parseFloat($("#txtDarsadVariziChK" + i).val()) || 0;
+                let dReuse = parseFloat($("#txtReUseDarsadChK" + i).val()) || 0;
+                let dHaml = parseFloat($("#txtDarsadHamlChK" + i).val()) || 0;
 
                 // 🟢 بخش ۱: کنترل حجم کل و درصد
                 if (changedId.includes("KhDetail")) {
                     let Zarb = khDetail / HajmChanelKani * 100;
-                    $("#txtDarsadPK" + i).val(Zarb.toFixed(2));
+                    $("#txtDarsadChK" + i).val(Zarb.toFixed(2));
 
                     let SumAll = ReturnSumAllDetails();
                     if (SumAll > HajmChanelKani) {
                         let NewVal = HajmChanelKani - (SumAll - khDetail);
-                        $("#txtKhDetailPK" + i).val(NewVal.toFixed(2));
+                        $("#txtKhDetailChK" + i).val(NewVal.toFixed(2));
                         khDetail = NewVal; // ✅ مقدار جدید رو دوباره ست کن
 
                         let Zarb = khDetail / HajmChanelKani * 100;
-                        $("#txtDarsadPK" + i).val(Zarb.toFixed(2));
+                        $("#txtDarsadChK" + i).val(Zarb.toFixed(2));
                     }
 
                     // ✅ حالا با مقدار اصلاح‌شده محاسبه کن
-                    $("#txtVariziPK" + i).val(((dVarizi / 100) * khDetail).toFixed(2));
-                    $("#txtReUseHajmPK" + i).val(((dReuse / 100) * khDetail).toFixed(2));
-                    $("#txtHamlPK" + i).val(((dHaml / 100) * khDetail).toFixed(2));
+                    $("#txtVariziChK" + i).val(((dVarizi / 100) * khDetail).toFixed(2));
+                    $("#txtReUseHajmChK" + i).val(((dReuse / 100) * khDetail).toFixed(2));
+                    $("#txtHamlChK" + i).val(((dHaml / 100) * khDetail).toFixed(2));
                 }
 
                 if (changedId.includes("Darsad")
@@ -431,7 +448,7 @@ function ShowSelctionChanelKani(IsNew, KMExistingId, KMNum, BarAvordId, FromKM, 
 
                     // حالا حجم این ردیف رو بر اساس درصد اصلاح‌شده محاسبه کن
                     let newKhDetail = (dVal / 100) * HajmChanelKani;
-                    $('#txtKhDetailPK' + i).val(newKhDetail.toFixed(2));
+                    $('#txtKhDetailChK' + i).val(newKhDetail.toFixed(2));
                 }
 
 
@@ -440,35 +457,35 @@ function ShowSelctionChanelKani(IsNew, KMExistingId, KMNum, BarAvordId, FromKM, 
                 if (khDetail > 0) {
                     if (changedId.includes("DarsadVarizi")) {
                         varizi = (dVarizi / 100) * khDetail;
-                        $("#txtVariziPK" + i).val(varizi.toFixed(2));
+                        $("#txtVariziChK" + i).val(varizi.toFixed(2));
                     } else if (changedId.includes("ReUseDarsad")) {
                         reuseHajm = (dReuse / 100) * khDetail;
-                        $("#txtReUseHajmPK" + i).val(reuseHajm.toFixed(2));
+                        $("#txtReUseHajmChK" + i).val(reuseHajm.toFixed(2));
                     } else if (changedId.includes("DarsadHaml")) {
                         haml = (dHaml / 100) * khDetail;
-                        $("#txtHamlPK" + i).val(haml.toFixed(2));
+                        $("#txtHamlChK" + i).val(haml.toFixed(2));
                     }
 
                     if (changedId.includes("Varizi") && !changedId.includes("Darsad")) {
                         dVarizi = (varizi / khDetail) * 100;
-                        $("#txtDarsadVariziPK" + i).val(dVarizi.toFixed(2));
+                        $("#txtDarsadVariziChK" + i).val(dVarizi.toFixed(2));
                     } else if (changedId.includes("ReUseHajm")) {
                         dReuse = (reuseHajm / khDetail) * 100;
-                        $("#txtReUseDarsadPK" + i).val(dReuse.toFixed(2));
+                        $("#txtReUseDarsadChK" + i).val(dReuse.toFixed(2));
                     } else if (changedId.includes("Haml") && !changedId.includes("Darsad")) {
                         dHaml = (haml / khDetail) * 100;
-                        $("#txtDarsadHamlPK" + i).val(dHaml.toFixed(2));
+                        $("#txtDarsadHamlChK" + i).val(dHaml.toFixed(2));
                     }
                 }
 
                 // 🔁 دوباره گرفتن مقادیر بعد از تغییر
-                varizi = parseFloat($("#txtVariziPK" + i).val()) || 0;
-                reuseHajm = parseFloat($("#txtReUseHajmPK" + i).val()) || 0;
-                haml = parseFloat($("#txtHamlPK" + i).val()) || 0;
+                varizi = parseFloat($("#txtVariziChK" + i).val()) || 0;
+                reuseHajm = parseFloat($("#txtReUseHajmChK" + i).val()) || 0;
+                haml = parseFloat($("#txtHamlChK" + i).val()) || 0;
 
-                dVarizi = parseFloat($("#txtDarsadVariziPK" + i).val()) || 0;
-                dReuse = parseFloat($("#txtReUseDarsadPK" + i).val()) || 0;
-                dHaml = parseFloat($("#txtDarsadHamlPK" + i).val()) || 0;
+                dVarizi = parseFloat($("#txtDarsadVariziChK" + i).val()) || 0;
+                dReuse = parseFloat($("#txtReUseDarsadChK" + i).val()) || 0;
+                dHaml = parseFloat($("#txtDarsadHamlChK" + i).val()) || 0;
 
                 // کنترل مجموع درصدها
                 let dSum = dVarizi + dReuse + dHaml;
@@ -476,16 +493,16 @@ function ShowSelctionChanelKani(IsNew, KMExistingId, KMNum, BarAvordId, FromKM, 
                     let extra = dSum - 100;
                     if (changedId.includes("DarsadVarizi")) {
                         dVarizi -= extra;
-                        $("#txtDarsadVariziPK" + i).val(dVarizi.toFixed(2));
-                        $("#txtVariziPK" + i).val(((dVarizi / 100) * khDetail).toFixed(2));
+                        $("#txtDarsadVariziChK" + i).val(dVarizi.toFixed(2));
+                        $("#txtVariziChK" + i).val(((dVarizi / 100) * khDetail).toFixed(2));
                     } else if (changedId.includes("ReUseDarsad")) {
                         dReuse -= extra;
-                        $("#txtReUseDarsadPK" + i).val(dReuse.toFixed(2));
-                        $("#txtReUseHajmPK" + i).val(((dReuse / 100) * khDetail).toFixed(2));
+                        $("#txtReUseDarsadChK" + i).val(dReuse.toFixed(2));
+                        $("#txtReUseHajmChK" + i).val(((dReuse / 100) * khDetail).toFixed(2));
                     } else if (changedId.includes("DarsadHaml")) {
                         dHaml -= extra;
-                        $("#txtDarsadHamlPK" + i).val(dHaml.toFixed(2));
-                        $("#txtHamlPK" + i).val(((dHaml / 100) * khDetail).toFixed(2));
+                        $("#txtDarsadHamlChK" + i).val(dHaml.toFixed(2));
+                        $("#txtHamlChK" + i).val(((dHaml / 100) * khDetail).toFixed(2));
                     }
                 }
 
@@ -495,16 +512,16 @@ function ShowSelctionChanelKani(IsNew, KMExistingId, KMNum, BarAvordId, FromKM, 
                     let extra = vSum - khDetail;
                     if (changedId.includes("Varizi") && !changedId.includes("Darsad")) {
                         varizi -= extra;
-                        $("#txtVariziPK" + i).val(varizi.toFixed(2));
-                        $("#txtDarsadVariziPK" + i).val(((varizi / khDetail) * 100).toFixed(2));
+                        $("#txtVariziChK" + i).val(varizi.toFixed(2));
+                        $("#txtDarsadVariziChK" + i).val(((varizi / khDetail) * 100).toFixed(2));
                     } else if (changedId.includes("ReUseHajm")) {
                         reuseHajm -= extra;
-                        $("#txtReUseHajmPK" + i).val(reuseHajm.toFixed(2));
-                        $("#txtReUseDarsadPK" + i).val(((reuseHajm / khDetail) * 100).toFixed(2));
+                        $("#txtReUseHajmChK" + i).val(reuseHajm.toFixed(2));
+                        $("#txtReUseDarsadChK" + i).val(((reuseHajm / khDetail) * 100).toFixed(2));
                     } else if (changedId.includes("Haml") && !changedId.includes("Darsad")) {
                         haml -= extra;
-                        $("#txtHamlPK" + i).val(haml.toFixed(2));
-                        $("#txtDarsadHamlPK" + i).val(((haml / khDetail) * 100).toFixed(2));
+                        $("#txtHamlChK" + i).val(haml.toFixed(2));
+                        $("#txtDarsadHamlChK" + i).val(((haml / khDetail) * 100).toFixed(2));
                     }
                 }
             });
@@ -552,18 +569,20 @@ function ShowSelctionChanelKani(IsNew, KMExistingId, KMNum, BarAvordId, FromKM, 
                 let lastIndex = -1;
 
                 for (let i = 1; i <= ActivityLength; i++) {
-                    let Darsad = parseFloat($('#txtDarsad' + i).val()) || 0;
+                    $('#txtDarsadChK' + i).val(100)
+                    let Darsad = 100;
 
                     if (Darsad > 0) {
                         let KhDetail = (Darsad / 100 * HKB);
 
                         // حجم اصلی
-                        $('#txtKhDetailPK' + i).val(KhDetail.toFixed(2));
+                        $('#txtKhDetailChK' + i).val(KhDetail.toFixed(2));
 
                         // درصدهای مرتبط
-                        let dVarizi = parseFloat($('#txtDarsadVariziPK' + i).val()) || 0;
-                        let dReUse = parseFloat($('#txtReUseDarsadPK' + i).val()) || 0;
-                        let dHaml = parseFloat($('#txtDarsadHamlPK' + i).val()) || 0;
+                        let dVarizi = parseFloat($('#txtDarsadVariziChK' + i).val()) || 0;
+                        let dReUse = parseFloat($('#txtReUseDarsadChK' + i).val()) || 0;
+                        $('#txtDarsadHamlChK' + i).val(100);
+                        let dHaml = 100;// parseFloat($('#txtDarsadHamlChK' + i).val()) || 0;
 
                         // محاسبه حجم هر بخش
                         let vVarizi = (dVarizi / 100) * KhDetail;
@@ -571,9 +590,9 @@ function ShowSelctionChanelKani(IsNew, KMExistingId, KMNum, BarAvordId, FromKM, 
                         let vHaml = (dHaml / 100) * KhDetail;
 
                         // ست کردن نتایج
-                        $('#txtVariziPK' + i).val(vVarizi.toFixed(2));
-                        $('#txtReUseHajmPK' + i).val(vReUse.toFixed(2));
-                        $('#txtHamlPK' + i).val(vHaml.toFixed(2));
+                        $('#txtVariziChK' + i).val(vVarizi.toFixed(2));
+                        $('#txtReUseHajmChK' + i).val(vReUse.toFixed(2));
+                        $('#txtHamlChK' + i).val(vHaml.toFixed(2));
 
                         totalAssigned += parseFloat(KhDetail.toFixed(2));
                         lastIndex = i;
@@ -584,37 +603,37 @@ function ShowSelctionChanelKani(IsNew, KMExistingId, KMNum, BarAvordId, FromKM, 
                 if (lastIndex > -1) {
                     let diff = HKB - totalAssigned;
                     if (Math.abs(diff) >= 0.01) {
-                        let lastVal = parseFloat($('#txtKhDetailPK' + lastIndex).val()) || 0;
+                        let lastVal = parseFloat($('#txtKhDetailChK' + lastIndex).val()) || 0;
                         let newVal = lastVal + diff;
 
-                        $('#txtKhDetailPK' + lastIndex).val(newVal.toFixed(2));
+                        $('#txtKhDetailChK' + lastIndex).val(newVal.toFixed(2));
 
                         // بروزرسانی دوباره بخش‌های وابسته به این ردیف
-                        let dVarizi = parseFloat($('#txtDarsadVariziPK' + lastIndex).val()) || 0;
-                        let dReUse = parseFloat($('#txtReUseDarsadPK' + lastIndex).val()) || 0;
-                        let dHaml = parseFloat($('#txtDarsadHamlPK' + lastIndex).val()) || 0;
+                        let dVarizi = parseFloat($('#txtDarsadVariziChK' + lastIndex).val()) || 0;
+                        let dReUse = parseFloat($('#txtReUseDarsadChK' + lastIndex).val()) || 0;
+                        let dHaml = parseFloat($('#txtDarsadHamlChK' + lastIndex).val()) || 0;
 
-                        $('#txtVariziPK' + lastIndex).val(((dVarizi / 100) * newVal).toFixed(2));
-                        $('#txtReUseHajmPK' + lastIndex).val(((dReUse / 100) * newVal).toFixed(2));
-                        $('#txtHamlPK' + lastIndex).val(((dHaml / 100) * newVal).toFixed(2));
+                        $('#txtVariziChK' + lastIndex).val(((dVarizi / 100) * newVal).toFixed(2));
+                        $('#txtReUseHajmChK' + lastIndex).val(((dReUse / 100) * newVal).toFixed(2));
+                        $('#txtHamlChK' + lastIndex).val(((dHaml / 100) * newVal).toFixed(2));
                     }
                 }
             });
 
             $('#txtFromKMForChanelKani').change(function () {
                 var KM = $(this).val();
-                var KMSplit = KM.split('+');
-                if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
-                    $(this).addClass('blinking');
-                    toastr.info('کیلومتراژ شروع وارد شده طبق فرمت نمی باشد', 'فرمت 000+000 می باشد');
-                }
-                else {
-                    $(this).removeClass('blinking');
-                }
+                //var KMSplit = KM.split('+');
+                //if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
+                //    $(this).addClass('blinking');
+                //    toastr.info('کیلومتراژ شروع وارد شده طبق فرمت نمی باشد', 'فرمت 000+000 می باشد');
+                //}
+                //else {
+                //    $(this).removeClass('blinking');
+                //}
 
 
-                var KMS = parseFloat(KM.replace('+', ''));
-                var KME = parseFloat($('#txtToKMForChanelKani').val().replace('+', ''));
+                var KMS = parseFloat(KM);//.replace('+', ''));
+                var KME = parseFloat($('#txtToKMForChanelKani').val());//.replace('+', ''));
                 if (KMS > KME) {
                     toastr.info('کیلومتراژ خاتمه قبل از کیلومتراژ شروع میباشد', 'اطلاع');
                     $('#txtToKMForChanelKani').addClass('blinking');
@@ -640,18 +659,18 @@ function ShowSelctionChanelKani(IsNew, KMExistingId, KMNum, BarAvordId, FromKM, 
             $('#txtToKMForChanelKani').change(function () {
                 debugger;
                 var KM = $(this).val();
-                var KMSplit = KM.split('+');
-                if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
-                    $(this).addClass('blinking');
-                    toastr.info('کیلومتراژ خاتمه وارد شده طبق فرمت نمی باشد', 'فرمت 000+000 می باشد');
-                }
-                else {
-                    $(this).removeClass('blinking');
-                }
+                //var KMSplit = KM.split('+');
+                //if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
+                //    $(this).addClass('blinking');
+                //    toastr.info('کیلومتراژ خاتمه وارد شده طبق فرمت نمی باشد', 'فرمت 000+000 می باشد');
+                //}
+                //else {
+                //    $(this).removeClass('blinking');
+                //}
 
 
-                var KME = parseFloat(KM.replace('+', ''));
-                var KMS = parseFloat($('#txtFromKMForChanelKani').val().replace('+', ''));
+                var KME = parseFloat(KM);//.replace('+', ''));
+                var KMS = parseFloat($('#txtFromKMForChanelKani').val());//.replace('+', ''));
                 if (KMS > KME) {
                     toastr.info('کیلومتراژ خاتمه قبل از کیلومتراژ شروع میباشد', 'اطلاع');
                     $('#txtToKMForChanelKani').addClass('blinking');
@@ -675,7 +694,7 @@ function ShowSelctionChanelKani(IsNew, KMExistingId, KMNum, BarAvordId, FromKM, 
             });
         },
         error: function (response) {
-            toastr.error('مشکل در بارگزاری پی کنی', 'خطا');
+            toastr.error('مشکل در بارگزاری کانال کنی', 'خطا');
         }
     });
 }
@@ -694,30 +713,30 @@ function UpdateChanelKaniInfo(KMChanelKaniId, BarAvordUserId, KMNum) {
         $('#txtHajmChanelKani' + KMNum).removeClass('blinking');
     }
     ////////////////
-    var KM = $('#txtFromKMForChanelKani' + KMNum).val();
-    var KMSplit = KM.split('+');
-    if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
-        $('#txtFromKMForChanelKani' + KMNum).addClass('blinking');
-        check = true;
-    }
-    else {
-        $('#txtFromKMForChanelKani' + KMNum).removeClass('blinking');
-    }
+    //var KM = $('#txtFromKMForChanelKani' + KMNum).val();
+    //var KMSplit = KM.split('+');
+    //if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
+    //    $('#txtFromKMForChanelKani' + KMNum).addClass('blinking');
+    //    check = true;
+    //}
+    //else {
+    //    $('#txtFromKMForChanelKani' + KMNum).removeClass('blinking');
+    //}
     ///////////////
-    var KM = $('#txtToKMForChanelKani' + KMNum).val();
-    var KMSplit = KM.split('+');
-    if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
-        $('#txtToKMForChanelKani' + KMNum).addClass('blinking');
-        check = true;
-    }
-    else {
-        $('#txtToKMForChanelKani' + KMNum).removeClass('blinking');
-    }
+    //var KM = $('#txtToKMForChanelKani' + KMNum).val();
+    //var KMSplit = KM.split('+');
+    //if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
+    //    $('#txtToKMForChanelKani' + KMNum).addClass('blinking');
+    //    check = true;
+    //}
+    //else {
+    //    $('#txtToKMForChanelKani' + KMNum).removeClass('blinking');
+    //}
     /////////////
-    var KME = parseFloat($('#txtToKMForChanelKani' + KMNum).val().replace('+', ''));
-    var KMS = parseFloat($('#txtFromKMForChanelKani' + KMNum).val().replace('+', ''));
+    var KME = parseFloat($('#txtToKMForChanelKani' + KMNum).val());//.replace('+', ''));
+    var KMS = parseFloat($('#txtFromKMForChanelKani' + KMNum).val());//.replace('+', ''));
     if (KMS >= KME) {
-        $('#txtToKMForChanelKani' + KMNum).addClass('ErrorValueStyle');
+        $('#txtToKMForChanelKani' + KMNum).addClass('blinking');
         toastr.info('کیلومتراژ انتها بایستی بعد از کیلومتراژ شروع باشد', 'اطلاع');
         check = true;
     }
@@ -729,11 +748,11 @@ function UpdateChanelKaniInfo(KMChanelKaniId, BarAvordUserId, KMNum) {
     $('#divChanelKaniInfoDetails input[type="text"]').each(function () {
         ////////////
         if (!$.isNumeric($(this).val())) {
-            $(this).addClass('ErrorValueStyle');
+            $(this).addClass('blinking');
             check = true;
         }
         else
-            $(this).removeClass('ErrorValueStyle');
+            $(this).removeClass('blinking');
     });
 
     if (SumAllDetailsForEdit(KMNum)) check = true;
@@ -748,17 +767,17 @@ function UpdateChanelKaniInfo(KMChanelKaniId, BarAvordUserId, KMNum) {
         let dataList = [];
 
         for (let i = 1; i <= ActivityLength; i++) {
-            var DarsadValue = $('#txtDarsadPK' + KMNum + "_" + i).val().trim();
+            var DarsadValue = $('#txtDarsadChK' + KMNum + "_" + i).val().trim();
             if (DarsadValue != "0") {
                 let obj = {
-                    DetailValue: $('#txtKhDetailPK' + KMNum + "_" + i).val(),
+                    DetailValue: $('#txtKhDetailChK' + KMNum + "_" + i).val(),
                     DarsadValue: DarsadValue,
-                    DetailValueOfReCycle: $('#txtReUseHajmPK' + KMNum + "_" + i).val(),
-                    DarsadValueOfReCycle: $('#txtReUseDarsadPK' + KMNum + "_" + i).val(),
-                    DetailValueOfVarize: $('#txtVariziPK' + KMNum + "_" + i).val(),
-                    DarsadValueOfVarize: $('#txtDarsadVariziPK' + KMNum + "_" + i).val(),
-                    DetailValueOfHaml: $('#txtHamlPK' + KMNum + "_" + i).val(),
-                    DarsadValueOfHaml: $('#txtDarsadHamlPK' + KMNum + "_" + i).val(),
+                    DetailValueOfReCycle: $('#txtReUseHajmChK' + KMNum + "_" + i).val(),
+                    DarsadValueOfReCycle: $('#txtReUseDarsadChK' + KMNum + "_" + i).val(),
+                    DetailValueOfVarize: $('#txtVariziChK' + KMNum + "_" + i).val(),
+                    DarsadValueOfVarize: $('#txtDarsadVariziChK' + KMNum + "_" + i).val(),
+                    DetailValueOfHaml: $('#txtHamlChK' + KMNum + "_" + i).val(),
+                    DarsadValueOfHaml: $('#txtDarsadHamlChK' + KMNum + "_" + i).val(),
                     NoeKhakBardari: $('#txtChanelKaniItemId' + KMNum + "_" + i).val(),
                 };
                 dataList.push(obj);
@@ -820,10 +839,10 @@ function ViewChanelKaniInfo(KMExistingId, KMNum, BarAvordId) {
     NoeFB = parseInt($('#HDFNoeFB').val());
     Year = $('#HDFYear').val();
     var vardata = new Object();
-    vardata.ChanelKaniInfoForBarAvordId = KMExistingId;
+    vardata.PayKaniInfoForBarAvordId = KMExistingId;
     vardata.NoeFB = NoeFB;
     vardata.Year = Year;
-    vardata.Type = 2;
+    vardata.Type = 3;
 
     $.ajax({
         type: "POST",
@@ -833,9 +852,9 @@ function ViewChanelKaniInfo(KMExistingId, KMNum, BarAvordId) {
         dataType: "json",
         success: function (response) {
             debugger;
-            KMChanelKaniBarAvordDetailsMore = response.kmChanelKaniBarAvordDetailsMore;
-            KMChanelKaniBarAvordDetails = response.kmChanelKaniBarAvordDetails;
-            lstChanelKaniInfoRizMetre = response.lstChanelKaniInfoRizMetre;
+            KMPayKaniBarAvordDetailsMore = response.kmPayKaniBarAvordDetailsMore;
+            KMPayKaniBarAvordDetails = response.kmPayKaniBarAvordDetails;
+            lstPayKaniInfoRizMetre = response.lstPayKaniInfoRizMetre;
             lstItemFBShomarehForGet = response.lstItemFBShomarehForGet;
 
             Value = 0;
@@ -938,7 +957,7 @@ function ViewChanelKaniInfo(KMExistingId, KMNum, BarAvordId) {
             var totalDarsadHaml = 0;
 
             i = 1;
-            $.each(KMChanelKaniBarAvordDetails, function () {
+            $.each(KMPayKaniBarAvordDetails, function () {
                 strKMAK += `
         <div class="container-fluid" style="width:100%;margin:0;padding:0;">
         <div class="row" style="padding:2px 0px;margin:2px 0px;border-bottom:1px solid #ccc;">
@@ -956,7 +975,7 @@ function ViewChanelKaniInfo(KMExistingId, KMNum, BarAvordId) {
 
                 debugger;
 
-                let result = KMChanelKaniBarAvordDetailsMore.filter(x => x.ChanelKaniInfoForBarAvordDetailsId === this.id);
+                let result = KMPayKaniBarAvordDetailsMore.filter(x => x.payKaniInfoForBarAvordDetailsId === this.id);
 
                 let KhDetail = result.filter(x => x.name === "KhDetail").length > 0 ? result.filter(x => x.name === "KhDetail")[0].value : 0;
                 let DarsadKhDetail = result.filter(x => x.name === "DarsadKhDetail").length > 0 ? result.filter(x => x.name === "DarsadKhDetail")[0].value : 0;
@@ -974,10 +993,10 @@ function ViewChanelKaniInfo(KMExistingId, KMNum, BarAvordId) {
         <div class="col-3" style="padding:0;">
           <div class="row">
             <div class="col-6" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtKhDetailPK${KMNum}_${i}" value="${KhDetail}" />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtKhDetailChK${KMNum}_${i}" value="${KhDetail}" />
             </div>
             <div class="col-4" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtDarsadPK${KMNum}_${i}" value="${DarsadKhDetail}" />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtDarsadChK${KMNum}_${i}" value="${DarsadKhDetail}" />
             </div>
           </div>
         </div>`;
@@ -992,10 +1011,10 @@ function ViewChanelKaniInfo(KMExistingId, KMNum, BarAvordId) {
         <div class="col-3" style="padding:0;">
           <div class="row">
             <div class="col-6" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtReUseHajmPK${KMNum}_${i}" value="${Varizi}"  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtReUseHajmChK${KMNum}_${i}" value="${Varizi}"  />
             </div>
             <div class="col-4" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtReUseDarsadPK${KMNum}_${i}" value="${DarsadVarizi}"  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtReUseDarsadChK${KMNum}_${i}" value="${DarsadVarizi}"  />
             </div>
           </div>
         </div>`
@@ -1008,10 +1027,10 @@ function ViewChanelKaniInfo(KMExistingId, KMNum, BarAvordId) {
           <div class="col-3" style="padding:0;">
           <div class="row">
             <div class="col-6" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtVariziPK${KMNum}_${i}" value="${ReUseHajm}"  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtVariziChK${KMNum}_${i}" value="${ReUseHajm}"  />
             </div>
             <div class="col-4" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtDarsadVariziPK${KMNum}_${i}" value="${DarsadReUseHajm}"  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtDarsadVariziChK${KMNum}_${i}" value="${DarsadReUseHajm}"  />
             </div>
           </div>
         </div>`
@@ -1024,10 +1043,10 @@ function ViewChanelKaniInfo(KMExistingId, KMNum, BarAvordId) {
         <div class="col-3" style="padding:0;">
           <div class="row">
             <div class="col-6" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtHamlPK${KMNum}_${i}" value="${Haml}"  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtHamlChK${KMNum}_${i}" value="${Haml}"  />
             </div>
             <div class="col-4" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtDarsadHamlPK${KMNum}_${i}" value="${DarsadHaml}"  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtDarsadHamlChK${KMNum}_${i}" value="${DarsadHaml}"  />
             </div>
           </div>
         </div>
@@ -1046,68 +1065,68 @@ function ViewChanelKaniInfo(KMExistingId, KMNum, BarAvordId) {
                 return Number.isInteger(num) ? num.toString() : parseFloat(num.toFixed(2)).toString();
             };
 
-//            strKMAK += `
-//<div class="container-fluid" style="width:100%;margin:0;padding:0;">
-//  <div class="row" 
-//       style="padding:4px 0;margin:2px 0;
-//              border-top:2px solid #333;
-//              background:#f9f9f9;
-//              font-weight:bold;">
+            //            strKMAK += `
+            //<div class="container-fluid" style="width:100%;margin:0;padding:0;">
+            //  <div class="row" 
+            //       style="padding:4px 0;margin:2px 0;
+            //              border-top:2px solid #333;
+            //              background:#f9f9f9;
+            //              font-weight:bold;">
 
-//    <div class="col-4" style="text-align:right;">
-//      جمع کل
-//    </div>
+            //    <div class="col-4" style="text-align:right;">
+            //      جمع کل
+            //    </div>
 
-//    <div class="col-8" style="padding:0;">
-//      <div class="row" style="margin:0;">
-        
-//        <!-- حجم خاکبرداری -->
-//        <div class="col-3" style="padding:0;">
-//          <div class="row">
-//            <div class="col-6" style="text-align:center;padding:0 2px;">
-//              <span>${fmt(totalKhDetail)}</span>
-//            </div>
-//            <div class="col-4" style="text-align:center;padding:0 2px;">
-//              <span>%${fmt(totalDarsadKhDetail)}</span>
-//            </div>
-//          </div>
-//        </div>
+            //    <div class="col-8" style="padding:0;">
+            //      <div class="row" style="margin:0;">
 
-//        <!-- واریزه -->
-//        <div class="col-3" style="padding:0;">
-//          <div class="row">
-//            <div class="col-6" style="text-align:center;padding:0 2px;">
-//              <span>${fmt(totalVarizi)}</span>
-//            </div>
-            
-//          </div>
-//        </div>
+            //        <!-- حجم خاکبرداری -->
+            //        <div class="col-3" style="padding:0;">
+            //          <div class="row">
+            //            <div class="col-6" style="text-align:center;padding:0 2px;">
+            //              <span>${fmt(totalKhDetail)}</span>
+            //            </div>
+            //            <div class="col-4" style="text-align:center;padding:0 2px;">
+            //              <span>%${fmt(totalDarsadKhDetail)}</span>
+            //            </div>
+            //          </div>
+            //        </div>
 
-//        <!-- مصرف در خاکریزی -->
-//        <div class="col-3" style="padding:0;">
-//          <div class="row">
-//            <div class="col-6" style="text-align:center;padding:0 2px;">
-//              <span>${fmt(totalReUseHajm)}</span>
-//            </div>
-            
-//          </div>
-//        </div>
+            //        <!-- واریزه -->
+            //        <div class="col-3" style="padding:0;">
+            //          <div class="row">
+            //            <div class="col-6" style="text-align:center;padding:0 2px;">
+            //              <span>${fmt(totalVarizi)}</span>
+            //            </div>
 
-//        <!-- حمل به دپو -->
-//        <div class="col-3" style="padding:0;">
-//          <div class="row">
-//            <div class="col-6" style="text-align:center;padding:0 2px;">
-//              <span>${fmt(totalHaml)}</span>
-//            </div>
-            
-//          </div>
-//        </div>
+            //          </div>
+            //        </div>
 
-//      </div>
-//    </div>
+            //        <!-- مصرف در خاکریزی -->
+            //        <div class="col-3" style="padding:0;">
+            //          <div class="row">
+            //            <div class="col-6" style="text-align:center;padding:0 2px;">
+            //              <span>${fmt(totalReUseHajm)}</span>
+            //            </div>
 
-//  </div>
-//</div>`;
+            //          </div>
+            //        </div>
+
+            //        <!-- حمل به دپو -->
+            //        <div class="col-3" style="padding:0;">
+            //          <div class="row">
+            //            <div class="col-6" style="text-align:center;padding:0 2px;">
+            //              <span>${fmt(totalHaml)}</span>
+            //            </div>
+
+            //          </div>
+            //        </div>
+
+            //      </div>
+            //    </div>
+
+            //  </div>
+            //</div>`;
 
 
             debugger;
@@ -1146,15 +1165,15 @@ function ViewChanelKaniInfo(KMExistingId, KMNum, BarAvordId) {
                 }
 
                 // مقادیر اصلی ردیف
-                let khDetail = parseFloat($("#txtKhDetailPK" + KMNum + "_" + i).val()) || 0;
+                let khDetail = parseFloat($("#txtKhDetailChK" + KMNum + "_" + i).val()) || 0;
 
-                let varizi = parseFloat($("#txtVariziPK" + KMNum + "_" + i).val()) || 0;
-                let reuseHajm = parseFloat($("#txtReUseHajmPK" + KMNum + "_" + i).val()) || 0;
-                let haml = parseFloat($("#txtHamlPK" + KMNum + "_" + i).val()) || 0;
+                let varizi = parseFloat($("#txtVariziChK" + KMNum + "_" + i).val()) || 0;
+                let reuseHajm = parseFloat($("#txtReUseHajmChK" + KMNum + "_" + i).val()) || 0;
+                let haml = parseFloat($("#txtHamlChK" + KMNum + "_" + i).val()) || 0;
 
-                let dVarizi = parseFloat($("#txtDarsadVariziPK" + KMNum + "_" + i).val()) || 0;
-                let dReuse = parseFloat($("#txtReUseDarsadPK" + KMNum + "_" + i).val()) || 0;
-                let dHaml = parseFloat($("#txtDarsadHamlPK" + KMNum + "_" + i).val()) || 0;
+                let dVarizi = parseFloat($("#txtDarsadVariziChK" + KMNum + "_" + i).val()) || 0;
+                let dReuse = parseFloat($("#txtReUseDarsadChK" + KMNum + "_" + i).val()) || 0;
+                let dHaml = parseFloat($("#txtDarsadHamlChK" + KMNum + "_" + i).val()) || 0;
 
                 // 🟢 بخش ۱: کنترل حجم کل و درصد
                 if (changedId.includes("KhDetail" + KMNum)) {
@@ -1172,9 +1191,9 @@ function ViewChanelKaniInfo(KMExistingId, KMNum, BarAvordId) {
                     }
 
                     // ✅ حالا با مقدار اصلاح‌شده محاسبه کن
-                    $("#txtVariziPK" + KMNum + "_" + i).val(((dVarizi / 100) * khDetail).toFixed(2));
-                    $("#txtReUseHajmPK" + KMNum + "_" + i).val(((dReuse / 100) * khDetail).toFixed(2));
-                    $("#txtHamlPK" + KMNum + "_" + i).val(((dHaml / 100) * khDetail).toFixed(2));
+                    $("#txtVariziChK" + KMNum + "_" + i).val(((dVarizi / 100) * khDetail).toFixed(2));
+                    $("#txtReUseHajmChK" + KMNum + "_" + i).val(((dReuse / 100) * khDetail).toFixed(2));
+                    $("#txtHamlChK" + KMNum + "_" + i).val(((dHaml / 100) * khDetail).toFixed(2));
                 }
 
                 if (changedId.includes("Darsad" + KMNum)
@@ -1197,7 +1216,7 @@ function ViewChanelKaniInfo(KMExistingId, KMNum, BarAvordId) {
 
                     // حالا حجم این ردیف رو بر اساس درصد اصلاح‌شده محاسبه کن
                     let newKhDetail = (dVal / 100) * HajmChanelKani;
-                    $('#txtKhDetailPK' + KMNum + "_" + i).val(newKhDetail.toFixed(2));
+                    $('#txtKhDetailChK' + KMNum + "_" + i).val(newKhDetail.toFixed(2));
                 }
 
 
@@ -1206,35 +1225,35 @@ function ViewChanelKaniInfo(KMExistingId, KMNum, BarAvordId) {
                 if (khDetail > 0) {
                     if (changedId.includes("DarsadVarizi" + KMNum)) {
                         varizi = (dVarizi / 100) * khDetail;
-                        $("#txtVariziPK" + KMNum + "_" + i).val(varizi.toFixed(2));
+                        $("#txtVariziChK" + KMNum + "_" + i).val(varizi.toFixed(2));
                     } else if (changedId.includes("ReUseDarsad" + KMNum)) {
                         reuseHajm = (dReuse / 100) * khDetail;
-                        $("#txtReUseHajmPK" + KMNum + "_" + i).val(reuseHajm.toFixed(2));
+                        $("#txtReUseHajmChK" + KMNum + "_" + i).val(reuseHajm.toFixed(2));
                     } else if (changedId.includes("DarsadHaml" + KMNum)) {
                         haml = (dHaml / 100) * khDetail;
-                        $("#txtHamlPK" + KMNum + "_" + i).val(haml.toFixed(2));
+                        $("#txtHamlChK" + KMNum + "_" + i).val(haml.toFixed(2));
                     }
 
                     if (changedId.includes("Varizi" + KMNum) && !changedId.includes("Darsad" + KMNum)) {
                         dVarizi = (varizi / khDetail) * 100;
-                        $("#txtDarsadVariziPK" + KMNum + "_" + i).val(dVarizi.toFixed(2));
+                        $("#txtDarsadVariziChK" + KMNum + "_" + i).val(dVarizi.toFixed(2));
                     } else if (changedId.includes("ReUseHajm" + KMNum)) {
                         dReuse = (reuseHajm / khDetail) * 100;
-                        $("#txtReUseDarsadPK" + KMNum + "_" + i).val(dReuse.toFixed(2));
+                        $("#txtReUseDarsadChK" + KMNum + "_" + i).val(dReuse.toFixed(2));
                     } else if (changedId.includes("Haml" + KMNum) && !changedId.includes("Darsad" + KMNum)) {
                         dHaml = (haml / khDetail) * 100;
-                        $("#txtDarsadHamlPK" + KMNum + "_" + i).val(dHaml.toFixed(2));
+                        $("#txtDarsadHamlChK" + KMNum + "_" + i).val(dHaml.toFixed(2));
                     }
                 }
 
                 // 🔁 دوباره گرفتن مقادیر بعد از تغییر
-                varizi = parseFloat($("#txtVariziPK" + KMNum + "_" + i).val()) || 0;
-                reuseHajm = parseFloat($("#txtReUseHajmPK" + KMNum + "_" + i).val()) || 0;
-                haml = parseFloat($("#txtHamlPK" + KMNum + "_" + i).val()) || 0;
+                varizi = parseFloat($("#txtVariziChK" + KMNum + "_" + i).val()) || 0;
+                reuseHajm = parseFloat($("#txtReUseHajmChK" + KMNum + "_" + i).val()) || 0;
+                haml = parseFloat($("#txtHamlChK" + KMNum + "_" + i).val()) || 0;
 
-                dVarizi = parseFloat($("#txtDarsadVariziPK" + KMNum + "_" + i).val()) || 0;
-                dReuse = parseFloat($("#txtReUseDarsadPK" + KMNum + "_" + i).val()) || 0;
-                dHaml = parseFloat($("#txtDarsadHamlPK" + KMNum + "_" + i).val()) || 0;
+                dVarizi = parseFloat($("#txtDarsadVariziChK" + KMNum + "_" + i).val()) || 0;
+                dReuse = parseFloat($("#txtReUseDarsadChK" + KMNum + "_" + i).val()) || 0;
+                dHaml = parseFloat($("#txtDarsadHamlChK" + KMNum + "_" + i).val()) || 0;
 
                 // کنترل مجموع درصدها
                 let dSum = dVarizi + dReuse + dHaml;
@@ -1242,16 +1261,16 @@ function ViewChanelKaniInfo(KMExistingId, KMNum, BarAvordId) {
                     let extra = dSum - 100;
                     if (changedId.includes("DarsadVarizi" + KMNum)) {
                         dVarizi -= extra;
-                        $("#txtDarsadVariziPK" + KMNum + "_" + i).val(dVarizi.toFixed(2));
-                        $("#txtVariziPK" + KMNum + "_" + i).val(((dVarizi / 100) * khDetail).toFixed(2));
+                        $("#txtDarsadVariziChK" + KMNum + "_" + i).val(dVarizi.toFixed(2));
+                        $("#txtVariziChK" + KMNum + "_" + i).val(((dVarizi / 100) * khDetail).toFixed(2));
                     } else if (changedId.includes("ReUseDarsad" + KMNum)) {
                         dReuse -= extra;
-                        $("#txtReUseDarsadPK" + KMNum + "_" + i).val(dReuse.toFixed(2));
-                        $("#txtReUseHajmPK" + KMNum + "_" + i).val(((dReuse / 100) * khDetail).toFixed(2));
+                        $("#txtReUseDarsadChK" + KMNum + "_" + i).val(dReuse.toFixed(2));
+                        $("#txtReUseHajmChK" + KMNum + "_" + i).val(((dReuse / 100) * khDetail).toFixed(2));
                     } else if (changedId.includes("DarsadHaml" + KMNum)) {
                         dHaml -= extra;
                         $("#txtDarsadHaml" + KMNum + "_" + i).val(dHaml.toFixed(2));
-                        $("#txtHamlPK" + KMNum + "_" + i).val(((dHaml / 100) * khDetail).toFixed(2));
+                        $("#txtHamlChK" + KMNum + "_" + i).val(((dHaml / 100) * khDetail).toFixed(2));
                     }
                 }
 
@@ -1261,15 +1280,15 @@ function ViewChanelKaniInfo(KMExistingId, KMNum, BarAvordId) {
                     let extra = vSum - khDetail;
                     if (changedId.includes("Varizi" + KMNum) && !changedId.includes("Darsad" + KMNum)) {
                         varizi -= extra;
-                        $("#txtVariziPK" + KMNum + "_" + i).val(varizi.toFixed(2));
-                        $("#txtDarsadVariziPK" + KMNum + "_" + i).val(((varizi / khDetail) * 100).toFixed(2));
+                        $("#txtVariziChK" + KMNum + "_" + i).val(varizi.toFixed(2));
+                        $("#txtDarsadVariziChK" + KMNum + "_" + i).val(((varizi / khDetail) * 100).toFixed(2));
                     } else if (changedId.includes("ReUseHajm" + KMNum)) {
                         reuseHajm -= extra;
-                        $("#txtReUseHajmPK" + KMNum + "_" + i).val(reuseHajm.toFixed(2));
-                        $("#txtReUseDarsadPK" + KMNum + "_" + i).val(((reuseHajm / khDetail) * 100).toFixed(2));
+                        $("#txtReUseHajmChK" + KMNum + "_" + i).val(reuseHajm.toFixed(2));
+                        $("#txtReUseDarsadChK" + KMNum + "_" + i).val(((reuseHajm / khDetail) * 100).toFixed(2));
                     } else if (changedId.includes("Haml" + KMNum) && !changedId.includes("Darsad" + KMNum)) {
                         haml -= extra;
-                        $("#txtHamlPK" + KMNum + "_" + i).val(haml.toFixed(2));
+                        $("#txtHamlChK" + KMNum + "_" + i).val(haml.toFixed(2));
                         $("#txtDarsadHaml" + KMNum + "_" + i).val(((haml / khDetail) * 100).toFixed(2));
                     }
                 }
@@ -1296,18 +1315,18 @@ function ViewChanelKaniInfo(KMExistingId, KMNum, BarAvordId) {
                 let lastIndex = -1;
 
                 for (let i = 1; i <= ActivityLength; i++) {
-                    let Darsad = parseFloat($('#txtDarsadPK' + KMNum + "_" + i).val()) || 0;
+                    let Darsad = parseFloat($('#txtDarsadChK' + KMNum + "_" + i).val()) || 0;
 
                     if (Darsad > 0) {
                         let KhDetail = (Darsad / 100 * HKB);
 
                         // حجم اصلی
-                        $('#txtKhDetailPK' + KMNum + "_" + i).val(KhDetail.toFixed(2));
+                        $('#txtKhDetailChK' + KMNum + "_" + i).val(KhDetail.toFixed(2));
 
                         // درصدهای مرتبط
-                        let dVarizi = parseFloat($('#txtDarsadVariziPK' + KMNum + "_" + i).val()) || 0;
-                        let dReUse = parseFloat($('#txtReUseDarsadPK' + KMNum + "_" + i).val()) || 0;
-                        let dHaml = parseFloat($('#txtDarsadHamlPK' + KMNum + "_" + i).val()) || 0;
+                        let dVarizi = parseFloat($('#txtDarsadVariziChK' + KMNum + "_" + i).val()) || 0;
+                        let dReUse = parseFloat($('#txtReUseDarsadChK' + KMNum + "_" + i).val()) || 0;
+                        let dHaml = parseFloat($('#txtDarsadHamlChK' + KMNum + "_" + i).val()) || 0;
                         debugger;
                         // محاسبه حجم هر بخش
                         let vVarizi = (dVarizi / 100) * KhDetail;
@@ -1315,9 +1334,9 @@ function ViewChanelKaniInfo(KMExistingId, KMNum, BarAvordId) {
                         let vHaml = (dHaml / 100) * KhDetail;
 
                         // ست کردن نتایج
-                        $('#txtVariziPK' + KMNum + "_" + i).val(vVarizi.toFixed(2));
-                        $('#txtReUseHajmPK' + KMNum + "_" + i).val(vReUse.toFixed(2));
-                        $('#txtHamlPK' + KMNum + "_" + i).val(vHaml.toFixed(2));
+                        $('#txtVariziChK' + KMNum + "_" + i).val(vVarizi.toFixed(2));
+                        $('#txtReUseHajmChK' + KMNum + "_" + i).val(vReUse.toFixed(2));
+                        $('#txtHamlChK' + KMNum + "_" + i).val(vHaml.toFixed(2));
 
                         totalAssigned += parseFloat(KhDetail.toFixed(2));
                         lastIndex = i;
@@ -1328,19 +1347,19 @@ function ViewChanelKaniInfo(KMExistingId, KMNum, BarAvordId) {
                 if (lastIndex > -1) {
                     let diff = HKB - totalAssigned;
                     if (Math.abs(diff) >= 0.01) {
-                        let lastVal = parseFloat($('#txtKhDetailPK' + KMNum + "_" + lastIndex).val()) || 0;
+                        let lastVal = parseFloat($('#txtKhDetailChK' + KMNum + "_" + lastIndex).val()) || 0;
                         let newVal = lastVal + diff;
 
-                        $('#txtKhDetailPK' + KMNum + "_" + lastIndex).val(newVal.toFixed(2));
+                        $('#txtKhDetailChK' + KMNum + "_" + lastIndex).val(newVal.toFixed(2));
 
                         // بروزرسانی دوباره بخش‌های وابسته به این ردیف
-                        let dVarizi = parseFloat($('#txtDarsadVariziPK' + KMNum + "_" + lastIndex).val()) || 0;
-                        let dReUse = parseFloat($('#txtReUseDarsadPK' + KMNum + "_" + lastIndex).val()) || 0;
-                        let dHaml = parseFloat($('#txtDarsadHamlPK' + KMNum + "_" + lastIndex).val()) || 0;
+                        let dVarizi = parseFloat($('#txtDarsadVariziChK' + KMNum + "_" + lastIndex).val()) || 0;
+                        let dReUse = parseFloat($('#txtReUseDarsadChK' + KMNum + "_" + lastIndex).val()) || 0;
+                        let dHaml = parseFloat($('#txtDarsadHamlChK' + KMNum + "_" + lastIndex).val()) || 0;
 
-                        $('#txtVariziPK' + KMNum + "_" + lastIndex).val(((dVarizi / 100) * newVal).toFixed(2));
-                        $('#txtReUseHajmPK' + KMNum + "_" + lastIndex).val(((dReUse / 100) * newVal).toFixed(2));
-                        $('#txtHamlPK' + KMNum + "_" + lastIndex).val(((dHaml / 100) * newVal).toFixed(2));
+                        $('#txtVariziChK' + KMNum + "_" + lastIndex).val(((dVarizi / 100) * newVal).toFixed(2));
+                        $('#txtReUseHajmChK' + KMNum + "_" + lastIndex).val(((dReUse / 100) * newVal).toFixed(2));
+                        $('#txtHamlChK' + KMNum + "_" + lastIndex).val(((dHaml / 100) * newVal).toFixed(2));
                     }
                 }
 
@@ -1348,7 +1367,7 @@ function ViewChanelKaniInfo(KMExistingId, KMNum, BarAvordId) {
 
             });
 
-            ShowRizMetreChanelKani(KMExistingId, lstChanelKaniInfoRizMetre, lstItemFBShomarehForGet, KMNum);
+            ShowRizMetreChanelKani(KMExistingId, lstPayKaniInfoRizMetre, lstItemFBShomarehForGet, KMNum);
 
             //ShowA_KhEzafeBaha(KMExistingId, KMNum);
 
@@ -1370,17 +1389,17 @@ function ViewChanelKaniInfo(KMExistingId, KMNum, BarAvordId) {
                 }
             });
 
-            CurrentValue = $('#txtKhDetailPK' + Type).val();
-            ValueOfReCycle = $('#txtReUseHajmPK' + Type).val();
-            ValueOfVarize = $('#txtVariziPK' + Type).val();
-            ValueOfHaml = $('#txtHamlPK' + Type).val();
+            CurrentValue = $('#txtKhDetailChK' + Type).val();
+            ValueOfReCycle = $('#txtReUseHajmChK' + Type).val();
+            ValueOfVarize = $('#txtVariziChK' + Type).val();
+            ValueOfHaml = $('#txtHamlChK' + Type).val();
             ValueOfFaseleHaml = $('#txtFaseleHaml' + Type).val();
 
-            $('#txtDarsadPK' + Type).val(parseFloat(Value) == 0 ? 0 : (parseFloat(CurrentValue) / parseFloat(Value) * 100).toFixed(2));
-            $('#txtReUseDarsadPK' + Type).val(parseFloat(CurrentValue) == 0 ? 0 : (parseFloat(ValueOfReCycle) / parseFloat(CurrentValue) * 100).toFixed(2));
-            $('#txtDarsadVariziPK' + Type).val(parseFloat(CurrentValue) == 0 ? 0 : (parseFloat(ValueOfVarize) / parseFloat(CurrentValue) * 100).toFixed(2));
-            $('#txtDarsadHamlPK' + Type).val(parseFloat(CurrentValue) == 0 ? 0 : (parseFloat(ValueOfHaml) / parseFloat(CurrentValue) * 100).toFixed(2));
-            $('#txtDarsadFaseleHamlPK' + Type).val(parseFloat(ValueOfVarize) == 0 ? 0 : (parseFloat(ValueOfFaseleHaml) / parseFloat(ValueOfVarize) * 100).toFixed(2));
+            $('#txtDarsadChK' + Type).val(parseFloat(Value) == 0 ? 0 : (parseFloat(CurrentValue) / parseFloat(Value) * 100).toFixed(2));
+            $('#txtReUseDarsadChK' + Type).val(parseFloat(CurrentValue) == 0 ? 0 : (parseFloat(ValueOfReCycle) / parseFloat(CurrentValue) * 100).toFixed(2));
+            $('#txtDarsadVariziChK' + Type).val(parseFloat(CurrentValue) == 0 ? 0 : (parseFloat(ValueOfVarize) / parseFloat(CurrentValue) * 100).toFixed(2));
+            $('#txtDarsadHamlChK' + Type).val(parseFloat(CurrentValue) == 0 ? 0 : (parseFloat(ValueOfHaml) / parseFloat(CurrentValue) * 100).toFixed(2));
+            $('#txtDarsadFaseleHamlChK' + Type).val(parseFloat(ValueOfVarize) == 0 ? 0 : (parseFloat(ValueOfFaseleHaml) / parseFloat(ValueOfVarize) * 100).toFixed(2));
 
             KMAmalyateRizeshBarAvordDetailsEzafeBaha = response.kmAmalyateRizeshBarAvordDetailsEzafeBaha;
             $.each(KMAmalyateRizeshBarAvordDetailsEzafeBaha, function () {
@@ -1407,7 +1426,7 @@ function ViewChanelKaniInfo(KMExistingId, KMNum, BarAvordId) {
 function SumAllDetails() {
     sumAll = 0;
     for (var i = 1; i <= ActivityLength; i++) {
-        sumAll += parseFloat($.trim($('#txtKhDetailPK' + i).val()) == '' ? '0' : $.trim($('#txtKhDetailPK' + i).val()));
+        sumAll += parseFloat($.trim($('#txtKhDetailChK' + i).val()) == '' ? '0' : $.trim($('#txtKhDetailChK' + i).val()));
     }
 
     HajmChanelKani = parseFloat($('#txtHajmChanelKani').val());
@@ -1435,28 +1454,28 @@ function SaveChanelKaniInfo1(BarAvordUserId) {
         $('#txtHajmChanelKani').removeClass('blinking');
     }
     ////////////////
-    var KM = $('#txtFromKMForChanelKani').val();
-    var KMSplit = KM.split('+');
-    if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
-        $('#txtFromKMForChanelKani').addClass('blinking');
-        check = true;
-    }
-    else {
-        $('#txtFromKMForChanelKani').removeClass('blinking');
-    }
-    ///////////////
-    var KM = $('#txtToKMForChanelKani').val();
-    var KMSplit = KM.split('+');
-    if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
-        $('#txtToKMForChanelKani').addClass('blinking');
-        check = true;
-    }
-    else {
-        $('#txtToKMForChanelKani').removeClass('blinking');
-    }
+    //var KM = $('#txtFromKMForChanelKani').val();
+    //var KMSplit = KM.split('+');
+    //if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
+    //    $('#txtFromKMForChanelKani').addClass('blinking');
+    //    check = true;
+    //}
+    //else {
+    //    $('#txtFromKMForChanelKani').removeClass('blinking');
+    //}
+    /////////////////
+    //var KM = $('#txtToKMForChanelKani').val();
+    //var KMSplit = KM.split('+');
+    //if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
+    //    $('#txtToKMForChanelKani').addClass('blinking');
+    //    check = true;
+    //}
+    //else {
+    //    $('#txtToKMForChanelKani').removeClass('blinking');
+    //}
     /////////////
-    var KME = parseFloat($('#txtToKMForChanelKani').val().replace('+', ''));
-    var KMS = parseFloat($('#txtFromKMForChanelKani').val().replace('+', ''));
+    var KME = parseFloat($('#txtToKMForChanelKani').val());//.replace('+', ''));
+    var KMS = parseFloat($('#txtFromKMForChanelKani').val());//.replace('+', ''));
     if (KMS >= KME) {
         $('#txtToKMForChanelKani').addClass('blinking');
         toastr.info('کیلومتراژ انتها بایستی بعد از کیلومتراژ شروع باشد', 'اطلاع');
@@ -1492,14 +1511,14 @@ function SaveChanelKaniInfo1(BarAvordUserId) {
             debugger;
 
             let obj = {
-                DetailValue: $('#txtKhDetailPK' + i).val(),
-                DarsadValue: $('#txtDarsadPK' + i).val(),
-                DetailValueOfReCycle: $('#txtReUseHajmPK' + i).val(),
-                DarsadValueOfReCycle: $('#txtReUseDarsadPK' + i).val(),
-                DetailValueOfVarize: $('#txtVariziPK' + i).val(),
-                DarsadValueOfVarize: $('#txtDarsadVariziPK' + i).val(),
-                DetailValueOfHaml: $('#txtHamlPK' + i).val(),
-                DarsadValueOfHaml: $('#txtDarsadHamlPK' + i).val(),
+                DetailValue: $('#txtKhDetailChK' + i).val(),
+                DarsadValue: $('#txtDarsadChK' + i).val(),
+                DetailValueOfReCycle: $('#txtReUseHajmChK' + i).val(),
+                DarsadValueOfReCycle: $('#txtReUseDarsadChK' + i).val(),
+                DetailValueOfVarize: $('#txtVariziChK' + i).val(),
+                DarsadValueOfVarize: $('#txtDarsadVariziChK' + i).val(),
+                DetailValueOfHaml: $('#txtHamlChK' + i).val(),
+                DarsadValueOfHaml: $('#txtDarsadHamlChK' + i).val(),
                 NoeKhakBardari: $('#txtChanelKaniItemId' + i).val(),
             };
 
@@ -1530,18 +1549,18 @@ function SaveChanelKaniInfo1(BarAvordUserId) {
                     $('#HDFKMAmalyateKhakiNum').val(info[2]);
 
                     $('#txtHajmChanelKani').val(0);
-                    $('#txtFromKMForChanelKani').val('000+000')
-                    $('#txtToKMForChanelKani').val('000+000')
+                    $('#txtFromKMForChanelKani').val('0')
+                    $('#txtToKMForChanelKani').val('0')
 
                     for (let i = 1; i <= ActivityLength; i++) {
-                        $('#txtKhDetailPK' + i).val(0);
-                        $('#txtDarsadPK' + i).val(0);
-                        $('#txtReUseHajmPK' + i).val(0);
-                        $('#txtReUseDarsadPK' + i).val(0);
-                        $('#txtVariziPK' + i).val(0);
-                        $('#txtDarsadVariziPK' + i).val(0);
-                        $('#txtHamlPK' + i).val(0);
-                        $('#txtDarsadHamlPK' + i).val(0);
+                        $('#txtKhDetailChK' + i).val(0);
+                        $('#txtDarsadChK' + i).val(0);
+                        $('#txtReUseHajmChK' + i).val(0);
+                        $('#txtReUseDarsadChK' + i).val(0);
+                        $('#txtVariziChK' + i).val(0);
+                        $('#txtDarsadVariziChK' + i).val(0);
+                        $('#txtHamlChK' + i).val(0);
+                        $('#txtDarsadHamlChK' + i).val(0);
                         $('#txtChanelKaniItemId' + i).val(0);
                     }
 
@@ -1577,28 +1596,28 @@ function UpdateChanelKaniInfo(KMChanelKaniId, BarAvordUserId, KMNum) {
         $('#txtHajmChanelKani' + KMNum).removeClass('blinking');
     }
     ////////////////
-    var KM = $('#txtFromKMForChanelKani' + KMNum).val();
-    var KMSplit = KM.split('+');
-    if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
-        $('#txtFromKMForChanelKani' + KMNum).addClass('blinking');
-        check = true;
-    }
-    else {
-        $('#txtFromKMForChanelKani' + KMNum).removeClass('blinking');
-    }
-    ///////////////
-    var KM = $('#txtToKMForChanelKani' + KMNum).val();
-    var KMSplit = KM.split('+');
-    if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
-        $('#txtToKMForChanelKani' + KMNum).addClass('blinking');
-        check = true;
-    }
-    else {
-        $('#txtToKMForChanelKani' + KMNum).removeClass('blinking');
-    }
+    //var KM = $('#txtFromKMForChanelKani' + KMNum).val();
+    //var KMSplit = KM.split('+');
+    //if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
+    //    $('#txtFromKMForChanelKani' + KMNum).addClass('blinking');
+    //    check = true;
+    //}
+    //else {
+    //    $('#txtFromKMForChanelKani' + KMNum).removeClass('blinking');
+    //}
+    /////////////////
+    //var KM = $('#txtToKMForChanelKani' + KMNum).val();
+    //var KMSplit = KM.split('+');
+    //if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
+    //    $('#txtToKMForChanelKani' + KMNum).addClass('blinking');
+    //    check = true;
+    //}
+    //else {
+    //    $('#txtToKMForChanelKani' + KMNum).removeClass('blinking');
+    //}
     /////////////
-    var KME = parseFloat($('#txtToKMForChanelKani' + KMNum).val().replace('+', ''));
-    var KMS = parseFloat($('#txtFromKMForChanelKani' + KMNum).val().replace('+', ''));
+    var KME = parseFloat($('#txtToKMForChanelKani' + KMNum).val());//.replace('+', ''));
+    var KMS = parseFloat($('#txtFromKMForChanelKani' + KMNum).val());//.replace('+', ''));
     if (KMS >= KME) {
         $('#txtToKMForChanelKani' + KMNum).addClass('ErrorValueStyle');
         toastr.info('کیلومتراژ انتها بایستی بعد از کیلومتراژ شروع باشد', 'اطلاع');
@@ -1631,17 +1650,17 @@ function UpdateChanelKaniInfo(KMChanelKaniId, BarAvordUserId, KMNum) {
         let dataList = [];
 
         for (let i = 1; i <= ActivityLength; i++) {
-            var DarsadValue = $('#txtDarsadPK' + KMNum + "_" + i).val().trim();
+            var DarsadValue = $('#txtDarsadChK' + KMNum + "_" + i).val().trim();
             if (DarsadValue != "0") {
                 let obj = {
-                    DetailValue: $('#txtKhDetailPK' + KMNum + "_" + i).val(),
+                    DetailValue: $('#txtKhDetailChK' + KMNum + "_" + i).val(),
                     DarsadValue: DarsadValue,
-                    DetailValueOfReCycle: $('#txtReUseHajmPK' + KMNum + "_" + i).val(),
-                    DarsadValueOfReCycle: $('#txtReUseDarsadPK' + KMNum + "_" + i).val(),
-                    DetailValueOfVarize: $('#txtVariziPK' + KMNum + "_" + i).val(),
-                    DarsadValueOfVarize: $('#txtDarsadVariziPK' + KMNum + "_" + i).val(),
-                    DetailValueOfHaml: $('#txtHamlPK' + KMNum + "_" + i).val(),
-                    DarsadValueOfHaml: $('#txtDarsadHamlPK' + KMNum + "_" + i).val(),
+                    DetailValueOfReCycle: $('#txtReUseHajmChK' + KMNum + "_" + i).val(),
+                    DarsadValueOfReCycle: $('#txtReUseDarsadChK' + KMNum + "_" + i).val(),
+                    DetailValueOfVarize: $('#txtVariziChK' + KMNum + "_" + i).val(),
+                    DarsadValueOfVarize: $('#txtDarsadVariziChK' + KMNum + "_" + i).val(),
+                    DetailValueOfHaml: $('#txtHamlChK' + KMNum + "_" + i).val(),
+                    DarsadValueOfHaml: $('#txtDarsadHamlChK' + KMNum + "_" + i).val(),
                     NoeKhakBardari: $('#txtChanelKaniItemId' + KMNum + "_" + i).val(),
                 };
                 dataList.push(obj);
@@ -1653,7 +1672,7 @@ function UpdateChanelKaniInfo(KMChanelKaniId, BarAvordUserId, KMNum) {
         Year = $('#HDFYear').val();
         var vardata = new Object();
         vardata.BarAvordUserId = BarAvordUserId;
-        vardata.KMChanelKaniId = KMChanelKaniId;
+        vardata.KMPayKaniId = KMChanelKaniId;
         vardata.FromKM = KMS;
         vardata.ToKM = KME;
         vardata.HKB = HKB;
@@ -1693,58 +1712,58 @@ function UpdateChanelKaniInfo(KMChanelKaniId, BarAvordUserId, KMNum) {
 function CheckValuesOfChanelKaniDetails() {
     checkValues = false;
     for (var i = 1; i <= ActivityLength; i++) {
-        KhDetail = parseFloat($('#txtKhDetailPK' + i).val());
+        KhDetail = parseFloat($('#txtKhDetailChK' + i).val());
 
-        ReUseHajm = parseFloat($('#txtReUseHajmPK' + i).val());
+        ReUseHajm = parseFloat($('#txtReUseHajmChK' + i).val());
         if (ReUseHajm > KhDetail) {
-            $('#txtReUseHajmPK' + i).addClass('ErrorValueStyle');
+            $('#txtReUseHajmChK' + i).addClass('ErrorValueStyle');
             checkValues = true;
         }
         else
-            $('#txtReUseHajmPK' + i).removeClass('ErrorValueStyle');
+            $('#txtReUseHajmChK' + i).removeClass('ErrorValueStyle');
 
-        ReUseDarsad = parseFloat($('#txtReUseDarsadPK' + i).val());
+        ReUseDarsad = parseFloat($('#txtReUseDarsadChK' + i).val());
         if (ReUseDarsad > 100) {
-            $('#txtReUseDarsadPK' + i).addClass('ErrorValueStyle');
+            $('#txtReUseDarsadChK' + i).addClass('ErrorValueStyle');
             checkValues = true;
         }
         else
-            $('#txtReUseDarsadPK' + i).removeClass('ErrorValueStyle');
+            $('#txtReUseDarsadChK' + i).removeClass('ErrorValueStyle');
         /////////////
-        Varizi = parseFloat($('#txtVariziPK' + i).val());
-        Haml = parseFloat($('#txtHamlPK' + i).val());
+        Varizi = parseFloat($('#txtVariziChK' + i).val());
+        Haml = parseFloat($('#txtHamlChK' + i).val());
         if (Varizi > KhDetail) {
-            $('#txtVariziPK' + i).addClass('ErrorValueStyle');
+            $('#txtVariziChK' + i).addClass('ErrorValueStyle');
             checkValues = true;
         }
         else {
-            $('#txtVariziPK' + i).removeClass('ErrorValueStyle');
+            $('#txtVariziChK' + i).removeClass('ErrorValueStyle');
         }
 
         if (Haml > KhDetail) {
-            $('#txtHamlPK' + i).addClass('ErrorValueStyle');
+            $('#txtHamlChK' + i).addClass('ErrorValueStyle');
             checkValues = true;
         }
         else {
-            $('#txtHamlPK' + i).removeClass('ErrorValueStyle');
+            $('#txtHamlChK' + i).removeClass('ErrorValueStyle');
         }
 
-        DarsadVarizi = parseFloat($('#txtDarsadVariziPK' + i).val());
-        DarsadHaml = parseFloat($('#txtDarsadHamlPK' + i).val());
+        DarsadVarizi = parseFloat($('#txtDarsadVariziChK' + i).val());
+        DarsadHaml = parseFloat($('#txtDarsadHamlChK' + i).val());
         if (DarsadVarizi > 100) {
-            $('#txtDarsadVariziPK' + i).addClass('ErrorValueStyle');
+            $('#txtDarsadVariziChK' + i).addClass('ErrorValueStyle');
             checkValues = true;
         }
         else {
-            $('#txtDarsadVariziPK' + i).removeClass('ErrorValueStyle');
+            $('#txtDarsadVariziChK' + i).removeClass('ErrorValueStyle');
         }
 
         if (DarsadHaml > 100) {
-            $('#txtDarsadHamlPK' + i).addClass('ErrorValueStyle');
+            $('#txtDarsadHamlChK' + i).addClass('ErrorValueStyle');
             checkValues = true;
         }
         else {
-            $('#txtDarsadHamlPK' + i).removeClass('ErrorValueStyle');
+            $('#txtDarsadHamlChK' + i).removeClass('ErrorValueStyle');
         }
     }
     return checkValues;
@@ -1753,58 +1772,58 @@ function CheckValuesOfChanelKaniDetails() {
 function CheckValuesOfChanelKaniDetailsForEdit(KMNum) {
     checkValues = false;
     for (var i = 1; i <= ActivityLength; i++) {
-        KhDetail = parseFloat($('#txtKhDetailPK' + KMNum + "_" + i).val());
+        KhDetail = parseFloat($('#txtKhDetailChK' + KMNum + "_" + i).val());
 
-        ReUseHajm = parseFloat($('#txtReUseHajmPK' + KMNum + "_" + i).val());
+        ReUseHajm = parseFloat($('#txtReUseHajmChK' + KMNum + "_" + i).val());
         if (ReUseHajm > KhDetail) {
-            $('#txtReUseHajmPK' + KMNum + "_" + i).addClass('ErrorValueStyle');
+            $('#txtReUseHajmChK' + KMNum + "_" + i).addClass('ErrorValueStyle');
             checkValues = true;
         }
         else
-            $('#txtReUseHajmPK' + KMNum + "_" + i).removeClass('ErrorValueStyle');
+            $('#txtReUseHajmChK' + KMNum + "_" + i).removeClass('ErrorValueStyle');
 
-        ReUseDarsad = parseFloat($('#txtReUseDarsadPK' + KMNum + "_" + i).val());
+        ReUseDarsad = parseFloat($('#txtReUseDarsadChK' + KMNum + "_" + i).val());
         if (ReUseDarsad > 100) {
-            $('#txtReUseDarsadPK' + KMNum + "_" + i).addClass('ErrorValueStyle');
+            $('#txtReUseDarsadChK' + KMNum + "_" + i).addClass('ErrorValueStyle');
             checkValues = true;
         }
         else
-            $('#txtReUseDarsadPK' + KMNum + "_" + i).removeClass('ErrorValueStyle');
+            $('#txtReUseDarsadChK' + KMNum + "_" + i).removeClass('ErrorValueStyle');
         /////////////
-        Varizi = parseFloat($('#txtVariziPK' + KMNum + "_" + i).val());
-        Haml = parseFloat($('#txtHamlPK' + KMNum + "_" + i).val());
+        Varizi = parseFloat($('#txtVariziChK' + KMNum + "_" + i).val());
+        Haml = parseFloat($('#txtHamlChK' + KMNum + "_" + i).val());
         if (Varizi > KhDetail) {
-            $('#txtVariziPK' + KMNum + "_" + i).addClass('ErrorValueStyle');
+            $('#txtVariziChK' + KMNum + "_" + i).addClass('ErrorValueStyle');
             checkValues = true;
         }
         else {
-            $('#txtVariziPK' + KMNum + "_" + i).removeClass('ErrorValueStyle');
+            $('#txtVariziChK' + KMNum + "_" + i).removeClass('ErrorValueStyle');
         }
 
         if (Haml > KhDetail) {
-            $('#txtHamlPK' + KMNum + "_" + i).addClass('ErrorValueStyle');
+            $('#txtHamlChK' + KMNum + "_" + i).addClass('ErrorValueStyle');
             checkValues = true;
         }
         else {
-            $('#txtHamlPK' + KMNum + "_" + i).removeClass('ErrorValueStyle');
+            $('#txtHamlChK' + KMNum + "_" + i).removeClass('ErrorValueStyle');
         }
 
-        DarsadVarizi = parseFloat($('#txtDarsadVariziPK' + KMNum + "_" + i).val());
-        DarsadHaml = parseFloat($('#txtDarsadHamlPK' + KMNum + "_" + i).val());
+        DarsadVarizi = parseFloat($('#txtDarsadVariziChK' + KMNum + "_" + i).val());
+        DarsadHaml = parseFloat($('#txtDarsadHamlChK' + KMNum + "_" + i).val());
         if (DarsadVarizi > 100) {
-            $('#txtDarsadVariziPK' + KMNum + "_" + i).addClass('ErrorValueStyle');
+            $('#txtDarsadVariziChK' + KMNum + "_" + i).addClass('ErrorValueStyle');
             checkValues = true;
         }
         else {
-            $('#txtDarsadVariziPK' + KMNum + "_" + i).removeClass('ErrorValueStyle');
+            $('#txtDarsadVariziChK' + KMNum + "_" + i).removeClass('ErrorValueStyle');
         }
 
         if (DarsadHaml > 100) {
-            $('#txtDarsadHamlPK' + KMNum + "_" + i).addClass('ErrorValueStyle');
+            $('#txtDarsadHamlChK' + KMNum + "_" + i).addClass('ErrorValueStyle');
             checkValues = true;
         }
         else {
-            $('#txtDarsadHamlPK' + KMNum + "_" + i).removeClass('ErrorValueStyle');
+            $('#txtDarsadHamlChK' + KMNum + "_" + i).removeClass('ErrorValueStyle');
         }
     }
     return checkValues;

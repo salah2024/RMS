@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using RMS.Controllers.AmalyateKhaki.Common;
 using RMS.Controllers.AmalyateKhaki.Dto;
@@ -14,7 +13,6 @@ namespace RMS.Controllers.AmalyateKhaki;
 public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext context) : Controller
 {
     private readonly ApplicationDbContext _context = context;
-
 
     public JsonResult ReturnNoeKhakBardari([FromBody] ReturnNoeKhakBardariDto request)
     {
@@ -48,8 +46,8 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
 
         clsAmalyateKhakiInfoForBarAvord AmalyateKhakiInfoForBarAvord = new clsAmalyateKhakiInfoForBarAvord();
         AmalyateKhakiInfoForBarAvord.BaravordUserId = BarAvordUserId;
-        AmalyateKhakiInfoForBarAvord.FromKM = FromKM.ToString("D6");
-        AmalyateKhakiInfoForBarAvord.ToKM = ToKM.ToString("D6");
+        AmalyateKhakiInfoForBarAvord.FromKM = FromKM.ToString();//.ToString("D6");
+        AmalyateKhakiInfoForBarAvord.ToKM = ToKM.ToString();//.ToString("D6");
         AmalyateKhakiInfoForBarAvord.Type = Type;
         AmalyateKhakiInfoForBarAvord.Name = "";
         AmalyateKhakiInfoForBarAvord.KMNum = intKMNum;
@@ -235,14 +233,13 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
 
             decimal dHKB = decimal.Parse(HKB);
 
-            clsAmalyateKhakiInfoForBarAvord? currentAmalyateKhakiInfoForBarAvord = _context.AmalyateKhakiInfoForBarAvords.FirstOrDefault(x => x.BaravordUserId == BarAvordUserId && x.KMNum==Num);
+            clsAmalyateKhakiInfoForBarAvord? currentAmalyateKhakiInfoForBarAvord = _context.AmalyateKhakiInfoForBarAvords.FirstOrDefault(x => x.BaravordUserId == BarAvordUserId && x.KMNum == Num);
             if (currentAmalyateKhakiInfoForBarAvord != null)
             {
-
                 _context.Entry(currentAmalyateKhakiInfoForBarAvord).CurrentValues.SetValues(new
                 {
-                    FromKM = FromKM.ToString("D6"),
-                    ToKM = ToKM.ToString("D6"),
+                    FromKM = FromKM.ToString(),
+                    ToKM = ToKM.ToString(),
                     Value = dHKB
                 });
 
@@ -353,8 +350,6 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
                             AmalyateKhakiInfoForBarAvordDetailsMore.Name = "DarsadHaml";
                             _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
                         }
-
-
                     }
                     /////////////
 
@@ -414,9 +409,9 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
                     }
                 }
 
-                ////
+                /////
                 /////دریافت اضافه بهاهای درج شده
-                ////
+                /////
 
                 List<clsAmalyateKhakiInfoForBarAvordEzafeBaha> lstAKhForBEB =
                         _context.AmalyateKhakiInfoForBarAvordEzafeBahas.Where(x => x.AmalyateKhakiInfoForBarAvordId == currentAmalyateKhakiInfoForBarAvord.ID).ToList();
@@ -424,13 +419,21 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
                 ///حذف اضافه بهاهای قبلی
                 _context.AmalyateKhakiInfoForBarAvordEzafeBahas.RemoveRange(lstAKhForBEB);
 
-
                 SaveEzafeBahaAKhDto request1 = new SaveEzafeBahaAKhDto
                 {
                     AmalyateKhakiInfoForBarAvordId = currentAmalyateKhakiInfoForBarAvord.ID,
                     BarAvordUserId = BarAvordUserId,
                     Year = Year
                 };
+
+                ///حذف حمل های درج شده
+                List<clsAmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetre> lstAmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetres =
+                    _context.AmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetres.Where(x => lstAKhForBEB.Select(x => x.ID).Contains(x.AmalyateKhakiInfoForBarAvordEzafeBahaId)).ToList();
+                _context.AmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetres.RemoveRange(lstAmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetres);
+
+                List<clsRizMetreUsers> lstRizMetreHaml = _context.RizMetreUserses.Where(x => lstAmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetres.Select(x => x.RizMetreId).Contains(x.ID)).ToList();
+                _context.RizMetreUserses.RemoveRange(lstRizMetreHaml);
+
                 _context.SaveChanges();
 
                 List<long> lstAKh = lstAKhForBEB.Select(x => x.NoeKhakBardariEzafeBahaId).ToList();
@@ -460,24 +463,26 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
 
     public JsonResult GetExistingKMAmalyateKhakiInfoWithBarAvordId([FromBody] RequestExistingKMAmalyateKhakiInfoWithBarAvord request)
     {
+        List<clsAmalyateKhakiInfoForBarAvord> GetExistingKMAmalyateKhakiInfoWithBarAvord =
+            _context.AmalyateKhakiInfoForBarAvords.Where(x => x.BaravordUserId == request.BaravordId && x.Type == request.Type).ToList();
 
-        string strParam1 = "BarAvordUserId='" + request.BaravordId + "' and Type=" + request.Type;
-        var Param = new SqlParameter("@Parameter", strParam1);
-        var TypeParam = new SqlParameter("@Type", request.Type);
+        //string strParam1 = "BarAvordUserId='" + request.BaravordId + "' and Type=" + request.Type;
+        //var Param = new SqlParameter("@Parameter", strParam1);
+        //var TypeParam = new SqlParameter("@Type", request.Type);
 
-        var GetExistingKMAmalyateKhakiInfoWithBarAvord = _context.Set<GetExistingKMAmalyateKhakiInfoWithBarAvordDto>()
-            .FromSqlRaw("EXEC AmalyateKhakiInfoForBarAvordListWithParameter @Parameter,@Type", Param, TypeParam)
-            .ToList();
+        //var GetExistingKMAmalyateKhakiInfoWithBarAvord = _context.Set<GetExistingKMAmalyateKhakiInfoWithBarAvordDto>()
+        //    .FromSqlRaw("EXEC AmalyateKhakiInfoForBarAvordListWithParameter @Parameter,@Type", Param, TypeParam)
+        //    .ToList();
 
-        //DataTable DtKMAmalyateKhakiBarAvord = clsConvert.ToDataTable(GetExistingKMAmalyateKhakiInfoWithBarAvord);
-        var DtKMAmalyateKhakiBarAvord = GetExistingKMAmalyateKhakiInfoWithBarAvord.ToList();
+        ////DataTable DtKMAmalyateKhakiBarAvord = clsConvert.ToDataTable(GetExistingKMAmalyateKhakiInfoWithBarAvord);
+        //var DtKMAmalyateKhakiBarAvord = GetExistingKMAmalyateKhakiInfoWithBarAvord.ToList();
         //DataSet Ds = new DataSet();
 
         //DtKMAmalyateKhakiBarAvord.TableName = "tblKMAmalyateKhakiBarAvord";
 
         //Ds.Tables.Add(DtKMAmalyateKhakiBarAvord);
 
-        return new JsonResult(DtKMAmalyateKhakiBarAvord);
+        return new JsonResult(GetExistingKMAmalyateKhakiInfoWithBarAvord);
     }
 
 
@@ -521,7 +526,7 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
                 Title = x.noe.Title,
                 Value = detail != null ? detail.Value : (decimal?)null,
                 Type = x.noe.Type
-            }).Where(x=>x.Type==Type).ToList();
+            }).Where(x => x.Type == Type).ToList();
 
 
         List<Guid> gKMAId = KMAmalyateKhakiBarAvordDetails
@@ -991,7 +996,7 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
 
         clsAmalyateKhakiInfoForBarAvordEzafeBaha? amalyateKhakiInfoForBarAvordEzafeBaha =
             _context.AmalyateKhakiInfoForBarAvordEzafeBahas.FirstOrDefault(x => x.NoeKhakBardariEzafeBahaId == request.NoeKhakBardariEzafeBahaId
-                                                                        && x.AmalyateKhakiInfoForBarAvordId == x.AmalyateKhakiInfoForBarAvordId);
+                                                                        && x.AmalyateKhakiInfoForBarAvordId == request.AmalyateKhakiInfoForBarAvordId);
 
         //List<AmalyateKhakiInfoForBarAvordDetailsInsertedDto> lstAKhForBDRizmetre =
         //    _context.AmalyateKhakiInfoForBarAvordDetailsRizMetres.Include(x => x.AmalyateKhakiInfoForBarAvordDetails)
@@ -1015,13 +1020,19 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
         if (amalyateKhakiInfoForBarAvordEzafeBaha != null)
         {
             _context.AmalyateKhakiInfoForBarAvordEzafeBahas.Remove(amalyateKhakiInfoForBarAvordEzafeBaha);
-
-
             List<clsAmalyateKhakiInfoForBarAvordEzafeBahaRizMetre> lstlstAKhForBERizMetre =
                 _context.AmalyateKhakiInfoForBarAvordEzafeBahaRizMetres.Where(x => x.AmalyateKhakiInfoForBarAvordEzafeBahaId == amalyateKhakiInfoForBarAvordEzafeBaha.ID).ToList();
 
             _context.AmalyateKhakiInfoForBarAvordEzafeBahaRizMetres.RemoveRange(lstlstAKhForBERizMetre);
+
+            List<clsAmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetre> lstAKhHamlRizMetre =
+                _context.AmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetres.Where(x => x.AmalyateKhakiInfoForBarAvordEzafeBahaId == amalyateKhakiInfoForBarAvordEzafeBaha.ID).ToList();
+            _context.AmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetres.RemoveRange(lstAKhHamlRizMetre);
+
+            List<clsRizMetreUsers> lstRizMetreHaml = _context.RizMetreUserses.Where(x => lstAKhHamlRizMetre.Select(x => x.RizMetreId).Contains(x.ID)).ToList();
+            _context.RizMetreUserses.RemoveRange(lstRizMetreHaml);
         }
+
         _context.SaveChanges();
 
         return new JsonResult("OK");

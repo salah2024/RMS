@@ -8,6 +8,8 @@ public class AmalyateKhakiCommon
 {
     public bool SaveEzafeBahaAKh(SaveEzafeBahaAKhDto request, ApplicationDbContext _context)
     {
+        long Year = request.Year;
+
         clsNoeKhakBardariEzafeBaha? NoeKhB_EB = _context.NoeKhakBardariEzafeBahas.FirstOrDefault(x => x.Id == request.NoeKhakBardariEzafeBahaId);
         string strCurrentShomareh = "";
         string? strCondition = "";
@@ -47,6 +49,7 @@ public class AmalyateKhakiCommon
                  //AmalyateKhakiInfoForBarAvordId = x.AmalyateKhakiInfoForBarAvordDetails.AmalyateKhakiInfoForBarAvordId,
                  NoeKhakBardariId = x.AmalyateKhakiInfoForBarAvordDetails.NoeKhakBardariId,
                  NoeKhakBardariName = x.AmalyateKhakiInfoForBarAvordDetails.NoeKhakBardari.Title,
+                 FBShomareh = x.AmalyateKhakiInfoForBarAvordDetails.NoeKhakBardari.FBItemShomareh,
                  lstAmalyateKhakiInfoForBarAvordDetailsMore = x.AmalyateKhakiInfoForBarAvordDetails.lstAmalyateKhakiInfoForBarAvordDetailsMore.ToList()
              }).ToList();
 
@@ -77,9 +80,11 @@ public class AmalyateKhakiCommon
             _context.FBs.Add(newFB);
             gFBId = newFB.ID;
         }
+
+        List<clsItemsRelatedToItemHaml> lstRelatedToItemHaml = _context.ItemsRelatedToItemHamls.Where(x => x.Year == Year).ToList();
+
         foreach (var item in lstAKhForBD)
         {
-
             decimal? MeghdarJoz = 0;
             clsAmalyateKhakiInfoForBarAvordDetailsMore? AmalyateKhakiInfoForBarAvordDetailsMore = null;
             switch (strCondition)
@@ -93,7 +98,7 @@ public class AmalyateKhakiCommon
                             MeghdarJoz = AmalyateKhakiInfoForBarAvordDetailsMore.Value;
                             clsRizMetreUsers RizMetre = new clsRizMetreUsers();
                             RizMetre.Shomareh = Shomareh++;
-                            RizMetre.Sharh = item.NoeKhakBardariName+" - " + "حمل به دپو";
+                            RizMetre.Sharh = item.NoeKhakBardariName + " - " + "حمل به دپو";
                             RizMetre.Tedad = null;
                             RizMetre.Tool = null;
                             RizMetre.Arz = null;
@@ -227,7 +232,66 @@ public class AmalyateKhakiCommon
                     }
             }
 
+            ///آیتم های حمل درج میگردد
+            string FBShomareh = item.FBShomareh.Trim();
+            bool blnHasHaml = false;
+            clsItemsRelatedToItemHaml? itemsRelatedToItemHaml = lstRelatedToItemHaml.FirstOrDefault(x => x.ItemFB.Trim() == FBShomareh);
+            string strItemHamlFB = "";
+            if (itemsRelatedToItemHaml != null)
+            {
+                strItemHamlFB = itemsRelatedToItemHaml.ItemHamlFB.Trim();
+                blnHasHaml = true;
+            }
 
+            if (blnHasHaml)
+            {
+                clsFB? FBHaml = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordUserId && x.Shomareh == strItemHamlFB);
+                Guid gFBIdHaml = new Guid();
+                if (FBHaml != null)
+                {
+                    gFBIdHaml = FBHaml.ID;
+                }
+                else
+                {
+                    clsFB newFBHaml = new clsFB
+                    {
+                        BarAvordId = BarAvordUserId,
+                        InsertDateTime = Now,
+                        Shomareh = strItemHamlFB
+                    };
+                    _context.FBs.Add(newFBHaml);
+                    gFBIdHaml = newFBHaml.ID;
+                }
+
+                ///
+                ///درج ریز متره
+                ///
+
+                clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                RizMetre.Shomareh = Shomareh++;
+                RizMetre.Sharh = " - حمل " + item.NoeKhakBardariName;
+                RizMetre.Tedad = null;
+                RizMetre.Tool = null;
+                RizMetre.Arz = null;
+                RizMetre.Ertefa = null;
+                RizMetre.Vazn = null;
+                RizMetre.Des = "";
+                RizMetre.FBId = gFBIdHaml;
+                RizMetre.OperationsOfHamlId = 1;
+                RizMetre.Type = "1";
+                RizMetre.ForItem = "";
+                RizMetre.UseItem = "";
+                RizMetre.MeghdarJoz = MeghdarJoz;
+                _context.RizMetreUserses.Add(RizMetre);
+
+                clsAmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetre AmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetre
+                    = new clsAmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetre
+                    {
+                        AmalyateKhakiInfoForBarAvordEzafeBahaId = amalyateKhakiInfoForBarAvordEzafeBaha.ID,
+                        RizMetreId = RizMetre.ID
+                    };
+                _context.AmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetres.Add(AmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetre);
+            }
         }
 
         return true;

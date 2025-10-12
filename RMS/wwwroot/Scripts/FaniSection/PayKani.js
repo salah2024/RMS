@@ -23,7 +23,7 @@ function PayKaniClick(OpId) {
       <span>از کیلومتراژ:</span>
     </div>
     <div class="col-md-1">
-      <input type="text" class="form-control_1 khakbardariTextStyle  input-sm text-center" id="txtFromKMForPayKani" value="000+000"/>
+      <input type="text" class="form-control_1 khakbardariTextStyle input-sm text-center" id="txtFromKMForPayKani" value="0"/>
     </div>
 
     <!-- تا کیلومتراژ -->
@@ -31,7 +31,7 @@ function PayKaniClick(OpId) {
       <span>تا کیلومتراژ:</span>
     </div>
     <div class="col-md-1">
-      <input type="text" class="form-control_1 khakbardariTextStyle input-sm text-center" id="txtToKMForPayKani" value="000+000"/>
+      <input type="text" class="form-control_1 khakbardariTextStyle input-sm text-center" id="txtToKMForPayKani" value="0"/>
     </div>
 
     <!-- حجم پی کنی -->
@@ -69,6 +69,23 @@ function PayKaniClick(OpId) {
     `;
 
     $('#ula' + OpId).html(str);
+
+    setTimeout(() => { $('#txtFromKMForPayKani').focus(); }, 200);
+
+    $('#ula' + OpId).off('keydown.paykani').on('keydown.paykani', '.khakbardariTextStyle', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // جلوگیری از submit فرم
+            const inputs = $('.khakbardariTextStyle');
+            const idx = inputs.index(this);
+            if (idx >= 0 && idx < inputs.length - 1) {
+                inputs.eq(idx + 1).focus().select();
+            } else {
+                // اگر آخرین input بود، می‌توانی فوکوس را به دکمه ذخیره بدهی
+                $('.buttonStyleBoard').focus();
+            }
+        }
+    });
+
     ShowExistingKMPayKani(BarAvordUserId);
 
     ShowSelctionPayKani(1, 0, 0, BarAvordUserId, 0, 0, 0, 0, 0);
@@ -90,9 +107,9 @@ function ShowExistingKMPayKani(BarAvordUserId) {
                 strSEKB = `
                  <div class="row col-12 ExistKhBHeaderStyle">
                         <div class="col-1" style="border-left: 1px solid #ccc;border-right: 1px solid #ccc;"><span>ردیف</span></div>
-                        <div class="col-2" style="border-left: 1px solid #ccc;border-right: 1px solid #ccc;" ><span>از کیلومتراژ</span></div>
+                        <div class="col-2" style="border-left: 1px solid #ccc;border-right: 1px solid #ccc;"><span>از کیلومتراژ</span></div>
                         <div class="col-2" style="border-left: 1px solid #ccc;border-right: 1px solid #ccc;"><span>تا کیلومتراژ</span></div>
-                        <div class="col-2" style="border-left: 1px solid #ccc;border-right: 1px solid #ccc;"><span>حجم خاکبرداری</span></div>
+                        <div class="col-2" style="border-left: 1px solid #ccc;border-right: 1px solid #ccc;"><span>حجم پی کنی</span></div>
                         <div class="col-3" style="border-left: 1px solid #ccc;border-right: 1px solid #ccc;"><span>عملیات</span></div>
                         <div class="col-2" style="border-left: 1px solid #ccc;border-right: 1px solid #ccc;"></div>
                 </div>
@@ -103,8 +120,8 @@ function ShowExistingKMPayKani(BarAvordUserId) {
                     KMExistingId = this.id;
                     FromKM = this.fromKM;
                     ToKM = this.toKM;
-                    FromKMSplit = this.fromKMSplit;
-                    ToKMSplit = this.toKMSplit;
+                    //FromKMSplit = this.fromKMSplit;
+                    //ToKMSplit = this.toKMSplit;
                     Value = this.value;
                     KMNum = this.kmNum;
                     Type = this.type;
@@ -118,13 +135,13 @@ function ShowExistingKMPayKani(BarAvordUserId) {
     <!-- از کیلومتراژ -->
     
     <div class="col-md-2">
-      <input type="text" class="form-control_1 khakbardariTextStyle  input-sm text-center" id="txtFromKMForPayKani${KMNum}" value="${FromKMSplit}" onclick="event.stopPropagation();"/>
+      <input type="text" class="form-control_1 khakbardariTextStyle  input-sm text-center" id="txtFromKMForPayKani${KMNum}" value="${FromKM}" onclick="event.stopPropagation();"/>
     </div>
 
     <!-- تا کیلومتراژ -->
     
     <div class="col-md-2">
-      <input type="text" class="form-control_1 khakbardariTextStyle input-sm text-center" id="txtToKMForPayKani${KMNum}" value="${ToKMSplit}" onclick="event.stopPropagation();"/>
+      <input type="text" class="form-control_1 khakbardariTextStyle input-sm text-center" id="txtToKMForPayKani${KMNum}" value="${ToKM}" onclick="event.stopPropagation();"/>
     </div>
 
     <!-- حجم خاکبرداری -->
@@ -515,8 +532,8 @@ function ShowSelctionPayKani(IsNew, KMExistingId, KMNum, BarAvordId, FromKM, ToK
 
                 let HKB = parseFloat($(this).val());
 
-                var KMS = parseFloat($('#txtFromKMForPayKani').val().replace('+', ''));
-                var KME = parseFloat($('#txtToKMForPayKani').val().replace('+', ''));
+                var KMS = parseFloat($('#txtFromKMForPayKani').val());//.replace('+', ''));
+                var KME = parseFloat($('#txtToKMForPayKani').val());//.replace('+', ''));
 
                 if (KMS == 0 || KME == 0) {
                     $('#txtFromKMForPayKani').addClass('blinking');
@@ -552,7 +569,8 @@ function ShowSelctionPayKani(IsNew, KMExistingId, KMNum, BarAvordId, FromKM, ToK
                 let lastIndex = -1;
 
                 for (let i = 1; i <= ActivityLength; i++) {
-                    let Darsad = parseFloat($('#txtDarsad' + i).val()) || 0;
+                    $('#txtDarsadPK' + i).val(100)
+                    let Darsad = 100;
 
                     if (Darsad > 0) {
                         let KhDetail = (Darsad / 100 * HKB);
@@ -563,7 +581,8 @@ function ShowSelctionPayKani(IsNew, KMExistingId, KMNum, BarAvordId, FromKM, ToK
                         // درصدهای مرتبط
                         let dVarizi = parseFloat($('#txtDarsadVariziPK' + i).val()) || 0;
                         let dReUse = parseFloat($('#txtReUseDarsadPK' + i).val()) || 0;
-                        let dHaml = parseFloat($('#txtDarsadHamlPK' + i).val()) || 0;
+                        $('#txtDarsadHamlPK' + i).val(100);
+                        let dHaml = 100;// parseFloat($('#txtDarsadHamlPK' + i).val()) || 0;
 
                         // محاسبه حجم هر بخش
                         let vVarizi = (dVarizi / 100) * KhDetail;
@@ -603,18 +622,18 @@ function ShowSelctionPayKani(IsNew, KMExistingId, KMNum, BarAvordId, FromKM, ToK
 
             $('#txtFromKMForPayKani').change(function () {
                 var KM = $(this).val();
-                var KMSplit = KM.split('+');
-                if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
-                    $(this).addClass('blinking');
-                    toastr.info('کیلومتراژ شروع وارد شده طبق فرمت نمی باشد', 'فرمت 000+000 می باشد');
-                }
-                else {
-                    $(this).removeClass('blinking');
-                }
+                //var KMSplit = KM.split('+');
+                //if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
+                //    $(this).addClass('blinking');
+                //    toastr.info('کیلومتراژ شروع وارد شده طبق فرمت نمی باشد', 'فرمت 000+000 می باشد');
+                //}
+                //else {
+                //    $(this).removeClass('blinking');
+                //}
 
 
-                var KMS = parseFloat(KM.replace('+', ''));
-                var KME = parseFloat($('#txtToKMForPayKani').val().replace('+', ''));
+                var KMS = parseFloat(KM);//.replace('+', ''));
+                var KME = parseFloat($('#txtToKMForPayKani').val());//.replace('+', ''));
                 if (KMS > KME) {
                     toastr.info('کیلومتراژ خاتمه قبل از کیلومتراژ شروع میباشد', 'اطلاع');
                     $('#txtToKMForPayKani').addClass('blinking');
@@ -640,18 +659,18 @@ function ShowSelctionPayKani(IsNew, KMExistingId, KMNum, BarAvordId, FromKM, ToK
             $('#txtToKMForPayKani').change(function () {
                 debugger;
                 var KM = $(this).val();
-                var KMSplit = KM.split('+');
-                if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
-                    $(this).addClass('blinking');
-                    toastr.info('کیلومتراژ خاتمه وارد شده طبق فرمت نمی باشد', 'فرمت 000+000 می باشد');
-                }
-                else {
-                    $(this).removeClass('blinking');
-                }
+                //var KMSplit = KM.split('+');
+                //if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
+                //    $(this).addClass('blinking');
+                //    toastr.info('کیلومتراژ خاتمه وارد شده طبق فرمت نمی باشد', 'فرمت 000+000 می باشد');
+                //}
+                //else {
+                //    $(this).removeClass('blinking');
+                //}
 
 
-                var KME = parseFloat(KM.replace('+', ''));
-                var KMS = parseFloat($('#txtFromKMForPayKani').val().replace('+', ''));
+                var KME = parseFloat(KM);//.replace('+', ''));
+                var KMS = parseFloat($('#txtFromKMForPayKani').val());//.replace('+', ''));
                 if (KMS > KME) {
                     toastr.info('کیلومتراژ خاتمه قبل از کیلومتراژ شروع میباشد', 'اطلاع');
                     $('#txtToKMForPayKani').addClass('blinking');
@@ -695,29 +714,29 @@ function UpdatePayKaniInfo(KMPayKaniId, BarAvordUserId, KMNum) {
     }
     ////////////////
     var KM = $('#txtFromKMForPayKani' + KMNum).val();
-    var KMSplit = KM.split('+');
-    if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
-        $('#txtFromKMForPayKani' + KMNum).addClass('blinking');
-        check = true;
-    }
-    else {
-        $('#txtFromKMForPayKani' + KMNum).removeClass('blinking');
-    }
+    //var KMSplit = KM.split('+');
+    //if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
+    //    $('#txtFromKMForPayKani' + KMNum).addClass('blinking');
+    //    check = true;
+    //}
+    //else {
+    //    $('#txtFromKMForPayKani' + KMNum).removeClass('blinking');
+    //}
     ///////////////
     var KM = $('#txtToKMForPayKani' + KMNum).val();
-    var KMSplit = KM.split('+');
-    if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
-        $('#txtToKMForPayKani' + KMNum).addClass('blinking');
-        check = true;
-    }
-    else {
-        $('#txtToKMForPayKani' + KMNum).removeClass('blinking');
-    }
+    //var KMSplit = KM.split('+');
+    //if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
+    //    $('#txtToKMForPayKani' + KMNum).addClass('blinking');
+    //    check = true;
+    //}
+    //else {
+    //    $('#txtToKMForPayKani' + KMNum).removeClass('blinking');
+    //}
     /////////////
-    var KME = parseFloat($('#txtToKMForPayKani' + KMNum).val().replace('+', ''));
-    var KMS = parseFloat($('#txtFromKMForPayKani' + KMNum).val().replace('+', ''));
+    var KME = parseFloat($('#txtToKMForPayKani' + KMNum).val());//.replace('+', ''));
+    var KMS = parseFloat($('#txtFromKMForPayKani' + KMNum).val());//.replace('+', ''));
     if (KMS >= KME) {
-        $('#txtToKMForPayKani' + KMNum).addClass('ErrorValueStyle');
+        $('#txtToKMForPayKani' + KMNum).addClass('blinking');
         toastr.info('کیلومتراژ انتها بایستی بعد از کیلومتراژ شروع باشد', 'اطلاع');
         check = true;
     }
@@ -729,11 +748,11 @@ function UpdatePayKaniInfo(KMPayKaniId, BarAvordUserId, KMNum) {
     $('#divPayKaniInfoDetails input[type="text"]').each(function () {
         ////////////
         if (!$.isNumeric($(this).val())) {
-            $(this).addClass('ErrorValueStyle');
+            $(this).addClass('blinking');
             check = true;
         }
         else
-            $(this).removeClass('ErrorValueStyle');
+            $(this).removeClass('blinking');
     });
 
     if (SumAllDetailsForEdit(KMNum)) check = true;
@@ -1435,28 +1454,28 @@ function SavePayKaniInfo1(BarAvordUserId) {
         $('#txtHajmPayKani').removeClass('blinking');
     }
     ////////////////
-    var KM = $('#txtFromKMForPayKani').val();
-    var KMSplit = KM.split('+');
-    if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
-        $('#txtFromKMForPayKani').addClass('blinking');
-        check = true;
-    }
-    else {
-        $('#txtFromKMForPayKani').removeClass('blinking');
-    }
-    ///////////////
-    var KM = $('#txtToKMForPayKani').val();
-    var KMSplit = KM.split('+');
-    if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
-        $('#txtToKMForPayKani').addClass('blinking');
-        check = true;
-    }
-    else {
-        $('#txtToKMForPayKani').removeClass('blinking');
-    }
+    //var KM = $('#txtFromKMForPayKani').val();
+    //var KMSplit = KM.split('+');
+    //if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
+    //    $('#txtFromKMForPayKani').addClass('blinking');
+    //    check = true;
+    //}
+    //else {
+    //    $('#txtFromKMForPayKani').removeClass('blinking');
+    //}
+    /////////////////
+    //var KM = $('#txtToKMForPayKani').val();
+    //var KMSplit = KM.split('+');
+    //if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
+    //    $('#txtToKMForPayKani').addClass('blinking');
+    //    check = true;
+    //}
+    //else {
+    //    $('#txtToKMForPayKani').removeClass('blinking');
+    //}
     /////////////
-    var KME = parseFloat($('#txtToKMForPayKani').val().replace('+', ''));
-    var KMS = parseFloat($('#txtFromKMForPayKani').val().replace('+', ''));
+    var KME = parseFloat($('#txtToKMForPayKani').val());//.replace('+', ''));
+    var KMS = parseFloat($('#txtFromKMForPayKani').val());//.replace('+', ''));
     if (KMS >= KME) {
         $('#txtToKMForPayKani').addClass('blinking');
         toastr.info('کیلومتراژ انتها بایستی بعد از کیلومتراژ شروع باشد', 'اطلاع');
@@ -1577,30 +1596,30 @@ function UpdatePayKaniInfo(KMPayKaniId, BarAvordUserId, KMNum) {
         $('#txtHajmPayKani' + KMNum).removeClass('blinking');
     }
     ////////////////
-    var KM = $('#txtFromKMForPayKani' + KMNum).val();
-    var KMSplit = KM.split('+');
-    if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
-        $('#txtFromKMForPayKani' + KMNum).addClass('blinking');
-        check = true;
-    }
-    else {
-        $('#txtFromKMForPayKani' + KMNum).removeClass('blinking');
-    }
-    ///////////////
-    var KM = $('#txtToKMForPayKani' + KMNum).val();
-    var KMSplit = KM.split('+');
-    if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
-        $('#txtToKMForPayKani' + KMNum).addClass('blinking');
-        check = true;
-    }
-    else {
-        $('#txtToKMForPayKani' + KMNum).removeClass('blinking');
-    }
+    //var KM = $('#txtFromKMForPayKani' + KMNum).val();
+    //var KMSplit = KM.split('+');
+    //if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
+    //    $('#txtFromKMForPayKani' + KMNum).addClass('blinking');
+    //    check = true;
+    //}
+    //else {
+    //    $('#txtFromKMForPayKani' + KMNum).removeClass('blinking');
+    //}
+    /////////////////
+    //var KM = $('#txtToKMForPayKani' + KMNum).val();
+    //var KMSplit = KM.split('+');
+    //if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
+    //    $('#txtToKMForPayKani' + KMNum).addClass('blinking');
+    //    check = true;
+    //}
+    //else {
+    //    $('#txtToKMForPayKani' + KMNum).removeClass('blinking');
+    //}
     /////////////
-    var KME = parseFloat($('#txtToKMForPayKani' + KMNum).val().replace('+', ''));
-    var KMS = parseFloat($('#txtFromKMForPayKani' + KMNum).val().replace('+', ''));
+    var KME = parseFloat($('#txtToKMForPayKani' + KMNum).val());//.replace('+', ''));
+    var KMS = parseFloat($('#txtFromKMForPayKani' + KMNum).val());//.replace('+', ''));
     if (KMS >= KME) {
-        $('#txtToKMForPayKani' + KMNum).addClass('ErrorValueStyle');
+        $('#txtToKMForPayKani' + KMNum).addClass('blinking');
         toastr.info('کیلومتراژ انتها بایستی بعد از کیلومتراژ شروع باشد', 'اطلاع');
         check = true;
     }
@@ -1612,11 +1631,11 @@ function UpdatePayKaniInfo(KMPayKaniId, BarAvordUserId, KMNum) {
     $('#divPayKaniInfoDetails input[type="text"]').each(function () {
         ////////////
         if (!$.isNumeric($(this).val())) {
-            $(this).addClass('ErrorValueStyle');
+            $(this).addClass('blinking');
             check = true;
         }
         else
-            $(this).removeClass('ErrorValueStyle');
+            $(this).removeClass('blinking');
     });
 
     if (SumAllDetailsForEdit(KMNum)) check = true;
