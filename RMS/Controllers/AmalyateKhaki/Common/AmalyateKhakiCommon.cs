@@ -296,5 +296,4 @@ public class AmalyateKhakiCommon
 
         return true;
     }
-
 }

@@ -231,6 +231,7 @@ function ConfirmItemsCondition(object, Id, ConditionGroupId, LevelNumber) {
         data: JSON.stringify(vardata),
         contentType: "application/json; charset=utf-8",
         success: function (data) {
+            debugger;
             var info = data.split('_');
             if (info[0] == "OK") {
                 toastr.success('اطلاعات انتخاب شده بدرستی ثبت گردید', 'موفقیت');
