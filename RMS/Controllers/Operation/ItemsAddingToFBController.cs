@@ -505,6 +505,23 @@ namespace RMS.Controllers.Operation
                                         break;
                                     }
 
+                                case "17":
+                                    {
+                                        var varFBUsersAdded = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == strFBShomarehAdded);
+
+                                        if (varFBUsersAdded != null)
+                                        {
+                                            Guid guFBUsersAddedId = varFBUsersAdded.ID; 
+                                            List<clsRizMetreUsers> lstRizMetres = _context.RizMetreUserses.Where(x => x.FBId == guFBUsersAddedId && x.ForItem == strFBShomareh.Trim()
+                                                && x.LevelNumber == LevelNumber).ToList();
+                                            if (lstRizMetres != null)
+                                            {
+                                                _context.RizMetreUserses.RemoveRange(lstRizMetres);
+                                            }
+                                        }
+
+                                        break;
+                                    }
                                 default:
                                     break;
                             }
@@ -3424,7 +3441,7 @@ namespace RMS.Controllers.Operation
                                         ItemsHasConditionAddedToFB.BarAvordId = BarAvordId;
                                         ItemsHasConditionAddedToFB.FBShomareh = strItemFBShomareh;
                                         ItemsHasConditionAddedToFB.ItemsHasCondition_ConditionContextId = lngItemsHasCondition_ConditionContextId;
-                                        ItemsHasConditionAddedToFB.Meghdar = Meghdar;
+                                        ItemsHasConditionAddedToFB.Meghdar = 0;
                                         ItemsHasConditionAddedToFB.ConditionGroupId = ConditionGroupId;
 
                                         try
@@ -3807,8 +3824,8 @@ namespace RMS.Controllers.Operation
                                 case "16":
                                 case "17":
                                     {
-                                        var varFBUsersAdded = _context.FBs.Where(x => x.BarAvordId == BarAvordId && x.Shomareh == strFBShomarehAdded).ToList();
-                                        DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
+                                        var varFBUsersAdded = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == strFBShomarehAdded);
+                                        //DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
 
                                         lstItemFBShomarehForGet.Clear();
 
@@ -3820,9 +3837,9 @@ namespace RMS.Controllers.Operation
                                         };
                                         lstItemFBShomarehForGet.Add(ItemFBShomarehForGet);
 
-                                        if (DtFBUsersAdded.Rows.Count != 0)
+                                        if (varFBUsersAdded != null)
                                         {
-                                            Guid guFBUsersAddedId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
+                                            Guid guFBUsersAddedId = varFBUsersAdded.ID; //Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
                                             var RizMetre = _context.RizMetreUserses.Where(x => x.FBId == guFBUsersAddedId && x.ForItem == strFBShomareh.Trim()
                                                 && x.LevelNumber == LevelNumber).OrderBy(x => x.Shomareh).Select(x => new RizMetreForGetAndShowAddItemsDto
                                                 {

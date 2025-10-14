@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Security.Cryptography;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RMS.Controllers.Operation.Dto;
@@ -45,10 +46,10 @@ namespace RMS.Controllers.Operation
                                                      ConditionGroupId = ItemsHasConditionAddedToFB.ConditionGroupId,
                                                      ItemShomareh = ItemsHasCondition.ItemFBShomareh
                                                  }).Where(x => x.BarAvordId == BarAvordId && x.FBShomareh.Substring(0, 6) == strFBShomareh && x.ConditionGroupId == ConditionGroupId).ToList();
-            DataTable DtItemsHasConditionAddedToFB = clsConvert.ToDataTable(varItemsHasConditionAddedToFB);
+            //DataTable DtItemsHasConditionAddedToFB = clsConvert.ToDataTable(varItemsHasConditionAddedToFB);
             //DataTable DtItemsHasConditionAddedToFB = clsItemsHasConditionAddedToFB.ListWithParameterSimple("BarAvordId=" + intBarAvordId + " and FBShomareh='" + strFBShomareh + "' and ConditionGroup=" + ConditionGroupId);
 
-            if (DtItemsHasConditionAddedToFB.Rows.Count != 0)
+            if (varItemsHasConditionAddedToFB.Count != 0)
             {
                 //string strItemsHasCondition_ConditionContext = "";
                 //if (DtItemsHasConditionAddedToFB.Rows.Count != 0)
@@ -65,13 +66,14 @@ namespace RMS.Controllers.Operation
                 //}
 
                 List<long> strItemsHasCondition_ConditionContext = new List<long>();
-                if (DtItemsHasConditionAddedToFB.Rows.Count != 0)
+                //if (varItemsHasConditionAddedToFB.Count != 0)
+                //{
+                for (int i = 0; i < varItemsHasConditionAddedToFB.Count; i++)
                 {
-                    for (int i = 0; i < DtItemsHasConditionAddedToFB.Rows.Count; i++)
-                    {
-                        strItemsHasCondition_ConditionContext.Add(long.Parse(DtItemsHasConditionAddedToFB.Rows[i]["ItemsHasCondition_ConditionContextId"].ToString()));
-                    }
+                    //strItemsHasCondition_ConditionContext.Add(long.Parse(DtItemsHasConditionAddedToFB.Rows[i]["ItemsHasCondition_ConditionContextId"].ToString()));
+                    strItemsHasCondition_ConditionContext.Add(varItemsHasConditionAddedToFB[i].ItemsHasCondition_ConditionContextId);
                 }
+                //}
                 bool blnCheckIsDel = false;
                 try
                 {
@@ -97,10 +99,10 @@ namespace RMS.Controllers.Operation
                     var varItemsAddingToFB = _context.ItemsAddingToFBs.Where(x => strItemsHasCondition_ConditionContext.Contains(x.ItemsHasCondition_ConditionContextId)).ToList();
                     DataTable DtItemsAddingToFB = clsConvert.ToDataTable(varItemsAddingToFB);
 
-                    for (int Counter = 0; Counter < DtItemsHasConditionAddedToFB.Rows.Count; Counter++)
+                    for (int Counter = 0; Counter < varItemsHasConditionAddedToFB.Count; Counter++)
                     {
-                        decimal Meghdar = decimal.Parse(DtItemsHasConditionAddedToFB.Rows[Counter]["Meghdar"].ToString());
-                        string RBCode = DtItemsHasConditionAddedToFB.Rows[Counter]["ItemsHasCondition_ConditionContextId"].ToString().Trim();
+                        decimal Meghdar = varItemsHasConditionAddedToFB[Counter].Meghdar;
+                        string RBCode = varItemsHasConditionAddedToFB[Counter].ItemsHasCondition_ConditionContextId.ToString().Trim(); //DtItemsHasConditionAddedToFB.Rows[Counter]["ItemsHasCondition_ConditionContextId"].ToString().Trim();
                         DataRow[] Dr = DtItemsAddingToFB.Select("ItemsHasCondition_ConditionContextId=" + RBCode);
                         if (Dr.Length != 0)
                         {
@@ -244,7 +246,7 @@ namespace RMS.Controllers.Operation
                                                     if (lstRMForDel.Count != 0)
                                                     {
                                                         _context.RizMetreUserses.RemoveRange(lstRMForDel);
-                                                        long ConditionGroupId1 = long.Parse(DtItemsHasConditionAddedToFB.Rows[Counter]["ConditionGroupId"].ToString());
+                                                        long ConditionGroupId1 = varItemsHasConditionAddedToFB[Counter].ConditionGroupId;
                                                         ///
                                                         ///ConditionGroup=12
                                                         ///برای پخش، آبپاشی، تسطیح و کوبیدن قشر زیراساس میباشد
@@ -355,7 +357,7 @@ namespace RMS.Controllers.Operation
                                         }
                                     case "13":
                                         {
-                                            decimal Meghdar2 = decimal.Parse(DtItemsHasConditionAddedToFB.Rows[Counter]["Meghdar2"].ToString());
+                                            decimal Meghdar2 = varItemsHasConditionAddedToFB[Counter].Meghdar2;
                                             decimal dZaribVazn = ((Meghdar * Meghdar2) / 10000);
 
                                             string[] strCondition = Dr[idr]["Condition"].ToString().Trim().Split("_");
@@ -402,6 +404,23 @@ namespace RMS.Controllers.Operation
                                             }
                                             break;
                                         }
+                                    case "17":
+                                        {
+                                            var varFBUsersAdded = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == strFBShomarehAdded);
+
+                                            if (varFBUsersAdded != null)
+                                            {
+                                                Guid guFBUsersAddedId = varFBUsersAdded.ID;
+                                                List<clsRizMetreUsers> lstRizMetres = _context.RizMetreUserses.Where(x => x.FBId == guFBUsersAddedId && x.ForItem == strFBShomareh.Trim()
+                                                    && x.LevelNumber == LevelNumber).ToList();
+
+                                                _context.RizMetreUserses.RemoveRange(lstRizMetres);
+                                                _context.SaveChanges();
+
+                                            }
+
+                                            break;
+                                        }
                                     default:
                                         break;
                                 }
@@ -410,7 +429,7 @@ namespace RMS.Controllers.Operation
                     }
                 }
 
-                long strItemsHasCondition_ConditionContextId = long.Parse(DtItemsHasConditionAddedToFB.Rows[0]["ItemsHasCondition_ConditionContextId"].ToString().Trim());
+                long strItemsHasCondition_ConditionContextId = varItemsHasConditionAddedToFB.First().ItemsHasCondition_ConditionContextId; //long.Parse(DtItemsHasConditionAddedToFB.Rows[0]["ItemsHasCondition_ConditionContextId"].ToString().Trim());
 
                 var varOperation_ItemsFB = (from ItemsHasCondition in _context.ItemsHasConditions
                                             join ItemsHasCondition_ConditionContext in _context.ItemsHasCondition_ConditionContexts
