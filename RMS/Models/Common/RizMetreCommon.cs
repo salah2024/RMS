@@ -290,6 +290,8 @@ namespace RMS.Models.Common
                         }
                     }
 
+                    context.SaveChanges();
+
                     //////////
                     ///
 

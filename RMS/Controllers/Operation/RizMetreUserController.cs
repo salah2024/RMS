@@ -2024,6 +2024,8 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                     }
                 }
 
+                context.SaveChanges();
+
                 //////////
                 ///////////////
                 //////////////

@@ -25,6 +25,18 @@
             lstItemFBShomarehForGet = data.lstItemFBShomarehForGet;
             lst = data.lst;
 
+            var uniqueList = [];
+            var seen = {};
+
+            $.each(lstItemFBShomarehForGet, function (i, item) {
+                if (!seen[item.itemFBShomareh]) {
+                    seen[item.itemFBShomareh] = true;
+                    uniqueList.push(item);
+                }
+            });
+
+            lstItemFBShomarehForGet = uniqueList;
+
             //در صورتی که مقدار ضریب غبر صفر باشد، یعنی 
             //آیتم دارای اضافه یا کسر بهای قیری بوده آیتم های 150801 یا 150802
 
@@ -40,7 +52,7 @@
                 }
                 groupedData[row.itemFBShomareh].push(row);
             });
-
+            debugger;
             // ساخت HTML بر اساس lstItemFBShomarehForGet
             if (lst.length != 0) {
                 lstItemFBShomarehForGet.forEach(function (itemGroup) {
