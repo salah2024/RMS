@@ -2175,8 +2175,10 @@ namespace RMS.Models.Common
 
                                 if (strFinalWorking != "")
                                 {
-                                    string[] strFinalWorkingSplit = strFinalWorking.Split('-');
-                                    int intReapetCount = (int.Parse(strFinalWorkingSplit[1]) / 2) - 1;
+                                    string[] strFinalWorkingSplit1 = strFinalWorking.Split('_');
+                                    int intDivided = int.Parse(strFinalWorkingSplit1[1]);
+                                    string[] strFinalWorkingSplit = strFinalWorkingSplit1[0].Split('-');
+                                    int intReapetCount = (int.Parse(strFinalWorkingSplit[1]) / intDivided) - 1;
                                     string strItemShomareh = strAddedItems;
                                     clsFB? varFBUser = lstFBUser.FirstOrDefault(x => x.Shomareh == strItemShomareh);
 
@@ -2203,7 +2205,7 @@ namespace RMS.Models.Common
                                     decimal? Vazn = 1;
                                     for (int i = 0; i < intReapetCount; i++)
                                     {
-                                        decimal dErtefa = 2;
+                                        decimal dErtefa = intDivided;
                                         clsRizMetreUsers RizMetreUserses1 = new clsRizMetreUsers();
                                         RizMetreUserses1.Shomareh = RizMetre.Shomareh;
                                         ShomareNew++;
@@ -2241,7 +2243,7 @@ namespace RMS.Models.Common
                                     }
 
 
-                                    strFinalWorking = strFinalWorking.Replace("z", RizMetre.Ertefa != null ? RizMetre.Ertefa.Value.ToString().Trim() : "");
+                                    strFinalWorking = strFinalWorkingSplit1[0].Replace("z", RizMetre.Ertefa != null ? RizMetre.Ertefa.Value.ToString().Trim() : "");
 
                                     //رکورد آخری هم بنا به شرط فاینل ارتفاع درج میگردد
                                     decimal Ertefa = decimal.Parse(StringToFormula.Eval(strFinalWorking).ToString("0.##"));
@@ -4563,8 +4565,10 @@ namespace RMS.Models.Common
 
                                 if (strFinalWorking != "")
                                 {
-                                    string[] strFinalWorkingSplit = strFinalWorking.Split('-');
-                                    int intReapetCount = (int.Parse(strFinalWorkingSplit[1]) / 2) - 1;
+                                    string[] strFinalWorkingSplit1 = strFinalWorking.Split('_');
+                                    int intDivided = int.Parse(strFinalWorkingSplit1[1]);
+                                    string[] strFinalWorkingSplit = strFinalWorkingSplit1[0].Split('-');
+                                    int intReapetCount = (int.Parse(strFinalWorkingSplit[1]) / intDivided) - 1;
 
                                     clsFB? varFBUser = lstFBUser.FirstOrDefault(x => x.Shomareh == strItemShomareh);
                                     Guid intFBId = new Guid();

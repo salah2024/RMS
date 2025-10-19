@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace RMS.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251018141356_a108")]
+    partial class a108
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1052,77 +1055,6 @@ namespace RMS.Migrations
                     b.ToTable("tblBarAvordAddedBoardStand");
                 });
 
-            modelBuilder.Entity("RMS.Models.Entity.clsBarAvordHaml", b =>
-                {
-                    b.Property<Guid>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("BarAvordId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("FBShomareh")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("InsertDateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool?>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("RemoveDateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("UserInserter")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("UserRemover")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("BarAvordId");
-
-                    b.ToTable("tblBarAvordHaml");
-                });
-
-            modelBuilder.Entity("RMS.Models.Entity.clsBarAvordHamlRizMetre", b =>
-                {
-                    b.Property<Guid>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("BarAvordHamlId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("InsertDateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool?>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("RemoveDateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("RizMetreId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("UserInserter")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("UserRemover")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("BarAvordHamlId");
-
-                    b.HasIndex("RizMetreId");
-
-                    b.ToTable("tblBarAvordHamlRizMetre");
-                });
-
             modelBuilder.Entity("RMS.Models.Entity.clsBaravordUser", b =>
                 {
                     b.Property<Guid>("ID")
@@ -1932,6 +1864,42 @@ namespace RMS.Migrations
                     b.ToTable("tblItemsHasConditionAddedToFB");
                 });
 
+            modelBuilder.Entity("RMS.Models.Entity.clsItemsHasConditionAddedToFBHamlRizMetre", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("InsertDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("ItemsHasConditionAddedToFBId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("RemoveDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("RizMetreUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserInserter")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserRemover")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ItemsHasConditionAddedToFBId");
+
+                    b.HasIndex("RizMetreUserId");
+
+                    b.ToTable("tblItemsHasConditionAddedToFBHamlRizMetre");
+                });
+
             modelBuilder.Entity("RMS.Models.Entity.clsItemsHasCondition_ConditionContext", b =>
                 {
                     b.Property<long>("Id")
@@ -1939,9 +1907,6 @@ namespace RMS.Migrations
                         .HasColumnType("bigint");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<bool?>("AutoSelecting")
-                        .HasColumnType("bit");
 
                     b.Property<long>("ConditionContextId")
                         .HasColumnType("bigint");
@@ -3876,36 +3841,6 @@ namespace RMS.Migrations
                     b.Navigation("boardStandItems");
                 });
 
-            modelBuilder.Entity("RMS.Models.Entity.clsBarAvordHaml", b =>
-                {
-                    b.HasOne("RMS.Models.Entity.clsBaravordUser", "BaravordUser")
-                        .WithMany()
-                        .HasForeignKey("BarAvordId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("BaravordUser");
-                });
-
-            modelBuilder.Entity("RMS.Models.Entity.clsBarAvordHamlRizMetre", b =>
-                {
-                    b.HasOne("RMS.Models.Entity.clsBarAvordHaml", "BarAvordHaml")
-                        .WithMany()
-                        .HasForeignKey("BarAvordHamlId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RMS.Models.Entity.clsRizMetreUsers", "RizMetreUser")
-                        .WithMany()
-                        .HasForeignKey("RizMetreId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("BarAvordHaml");
-
-                    b.Navigation("RizMetreUser");
-                });
-
             modelBuilder.Entity("RMS.Models.Entity.clsBaseInfo", b =>
                 {
                     b.HasOne("RMS.Models.Entity.clsBaseInfoType", "Type")
@@ -4052,6 +3987,25 @@ namespace RMS.Migrations
                     b.Navigation("ConditionGroup");
 
                     b.Navigation("ItemsHasCondition_ConditionContext");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsItemsHasConditionAddedToFBHamlRizMetre", b =>
+                {
+                    b.HasOne("RMS.Models.Entity.clsItemsHasConditionAddedToFB", "ItemsHasConditionAddedToFB")
+                        .WithMany()
+                        .HasForeignKey("ItemsHasConditionAddedToFBId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RMS.Models.Entity.clsRizMetreUsers", "RizMetreUser")
+                        .WithMany()
+                        .HasForeignKey("RizMetreUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ItemsHasConditionAddedToFB");
+
+                    b.Navigation("RizMetreUser");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsItemsHasCondition_ConditionContext", b =>

@@ -43,5 +43,11 @@ public class clsItemsHasCondition_ConditionContext
     public string DesForEnteringValue { get; set; }
     public bool? EnableEditing { get; set; }
     public bool? EnableDeleting { get; set; }
+    /// <summary>
+    /// در صورتی که ترو باشد
+    /// بعد از درج ریز متره در صورتی شرط اضافه بها درست باشد
+    /// خودش اضافه بها را اضافه میکند نیاز به تیک زدن چک باکس نیست
+    /// </summary>
+    public bool? AutoSelecting { get; set; }
 
 }

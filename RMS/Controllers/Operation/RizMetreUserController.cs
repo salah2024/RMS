@@ -8,6 +8,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using RMS.Controllers.AbnieFani.Dto;
 using RMS.Controllers.BarAvordUser.Dto;
+using RMS.Controllers.Operation.Common;
 using RMS.Controllers.Operation.Dto;
 using RMS.Models.Common;
 using RMS.Models.Dto.ItemsFieldsDto;
@@ -61,8 +62,6 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
         //    Shomareh = RizMetreUser.Shomareh + 1;
         //else
         //    Shomareh = 1;
-
-
         //DataTable DtLastRizMetreUsersShomareh = clsRizMetreUserss.GetLastRizMetreUsersShomareh("FBId=" + FBId);
         //int Shomareh = int.Parse(DtLastRizMetreUsersShomareh.Rows[0]["lastShomareh"].ToString().Trim());
         clsRizMetreUsers RizMetre = new clsRizMetreUsers();
@@ -97,13 +96,78 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
         context.SaveChanges();
 
 
+        clsFB? currentFB = context.FBs.FirstOrDefault(x => x.ID == FBId);
 
-        /////////////
-        //////////////
-        //////////////
-        ///
+        if (currentFB != null)
+        {
+            /////////////
+            ///درج حمل///
+            /////////////
+            clsBarAvordHaml barAvordHaml = new clsBarAvordHaml
+            {
+                BarAvordId = BarAvordId,
+                FBShomareh = currentFB.Shomareh,
+            };
+            context.BarAvordHamls.Add(barAvordHaml);
+            ///درج ریز متره
+            SaveHamlDto requestSaveHaml = new SaveHamlDto
+            {
+                BarAvordUserId = Request.BarAvordUserId,
+                Year = Year,
+                ItemFBShomareh = currentFB.Shomareh,
+                BarAvordHamlId = barAvordHaml.ID,
+                MeghdarJoz = dMeghdarJoz
+            };
+            HamlCommon.SaveHaml(requestSaveHaml, context);
+            context.SaveChanges();
+
+            /////////////////////////////////////////////////////////////
+            /////آیتم هایی که دارای درج خودکار اضافه بها هستند بررسی////
+            /////   می شوند و اضافه بهایشان بصورت خودکار درج میگردد ////
+            /////////////////////////////////////////////////////////////
 
 
+            var ItemsHasCondition_ConditionContext = context.ItemsHasCondition_ConditionContexts.Include(x => x.ItemsHasCondition)
+                  .Include(x => x.ConditionContext)
+                  .Where(x => x.ItemsHasCondition.ItemFBShomareh == currentFB.Shomareh.Trim() && x.Year == Year).Select(x => new
+                  {
+                      x.Id,
+                      x.AutoSelecting,
+                      x.ConditionContext.ConditionGroupId
+                  }).ToList();
+
+            foreach (var item in ItemsHasCondition_ConditionContext)
+            {
+                if (item.AutoSelecting != null)
+                {
+                    if (item.AutoSelecting.Value)
+                    {
+                        clsItemsHasConditionAddedToFB? currentItemsHasConditionAddedToFBs = context.ItemsHasConditionAddedToFBs
+                            .FirstOrDefault(x => x.BarAvordId == BarAvordId && x.FBShomareh == currentFB.Shomareh &&
+                            x.ItemsHasCondition_ConditionContextId == item.Id);
+
+                        if (currentItemsHasConditionAddedToFBs == null)
+                        {
+                            clsItemsHasConditionAddedToFB ItemsHasConditionAddedToFB = new clsItemsHasConditionAddedToFB
+                            {
+                                BarAvordId = BarAvordId,
+                                FBShomareh = currentFB.Shomareh,
+                                ItemsHasCondition_ConditionContextId = item.Id,
+                                Meghdar = 0,
+                                ConditionGroupId = item.ConditionGroupId
+                            };
+                            context.ItemsHasConditionAddedToFBs.Add(ItemsHasConditionAddedToFB);
+                        }
+                    }
+                }
+            }
+            context.SaveChanges();
+        }
+
+        /////////////////////////////////////////////////////////////////
+        //////در صورتی که اضافه بهایی برای این آیتم انتخاب شده بود//////
+        //////در این صورت بایستی آیتم جاری نیز اضافه بهایش درج گردد/////
+        /////////////////////////////////////////////////////////////////
         clsOperation_ItemsFB operation_ItemsFB = context.Operation_ItemsFBs.First(x => x.OperationId == OperationId);
 
 
@@ -120,39 +184,40 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                                OperationId = OpItemFB.OperationId
                                            }).Where(x => x.OperationId == OperationId && x.NoeFB == NoeFB).OrderBy(x => x.FieldType).ToList();
 
-        List<ItemsHasConditionConditionContextForCheckOperationDto> lstItemsHasCondition = _context.ItemsHasCondition_ConditionContexts
+        List<ItemsHasConditionConditionContextForCheckOperationDto> lstItemsHasCondition =
+            _context.ItemsHasCondition_ConditionContexts
             .Where(cc => cc.Year == Year)
-            .Join(_context.ItemsHasConditionAddedToFBs,
+                .Join(_context.ItemsHasConditionAddedToFBs,
             cc => cc.Id,
             fb => fb.ItemsHasCondition_ConditionContextId,
-    (cc, fb) => new { cc, fb })
-        .Join(_context.ItemsHasConditions,
-    temp => temp.cc.ItemsHasConditionId,
-    ihc => ihc.Id,
-    (temp, ihc) => new { temp.cc, temp.fb, ihc })
-        .Join(_context.Operation_ItemsFBs,
-    temp => temp.ihc.ItemFBShomareh,
-    ofb => ofb.ItemsFBShomareh,
-    (temp, ofb) => new ItemsHasConditionConditionContextForCheckOperationDto
-    {
-        Id = temp.cc.Id,
-        ItemsHasConditionId = temp.cc.ItemsHasConditionId,
-        ConditionContextId = temp.cc.ConditionContextId,
-        HasEnteringValue = temp.cc.HasEnteringValue,
-        Des = temp.cc.Des,
-        DefaultValue = temp.cc.DefaultValue,
-        IsShow = temp.cc.IsShow,
-        ParentId = temp.cc.ParentId,
-        MoveToRel = temp.cc.MoveToRel,
-        ViewCheckAllRecords = temp.cc.ViewCheckAllRecords,
-        StepChange = temp.cc.StepChange,
-        Meghdar = temp.fb.Meghdar,
-        Meghdar2 = temp.fb.Meghdar2,
-        FBShomareh = temp.fb.FBShomareh,
-        ConditionGroupId = temp.fb.ConditionGroupId,
-        BarAvordId = temp.fb.BarAvordId,
-        OperationId = ofb.OperationId
-    }).Where(x => x.OperationId == OperationId && x.BarAvordId == BarAvordId).ToList();
+            (cc, fb) => new { cc, fb })
+                .Join(_context.ItemsHasConditions,
+            temp => temp.cc.ItemsHasConditionId,
+            ihc => ihc.Id,
+            (temp, ihc) => new { temp.cc, temp.fb, ihc })
+                .Join(_context.Operation_ItemsFBs,
+            temp => temp.ihc.ItemFBShomareh,
+            ofb => ofb.ItemsFBShomareh,
+            (temp, ofb) => new ItemsHasConditionConditionContextForCheckOperationDto
+            {
+                Id = temp.cc.Id,
+                ItemsHasConditionId = temp.cc.ItemsHasConditionId,
+                ConditionContextId = temp.cc.ConditionContextId,
+                HasEnteringValue = temp.cc.HasEnteringValue,
+                Des = temp.cc.Des,
+                DefaultValue = temp.cc.DefaultValue,
+                IsShow = temp.cc.IsShow,
+                ParentId = temp.cc.ParentId,
+                MoveToRel = temp.cc.MoveToRel,
+                ViewCheckAllRecords = temp.cc.ViewCheckAllRecords,
+                StepChange = temp.cc.StepChange,
+                Meghdar = temp.fb.Meghdar,
+                Meghdar2 = temp.fb.Meghdar2,
+                FBShomareh = temp.fb.FBShomareh,
+                ConditionGroupId = temp.fb.ConditionGroupId,
+                BarAvordId = temp.fb.BarAvordId,
+                OperationId = ofb.OperationId
+            }).Where(x => x.OperationId == OperationId && x.BarAvordId == BarAvordId).ToList();
 
 
         var ItemsAddingToFBs = _context.ItemsAddingToFBs.Include(x => x.ItemsHasCondition_ConditionContext).ThenInclude(x => x.ConditionContext).Where(x => x.Year == Year).Select(x => new
@@ -172,21 +237,22 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
 
         foreach (var ItemHasCon in lstItemsHasCondition)
         {
-            List<ItemsAddingToFBForCheckOperationDto> lstItemsAddingToFBForCheckOperation = ItemsAddingToFBs.Where(x => x.ItemsHasCondition_ConditionContextId == ItemHasCon.Id).Select(x => new
+            List<ItemsAddingToFBForCheckOperationDto> lstItemsAddingToFBForCheckOperation =
+                ItemsAddingToFBs.Where(x => x.ItemsHasCondition_ConditionContextId == ItemHasCon.Id).Select(x => new
             ItemsAddingToFBForCheckOperationDto
-            {
-                ItemsHasCondition_ConditionContextId = x.ItemsHasCondition_ConditionContextId,
-                AddedItems = x.AddedItems,
-                Condition = x.Condition,
-                FinalWorking = x.FinalWorking,
-                ConditionType = x.ConditionType,
-                DesOfAddingItems = x.DesOfAddingItems,
-                UseItemForAdd = x.UseItemForAdd,
-                FieldsAdding = x.FieldsAdding,
-                CharacterPlus = x.CharacterPlus,
-                ConditionContextId = x.ConditionContextId,
-                ConditionContextRel = x.ConditionContextRel
-            }).ToList();
+                {
+                    ItemsHasCondition_ConditionContextId = x.ItemsHasCondition_ConditionContextId,
+                    AddedItems = x.AddedItems,
+                    Condition = x.Condition,
+                    FinalWorking = x.FinalWorking,
+                    ConditionType = x.ConditionType,
+                    DesOfAddingItems = x.DesOfAddingItems,
+                    UseItemForAdd = x.UseItemForAdd,
+                    FieldsAdding = x.FieldsAdding,
+                    CharacterPlus = x.CharacterPlus,
+                    ConditionContextId = x.ConditionContextId,
+                    ConditionContextRel = x.ConditionContextRel
+                }).ToList();
 
             CheckOperationConditions checkOperationConditions = new CheckOperationConditions();
             foreach (var itemsAddingToFBForCheckOperation in lstItemsAddingToFBForCheckOperation)
@@ -5759,7 +5825,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                 //    }
                                 //    //clsRizMetreUserss.Delete("clsRizMetreUserss.Id=" + DtRizMetreUsers.Rows[0]["Id"].ToString());
                                 //}
-                                string strResult = SubItemsAddingToFB(AddingToFB.ID, Ertefa, RizMetreId, BarAvordId, strAddedItems,ShomareNew);
+                                string strResult = SubItemsAddingToFB(AddingToFB.ID, Ertefa, RizMetreId, BarAvordId, strAddedItems, ShomareNew);
                             }
                             //else
                             //{
@@ -6241,7 +6307,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                 //    }
                                 //    //clsRizMetreUserss.Delete("clsRizMetreUserss.Id=" + DtRizMetreUsers.Rows[0]["Id"].ToString());
                                 //}
-                                string strResult = SubItemsAddingToFB(AddingToFB.ID, Ertefa, RizMetreId, BarAvordId, strAddedItems,ShomareNew);
+                                string strResult = SubItemsAddingToFB(AddingToFB.ID, Ertefa, RizMetreId, BarAvordId, strAddedItems, ShomareNew);
                             }
                             break;
                         }
@@ -6514,7 +6580,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
 
             clsRizMetreUsers? RizMetre = context.RizMetreUserses.Include(x => x.FB).OrderByDescending(x => x.InsertDateTime).ThenByDescending(x => x.Shomareh).FirstOrDefault(x => x.FB.BarAvordId == BarAvordId);
             long ShomareNew = 1;
-            if (RizMetre!=null)
+            if (RizMetre != null)
             {
                 long currentShomareNew = RizMetre.ShomarehNew == null || RizMetre.ShomarehNew.Trim() == "" ? 1 : long.Parse(RizMetre.ShomarehNew);
                 if (currentShomareNew > RizMetre.Shomareh)
@@ -6677,7 +6743,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                     //clsRizMetreUserss.Delete("clsRizMetreUserss.Id=" + DtRizMetreUsers.Rows[0]["Id"].ToString());
                                     strTypeOp = "Del";
                                 }
-                                string strResult = SubItemsAddingToFB(long.Parse(DtItemsAddingToFB.Rows[i]["ID"].ToString()), Ertefa, RizMetreId, BarAvordId, strAddedItems,ShomareNew);
+                                string strResult = SubItemsAddingToFB(long.Parse(DtItemsAddingToFB.Rows[i]["ID"].ToString()), Ertefa, RizMetreId, BarAvordId, strAddedItems, ShomareNew);
                             }
                             else
                             {
@@ -6726,7 +6792,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                         context.SaveChanges();
                                     }
                                     //clsRizMetreUserss.Delete("clsRizMetreUserss.Id=" + DtRizMetreUsers.Rows[0]["Id"].ToString());
-                                    string strResult = SubItemsAddingToFB(long.Parse(DtItemsAddingToFB.Rows[i]["ID"].ToString()), Ertefa, RizMetreId, BarAvordId, strAddedItems,ShomareNew);
+                                    string strResult = SubItemsAddingToFB(long.Parse(DtItemsAddingToFB.Rows[i]["ID"].ToString()), Ertefa, RizMetreId, BarAvordId, strAddedItems, ShomareNew);
                                 }
                             }
                             break;
@@ -6941,7 +7007,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
         }
     }
 
-    public string SubItemsAddingToFB(long Id, string Ertefa, Guid RizMetreId, Guid BarAvordId, string ItemShomareh,long ShomareNew)
+    public string SubItemsAddingToFB(long Id, string Ertefa, Guid RizMetreId, Guid BarAvordId, string ItemShomareh, long ShomareNew)
     {
         var varItemsAddingToFB = context.SubItemsAddingToFBs.Where(x => x.ItemsAddingToFBId == Id).ToList();
         DataTable DtItemsAddingToFB = clsConvert.ToDataTable(varItemsAddingToFB);

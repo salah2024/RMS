@@ -32,7 +32,12 @@ public class clsRizMetreUsers : clsBaseEntity
     [ForeignKey("OperationsOfHaml")]
     public long? OperationsOfHamlId { get; set; }    
     public clsOperationsOfHaml OperationsOfHaml { get; set; }
-    public string? ForItem { get; set; }           
+    public string? ForItem { get; set; }   
+    /// <summary>
+    /// 1-آیتم اصلی
+    /// 2-اضافه بها
+    /// 3-آیتم حمل
+    /// </summary>
     public string Type { get; set; }            
 
     public string? UseItem { get; set; }

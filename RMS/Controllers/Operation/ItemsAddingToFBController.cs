@@ -4,6 +4,7 @@ using System.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RMS.Controllers.AbnieFani.Dto;
+using RMS.Controllers.Operation.Common;
 using RMS.Controllers.Operation.Dto;
 using RMS.Models.Common;
 using RMS.Models.Common.Dto;
@@ -804,9 +805,11 @@ namespace RMS.Controllers.Operation
                                     string? ConditionContextRel = Dr[idr]["ConditionContextRel"].ToString().Trim() == "" ? null : Dr[idr]["ConditionContextRel"].ToString().Trim();
                                     long? ConditionContextId = long.Parse(Dr[idr]["ConditionContextId"].ToString().Trim() == "" ? null : Dr[idr]["ConditionContextId"].ToString().Trim());
 
+                                    string strItemsFBShomareh1 = Dt.Rows[0]["ItemsFBShomareh"].ToString().Trim();
+
                                     clsItemsHasConditionAddedToFB ItemsHasConditionAddedToFB = new clsItemsHasConditionAddedToFB();
                                     ItemsHasConditionAddedToFB.BarAvordId = BarAvordId;
-                                    ItemsHasConditionAddedToFB.FBShomareh = Dt.Rows[0]["ItemsFBShomareh"].ToString().Trim();
+                                    ItemsHasConditionAddedToFB.FBShomareh = strItemsFBShomareh1; //Dt.Rows[0]["ItemsFBShomareh"].ToString().Trim();
                                     ItemsHasConditionAddedToFB.ItemsHasCondition_ConditionContextId = int.Parse(Dr[idr]["ItemsHasCondition_ConditionContextId"].ToString());
                                     ItemsHasConditionAddedToFB.Meghdar = Meghdar;
                                     ItemsHasConditionAddedToFB.ConditionGroupId = ConditionGroupId;
@@ -1018,7 +1021,6 @@ namespace RMS.Controllers.Operation
 
                                                 _context.RizMetreUserses.Add(RizMetreUserses);
                                                 _context.SaveChanges();
-                                                //RizMetreUserses.Save();
                                             }
                                         }
                                     }
@@ -1454,9 +1456,9 @@ namespace RMS.Controllers.Operation
                                                          .FirstOrDefault(x => x.BarAvordId == BarAvordId && x.FBShomareh == strCurrentFBShomareh &&
                                                              x.ItemsHasCondition_ConditionContextId == lngItemsHasCondition_ConditionContextId);
                                         bool blnCheckSave = false;
+                                        clsItemsHasConditionAddedToFB ItemsHasConditionAddedToFB = new clsItemsHasConditionAddedToFB();
                                         if (currentItemsHasConditionAddedToFBs == null)
                                         {
-                                            clsItemsHasConditionAddedToFB ItemsHasConditionAddedToFB = new clsItemsHasConditionAddedToFB();
                                             ItemsHasConditionAddedToFB.BarAvordId = BarAvordId;
                                             ItemsHasConditionAddedToFB.FBShomareh = strCurrentFBShomareh;
                                             ItemsHasConditionAddedToFB.ItemsHasCondition_ConditionContextId = lngItemsHasCondition_ConditionContextId;
@@ -3472,8 +3474,10 @@ namespace RMS.Controllers.Operation
                                             {
                                                 if (strFinalWorking != "")
                                                 {
-                                                    string[] strFinalWorkingSplit = strFinalWorking.Split('-');
-                                                    int intReapetCount = (int.Parse(strFinalWorkingSplit[1]) / 2) - 1;
+                                                    string[] strFinalWorkingSplit1 = strFinalWorking.Split('_');
+                                                    int intDivided = int.Parse(strFinalWorkingSplit1[1]);
+                                                    string[] strFinalWorkingSplit = strFinalWorkingSplit1[0].Split('-');
+                                                    int intReapetCount = (int.Parse(strFinalWorkingSplit[1]) / intDivided) - 1;
                                                     string strItemShomareh = Dr[idr]["AddedItems"].ToString().Trim();
                                                     clsFB? varFBUser = lstFBUser.FirstOrDefault(x => x.Shomareh == strItemShomareh);
 
@@ -3494,14 +3498,14 @@ namespace RMS.Controllers.Operation
 
 
                                                     //به تعداد intReapetCount
-                                                    //رکورد با ارتفاع 2 درج می گردد
+                                                    //رکورد با ارتفاع intDivided درج می گردد
                                                     decimal? Tedad = RM.Tedad == 0 ? 1 : RM.Tedad;
                                                     decimal? Tool = RM.Tool;
                                                     decimal? Arz = RM.Arz;
                                                     decimal? Vazn = 1;
                                                     for (int i = 0; i < intReapetCount; i++)
                                                     {
-                                                        decimal dErtefa = 2;
+                                                        decimal dErtefa = intDivided;
                                                         clsRizMetreUsers RizMetreUserses1 = new clsRizMetreUsers();
                                                         RizMetreUserses1.Shomareh = RM.Shomareh;
                                                         ShomareNew++;
@@ -3539,10 +3543,10 @@ namespace RMS.Controllers.Operation
                                                     }
 
 
-                                                    strFinalWorking = strFinalWorking.Replace("z", RM.Ertefa != null ? RM.Ertefa.Value.ToString().Trim() : "");
+                                                   string strFinalWorking1 = strFinalWorkingSplit1[0].Replace("z", RM.Ertefa != null ? RM.Ertefa.Value.ToString().Trim() : "");
 
                                                     //رکورد آخری هم بنا به شرط فاینل ارتفاع درج میگردد
-                                                    decimal Ertefa = decimal.Parse(StringToFormula.Eval(strFinalWorking).ToString("0.##"));
+                                                    decimal Ertefa = decimal.Parse(StringToFormula.Eval(strFinalWorking1).ToString("0.##"));
 
 
                                                     //DataRow[] DrRizMetreUsersesCurrent = DtRizMetreUsersesCurrent.Select("shomareh=" + RM.Shomareh + " and FBId=" + FBId);

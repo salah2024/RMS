@@ -278,7 +278,7 @@ public class AmalyateKhakiCommon
                 RizMetre.Des = "";
                 RizMetre.FBId = gFBIdHaml;
                 RizMetre.OperationsOfHamlId = 1;
-                RizMetre.Type = "1";
+                RizMetre.Type = "3";
                 RizMetre.ForItem = "";
                 RizMetre.UseItem = "";
                 RizMetre.MeghdarJoz = MeghdarJoz;
