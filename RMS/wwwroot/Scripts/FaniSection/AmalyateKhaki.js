@@ -71,21 +71,31 @@ function KhakBardariMashinWithBarAvordIdClick(OpId, BarAvordUserId) {
 
     $('#ula' + OpId).html(str);
 
-    setTimeout(() => { $('#txtFromKMForKhakBardari').focus(); }, 200);
+    setTimeout(() => { $('#txtFromKMForKhakbardari').focus().select(); }, 200);
 
-    $('#ula' + OpId).off('keydown.KhakBardari').on('keydown.KhakBardari', '.khakbardariTextStyle', function (e) {
-        if (e.key === 'Enter') {
-            e.preventDefault(); // جلوگیری از submit فرم
-            const inputs = $('.khakbardariTextStyle');
-            const idx = inputs.index(this);
-            if (idx >= 0 && idx < inputs.length - 1) {
-                inputs.eq(idx + 1).focus().select();
-            } else {
-                // اگر آخرین input بود، می‌توانی فوکوس را به دکمه ذخیره بدهی
+    $('#ula' + OpId)
+        .off('keydown.KhakBardari')
+        .on('keydown.KhakBardari', '.khakbardariTextStyle', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // جلوگیری از submit فرم
+
+                const inputs = $('.khakbardariTextStyle');
+                let idx = inputs.index(this);
+
+                // تا وقتی input بعدی وجود دارد، بررسی کن disabled نباشد
+                while (idx < inputs.length - 1) {
+                    idx++;
+                    if (!inputs.eq(idx).prop('disabled')) {
+                        inputs.eq(idx).focus().select();
+                        return; // خروج از تابع بعد از فوکوس موفق
+                    }
+                }
+
+                // اگر هیچ input فعالی نبود → برو روی دکمه
                 $('.buttonStyleBoard').focus();
             }
-        }
-    });
+        });
+
 
     ShowExistingKMKhakBardari(BarAvordUserId);
 
@@ -227,10 +237,10 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
         <div class="col-3" style="padding:0;">
           <div class="row">
             <div class="col-6" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtKhDetail${i + 1}" value="0" />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtKhDetail${i + 1}" value="" />
             </div>
             <div class="col-4" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtDarsad${i + 1}" value="0" />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtDarsad${i + 1}" value="" />
             </div>
           </div>
         </div>
@@ -239,10 +249,10 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
         <div class="col-3" style="padding:0;">
           <div class="row">
             <div class="col-6" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtVarizi${i + 1}" value="0"  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtVarizi${i + 1}" value=""  />
             </div>
             <div class="col-4" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtDarsadVarizi${i + 1}" value="0"  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtDarsadVarizi${i + 1}" value=""  />
             </div>
           </div>
         </div>
@@ -251,10 +261,10 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
         <div class="col-3" style="padding:0;">
           <div class="row">
             <div class="col-6" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtReUseHajm${i + 1}" value="0"  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" ${((i + 1) === 1 || (i + 1) === 2) ? `disabled` : ``} id="txtReUseHajm${i + 1}" value=""  />
             </div>
             <div class="col-4" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtReUseDarsad${i + 1}" value="0"  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" ${((i + 1) === 1 || (i + 1) === 2) ? `disabled` : ``} id="txtReUseDarsad${i + 1}" value=""  />
             </div>
           </div>
         </div>
@@ -263,10 +273,10 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
         <div class="col-3" style="padding:0;">
           <div class="row">
             <div class="col-6" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtHaml${i + 1}" value="0"  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtHaml${i + 1}" value=""  />
             </div>
             <div class="col-4" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtDarsadHaml${i + 1}" value="0"  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtDarsadHaml${i + 1}" value=""  />
             </div>
           </div>
         </div>
@@ -288,23 +298,34 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
                 // 🚨 اعتبارسنجی
                 if (!$.isNumeric($(this).val())) {
                     toastr.info('مقدار وارد شده نامعتبر میباشد', 'اطلاع');
-                    $(this).addClass('ErrorValueStyle');
+                    $(this).addClass('blinking');
                     return;
                 }
                 else {
-                    $(this).removeClass('ErrorValueStyle');
+                    $(this).removeClass('blinking');
                 }
 
                 if (HajmKhakBardari == 0 || HajmKhakBardari == '' || !$.isNumeric(HajmKhakBardari)) {
                     toastr.info('حجم خاکبرداری وارد شده نامعتبر میباشد', 'اطلاع');
-                    $('#txtHajmKhakBardari').addClass('ErrorValueStyle');
+                    $('#txtHajmKhakBardari').addClass('blinking');
                     return;
                 } else {
-                    $('#txtHajmKhakBardari').removeClass('ErrorValueStyle');
+                    $('#txtHajmKhakBardari').removeClass('blinking');
                 }
 
                 // مقادیر اصلی ردیف
                 let khDetail = parseFloat($("#txtKhDetail" + i).val()) || 0;
+
+                if (khDetail != null || khDetail != 0) {
+
+                    $("#txtVarizi" + i).prop('disabled') ? '' : $("#txtVarizi" + i).addClass('blinking');
+                    $("#txtReUseHajm" + i).prop('disabled') ? '' : $("#txtReUseHajm" + i).addClass('blinking');
+                    $("#txtHaml" + i).prop('disabled') ? '' : $("#txtHaml" + i).addClass('blinking');
+
+                    $("#txtDarsadVarizi" + i).prop('disabled') ? '' : $("#txtDarsadVarizi" + i).addClass('blinking');
+                    $("#txtReUseDarsad" + i).prop('disabled') ? '' : $("#txtReUseDarsad" + i).addClass('blinking');
+                    $("#txtDarsadHaml" + i).prop('disabled') ? '' : $("#txtDarsadHaml" + i).addClass('blinking');
+                }
 
                 let varizi = parseFloat($("#txtVarizi" + i).val()) || 0;
                 let reuseHajm = parseFloat($("#txtReUseHajm" + i).val()) || 0;
@@ -316,7 +337,7 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
 
                 // 🟢 بخش ۱: کنترل حجم کل و درصد
                 if (changedId.includes("KhDetail")) {
-                    let Zarb = khDetail / HajmKhakBardari * 100;
+                    let Zarb = HajmKhakBardari === 0 ? 0 : (khDetail / HajmKhakBardari) * 100;
                     $("#txtDarsad" + i).val(Zarb.toFixed(2));
 
                     let SumAll = ReturnSumAllDetails();
@@ -325,12 +346,12 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
                         $("#txtKhDetail" + i).val(NewVal.toFixed(2));
                         khDetail = NewVal; // ✅ مقدار جدید رو دوباره ست کن
 
-                        let Zarb = khDetail / HajmKhakBardari * 100;
+                        let Zarb = HajmKhakBardari === 0 ? 0 : (khDetail / HajmKhakBardari) * 100;
                         $("#txtDarsad" + i).val(Zarb.toFixed(2));
                     }
 
                     // ✅ حالا با مقدار اصلاح‌شده محاسبه کن
-                    $("#txtVarizi" + i).val(((dVarizi / 100) * khDetail).toFixed(2));
+                    $("#txtVarizi" + i).val((dVarizi === 0 ? '' : (dVarizi / 100) * khDetail).toFixed(2));
                     $("#txtReUseHajm" + i).val(((dReuse / 100) * khDetail).toFixed(2));
                     $("#txtHaml" + i).val(((dHaml / 100) * khDetail).toFixed(2));
                 }
@@ -373,13 +394,13 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
                     }
 
                     if (changedId.includes("Varizi") && !changedId.includes("Darsad")) {
-                        dVarizi = (varizi / khDetail) * 100;
+                        dVarizi = (khDetail === 0 ? 0 : (varizi / khDetail)) * 100;
                         $("#txtDarsadVarizi" + i).val(dVarizi.toFixed(2));
                     } else if (changedId.includes("ReUseHajm")) {
-                        dReuse = (reuseHajm / khDetail) * 100;
+                        dReuse = (khDetail === 0 ? 0 : (reuseHajm / khDetail)) * 100;
                         $("#txtReUseDarsad" + i).val(dReuse.toFixed(2));
                     } else if (changedId.includes("Haml") && !changedId.includes("Darsad")) {
-                        dHaml = (haml / khDetail) * 100;
+                        dHaml = (khDetail === 0 ? 0 : (haml / khDetail)) * 100;
                         $("#txtDarsadHaml" + i).val(dHaml.toFixed(2));
                     }
                 }
@@ -395,6 +416,7 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
 
                 // کنترل مجموع درصدها
                 let dSum = dVarizi + dReuse + dHaml;
+                debugger;
                 if (dSum > 100) {
                     let extra = dSum - 100;
                     if (changedId.includes("DarsadVarizi")) {
@@ -419,23 +441,56 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
                     if (changedId.includes("Varizi") && !changedId.includes("Darsad")) {
                         varizi -= extra;
                         $("#txtVarizi" + i).val(varizi.toFixed(2));
-                        $("#txtDarsadVarizi" + i).val(((varizi / khDetail) * 100).toFixed(2));
+                        $("#txtDarsadVarizi" + i).val((khDetail === 0 ? 0 : (varizi / khDetail) * 100).toFixed(2));
                     } else if (changedId.includes("ReUseHajm")) {
                         reuseHajm -= extra;
                         $("#txtReUseHajm" + i).val(reuseHajm.toFixed(2));
-                        $("#txtReUseDarsad" + i).val(((reuseHajm / khDetail) * 100).toFixed(2));
+                        $("#txtReUseDarsad" + i).val((khDetail === 0 ? 0 : (reuseHajm / khDetail) * 100).toFixed(2));
                     } else if (changedId.includes("Haml") && !changedId.includes("Darsad")) {
                         haml -= extra;
                         $("#txtHaml" + i).val(haml.toFixed(2));
-                        $("#txtDarsadHaml" + i).val(((haml / khDetail) * 100).toFixed(2));
+                        $("#txtDarsadHaml" + i).val((khDetail === 0 ? 0 : (haml / khDetail) * 100).toFixed(2));
                     }
                 }
             });
 
+            $('#txtHajmKhakBardari').on('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+
+                    let HKB = parseFloat($(this).val());
+
+                    var KMS = parseFloat($('#txtFromKMForKhakbardari').val());//.replace('+', ''));
+                    var KME = parseFloat($('#txtToKMForKhakbardari').val());//.replace('+', ''));
+
+                    if (KMS == 0 || KME == 0) {
+                        $('#txtFromKMForKhakbardari').addClass('blinking');
+                        $('#txtToKMForKhakbardari').addClass('blinking');
+                        return;
+                    }
+
+                    if (KMS > KME) {
+                        toastr.info('کیلومتراژ خاتمه قبل از کیلومتراژ شروع میباشد', 'اطلاع');
+                        $('#txtToKMForKhakbardari').addClass('blinking');
+                        $('#txtFromKMForKhakbardari').addClass('blinking');
+                        return;
+                    }
+                    else {
+                        $('#txtToKMForKhakbardari').removeClass('blinking');
+                        $('#txtFromKMForKhakbardari').removeClass('blinking');
+                    }
+
+                    if (!$.isNumeric(HKB) || HKB <= 0) {
+                        toastr.info('حجم خاکبرداری وارد شده نامعتبر میباشد', 'اطلاع');
+                        $(this).addClass('blinking');
+                        return;
+                    }
+
+                    $('#MainViewKhakBardariNew').slideDown(500);
+                }
+            });
+
             $('#txtHajmKhakBardari').change(function () {
-
-                debugger;
-
                 let HKB = parseFloat($(this).val());
 
                 var KMS = parseFloat($('#txtFromKMForKhakbardari').val());//.replace('+', ''));
@@ -561,7 +616,6 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
             });
 
             $('#txtToKMForKhakbardari').change(function () {
-                debugger;
                 var KM = $(this).val();
                 //var KMSplit = KM.split('+');
                 //if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
@@ -596,90 +650,6 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
                     $('#divKhakBardariInfoDetails').show();
                 }
             });
-
-
-
-        //    if (IsNew == 0) {
-        //        $('#txtFromKMForKhakbardari').val(FromKMSplit);
-        //        $('#txtToKMForKhakbardari').val(ToKMSplit);
-        //        $('#txtHajmKhakBardari').val(Value);
-        //        $('#divKhakBardariInfoDetails').show();
-        //        $('#HDFStateAmalyateKhakiSaveOrEdit').val('Edit');
-        //        $('#btnCloseExistingKMAmalyateKhaki').click();
-        //        var vardata = new Object();
-        //        vardata.AmalyateKhakiInfoForBarAvordId = KMExistingId;
-        //        $.ajax({
-        //            type: "POST",
-        //            url: "/AmalyateKhakiInfoForBarAvordDetails/GetDetailsOfKMKhakBardariInfoWithKMKhakBardariId",
-        //            data: JSON.stringify(vardata),
-        //            //data: '{AmalyateKhakiInfoForBarAvordId:' + KMExistingId + '}',
-        //            contentType: "application/json; charset=utf-8",
-        //            dataType: "json",
-        //            success: function (response) {
-        //                var xmlDoc = $.parseXML(response);
-        //                var xml = $(xmlDoc);
-        //                var KMAmalyateKhakiBarAvordDetails = xml.find("tblKMAmalyateKhakiBarAvordDetails");
-        //                var KMAmalyateKhakiBarAvordMore = xml.find("tblKMAmalyateKhakiBarAvordMore");
-        //                var KMAmalyateRizeshBarAvordDetailsMore = xml.find("tblKMAmalyateKhakiBarAvordDetailsMore");
-        //                var KMAmalyateRizeshBarAvordDetailsEzafeBaha = xml.find("tblKMAmalyateKhakiBarAvordDetailsEzafeBaha");
-
-        //                Value = 0;
-        //                $.each(KMAmalyateKhakiBarAvordMore, function () {
-        //                    Name = $.trim($(this).find("_Name").text());
-        //                    if (Name == 'HKB') {
-        //                        Value = $.trim($(this).find("_Value").text());
-        //                        $('#txtHajmKhakBardari').val(Value);
-        //                    }
-        //                });
-
-        //                $.each(KMAmalyateKhakiBarAvordDetails, function () {
-        //                    Id = $(this).find("_ID").text();
-        //                    AmalyateKhakiInfoForBarAvordId = $(this).find("_AmalyateKhakiInfoForBarAvordId").text();
-        //                    Type = $(this).find("_Type").text();
-
-        //                    $.each(KMAmalyateRizeshBarAvordDetailsMore, function () {
-        //                        CurrentId = $(this).find("_ID").text();
-        //                        Name = $.trim($(this).find("_Name").text());
-        //                        ValueMore = $(this).find("_Value").text();
-        //                        console.log(Name);
-        //                        AmalyateKhakiInfoForBarAvordDetailsId = $(this).find("_AmalyateKhakiInfoForBarAvordDetailsId").text();
-        //                        if (Id == AmalyateKhakiInfoForBarAvordDetailsId) {
-        //                            $('#txt' + Name + Type).val(ValueMore);
-        //                        }
-        //                    });
-
-        //                    CurrentValue = $('#txtKhDetail' + Type).val();
-        //                    ValueOfReCycle = $('#txtReUseHajm' + Type).val();
-        //                    ValueOfVarize = $('#txtVarizi' + Type).val();
-        //                    ValueOfHaml = $('#txtHaml' + Type).val();
-        //                    ValueOfFaseleHaml = $('#txtFaseleHaml' + Type).val();
-
-        //                    $('#txtDarsad' + Type).val(parseFloat(Value) == 0 ? 0 : (parseFloat(CurrentValue) / parseFloat(Value) * 100).toFixed(2));
-        //                    $('#txtReUseDarsad' + Type).val(parseFloat(CurrentValue) == 0 ? 0 : (parseFloat(ValueOfReCycle) / parseFloat(CurrentValue) * 100).toFixed(2));
-        //                    $('#txtDarsadVarizi' + Type).val(parseFloat(CurrentValue) == 0 ? 0 : (parseFloat(ValueOfVarize) / parseFloat(CurrentValue) * 100).toFixed(2));
-        //                    $('#txtDarsadHaml' + Type).val(parseFloat(CurrentValue) == 0 ? 0 : (parseFloat(ValueOfHaml) / parseFloat(CurrentValue) * 100).toFixed(2));
-        //                    $('#txtDarsadFaseleHaml' + Type).val(parseFloat(ValueOfVarize) == 0 ? 0 : (parseFloat(ValueOfFaseleHaml) / parseFloat(ValueOfVarize) * 100).toFixed(2));
-
-        //                    $.each(KMAmalyateRizeshBarAvordDetailsEzafeBaha, function () {
-        //                        CurrentId = $(this).find("_ID").text();
-        //                        Name = $.trim($(this).find("_Name").text());
-        //                        boolValue = $(this).find("_Value").text() == 'true' ? true : false;
-        //                        AmalyateKhakiInfoForBarAvordDetailsId = $(this).find("_AmalyateKhakiInfoForBarAvordDetailsId").text();
-
-        //                        if (Id == AmalyateKhakiInfoForBarAvordDetailsId) {
-        //                            $('#ck' + Name + Type).attr('checked', boolValue);
-        //                        }
-        //                    });
-        //                });
-        //            },
-        //            error: function (response) {
-        //                toastr.error('مشکل در بارگذاری کیلومتراژ انتخابی', 'خطا');
-        //            }
-        //        });
-        //    }
-        //    else {
-        //        $('#HDFStateAmalyateKhakiSaveOrEdit').val('Add');
-        //    }
         },
         error: function (response) {
             toastr.error('مشکل در بارگزاری خاکبرداری', 'خطا');
@@ -942,7 +912,8 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
 
                 let KhDetail = result.filter(x => x.name === "KhDetail").length > 0 ? result.filter(x => x.name === "KhDetail")[0].value : 0;
                 let DarsadKhDetail = result.filter(x => x.name === "DarsadKhDetail").length > 0 ? result.filter(x => x.name === "DarsadKhDetail")[0].value : 0;
-
+                KhDetail = KhDetail == null ? 0 : KhDetail;
+                DarsadKhDetail = DarsadKhDetail == null ? 0 : DarsadKhDetail;
 
                 // جمع کردن مقادیر
                 totalKhDetail += parseFloat(KhDetail);
@@ -956,10 +927,10 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
         <div class="col-3" style="padding:0;">
           <div class="row">
             <div class="col-6" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtKhDetail${KMNum}_${i}" value="${KhDetail}" />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtKhDetail${KMNum}_${i}" value="${KhDetail == 0 ? '' : KhDetail}" />
             </div>
             <div class="col-4" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtDarsad${KMNum}_${i}" value="${DarsadKhDetail}" />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtDarsad${KMNum}_${i}" value="${DarsadKhDetail == 0 ? '' : DarsadKhDetail}" />
             </div>
           </div>
         </div>`;
@@ -967,6 +938,10 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
 
                 let Varizi = result.filter(x => x.name === "Varizi").length > 0 ? result.filter(x => x.name === "Varizi")[0].value : 0;
                 let DarsadVarizi = result.filter(x => x.name === "DarsadVarizi").length > 0 ? result.filter(x => x.name === "DarsadVarizi")[0].value : 0;
+
+                Varizi = Varizi == null ? 0 : Varizi;
+                DarsadVarizi = DarsadVarizi == null ? 0 : DarsadVarizi;
+
                 totalVarizi += parseFloat(Varizi);
                 totalDarsadVarizi += parseFloat(DarsadVarizi);
                 strKMAK += `
@@ -974,31 +949,40 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
         <div class="col-3" style="padding:0;">
           <div class="row">
             <div class="col-6" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtReUseHajm${KMNum}_${i}" value="${Varizi}"  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle"  id="txtVarizi${KMNum}_${i}" value="${Varizi == 0 ? '' : Varizi}"
+}"  />
             </div>
             <div class="col-4" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtReUseDarsad${KMNum}_${i}" value="${DarsadVarizi}"  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtDarsadVarizi${KMNum}_${i}" value="${DarsadVarizi == 0 ? '' : DarsadVarizi}"  />
             </div>
           </div>
         </div>`
 
                 let ReUseHajm = result.filter(x => x.name === "ReUseHajm").length > 0 ? result.filter(x => x.name === "ReUseHajm")[0].value : 0;
                 let DarsadReUseHajm = result.filter(x => x.name === "DarsadReUseHajm").length > 0 ? result.filter(x => x.name === "DarsadReUseHajm")[0].value : 0;
+
+                ReUseHajm = ReUseHajm == null ? 0 : ReUseHajm;
+                DarsadReUseHajm = DarsadReUseHajm == null ? 0 : DarsadReUseHajm;
+
                 totalReUseHajm += parseFloat(ReUseHajm);
                 totalDarsadReUseHajm += parseFloat(DarsadReUseHajm);
                 strKMAK += `
           <div class="col-3" style="padding:0;">
           <div class="row">
             <div class="col-6" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtVarizi${KMNum}_${i}" value="${ReUseHajm}"  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" ${(i === 1 || i === 2) ? `disabled` : ``} id="txtReUseHajm${KMNum}_${i}" value="${ReUseHajm == 0 ? '' : ReUseHajm}"  />
             </div>
             <div class="col-4" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtDarsadVarizi${KMNum}_${i}" value="${DarsadReUseHajm}"  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" ${(i === 1 || i === 2) ? `disabled` : ``} id="txtReUseDarsad${KMNum}_${i}" value="${DarsadReUseHajm == 0 ? '' : DarsadReUseHajm}"  />
             </div>
           </div>
         </div>`
                 let Haml = result.filter(x => x.name === "Haml").length > 0 ? result.filter(x => x.name === "Haml")[0].value : 0;
                 let DarsadHaml = result.filter(x => x.name === "DarsadHaml").length > 0 ? result.filter(x => x.name === "DarsadHaml")[0].value : 0;
+
+                Haml = Haml == null ? 0 : Haml;
+                DarsadHaml = DarsadHaml == null ? 0 : DarsadHaml;
+
                 totalHaml += parseFloat(Haml);
                 totalDarsadHaml += parseFloat(DarsadHaml);
                 strKMAK += `
@@ -1006,10 +990,10 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
         <div class="col-3" style="padding:0;">
           <div class="row">
             <div class="col-6" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtHaml${KMNum}_${i}" value="${Haml}"  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtHaml${KMNum}_${i}" value="${Haml == 0 ? '' : Haml}"  />
             </div>
             <div class="col-4" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtDarsadHaml${KMNum}_${i}" value="${DarsadHaml}"  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtDarsadHaml${KMNum}_${i}" value="${DarsadHaml ==0  ?''  : DarsadHaml}"  />
             </div>
           </div>
         </div>
@@ -1112,18 +1096,18 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
                 // 🚨 اعتبارسنجی
                 if (!$.isNumeric($(this).val())) {
                     toastr.info('مقدار وارد شده نامعتبر میباشد', 'اطلاع');
-                    $(this).addClass('ErrorValueStyle');
+                    $(this).addClass('blinking');
                     return;
                 } else {
-                    $(this).removeClass('ErrorValueStyle');
+                    $(this).removeClass('blinking');
                 }
 
                 if (HajmKhakBardari == 0 || HajmKhakBardari == '' || !$.isNumeric(HajmKhakBardari)) {
                     toastr.info('حجم خاکبرداری وارد شده نامعتبر میباشد', 'اطلاع');
-                    $('#txtHajmKhakBardari' + KMNum).addClass('ErrorValueStyle');
+                    $('#txtHajmKhakBardari' + KMNum).addClass('blinking');
                     return;
                 } else {
-                    $('#txtHajmKhakBardari' + KMNum).removeClass('ErrorValueStyle');
+                    $('#txtHajmKhakBardari' + KMNum).removeClass('blinking');
                 }
 
                 // مقادیر اصلی ردیف
@@ -1142,7 +1126,7 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
                     let Zarb = khDetail / HajmKhakBardari * 100;
                     $("#txtDarsad" + KMNum + "_" + i).val(Zarb.toFixed(2));
 
-                    let SumAll = ReturnSumAllDetailsForEdit(KMNum);
+                    let SumAll = ReturnSumAllDetailsKhakBardariForEdit(KMNum);
                     if (SumAll > HajmKhakBardari) {
                         let NewVal = HajmKhakBardari - (SumAll - khDetail);
                         $("#txtKhDetail" + KMNum + "_" + i).val(NewVal.toFixed(2));
@@ -1197,13 +1181,13 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
                     }
 
                     if (changedId.includes("Varizi" + KMNum) && !changedId.includes("Darsad" + KMNum)) {
-                        dVarizi = (varizi / khDetail) * 100;
+                        dVarizi = khDetail === 0 ? 0 : (varizi / khDetail) * 100;
                         $("#txtDarsadVarizi" + KMNum + "_" + i).val(dVarizi.toFixed(2));
                     } else if (changedId.includes("ReUseHajm" + KMNum)) {
-                        dReuse = (reuseHajm / khDetail) * 100;
+                        dReuse = khDetail === 0 ? 0 : (reuseHajm / khDetail) * 100;
                         $("#txtReUseDarsad" + KMNum + "_" + i).val(dReuse.toFixed(2));
                     } else if (changedId.includes("Haml" + KMNum) && !changedId.includes("Darsad" + KMNum)) {
-                        dHaml = (haml / khDetail) * 100;
+                        dHaml = khDetail === 0 ? 0 : (haml / khDetail) * 100;
                         $("#txtDarsadHaml" + KMNum + "_" + i).val(dHaml.toFixed(2));
                     }
                 }
@@ -1243,15 +1227,15 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
                     if (changedId.includes("Varizi" + KMNum) && !changedId.includes("Darsad" + KMNum)) {
                         varizi -= extra;
                         $("#txtVarizi" + KMNum + "_" + i).val(varizi.toFixed(2));
-                        $("#txtDarsadVarizi" + KMNum + "_" + i).val(((varizi / khDetail) * 100).toFixed(2));
+                        $("#txtDarsadVarizi" + KMNum + "_" + i).val((khDetail === 0 ? 0 : (varizi / khDetail) * 100).toFixed(2));
                     } else if (changedId.includes("ReUseHajm" + KMNum)) {
                         reuseHajm -= extra;
                         $("#txtReUseHajm" + KMNum + "_" + i).val(reuseHajm.toFixed(2));
-                        $("#txtReUseDarsad" + KMNum + "_" + i).val(((reuseHajm / khDetail) * 100).toFixed(2));
+                        $("#txtReUseDarsad" + KMNum + "_" + i).val((khDetail === 0 ? 0 : (reuseHajm / khDetail) * 100).toFixed(2));
                     } else if (changedId.includes("Haml" + KMNum) && !changedId.includes("Darsad" + KMNum)) {
                         haml -= extra;
                         $("#txtHaml" + KMNum + "_" + i).val(haml.toFixed(2));
-                        $("#txtDarsadHaml" + KMNum + "_" + i).val(((haml / khDetail) * 100).toFixed(2));
+                        $("#txtDarsadHaml" + KMNum + "_" + i).val((khDetail === 0 ? 0 : (haml / khDetail) * 100).toFixed(2));
                     }
                 }
             });
@@ -1265,13 +1249,13 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
 
                 if (!$.isNumeric(HKB) || HKB <= 0) {
                     toastr.info('حجم خاکبرداری وارد شده نامعتبر میباشد', 'اطلاع');
-                    $(this).addClass('ErrorValueStyle');
+                    $(this).addClass('blinking');
                     return;
                 }
 
                 $('#MainViewKhakBardariNew').slideDown(500);
                 $('#divKhakBardariInfoDetails').show();
-                $(this).removeClass('ErrorValueStyle');
+                $(this).removeClass('blinking');
 
                 let totalAssigned = 0;
                 let lastIndex = -1;
@@ -1572,7 +1556,7 @@ function ReturnSumAllDetails() {
     return parseFloat(sumAll);
 }
 
-function ReturnSumAllDetailsForEdit(KMNum) {
+function ReturnSumAllDetailsKhakBardariForEdit(KMNum) {
     sumAll = 0;
     for (var i = 1; i <= ActivityLength; i++) {
         sumAll += parseFloat($.trim($('#txtKhDetail' + KMNum + "_" + i).val()) == '' ? '0' : $.trim($('#txtKhDetail' + KMNum + "_" + i).val()));
@@ -1611,7 +1595,7 @@ function ReturnSumAllRBDardad() {
     return parseFloat(sumAll);
 }
 
-function SumAllDetails() {
+function SumAllDetailsKhakBardari() {
     sumAll = 0;
     for (var i = 1; i <= ActivityLength; i++) {
         sumAll += parseFloat($.trim($('#txtKhDetail' + i).val()) == '' ? '0' : $.trim($('#txtKhDetail' + i).val()));
@@ -1623,6 +1607,11 @@ function SumAllDetails() {
         toastr.info('احجام وارد شده نبایستی از حجم خاکبرداری بیشتر باشد', 'اطلاع');
         return true;
     }
+    else if (sumAll < HajmKhakBardari) {
+        $('#txtHajmKhakBardari').addClass('blinking');
+        toastr.info('احجام وارد شده نبایستی از حجم خاکبرداری کمتر باشد', 'اطلاع');
+        return true;
+    }
     else {
         $('#txtHajmKhakBardari').removeClass('blinking');
         return false;
@@ -1630,7 +1619,7 @@ function SumAllDetails() {
 }
 
 
-function SumAllDetailsForEdit(KMNum) {
+function SumAllDetailsKhakBardariForEdit(KMNum) {
 
     sumAll = 0;
     for (var i = 1; i <= ActivityLength; i++) {
@@ -1643,6 +1632,11 @@ function SumAllDetailsForEdit(KMNum) {
         toastr.info('احجام وارد شده نبایستی از حجم خاکبرداری بیشتر باشد', 'اطلاع');
         return true;
     }
+    else if (sumAll < HajmKhakBardari) {
+        $('#txtHajmKhakBardari' + KMNum).addClass('blinking');
+        toastr.info('احجام وارد شده نبایستی از حجم خاکبرداری کمتر باشد', 'اطلاع');
+        return true;
+    }
     else {
         $('#txtHajmKhakBardari' + KMNum).removeClass('blinking');
         return false;
@@ -1650,60 +1644,106 @@ function SumAllDetailsForEdit(KMNum) {
 }
 
 function CheckValuesOfKhakBardariDetails() {
+    debugger;
     checkValues = false;
     for (var i = 1; i <= ActivityLength; i++) {
-        KhDetail = parseFloat($('#txtKhDetail' + i).val());
+        KhDetail = $('#txtKhDetail' + i).val() == '' ? 0 : parseFloat($('#txtKhDetail' + i).val());
+        ReUseHajm = $('#txtReUseHajm' + i).val() == '' ? 0 : parseFloat($('#txtReUseHajm' + i).val());
+        ReUseDarsad = $('#txtReUseDarsad' + i).val() == '' ? 0 : parseFloat($('#txtReUseDarsad' + i).val());
+        Varizi = $('#txtVarizi' + i).val() == '' ? 0 : parseFloat($('#txtVarizi' + i).val());
+        DarsadVarizi = $('#txtDarsadVarizi' + i).val() == '' ? 0 : parseFloat($('#txtDarsadVarizi' + i).val());
+        Haml = $('#txtHaml' + i).val() == '' ? 0 : parseFloat($('#txtHaml' + i).val());
+        DarsadHaml = $('#txtDarsadHaml' + i).val() == '' ? 0 : parseFloat($('#txtDarsadHaml' + i).val());
 
-        ReUseHajm = parseFloat($('#txtReUseHajm' + i).val());
+        sumAllThisRow = ReUseHajm + Varizi + Haml;
+
+        if (sumAllThisRow < KhDetail) {
+            if (i != 1 && i != 2) {
+                $('#txtReUseHajm' + i).addClass('blinking');
+            }
+            $('#txtVarizi' + i).addClass('blinking');
+            $('#txtHaml' + i).addClass('blinking');
+            return true;
+        }
+        if (sumAllThisRow > KhDetail) {
+            if (i != 1 && i != 2) {
+                $('#txtReUseHajm' + i).addClass('blinking');
+            }
+            $('#txtVarizi' + i).addClass('blinking');
+            $('#txtHaml' + i).addClass('blinking');
+            return true;
+        }
+        else if (sumAllThisRow == KhDetail) {
+            $('#txtReUseHajm' + i).removeClass('blinking');
+            $('#txtVarizi' + i).removeClass('blinking');
+            $('#txtHaml' + i).removeClass('blinking');
+
+            $('#txtReUseDarsad' + i).removeClass('blinking');
+            $('#txtDarsadVarizi' + i).removeClass('blinking');
+            $('#txtDarsadHaml' + i).removeClass('blinking');
+            return false;
+        }
+
+        if (KhDetail != 0 && KhDetail != '') {
+            if (ReUseHajm == 0 || isNaN(ReUseHajm)) {
+                $('#txtReUseHajm' + i).addClass('blinking');
+                return true;
+            }
+            else if (Varizi == 0 || isNaN(Varizi)) {
+                $('#txtVarizi' + i).addClass('blinking');
+                return true;
+            }
+            else if (Haml == 0 || isNaN(Haml)) {
+                $('#txtHaml' + i).addClass('blinking');
+                return true;
+            }
+            else return false;
+        }
+
         if (ReUseHajm > KhDetail) {
-            $('#txtReUseHajm' + i).addClass('ErrorValueStyle');
+            $('#txtReUseHajm' + i).addClass('blinking');
             checkValues = true;
         }
         else
-            $('#txtReUseHajm' + i).removeClass('ErrorValueStyle');
+            $('#txtReUseHajm' + i).removeClass('blinking');
 
-        ReUseDarsad = parseFloat($('#txtReUseDarsad' + i).val());
         if (ReUseDarsad > 100) {
-            $('#txtReUseDarsad' + i).addClass('ErrorValueStyle');
+            $('#txtReUseDarsad' + i).addClass('blinking');
             checkValues = true;
         }
         else
-            $('#txtReUseDarsad' + i).removeClass('ErrorValueStyle');
+            $('#txtReUseDarsad' + i).removeClass('blinking');
         /////////////
-        Varizi = parseFloat($('#txtVarizi' + i).val());
-        Haml = parseFloat($('#txtHaml' + i).val());
         if (Varizi > KhDetail) {
-            $('#txtVarizi' + i).addClass('ErrorValueStyle');
+            $('#txtVarizi' + i).addClass('blinking');
             checkValues = true;
         }
         else {
-            $('#txtVarizi' + i).removeClass('ErrorValueStyle');
+            $('#txtVarizi' + i).removeClass('blinking');
         }
 
         if (Haml > KhDetail) {
-            $('#txtHaml' + i).addClass('ErrorValueStyle');
+            $('#txtHaml' + i).addClass('blinking');
             checkValues = true;
         }
         else {
-            $('#txtHaml' + i).removeClass('ErrorValueStyle');
+            $('#txtHaml' + i).removeClass('blinking');
         }
 
-        DarsadVarizi = parseFloat($('#txtDarsadVarizi' + i).val());
-        DarsadHaml = parseFloat($('#txtDarsadHaml' + i).val());
         if (DarsadVarizi > 100) {
-            $('#txtDarsadVarizi' + i).addClass('ErrorValueStyle');
+            $('#txtDarsadVarizi' + i).addClass('blinking');
             checkValues = true;
         }
         else {
-            $('#txtDarsadVarizi' + i).removeClass('ErrorValueStyle');
+            $('#txtDarsadVarizi' + i).removeClass('blinking');
         }
 
         if (DarsadHaml > 100) {
-            $('#txtDarsadHaml' + i).addClass('ErrorValueStyle');
+            $('#txtDarsadHaml' + i).addClass('blinking');
             checkValues = true;
         }
         else {
-            $('#txtDarsadHaml' + i).removeClass('ErrorValueStyle');
+            $('#txtDarsadHaml' + i).removeClass('blinking');
         }
     }
     return checkValues;
@@ -1716,54 +1756,54 @@ function CheckValuesOfKhakBardariDetailsForEdit(KMNum) {
 
         ReUseHajm = parseFloat($('#txtReUseHajm' + KMNum + "_" + i).val());
         if (ReUseHajm > KhDetail) {
-            $('#txtReUseHajm' + KMNum + "_" + i).addClass('ErrorValueStyle');
+            $('#txtReUseHajm' + KMNum + "_" + i).addClass('blinking');
             checkValues = true;
         }
         else
-            $('#txtReUseHajm' + KMNum + "_" + i).removeClass('ErrorValueStyle');
+            $('#txtReUseHajm' + KMNum + "_" + i).removeClass('blinking');
 
         ReUseDarsad = parseFloat($('#txtReUseDarsad' + KMNum + "_" + i).val());
         if (ReUseDarsad > 100) {
-            $('#txtReUseDarsad' + KMNum + "_" + i).addClass('ErrorValueStyle');
+            $('#txtReUseDarsad' + KMNum + "_" + i).addClass('blinking');
             checkValues = true;
         }
         else
-            $('#txtReUseDarsad' + KMNum + "_" + i).removeClass('ErrorValueStyle');
+            $('#txtReUseDarsad' + KMNum + "_" + i).removeClass('blinking');
         /////////////
         Varizi = parseFloat($('#txtVarizi' + KMNum + "_" + i).val());
         Haml = parseFloat($('#txtHaml' + KMNum + "_" + i).val());
         if (Varizi > KhDetail) {
-            $('#txtVarizi' + KMNum + "_" + i).addClass('ErrorValueStyle');
+            $('#txtVarizi' + KMNum + "_" + i).addClass('blinking');
             checkValues = true;
         }
         else {
-            $('#txtVarizi' + KMNum + "_" + i).removeClass('ErrorValueStyle');
+            $('#txtVarizi' + KMNum + "_" + i).removeClass('blinking');
         }
 
         if (Haml > KhDetail) {
-            $('#txtHaml' + KMNum + "_" + i).addClass('ErrorValueStyle');
+            $('#txtHaml' + KMNum + "_" + i).addClass('blinking');
             checkValues = true;
         }
         else {
-            $('#txtHaml' + KMNum + "_" + i).removeClass('ErrorValueStyle');
+            $('#txtHaml' + KMNum + "_" + i).removeClass('blinking');
         }
 
         DarsadVarizi = parseFloat($('#txtDarsadVarizi' + KMNum + "_" + i).val());
         DarsadHaml = parseFloat($('#txtDarsadHaml' + KMNum + "_" + i).val());
         if (DarsadVarizi > 100) {
-            $('#txtDarsadVarizi' + KMNum + "_" + i).addClass('ErrorValueStyle');
+            $('#txtDarsadVarizi' + KMNum + "_" + i).addClass('blinking');
             checkValues = true;
         }
         else {
-            $('#txtDarsadVarizi' + KMNum + "_" + i).removeClass('ErrorValueStyle');
+            $('#txtDarsadVarizi' + KMNum + "_" + i).removeClass('blinking');
         }
 
         if (DarsadHaml > 100) {
-            $('#txtDarsadHaml' + KMNum + "_" + i).addClass('ErrorValueStyle');
+            $('#txtDarsadHaml' + KMNum + "_" + i).addClass('blinking');
             checkValues = true;
         }
         else {
-            $('#txtDarsadHaml' + KMNum + "_" + i).removeClass('ErrorValueStyle');
+            $('#txtDarsadHaml' + KMNum + "_" + i).removeClass('blinking');
         }
     }
     return checkValues;
@@ -1771,7 +1811,6 @@ function CheckValuesOfKhakBardariDetailsForEdit(KMNum) {
 
 
 function SaveKhakBardariInfo(BarAvordUserId) {
-    debugger;
     check = false;
     //////////
     HKB = $('#txtHajmKhakBardari').val();
@@ -1825,14 +1864,22 @@ function SaveKhakBardariInfo(BarAvordUserId) {
             $(this).removeClass('blinking');
     });
 
-    if (SumAllDetails()) check = true;
+    debugger;
 
-    if (CheckValuesOfKhakBardariDetails()) {
-        check = true;
+    check = SumAllDetailsKhakBardari();
+
+    if (check) {
+        //toastr.info('حجم کل خاکبرداری صحیح نمی باشد', 'اطلاع');
+    }
+
+    check1 = CheckValuesOfKhakBardariDetails();
+
+    if (check1) {
+        //toastr.info('احجام وارد شده درست نمی باشند', 'اطلاع');
     }
     debugger;
 
-    if (!check) {
+    if (!check && !check1) {
 
         let dataList = [];
 
@@ -1967,10 +2014,14 @@ function UpdateKhakBardariInfo(KMKhakBardariId, BarAvordUserId, KMNum) {
             $(this).removeClass('blinking');
     });
 
-    if (SumAllDetailsForEdit(KMNum)) check = true;
+    check = SumAllDetailsKhakBardariForEdit(KMNum);
+    if (check) {
+        toastr.info('حجم کل خاکبرداری صحیح نمیباشد', 'اطلاع');
+    }
 
-    if (CheckValuesOfKhakBardariDetailsForEdit(KMNum)) {
-        check = true;
+    check1 = CheckValuesOfKhakBardariDetailsForEdit(KMNum);
+    if (check1) {
+        toastr.info('مشکل در مقادیر وارده', 'اطلاع');
     }
     debugger;
 

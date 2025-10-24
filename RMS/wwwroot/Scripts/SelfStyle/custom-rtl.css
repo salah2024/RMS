@@ -1533,7 +1533,7 @@ Red Default
 }
 
 .blinking {
-    animation: blink 1s infinite;
+    animation: blink 1.5s infinite;
     border: 2px solid red;
 }
 
@@ -1543,7 +1543,7 @@ Red Default
     }
 
     50% {
-        background-color: deepskyblue; /* رنگ ملایم صورتی داخل input */
+        background-color: #55eaff;
     }
 }
 

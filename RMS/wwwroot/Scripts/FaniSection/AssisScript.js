@@ -1073,21 +1073,22 @@ function SaveRMUClick(object, FBId, IsFromAddedOperation, OperationId, LevelNumb
         if ($(this).attr('id').startsWith('txtSharh'))
     debugger;
             Sharh = $(this).val();
-        if ($(this).attr('id').startsWith('txtTedad')) {
-            if ($(this).hasClass('HasEnteringValue')) {
-                if ($.isNumeric(parseFloat($(this).val()))) {
-                    Tedad = $(this).val().replace(/\,/g, '');
-                    $(this).removeClass('ErrorValueStyle');
-                }
-                else {
-                    $(this).addClass('ErrorValueStyle');
-                    $(this).removeClass('TextEdit');
-                    Check = false;
-                }
-            }
-            else Tedad = undefined;
-        }
-        else if ($(this).attr('id').startsWith('txtTool')) {
+        //if ($(this).attr('id').startsWith('txtTedad')) {
+        //    if ($(this).hasClass('HasEnteringValue')) {
+        //        if ($.isNumeric(parseFloat($(this).val()))) {
+        //            Tedad = $(this).val().replace(/\,/g, '');
+        //            $(this).removeClass('ErrorValueStyle');
+        //        }
+        //        else {
+        //            $(this).addClass('ErrorValueStyle');
+        //            $(this).removeClass('TextEdit');
+        //            Check = false;
+        //        }
+        //    }
+        //    else Tedad = undefined;
+        //}
+        //else
+            if ($(this).attr('id').startsWith('txtTool')) {
             if ($(this).hasClass('HasEnteringValue')) {
                 if ($.isNumeric(parseFloat($(this).val()))) {
                     Tool = $(this).val().replace(/\,/g, '');
@@ -1277,13 +1278,9 @@ function GetRizMetreUsers(LevelNumber) {
         type: "POST",
         url: '/RizMetreUser/GetRizMetreUsers',
         dataType: "json",
-        //data: '{FBId:' + FBId + ',IsFromAddedOperation:' + "'" + IsFromAddedOperation
-        //    + "'" + ',BarAvordUserId:' + BarAvordUserId 
-        //    + ',NoeFB:' + "'eec10c4b-5452-4677-a22b-ab5ea9b4e3f0'" + ',Year:' + "'1397'" + '}',
         data: JSON.stringify(vardata),
         contentType: "application/json; charset=utf-8",
         success: function (data) {
-
             var info = data.split('_');
             if (info[0] == "OK") {
                 if (LevelNumber === 1) {
@@ -1603,15 +1600,15 @@ function UpdateRMUClick(Id) {
     //}
     //else Tedad = 0;
 
-    if ($('#txtTedad' + Id).val() != '') {
-        if ($.isNumeric(parseFloat($('#txtTedad' + Id).val()))) {
-            Tedad = $('#txtTedad' + Id).val().replace(/\,/g, '');
-        }
-        else {
-            $('#txtTedad' + Id).addClass('ErrorValueStyle');
-            Check = false;
-        }
-    }
+    //if ($('#txtTedad' + Id).val() != '') {
+    //    if ($.isNumeric(parseFloat($('#txtTedad' + Id).val()))) {
+    //        Tedad = $('#txtTedad' + Id).val().replace(/\,/g, '');
+    //    }
+    //    else {
+    //        $('#txtTedad' + Id).addClass('ErrorValueStyle');
+    //        Check = false;
+    //    }
+    //}
 
     firstObjectHasFocus = null;
     if ($('#txtTool' + Id).hasClass('HasEnteringValue')) {

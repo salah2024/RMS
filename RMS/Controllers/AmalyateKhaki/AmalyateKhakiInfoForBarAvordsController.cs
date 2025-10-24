@@ -94,49 +94,49 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
                 {
 
                     clsAmalyateKhakiInfoForBarAvordDetailsMore AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
-                    AmalyateKhakiInfoForBarAvordDetailsMore.Value = decimal.Parse(item.DetailValue);
+                    AmalyateKhakiInfoForBarAvordDetailsMore.Value = item.DetailValue == "" ? null : decimal.Parse(item.DetailValue);
                     AmalyateKhakiInfoForBarAvordDetailsMore.Name = "KhDetail";
                     AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
                     _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
 
                     AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
-                    AmalyateKhakiInfoForBarAvordDetailsMore.Value = decimal.Parse(item.DarsadValue);
+                    AmalyateKhakiInfoForBarAvordDetailsMore.Value = item.DarsadValue == "" ? null : decimal.Parse(item.DarsadValue);
                     AmalyateKhakiInfoForBarAvordDetailsMore.Name = "DarsadKhDetail";
                     AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
                     _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
 
                     AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
-                    AmalyateKhakiInfoForBarAvordDetailsMore.Value = decimal.Parse(item.DetailValueOfReCycle);
+                    AmalyateKhakiInfoForBarAvordDetailsMore.Value = item.DetailValueOfReCycle == "" ? null : decimal.Parse(item.DetailValueOfReCycle);
                     AmalyateKhakiInfoForBarAvordDetailsMore.Name = "ReUseHajm";
                     AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
                     _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
 
                     AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
-                    AmalyateKhakiInfoForBarAvordDetailsMore.Value = decimal.Parse(item.DarsadValueOfReCycle);
+                    AmalyateKhakiInfoForBarAvordDetailsMore.Value = item.DarsadValueOfReCycle == "" ? null : decimal.Parse(item.DarsadValueOfReCycle);
                     AmalyateKhakiInfoForBarAvordDetailsMore.Name = "DarsadReUseHajm";
                     AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
                     _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
 
                     AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
-                    AmalyateKhakiInfoForBarAvordDetailsMore.Value = decimal.Parse(item.DetailValueOfVarize);
+                    AmalyateKhakiInfoForBarAvordDetailsMore.Value = item.DetailValueOfVarize == "" ? null : decimal.Parse(item.DetailValueOfVarize);
                     AmalyateKhakiInfoForBarAvordDetailsMore.Name = "Varizi";
                     AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
                     _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
 
                     AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
-                    AmalyateKhakiInfoForBarAvordDetailsMore.Value = decimal.Parse(item.DarsadValueOfVarize);
+                    AmalyateKhakiInfoForBarAvordDetailsMore.Value = item.DarsadValueOfVarize == "" ? null : decimal.Parse(item.DarsadValueOfVarize);
                     AmalyateKhakiInfoForBarAvordDetailsMore.Name = "DarsadVarizi";
                     AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
                     _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
 
                     AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
-                    AmalyateKhakiInfoForBarAvordDetailsMore.Value = decimal.Parse(item.DetailValueOfHaml);
+                    AmalyateKhakiInfoForBarAvordDetailsMore.Value = item.DetailValueOfHaml == "" ? null : decimal.Parse(item.DetailValueOfHaml);
                     AmalyateKhakiInfoForBarAvordDetailsMore.Name = "Haml";
                     AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
                     _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
 
                     AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
-                    AmalyateKhakiInfoForBarAvordDetailsMore.Value = decimal.Parse(item.DarsadValueOfHaml);
+                    AmalyateKhakiInfoForBarAvordDetailsMore.Value = item.DarsadValueOfHaml == "" ? null : decimal.Parse(item.DarsadValueOfHaml);
                     AmalyateKhakiInfoForBarAvordDetailsMore.Name = "DarsadHaml";
                     AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
                     _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
@@ -164,7 +164,7 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
                         gFBId = newFB.ID;
                     }
 
-                    decimal Hajm = decimal.Parse(item.DetailValue);
+                    decimal? Hajm = item.DetailValue == "" ? null : decimal.Parse(item.DetailValue);
                     if (Hajm != 0)
                     {
                         clsRizMetreUsers RizMetre = new clsRizMetreUsers();
@@ -279,7 +279,7 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
 
                     if (AmalyateKhakiInfoForBarAvordDetailsId != guCheck)
                     {
-                        decimal dDetailValue = decimal.Parse(item.DetailValue);
+                        decimal? dDetailValue = item.DetailValue == "" ? null : decimal.Parse(item.DetailValue);
                         if (dDetailValue != 0)
                         {
                             clsAmalyateKhakiInfoForBarAvordDetailsMore AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
@@ -288,7 +288,7 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
                             AmalyateKhakiInfoForBarAvordDetailsMore.Name = "KhDetail";
                             _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
 
-                            decimal dDarsadValue = decimal.Parse(item.DarsadValue);
+                            decimal? dDarsadValue = item.DarsadValue == "" ? null : decimal.Parse(item.DarsadValue);
                             AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
                             AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
                             AmalyateKhakiInfoForBarAvordDetailsMore.Value = dDarsadValue;
@@ -297,7 +297,7 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
                             //_context.SaveChanges();
                         }
 
-                        decimal dDetailValueOfReCycle = decimal.Parse(item.DetailValueOfReCycle);
+                        decimal? dDetailValueOfReCycle = item.DetailValueOfReCycle==""?null: decimal.Parse(item.DetailValueOfReCycle);
                         if (dDetailValueOfReCycle != 0)
                         {
                             clsAmalyateKhakiInfoForBarAvordDetailsMore AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
@@ -306,7 +306,7 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
                             AmalyateKhakiInfoForBarAvordDetailsMore.Name = "ReUseHajm";
                             _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
 
-                            decimal dDarsadValueOfReCycle = decimal.Parse(item.DarsadValueOfReCycle);
+                            decimal? dDarsadValueOfReCycle = item.DarsadValueOfReCycle == "" ? null : decimal.Parse(item.DarsadValueOfReCycle);
                             AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
                             AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
                             AmalyateKhakiInfoForBarAvordDetailsMore.Value = dDarsadValueOfReCycle;
@@ -316,7 +316,7 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
                             //AmalyateKhakiInfoForBarAvordDetails.SaveMore(AmalyateKhakiInfoForBarAvordDetailsId);
                         }
 
-                        decimal dDetailValueOfVarize = decimal.Parse(item.DetailValueOfVarize);
+                        decimal? dDetailValueOfVarize = item.DetailValueOfVarize == "" ? null : decimal.Parse(item.DetailValueOfVarize);
                         if (dDetailValueOfVarize != 0)
                         {
                             clsAmalyateKhakiInfoForBarAvordDetailsMore AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
@@ -325,7 +325,7 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
                             AmalyateKhakiInfoForBarAvordDetailsMore.Name = "Varizi";
                             _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
 
-                            decimal dDarsadValueOfVarize = decimal.Parse(item.DarsadValueOfVarize);
+                            decimal? dDarsadValueOfVarize = item.DarsadValueOfVarize == "" ? null : decimal.Parse(item.DarsadValueOfVarize);
                             AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
                             AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
                             AmalyateKhakiInfoForBarAvordDetailsMore.Value = dDarsadValueOfVarize;
@@ -334,7 +334,7 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
                             //_context.SaveChanges();
                         }
 
-                        decimal dDetailValueOfHaml = decimal.Parse(item.DetailValueOfHaml);
+                        decimal? dDetailValueOfHaml = item.DetailValueOfHaml == "" ? null : decimal.Parse(item.DetailValueOfHaml);
                         if (dDetailValueOfHaml != 0)
                         {
                             clsAmalyateKhakiInfoForBarAvordDetailsMore AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
@@ -343,7 +343,7 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
                             AmalyateKhakiInfoForBarAvordDetailsMore.Name = "Haml";
                             _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
 
-                            decimal dDarsadValueOfHaml = decimal.Parse(item.DarsadValueOfHaml);
+                            decimal? dDarsadValueOfHaml = item.DarsadValueOfHaml == "" ? null : decimal.Parse(item.DarsadValueOfHaml);
                             AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
                             AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
                             AmalyateKhakiInfoForBarAvordDetailsMore.Value = dDarsadValueOfHaml;
@@ -376,7 +376,7 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
                             gFBId = newFB.ID;
                         }
 
-                        decimal Hajm = decimal.Parse(item.DetailValue);
+                        decimal? Hajm = item.DetailValue == "" ? null : decimal.Parse(item.DetailValue);
                         if (Hajm != 0)
                         {
                             clsRizMetreUsers RizMetre = new clsRizMetreUsers();

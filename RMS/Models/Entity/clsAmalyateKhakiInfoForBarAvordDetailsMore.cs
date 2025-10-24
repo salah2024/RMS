@@ -9,5 +9,5 @@ public class clsAmalyateKhakiInfoForBarAvordDetailsMore:clsBaseEntity
     public Guid AmalyateKhakiInfoForBarAvordDetailsId { get; set; }
     public clsAmalyateKhakiInfoForBarAvordDetails AmalyateKhakiInfoForBarAvordDetails { get; set; }
     public string Name { get; set; }
-    public decimal Value { get; set; }
+    public decimal? Value { get; set; }
 }

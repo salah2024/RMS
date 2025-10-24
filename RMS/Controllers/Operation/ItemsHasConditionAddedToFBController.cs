@@ -233,6 +233,29 @@ namespace RMS.Controllers.Operation
                                         }
                                     case "6":
                                         {
+                                            bool blnHasHaml = false;
+                                            clsItemsRelatedToItemHaml? itemsRelatedToItemHaml = _context.ItemsRelatedToItemHamls
+                                                .FirstOrDefault(x => x.ItemFB.Trim() == strFBShomarehAdded.Trim() && x.Year == Year);
+
+                                            string strItemHamlFB = "";
+                                            if (itemsRelatedToItemHaml != null)
+                                            {
+                                                strItemHamlFB = itemsRelatedToItemHaml.ItemHamlFB.Trim();
+                                                blnHasHaml = true;
+                                            }
+
+                                            if (blnHasHaml)
+                                            {
+                                                string ItemHamlFB = itemsRelatedToItemHaml.ItemHamlFB;
+                                                clsFB FbHaml = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == ItemHamlFB);
+                                                if (FbHaml != null)
+                                                {
+                                                    List<clsRizMetreUsers> lstRMForDelForHaml = _context.RizMetreUserses.Where(x => x.FBId == FbHaml.ID && x.ForItem == strFBShomareh.Trim() && x.Type == "3").ToList();
+                                                    _context.RizMetreUserses.RemoveRange(lstRMForDelForHaml);
+                                                }
+                                            }
+
+
                                             var varFBUsersAdded = _context.FBs.Where(x => x.BarAvordId == BarAvordId && x.Shomareh == strFBShomarehAdded).ToList();
                                             DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
 
@@ -242,7 +265,7 @@ namespace RMS.Controllers.Operation
                                                 clsFB? Fb = _context.FBs.Where(x => x.ID == guFBUsersAddedId).FirstOrDefault();
                                                 if (Fb != null)
                                                 {
-                                                    List<clsRizMetreUsers> lstRMForDel = _context.RizMetreUserses.Where(x => x.FBId == Fb.ID && x.ForItem == strFBShomareh.Trim()).ToList();
+                                                    List<clsRizMetreUsers> lstRMForDel = _context.RizMetreUserses.Where(x => x.FBId == Fb.ID && x.ForItem == strFBShomareh.Trim() && x.Type == "2").ToList();
                                                     if (lstRMForDel.Count != 0)
                                                     {
                                                         _context.RizMetreUserses.RemoveRange(lstRMForDel);
