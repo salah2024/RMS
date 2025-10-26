@@ -10,5 +10,6 @@ public class clsItemsRelatedToItemHaml
     public long Id { get; set; }
     public string ItemFB { get; set; }
     public string ItemHamlFB { get; set; }
+    public decimal? Zarib { get; set; }
     public long Year { get; set; }
 }

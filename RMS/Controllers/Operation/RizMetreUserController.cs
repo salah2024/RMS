@@ -103,20 +103,38 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
             /////////////
             ///درج حمل///
             /////////////
-            clsBarAvordHaml barAvordHaml = new clsBarAvordHaml
+            ///
+            Guid gBarAvordHamlId = new Guid();
+            clsBarAvordHaml? currentBarAvordHaml = context.BarAvordHamls.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.FBShomareh == currentFB.Shomareh);
+            if (currentBarAvordHaml == null)
             {
-                BarAvordId = BarAvordId,
-                FBShomareh = currentFB.Shomareh,
-            };
-            context.BarAvordHamls.Add(barAvordHaml);
+
+                gBarAvordHamlId = Guid.NewGuid();
+                clsBarAvordHaml barAvordHaml = new clsBarAvordHaml
+                {
+                    ID = gBarAvordHamlId,
+                    BarAvordId = BarAvordId,
+                    FBShomareh = currentFB.Shomareh,
+                };
+                context.BarAvordHamls.Add(barAvordHaml);
+            }
+            else
+            {
+                gBarAvordHamlId = currentBarAvordHaml.ID;
+            }
+
             ///درج ریز متره
             SaveHamlDto requestSaveHaml = new SaveHamlDto
             {
                 BarAvordUserId = Request.BarAvordUserId,
                 Year = Year,
                 ItemFBShomareh = currentFB.Shomareh,
-                BarAvordHamlId = barAvordHaml.ID,
-                MeghdarJoz = dMeghdarJoz
+                BarAvordHamlId = gBarAvordHamlId,
+                Shomareh = LastShomareh,
+                Tedad = Tedad,
+                Tool = Tool,
+                Arz = Arz,
+                Ertefa = Ertefa
             };
             HamlCommon.SaveHaml(requestSaveHaml, context);
             context.SaveChanges();
@@ -1711,6 +1729,37 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
             (Arz == null ? 1 : Arz.Value) * (Ertefa == null ? 1 : Ertefa.Value) * (Vazn == null ? 1 : Vazn.Value);
         entity.MeghdarJoz = dMeghdarJoz;
 
+
+        clsFB? currentFb = context.FBs.FirstOrDefault(x => x.ID == entity.FBId);
+        if (currentFb != null)
+        {
+            string currentShomareh = currentFb.Shomareh;
+            clsBarAvordHaml? barAvordHaml = context.BarAvordHamls.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.FBShomareh == currentShomareh);
+            if (barAvordHaml != null)
+            {
+                List<clsBarAvordHamlRizMetre> lstBAHRM =
+                    context.BarAvordHamlRizMetres.Where(x => x.BarAvordHamlId == barAvordHaml.ID).ToList();
+                List<Guid> lstRizMetreIds = lstBAHRM.Select(x => x.RizMetreId).ToList();
+                if (lstBAHRM.Count != 0)
+                {
+                    clsRizMetreUsers? RizMetreForHaml = context.RizMetreUserses.FirstOrDefault(x => lstRizMetreIds.Contains(x.ID) && x.Shomareh == entity.Shomareh);
+                    if (RizMetreForHaml != null)
+                    {
+                        RizMetreForHaml.Tedad = Tedad;
+                        RizMetreForHaml.Tool = Tool;
+                        RizMetreForHaml.Arz = Arz;
+                        RizMetreForHaml.Ertefa = Ertefa;
+                        decimal dMeghdarJozHaml = 0;
+                        if (Tedad == null && Tool == null && Arz == null && Ertefa == null)
+                            dMeghdarJozHaml = 0;
+                        else
+                            dMeghdarJozHaml += (Tedad == null ? 1 : Tedad.Value) * (Tool == null ? 1 : Tool.Value) *
+                            (Arz == null ? 1 : Arz.Value) * (Ertefa == null ? 1 : Ertefa.Value) * (RizMetreForHaml.Vazn == null ? 1 : RizMetreForHaml.Vazn.Value);
+                        RizMetreForHaml.MeghdarJoz = dMeghdarJozHaml;
+                    }
+                }
+            }
+        }
         context.SaveChanges();
 
         decimal SumMeghdarJoz = context.RizMetreUserses.Where(x => x.FBId == entity.FBId).Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
@@ -1981,6 +2030,39 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                 try
                 {
                     context.Entry(clsRizMetreUsers1).CurrentValues.SetValues(RizMetre);
+
+                    clsFB? currentFb = context.FBs.FirstOrDefault(x => x.ID == RizMetre.FBId);
+                    if (currentFb != null)
+                    {
+                        string currentShomareh = currentFb.Shomareh;
+                        clsBarAvordHaml? barAvordHaml = context.BarAvordHamls.FirstOrDefault(x => x.BarAvordId == request.BarAvordUserId && x.FBShomareh == currentShomareh);
+                        if (barAvordHaml != null)
+                        {
+                            List<clsBarAvordHamlRizMetre> lstBAHRM =
+                                context.BarAvordHamlRizMetres.Where(x => x.BarAvordHamlId == barAvordHaml.ID).ToList();
+                            List<Guid> lstRizMetreIds = lstBAHRM.Select(x => x.RizMetreId).ToList();
+                            if (lstBAHRM.Count != 0)
+                            {
+                                clsRizMetreUsers? RizMetreForHaml = context.RizMetreUserses.FirstOrDefault(x => lstRizMetreIds.Contains(x.ID) && x.Shomareh == RizMetre.Shomareh);
+                                if (RizMetreForHaml != null)
+                                {
+                                    RizMetreForHaml.Tedad = Tedad;
+                                    RizMetreForHaml.Tool = Tool;
+                                    RizMetreForHaml.Arz = Arz;
+                                    RizMetreForHaml.Ertefa = Ertefa;
+                                    decimal dMeghdarJozHaml = 0;
+                                    if (Tedad == null && Tool == null && Arz == null && Ertefa == null)
+                                        dMeghdarJozHaml = 0;
+                                    else
+                                        dMeghdarJozHaml += (Tedad == null ? 1 : Tedad.Value) * (Tool == null ? 1 : Tool.Value) *
+                                        (Arz == null ? 1 : Arz.Value) * (Ertefa == null ? 1 : Ertefa.Value) * (RizMetreForHaml.Vazn == null ? 1 : RizMetreForHaml.Vazn.Value);
+                                    RizMetreForHaml.MeghdarJoz = dMeghdarJozHaml;
+                                }
+                            }
+                        }
+                    }
+
+
                     context.SaveChanges();
                     blnCheckUpdate1 = true;
                 }
@@ -7807,13 +7889,28 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
 
     public ActionResult DeleteRizMetre([FromBody] DeleteRizMetreInputDto request)
     {
+        Guid BarAvordUserId = request.BarAvordUserId;
         clsRizMetreUsers? entity = context.RizMetreUserses.Find(request.Id);
         if (entity != null)
         {
             context.RizMetreUserses.Remove(entity);
             // context.SaveChanges();
 
+            ///////////
+            //حذف حمل//
+            ///////////
+            clsFB? FB = context.FBs.FirstOrDefault(x => x.ID == entity.FBId);
 
+            if (FB != null)
+            {
+                DeleteHamlDto deleteHaml = new DeleteHamlDto
+                {
+                    BarAvordId = BarAvordUserId,
+                    FBShomareh = FB.Shomareh,
+                    RMShomareh = entity.Shomareh,
+                };
+                HamlCommon.DeleteHaml(deleteHaml, context);
+            }
             /////////////
             //////////////
             //////////////
@@ -7907,7 +8004,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                 CheckOperationConditions checkOperationConditions = new CheckOperationConditions();
                 foreach (var itemsAddingToFBForCheckOperation in lstItemsAddingToFBForCheckOperation)
                 {
-                    checkOperationConditions.fnCheckOperationConditionForDelete(_context, itemsAddingToFBForCheckOperation, ItemsField, ItemHasCon, FBId, entity);
+                    checkOperationConditions.fnCheckOperationConditionForDelete(_context, itemsAddingToFBForCheckOperation, ItemsField, ItemHasCon, FBId, Year, entity);
                 }
             }
 

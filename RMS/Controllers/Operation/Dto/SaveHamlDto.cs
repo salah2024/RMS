@@ -6,5 +6,9 @@ public class SaveHamlDto
     public long Year { get;set; }
     public string ItemFBShomareh { get; set; }
     public Guid BarAvordHamlId { get;set; }
-    public decimal? MeghdarJoz { get; set; }
+    public long Shomareh { get; set;}
+    public decimal? Tedad { get; set; }
+    public decimal? Tool { get; set; }
+    public decimal? Arz { get; set; }
+    public decimal? Ertefa { get; set; }
 }
