@@ -2043,20 +2043,23 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                             List<Guid> lstRizMetreIds = lstBAHRM.Select(x => x.RizMetreId).ToList();
                             if (lstBAHRM.Count != 0)
                             {
-                                clsRizMetreUsers? RizMetreForHaml = context.RizMetreUserses.FirstOrDefault(x => lstRizMetreIds.Contains(x.ID) && x.Shomareh == RizMetre.Shomareh);
-                                if (RizMetreForHaml != null)
+                                List<clsRizMetreUsers> lstRizMetreForHaml = context.RizMetreUserses.Where(x => lstRizMetreIds.Contains(x.ID) && x.Shomareh == RizMetre.Shomareh).ToList();
+                                if (lstRizMetreForHaml.Count != 0)
                                 {
-                                    RizMetreForHaml.Tedad = Tedad;
-                                    RizMetreForHaml.Tool = Tool;
-                                    RizMetreForHaml.Arz = Arz;
-                                    RizMetreForHaml.Ertefa = Ertefa;
-                                    decimal dMeghdarJozHaml = 0;
-                                    if (Tedad == null && Tool == null && Arz == null && Ertefa == null)
-                                        dMeghdarJozHaml = 0;
-                                    else
-                                        dMeghdarJozHaml += (Tedad == null ? 1 : Tedad.Value) * (Tool == null ? 1 : Tool.Value) *
-                                        (Arz == null ? 1 : Arz.Value) * (Ertefa == null ? 1 : Ertefa.Value) * (RizMetreForHaml.Vazn == null ? 1 : RizMetreForHaml.Vazn.Value);
-                                    RizMetreForHaml.MeghdarJoz = dMeghdarJozHaml;
+                                    foreach (var RizMetreForHaml in lstRizMetreForHaml)
+                                    {
+                                        RizMetreForHaml.Tedad = Tedad;
+                                        RizMetreForHaml.Tool = Tool;
+                                        RizMetreForHaml.Arz = Arz;
+                                        RizMetreForHaml.Ertefa = Ertefa;
+                                        decimal dMeghdarJozHaml = 0;
+                                        if (Tedad == null && Tool == null && Arz == null && Ertefa == null)
+                                            dMeghdarJozHaml = 0;
+                                        else
+                                            dMeghdarJozHaml += (Tedad == null ? 1 : Tedad.Value) * (Tool == null ? 1 : Tool.Value) *
+                                            (Arz == null ? 1 : Arz.Value) * (Ertefa == null ? 1 : Ertefa.Value) * (RizMetreForHaml.Vazn == null ? 1 : RizMetreForHaml.Vazn.Value);
+                                        RizMetreForHaml.MeghdarJoz = dMeghdarJozHaml;
+                                    }
                                 }
                             }
                         }
