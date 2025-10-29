@@ -134,7 +134,8 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                 Tedad = Tedad,
                 Tool = Tool,
                 Arz = Arz,
-                Ertefa = Ertefa
+                Ertefa = Ertefa,
+                LevelNumber = LevelNumber
             };
             HamlCommon.SaveHaml(requestSaveHaml, context);
             context.SaveChanges();

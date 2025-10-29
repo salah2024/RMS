@@ -346,6 +346,88 @@ namespace RMS.Models.Common
 
 
                             _context.RizMetreUserses.Add(RizMetreUsers);
+
+
+
+                            //Start///////////////////////
+                            ////////////حمل///////////////
+                            //////////////////////////////
+                            ///آیتم های حمل درج میگردد
+                            string FBShomareh = strShomarehAdd;
+                            bool blnHasHaml = false;
+                            List<clsItemsRelatedToItemHaml> lstItemsRelatedToItemHaml = lstRelatedToItemHaml.Where(x => x.ItemFB.Trim() == FBShomareh).ToList();
+                            foreach (var itemsRelatedToItemHaml in lstItemsRelatedToItemHaml)
+                            {
+                                string strItemHamlFB = "";
+                                decimal? Zarib = 0;
+                                if (itemsRelatedToItemHaml != null)
+                                {
+                                    strItemHamlFB = itemsRelatedToItemHaml.ItemHamlFB.Trim();
+                                    Zarib = itemsRelatedToItemHaml.Zarib;
+                                    blnHasHaml = true;
+                                }
+
+                                if (blnHasHaml)
+                                {
+                                    clsFB? FBHaml = _context.FBs.FirstOrDefault(x => x.BarAvordId == guBAId && x.Shomareh == strItemHamlFB);
+                                    Guid gFBIdHaml = new Guid();
+                                    if (FBHaml != null)
+                                    {
+                                        gFBIdHaml = FBHaml.ID;
+                                    }
+                                    else
+                                    {
+                                        clsFB newFBHaml = new clsFB
+                                        {
+                                            BarAvordId = guBAId,
+                                            InsertDateTime = Now,
+                                            Shomareh = strItemHamlFB
+                                        };
+                                        _context.FBs.Add(newFBHaml);
+                                        gFBIdHaml = newFBHaml.ID;
+                                    }
+
+                                    ///
+                                    ///درج ریز متره
+                                    ///
+
+                                    clsRizMetreUsers RizMetreHaml = new clsRizMetreUsers();
+                                    RizMetreHaml.Shomareh = RizMetreUsers.Shomareh;
+                                    ShomareNew++;
+                                    RizMetreHaml.ShomarehNew = ShomareNew.ToString();
+                                    RizMetreHaml.Sharh = " حمل ";
+                                    RizMetreHaml.Tedad = RM.Tedad;
+                                    RizMetreHaml.Tool = RM.Tool;
+                                    RizMetreHaml.Arz = RM.Arz;
+                                    RizMetreHaml.Ertefa = RM.Ertefa;
+                                    RizMetreHaml.Vazn = Zarib;
+                                    RizMetreHaml.Des = " آیتم- " + strShomarehAdd;
+                                    RizMetreHaml.FBId = gFBIdHaml;
+                                    RizMetreHaml.OperationsOfHamlId = 1;
+                                    RizMetreHaml.LevelNumber = LevelNumber;
+                                    RizMetreHaml.Type = "3";
+                                    RizMetreHaml.ForItem = ItemHasCon.FBShomareh;//DtFB.Rows[0]["Shomareh"].ToString().Trim();
+                                    RizMetreHaml.UseItem = "";
+
+                                    decimal dMeghdarJozHaml = 0;
+                                    if (RM.Tedad == null && RM.Tool == null && RM.Arz == null && RM.Ertefa == null && RM.Vazn == null)
+                                        dMeghdarJozHaml = 0;
+                                    else
+                                        dMeghdarJozHaml += (RM.Tedad == null ? 1 : RM.Tedad.Value) * (RM.Tool == null ? 1 : RM.Tool.Value) *
+                                        (RM.Arz == null ? 1 : RM.Arz.Value) * (RM.Ertefa == null ? 1 : RM.Ertefa.Value)
+                                        * (RizMetreHaml.Vazn == null ? 1 : RizMetreHaml.Vazn.Value);
+
+                                    RizMetreHaml.MeghdarJoz = dMeghdarJozHaml;
+                                    _context.RizMetreUserses.Add(RizMetreHaml);
+                                }
+                            }
+
+                            //End//////////////////////////
+                            /////////////حمل//////////////
+                            //////////////////////////////
+
+
+
                             _context.SaveChanges();
 
                         }
@@ -847,73 +929,76 @@ namespace RMS.Models.Common
                                 ///آیتم های حمل درج میگردد
                                 string FBShomareh = strAddedItems;
                                 bool blnHasHaml = false;
-                                clsItemsRelatedToItemHaml? itemsRelatedToItemHaml = lstRelatedToItemHaml.FirstOrDefault(x => x.ItemFB.Trim() == FBShomareh);
-                                string strItemHamlFB = "";
-                                decimal? Zarib = 0;
-                                if (itemsRelatedToItemHaml != null)
+                                List<clsItemsRelatedToItemHaml> lstItemsRelatedToItemHaml = lstRelatedToItemHaml.Where(x => x.ItemFB.Trim() == FBShomareh).ToList();
+                                foreach (var itemsRelatedToItemHaml in lstItemsRelatedToItemHaml)
                                 {
-                                    strItemHamlFB = itemsRelatedToItemHaml.ItemHamlFB.Trim();
-                                    Zarib = itemsRelatedToItemHaml.Zarib;
-                                    blnHasHaml = true;
-                                }
-
-                                if (blnHasHaml)
-                                {
-                                    clsFB? FBHaml = _context.FBs.FirstOrDefault(x => x.BarAvordId == guBAId && x.Shomareh == strItemHamlFB);
-                                    Guid gFBIdHaml = new Guid();
-                                    if (FBHaml != null)
+                                    string strItemHamlFB = "";
+                                    decimal? Zarib = 0;
+                                    if (itemsRelatedToItemHaml != null)
                                     {
-                                        gFBIdHaml = FBHaml.ID;
+                                        strItemHamlFB = itemsRelatedToItemHaml.ItemHamlFB.Trim();
+                                        Zarib = itemsRelatedToItemHaml.Zarib;
+                                        blnHasHaml = true;
                                     }
-                                    else
+
+                                    if (blnHasHaml)
                                     {
-                                        clsFB newFBHaml = new clsFB
+                                        clsFB? FBHaml = _context.FBs.FirstOrDefault(x => x.BarAvordId == guBAId && x.Shomareh == strItemHamlFB);
+                                        Guid gFBIdHaml = new Guid();
+                                        if (FBHaml != null)
                                         {
-                                            BarAvordId = guBAId,
-                                            InsertDateTime = Now,
-                                            Shomareh = strItemHamlFB
-                                        };
-                                        _context.FBs.Add(newFBHaml);
-                                        gFBIdHaml = newFBHaml.ID;
+                                            gFBIdHaml = FBHaml.ID;
+                                        }
+                                        else
+                                        {
+                                            clsFB newFBHaml = new clsFB
+                                            {
+                                                BarAvordId = guBAId,
+                                                InsertDateTime = Now,
+                                                Shomareh = strItemHamlFB
+                                            };
+                                            _context.FBs.Add(newFBHaml);
+                                            gFBIdHaml = newFBHaml.ID;
+                                        }
+
+                                        ///
+                                        ///درج ریز متره
+                                        ///
+
+                                        clsRizMetreUsers RizMetreHaml = new clsRizMetreUsers();
+                                        RizMetreHaml.Shomareh = RizMetreUsers.Shomareh;
+                                        ShomareNew++;
+                                        RizMetreHaml.ShomarehNew = ShomareNew.ToString();
+                                        RizMetreHaml.Sharh = " - حمل ";
+                                        RizMetreHaml.Tedad = RM.Tedad;
+                                        RizMetreHaml.Tool = RM.Tool;
+                                        RizMetreHaml.Arz = RM.Arz;
+                                        RizMetreHaml.Ertefa = RM.Ertefa;
+                                        RizMetreHaml.Vazn = Zarib;
+                                        RizMetreHaml.Des = " آیتم- " + strAddedItems;
+                                        RizMetreHaml.FBId = gFBIdHaml;
+                                        RizMetreHaml.OperationsOfHamlId = 1;
+                                        RizMetreHaml.LevelNumber = LevelNumber;
+                                        RizMetreHaml.Type = "3";
+                                        RizMetreHaml.ForItem = ItemHasCon.FBShomareh;//DtFB.Rows[0]["Shomareh"].ToString().Trim();
+                                        RizMetreHaml.UseItem = "";
+
+                                        decimal dMeghdarJozHaml = 0;
+                                        if (RM.Tedad == null && RM.Tool == null && RM.Arz == null && RM.Ertefa == null && RM.Vazn == null)
+                                            dMeghdarJozHaml = 0;
+                                        else
+                                            dMeghdarJozHaml += (RM.Tedad == null ? 1 : RM.Tedad.Value) * (RM.Tool == null ? 1 : RM.Tool.Value) *
+                                            (RM.Arz == null ? 1 : RM.Arz.Value) * (RM.Ertefa == null ? 1 : RM.Ertefa.Value)
+                                            * (RizMetreHaml.Vazn == null ? 1 : RizMetreHaml.Vazn.Value);
+
+                                        RizMetreHaml.MeghdarJoz = dMeghdarJozHaml;
+                                        _context.RizMetreUserses.Add(RizMetreHaml);
                                     }
 
-                                    ///
-                                    ///درج ریز متره
-                                    ///
-
-                                    clsRizMetreUsers RizMetreHaml = new clsRizMetreUsers();
-                                    RizMetreHaml.Shomareh = RizMetreUsers.Shomareh;
-                                    ShomareNew++;
-                                    RizMetreHaml.ShomarehNew = ShomareNew.ToString();
-                                    RizMetreHaml.Sharh = " - حمل ";
-                                    RizMetreHaml.Tedad = RM.Tedad;
-                                    RizMetreHaml.Tool = RM.Tool;
-                                    RizMetreHaml.Arz = RM.Arz;
-                                    RizMetreHaml.Ertefa = RM.Ertefa;
-                                    RizMetreHaml.Vazn = Zarib;
-                                    RizMetreHaml.Des = " آیتم- "+ strAddedItems;
-                                    RizMetreHaml.FBId = gFBIdHaml;
-                                    RizMetreHaml.OperationsOfHamlId = 1;
-                                    RizMetreHaml.Type = "3";
-                                    RizMetreHaml.ForItem = ItemHasCon.FBShomareh;//DtFB.Rows[0]["Shomareh"].ToString().Trim();
-                                    RizMetreHaml.UseItem = "";
-
-                                    decimal dMeghdarJozHaml = 0;
-                                    if (RM.Tedad == null && RM.Tool == null && RM.Arz == null && RM.Ertefa == null && RM.Vazn == null)
-                                        dMeghdarJozHaml = 0;
-                                    else
-                                        dMeghdarJozHaml += (RM.Tedad == null ? 1 : RM.Tedad.Value) * (RM.Tool == null ? 1 : RM.Tool.Value) *
-                                        (RM.Arz == null ? 1 : RM.Arz.Value) * (RM.Ertefa == null ? 1 : RM.Ertefa.Value)
-                                        * (RizMetreHaml.Vazn == null ? 1 : RizMetreHaml.Vazn.Value);
-
-                                    RizMetreHaml.MeghdarJoz = dMeghdarJozHaml;
-                                    _context.RizMetreUserses.Add(RizMetreHaml);
+                                    //End//////////////////////////
+                                    /////////////حمل//////////////
+                                    //////////////////////////////
                                 }
-
-                                //End//////////////////////////
-                                /////////////حمل//////////////
-                                //////////////////////////////
-
                                 _context.SaveChanges();
                             }
                         }
@@ -2610,6 +2695,22 @@ namespace RMS.Models.Common
                                 }
                             }
                             _context.RizMetreUserses.Remove(RizMetreUsersCurrent);
+
+                            List<clsItemsRelatedToItemHaml> lstItemsRelatedToItemHaml = _context.ItemsRelatedToItemHamls
+                                   .Where(x => x.ItemFB.Trim() == strShomarehAdd && x.Year == Year).ToList();
+
+                            List<string> strItemHamlFB = new List<string>();
+                            if (lstItemsRelatedToItemHaml.Count != 0)
+                            {
+                                strItemHamlFB = lstItemsRelatedToItemHaml.Select(x => x.ItemHamlFB.Trim()).ToList();
+                                clsFB? FbHaml = _context.FBs.FirstOrDefault(x => x.BarAvordId == ItemHasCon.BarAvordId && strItemHamlFB.Contains(x.Shomareh));
+                                if (FbHaml != null)
+                                {
+                                    List<clsRizMetreUsers> lstRMForDelForHaml = _context.RizMetreUserses.Where(x => x.FBId == FbHaml.ID
+                                        && x.ForItem == strShomareh1.Trim() && x.Type == "3" && x.Shomareh == RizMetre.Shomareh).ToList();
+                                    _context.RizMetreUserses.RemoveRange(lstRMForDelForHaml);
+                                }
+                            }
                         }
                         break;
                     }
@@ -2791,26 +2892,20 @@ namespace RMS.Models.Common
                                 _context.RizMetreUserses.RemoveRange(RizMetreUsers);
 
 
-                                bool blnHasHaml = false;
-                                clsItemsRelatedToItemHaml? itemsRelatedToItemHaml = _context.ItemsRelatedToItemHamls
-                                    .FirstOrDefault(x => x.ItemFB.Trim() == strAddedItems && x.Year == Year);
+                                //bool blnHasHaml = false;
+                                List<clsItemsRelatedToItemHaml> lstItemsRelatedToItemHaml = _context.ItemsRelatedToItemHamls
+                                    .Where(x => x.ItemFB.Trim() == strAddedItems && x.Year == Year).ToList();
 
-                                string strItemHamlFB = "";
-                                if (itemsRelatedToItemHaml != null)
+                                List<string> strItemHamlFB = new List<string>();
+                                if (lstItemsRelatedToItemHaml.Count != 0)
                                 {
-                                    strItemHamlFB = itemsRelatedToItemHaml.ItemHamlFB.Trim();
-                                    blnHasHaml = true;
-
-                                    if (blnHasHaml)
+                                    strItemHamlFB = lstItemsRelatedToItemHaml.Select(x => x.ItemHamlFB.Trim()).ToList();
+                                    clsFB? FbHaml = _context.FBs.FirstOrDefault(x => x.BarAvordId == ItemHasCon.BarAvordId && strItemHamlFB.Contains(x.Shomareh));
+                                    if (FbHaml != null)
                                     {
-                                        string ItemHamlFB = itemsRelatedToItemHaml.ItemHamlFB;
-                                        clsFB? FbHaml = _context.FBs.FirstOrDefault(x => x.BarAvordId == ItemHasCon.BarAvordId && x.Shomareh == ItemHamlFB);
-                                        if (FbHaml != null)
-                                        {
-                                            List<clsRizMetreUsers> lstRMForDelForHaml = _context.RizMetreUserses.Where(x => x.FBId == FbHaml.ID
-                                                && x.ForItem == strCurrentFBShomareh.Trim() && x.Type == "3" && x.Shomareh == lngShomareh).ToList();
-                                            _context.RizMetreUserses.RemoveRange(lstRMForDelForHaml);
-                                        }
+                                        List<clsRizMetreUsers> lstRMForDelForHaml = _context.RizMetreUserses.Where(x => x.FBId == FbHaml.ID
+                                            && x.ForItem == strCurrentFBShomareh.Trim() && x.Type == "3" && x.Shomareh == lngShomareh).ToList();
+                                        _context.RizMetreUserses.RemoveRange(lstRMForDelForHaml);
                                     }
                                 }
                             }
@@ -3383,31 +3478,37 @@ namespace RMS.Models.Common
                         clsRizMetreUsers? RizMetreUsersCurrent = _context.RizMetreUserses.FirstOrDefault(x => x.FBId == intFBId && x.ForItem == strShomareh1 && x.Type == "2" && x.Shomareh == RizMetre.Shomareh);
                         if (RizMetreUsersCurrent != null)
                         {
-                            RizMetre.ID = RizMetreUsersCurrent.ID;
-                            RizMetre.FBId = RizMetreUsersCurrent.FBId;
-                            RizMetre.ForItem = RizMetreUsersCurrent.ForItem;
-                            RizMetre.UseItem = RizMetreUsersCurrent.UseItem;
-                            RizMetre.Shomareh = RizMetreUsersCurrent.Shomareh;
-                            RizMetre.ShomarehNew = RizMetreUsersCurrent.ShomarehNew;
-                            RizMetre.OperationsOfHamlId = RizMetreUsersCurrent.OperationsOfHamlId;
-                            RizMetre.Type = RizMetreUsersCurrent.Type;
-                            RizMetre.LevelNumber = RizMetreUsersCurrent.LevelNumber;
-                            RizMetre.Des = RizMetreUsersCurrent.Des;
+                            //RizMetre.ID = RizMetreUsersCurrent.ID;
+                            //RizMetre.FBId = RizMetreUsersCurrent.FBId;
+                            //RizMetre.ForItem = RizMetreUsersCurrent.ForItem;
+                            //RizMetre.UseItem = RizMetreUsersCurrent.UseItem;
+                            //RizMetre.Shomareh = RizMetreUsersCurrent.Shomareh;
+                            //RizMetre.ShomarehNew = RizMetreUsersCurrent.ShomarehNew;
+                            //RizMetre.OperationsOfHamlId = RizMetreUsersCurrent.OperationsOfHamlId;
+                            //RizMetre.Type = RizMetreUsersCurrent.Type;
+                            //RizMetre.LevelNumber = RizMetreUsersCurrent.LevelNumber;
+                            //RizMetre.Des = RizMetreUsersCurrent.Des;
 
-                            if (lstCurrentItemsFields[0] != true)
-                                RizMetre.Tedad = null;
+                            //if (lstCurrentItemsFields[0] != true)
+                            //    RizMetre.Tedad = null;
 
-                            if (lstCurrentItemsFields[1] != true)
-                                RizMetre.Tool = null;
 
-                            if (lstCurrentItemsFields[2] != true)
-                                RizMetre.Arz = null;
+                            //if (lstCurrentItemsFields[1] != true)
+                            //    RizMetre.Tool = null;
 
-                            if (lstCurrentItemsFields[3] != true)
-                                RizMetre.Ertefa = null;
 
-                            if (lstCurrentItemsFields[4] != true)
-                                RizMetre.Vazn = null;
+                            //if (lstCurrentItemsFields[2] != true)
+                            //    RizMetre.Arz = null;
+
+
+                            //if (lstCurrentItemsFields[3] != true)
+                            //    RizMetre.Ertefa = null;
+
+
+                            //if (lstCurrentItemsFields[4] != true)
+                            //    RizMetre.Vazn = null;
+
+
 
                             ///محاسبه مقدار جزء
                             decimal? dMeghdarJoz = null;
@@ -3419,7 +3520,65 @@ namespace RMS.Models.Common
 
                             RizMetre.MeghdarJoz = dMeghdarJoz;
 
-                            _context.Entry(RizMetreUsersCurrent).CurrentValues.SetValues(RizMetre);
+                            _context.Entry(RizMetreUsersCurrent).CurrentValues.SetValues(new
+                            {
+                                Tedad = RizMetre.Tedad,
+                                Tool = RizMetre.Tool,
+                                Arz = RizMetre.Arz,
+                                Ertefa = RizMetre.Ertefa,
+                                Vazn = RizMetre.Vazn,
+                                MeghdarJoz = RizMetre.MeghdarJoz
+                            });
+                            _context.SaveChanges();
+
+                            ///حمل قبلی ویرایش میگردد///
+                            bool blnHasHaml = false;
+                            List<clsItemsRelatedToItemHaml> lstItemsRelatedToItemHaml = _context.ItemsRelatedToItemHamls
+                                .Where(x => x.ItemFB.Trim() == strShomarehAdd && x.Year == Year).ToList();
+
+                            foreach (var itemsRelatedToItemHaml in lstItemsRelatedToItemHaml)
+                            {
+                                string strItemHamlFB = "";
+                                if (itemsRelatedToItemHaml != null)
+                                {
+                                    strItemHamlFB = itemsRelatedToItemHaml.ItemHamlFB.Trim();
+                                    blnHasHaml = true;
+                                    decimal? Zarib = itemsRelatedToItemHaml.Zarib;
+                                    if (blnHasHaml)
+                                    {
+                                        string ItemHamlFB = itemsRelatedToItemHaml.ItemHamlFB;
+                                        clsFB? FbHaml = _context.FBs.FirstOrDefault(x => x.BarAvordId == ItemHasCon.BarAvordId && x.Shomareh == ItemHamlFB);
+                                        if (FbHaml != null)
+                                        {
+                                            List<clsRizMetreUsers> lstRMForDelForHaml = _context.RizMetreUserses.Where(x => x.FBId == FbHaml.ID
+                                                && x.ForItem == ItemHasCon.FBShomareh.Substring(0, 6).Trim() && x.Type == "3" && x.Shomareh == RizMetreUsersCurrent.Shomareh).ToList();
+
+                                            foreach (var RMForDelForHaml in lstRMForDelForHaml)
+                                            {
+                                                ///محاسبه مقدار جزء
+                                                decimal? dMeghdarJozHaml = null;
+                                                if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                                                    dMeghdarJozHaml = null;
+                                                else
+                                                    dMeghdarJozHaml = (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                                                    (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                                                _context.Entry(RMForDelForHaml).CurrentValues.SetValues(new
+                                                {
+                                                    Tedad = RizMetre.Tedad,
+                                                    Tool = RizMetre.Tool,
+                                                    Arz = RizMetre.Arz,
+                                                    Ertefa = RizMetre.Ertefa,
+                                                    Vazn = Zarib,
+                                                    MeghdarJoz = dMeghdarJozHaml
+                                                });
+                                            }
+                                            //_context.RizMetreUserses.RemoveRange(lstRMForDelForHaml);
+                                        }
+                                    }
+                                }
+                            }
+
                             _context.SaveChanges();
                         }
                         break;
@@ -3610,33 +3769,38 @@ namespace RMS.Models.Common
                             if (lstRizMetreUsers.Count != 0)
                             {
                                 _context.RizMetreUserses.RemoveRange(lstRizMetreUsers);
+
+
+                                ///حمل قبلی حذف میگردد///
+                                bool blnHasHaml = false;
+                                List<clsItemsRelatedToItemHaml> lstItemsRelatedToItemHaml = _context.ItemsRelatedToItemHamls
+                                    .Where(x => x.ItemFB.Trim() == strAddedItems && x.Year == Year).ToList();
+
+                                foreach (var itemsRelatedToItemHaml in lstItemsRelatedToItemHaml)
+                                {
+                                    string strItemHamlFB = "";
+                                    if (itemsRelatedToItemHaml != null)
+                                    {
+                                        strItemHamlFB = itemsRelatedToItemHaml.ItemHamlFB.Trim();
+                                        blnHasHaml = true;
+
+                                        if (blnHasHaml)
+                                        {
+                                            string ItemHamlFB = itemsRelatedToItemHaml.ItemHamlFB;
+                                            clsFB? FbHaml = _context.FBs.FirstOrDefault(x => x.BarAvordId == ItemHasCon.BarAvordId && x.Shomareh == ItemHamlFB);
+                                            if (FbHaml != null)
+                                            {
+                                                List<clsRizMetreUsers> lstRMForDelForHaml = _context.RizMetreUserses.Where(x => x.FBId == FbHaml.ID
+                                                    && x.ForItem == strCurrentFBShomareh.Trim() && x.Type == "3" && x.Shomareh == lngShomareh).ToList();
+                                                _context.RizMetreUserses.RemoveRange(lstRMForDelForHaml);
+                                            }
+                                        }
+                                    }
+                                }
+
                                 _context.SaveChanges();
                             }
 
-
-                            ///حمل قبلی حذف میگردد///
-                            bool blnHasHaml = false;
-                            clsItemsRelatedToItemHaml itemsRelatedToItemHaml = _context.ItemsRelatedToItemHamls
-                                .First(x => x.ItemFB.Trim() == strAddedItems && x.Year == Year);
-
-                            string strItemHamlFB = "";
-                            if (itemsRelatedToItemHaml != null)
-                            {
-                                strItemHamlFB = itemsRelatedToItemHaml.ItemHamlFB.Trim();
-                                blnHasHaml = true;
-
-                                if (blnHasHaml)
-                                {
-                                    string ItemHamlFB = itemsRelatedToItemHaml.ItemHamlFB;
-                                    clsFB? FbHaml = _context.FBs.FirstOrDefault(x => x.BarAvordId == ItemHasCon.BarAvordId && x.Shomareh == ItemHamlFB);
-                                    if (FbHaml != null)
-                                    {
-                                        List<clsRizMetreUsers> lstRMForDelForHaml = _context.RizMetreUserses.Where(x => x.FBId == FbHaml.ID
-                                            && x.ForItem == strCurrentFBShomareh.Trim() && x.Type == "3" && x.Shomareh == lngShomareh).ToList();
-                                        _context.RizMetreUserses.RemoveRange(lstRMForDelForHaml);
-                                    }
-                                }
-                            }
                         }
 
                         //////////////
@@ -3786,73 +3950,77 @@ namespace RMS.Models.Common
                                 ///آیتم های حمل درج میگردد
                                 string FBShomareh = strAddedItems;
                                 bool blnHasHaml = false;
-                                clsItemsRelatedToItemHaml? itemsRelatedToItemHaml = lstRelatedToItemHaml.FirstOrDefault(x => x.ItemFB.Trim() == FBShomareh);
-                                string strItemHamlFB = "";
-                                decimal? Zarib = 0;
-                                if (itemsRelatedToItemHaml != null)
+                                List<clsItemsRelatedToItemHaml> lstItemsRelatedToItemHaml = lstRelatedToItemHaml.Where(x => x.ItemFB.Trim() == FBShomareh).ToList();
+                                foreach (var itemsRelatedToItemHaml in lstItemsRelatedToItemHaml)
                                 {
-                                    strItemHamlFB = itemsRelatedToItemHaml.ItemHamlFB.Trim();
-                                    Zarib = itemsRelatedToItemHaml.Zarib;
-                                    dVazn = Zarib;
-                                    blnHasHaml = true;
-                                }
 
-                                if (blnHasHaml)
-                                {
-                                    clsFB? FBHaml = _context.FBs.FirstOrDefault(x => x.BarAvordId == guBAId && x.Shomareh == strItemHamlFB);
-                                    Guid gFBIdHaml = new Guid();
-                                    if (FBHaml != null)
+                                    string strItemHamlFB = "";
+                                    decimal? Zarib = 0;
+                                    if (itemsRelatedToItemHaml != null)
                                     {
-                                        gFBIdHaml = FBHaml.ID;
+                                        strItemHamlFB = itemsRelatedToItemHaml.ItemHamlFB.Trim();
+                                        Zarib = itemsRelatedToItemHaml.Zarib;
+                                        dVazn = Zarib;
+                                        blnHasHaml = true;
                                     }
-                                    else
+
+                                    if (blnHasHaml)
                                     {
-                                        clsFB newFBHaml = new clsFB
+                                        clsFB? FBHaml = _context.FBs.FirstOrDefault(x => x.BarAvordId == guBAId && x.Shomareh == strItemHamlFB);
+                                        Guid gFBIdHaml = new Guid();
+                                        if (FBHaml != null)
                                         {
-                                            BarAvordId = guBAId,
-                                            InsertDateTime = Now,
-                                            Shomareh = strItemHamlFB
-                                        };
-                                        _context.FBs.Add(newFBHaml);
-                                        gFBIdHaml = newFBHaml.ID;
+                                            gFBIdHaml = FBHaml.ID;
+                                        }
+                                        else
+                                        {
+                                            clsFB newFBHaml = new clsFB
+                                            {
+                                                BarAvordId = guBAId,
+                                                InsertDateTime = Now,
+                                                Shomareh = strItemHamlFB
+                                            };
+                                            _context.FBs.Add(newFBHaml);
+                                            gFBIdHaml = newFBHaml.ID;
+                                        }
+
+                                        ///
+                                        ///درج ریز متره
+                                        ///
+
+                                        clsRizMetreUsers RizMetreHaml = new clsRizMetreUsers();
+                                        RizMetreHaml.Shomareh = RizMetreUsers.Shomareh;
+                                        ShomareNew++;
+                                        RizMetreHaml.ShomarehNew = ShomareNew.ToString();
+                                        RizMetreHaml.Sharh = " حمل ";
+                                        RizMetreHaml.Tedad = dTedad;
+                                        RizMetreHaml.Tool = dTool;
+                                        RizMetreHaml.Arz = dArz;
+                                        RizMetreHaml.Ertefa = dErtefa;
+                                        RizMetreHaml.Vazn = dVazn;
+                                        RizMetreHaml.Des = " آیتم - " + strAddedItems;
+                                        RizMetreHaml.FBId = gFBIdHaml;
+                                        RizMetreHaml.OperationsOfHamlId = 1;
+                                        RizMetreHaml.LevelNumber = LevelNumber;
+                                        RizMetreHaml.Type = "3";
+                                        RizMetreHaml.ForItem = ItemHasCon.FBShomareh;//DtFB.Rows[0]["Shomareh"].ToString().Trim();
+                                        RizMetreHaml.UseItem = "";
+                                        ///محاسبه مقدار جزء
+                                        decimal dMeghdarJozHaml = 0;
+                                        if (dTedad == null && dTool == null && dArz == null && dVazn == null)
+                                            dMeghdarJozHaml = 0;
+                                        else
+                                            dMeghdarJozHaml += (dTedad == null ? 1 : dTedad.Value) * (dTool == null ? 1 : dTool.Value) *
+                                            ((dArz == null || dArz == 0) ? 1 : dArz.Value) * ((dErtefa == null || dErtefa == 0) ? 1 : dErtefa.Value) * (dVazn == null ? 1 : dVazn.Value);
+
+                                        RizMetreHaml.MeghdarJoz = dMeghdarJozHaml;
+                                        _context.RizMetreUserses.Add(RizMetreHaml);
                                     }
 
-                                    ///
-                                    ///درج ریز متره
-                                    ///
-
-                                    clsRizMetreUsers RizMetreHaml = new clsRizMetreUsers();
-                                    RizMetreHaml.Shomareh = RizMetreUsers.Shomareh;
-                                    ShomareNew++;
-                                    RizMetreHaml.ShomarehNew = ShomareNew.ToString();
-                                    RizMetreHaml.Sharh = " - حمل ";
-                                    RizMetreHaml.Tedad = dTedad;
-                                    RizMetreHaml.Tool = dTool;
-                                    RizMetreHaml.Arz = dArz;
-                                    RizMetreHaml.Ertefa = dErtefa;
-                                    RizMetreHaml.Vazn = dVazn;
-                                    RizMetreHaml.Des = " آیتم- "+ strAddedItems;
-                                    RizMetreHaml.FBId = gFBIdHaml;
-                                    RizMetreHaml.OperationsOfHamlId = 1;
-                                    RizMetreHaml.Type = "3";
-                                    RizMetreHaml.ForItem = ItemHasCon.FBShomareh;//DtFB.Rows[0]["Shomareh"].ToString().Trim();
-                                    RizMetreHaml.UseItem = "";
-                                    ///محاسبه مقدار جزء
-                                    decimal dMeghdarJozHaml = 0;
-                                    if (dTedad == null && dTool == null && dArz == null && dVazn == null)
-                                        dMeghdarJozHaml = 0;
-                                    else
-                                        dMeghdarJozHaml += (dTedad == null ? 1 : dTedad.Value) * (dTool == null ? 1 : dTool.Value) *
-                                        ((dArz == null|| dArz==0) ? 1 : dArz.Value) * ((dErtefa == null || dErtefa == 0) ? 1 : dErtefa.Value) * (dVazn == null ? 1 : dVazn.Value);
-
-                                    RizMetreHaml.MeghdarJoz = dMeghdarJozHaml;
-                                    _context.RizMetreUserses.Add(RizMetreHaml);
+                                    //End//////////////////////////
+                                    /////////////حمل//////////////
+                                    //////////////////////////////
                                 }
-
-                                //End//////////////////////////
-                                /////////////حمل//////////////
-                                //////////////////////////////
-
 
                                 _context.SaveChanges();
                                 //RizMetreUsers.Save();

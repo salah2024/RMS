@@ -511,6 +511,7 @@ function renderTable(data, Code) {
             const meghdarText = $(this).find('#meghdarFasl').text().replace(/,/g, '');
             const EnNum = convertPersianToEnglish(meghdarText);
             const meghdar = parseFloat(EnNum);
+
             if (showOnlyNonZero) {
                 if (meghdar === 0) {
                     $(this).hide();
@@ -579,13 +580,19 @@ function cancelEditRow(row, rizMetreId, Shomareh, rizId1, FBId) {
 }
 
 function convertPersianToEnglish(str) {
-    return str.replace(/[۰-۹]/g, function (d) {
-        return d.charCodeAt(0) - 1776;
-    }).replace(/[٠-٩]/g, function (d) {
-        return d.charCodeAt(0) - 1632;
-    });
+    if (!str) return str;
+    // تبدیل ارقام فارسی و عربی به انگلیسی
+    const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+    const arabicDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+    let result = str;
+    for (let i = 0; i < 10; i++) {
+        result = result.replace(new RegExp(persianDigits[i], 'g'), i)
+            .replace(new RegExp(arabicDigits[i], 'g'), i);
+    }
+    // تبدیل جداکننده اعشار فارسی یا عربی به "."
+    result = result.replace(/[٫٬]/g, '.');
+    return result;
 }
-
 
 function UpdateRizMetreFromRow(el, rizMetreId, Shomareh, rizId1, FBId, Code) {
     const row = $(el).closest('tr');

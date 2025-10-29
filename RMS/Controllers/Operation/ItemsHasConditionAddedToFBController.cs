@@ -144,7 +144,35 @@ namespace RMS.Controllers.Operation
                                                 if (tblRizMetreUser.Count != 0)
                                                 {
                                                     _context.RizMetreUserses.RemoveRange(tblRizMetreUser);
+
+
+                                                    bool blnHasHaml = false;
+                                                    List<clsItemsRelatedToItemHaml> lstItemsRelatedToItemHaml = _context.ItemsRelatedToItemHamls
+                                                        .Where(x => x.ItemFB.Trim() == strFBShomarehAdded.Trim() && x.Year == Year).ToList();
+
+                                                    foreach (var itemsRelatedToItemHaml in lstItemsRelatedToItemHaml)
+                                                    {
+                                                        string strItemHamlFB = "";
+                                                        if (itemsRelatedToItemHaml != null)
+                                                        {
+                                                            strItemHamlFB = itemsRelatedToItemHaml.ItemHamlFB.Trim();
+                                                            blnHasHaml = true;
+
+                                                            if (blnHasHaml)
+                                                            {
+                                                                string ItemHamlFB = itemsRelatedToItemHaml.ItemHamlFB;
+                                                                clsFB? FbHaml = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == ItemHamlFB);
+                                                                if (FbHaml != null)
+                                                                {
+                                                                    List<clsRizMetreUsers> lstRMForDelForHaml = _context.RizMetreUserses.Where(x => x.FBId == FbHaml.ID && x.ForItem == strFBShomareh.Trim() && x.Type == "3").ToList();
+                                                                    _context.RizMetreUserses.RemoveRange(lstRMForDelForHaml);
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+
                                                     _context.SaveChanges();
+
                                                 }
                                                 //clsRizMetreUserses.Delete("FBId=" + DtFBUsersAdded.Rows[0]["Id"].ToString().Trim() + " and ForItem='" + strFBShomareh.Trim() + "'");
                                             }
@@ -234,27 +262,30 @@ namespace RMS.Controllers.Operation
                                     case "6":
                                         {
                                             bool blnHasHaml = false;
-                                            clsItemsRelatedToItemHaml? itemsRelatedToItemHaml = _context.ItemsRelatedToItemHamls
-                                                .FirstOrDefault(x => x.ItemFB.Trim() == strFBShomarehAdded.Trim() && x.Year == Year);
+                                            List<clsItemsRelatedToItemHaml> lstItemsRelatedToItemHaml = _context.ItemsRelatedToItemHamls
+                                                .Where(x => x.ItemFB.Trim() == strFBShomarehAdded.Trim() && x.Year == Year).ToList();
 
-                                            string strItemHamlFB = "";
-                                            if (itemsRelatedToItemHaml != null)
+                                            foreach (var itemsRelatedToItemHaml in lstItemsRelatedToItemHaml)
                                             {
-                                                strItemHamlFB = itemsRelatedToItemHaml.ItemHamlFB.Trim();
-                                                blnHasHaml = true;
-                                            }
 
-                                            if (blnHasHaml)
-                                            {
-                                                string ItemHamlFB = itemsRelatedToItemHaml.ItemHamlFB;
-                                                clsFB FbHaml = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == ItemHamlFB);
-                                                if (FbHaml != null)
+                                                string strItemHamlFB = "";
+                                                if (itemsRelatedToItemHaml != null)
                                                 {
-                                                    List<clsRizMetreUsers> lstRMForDelForHaml = _context.RizMetreUserses.Where(x => x.FBId == FbHaml.ID && x.ForItem == strFBShomareh.Trim() && x.Type == "3").ToList();
-                                                    _context.RizMetreUserses.RemoveRange(lstRMForDelForHaml);
+                                                    strItemHamlFB = itemsRelatedToItemHaml.ItemHamlFB.Trim();
+                                                    blnHasHaml = true;
+                                                }
+
+                                                if (blnHasHaml)
+                                                {
+                                                    string ItemHamlFB = itemsRelatedToItemHaml.ItemHamlFB;
+                                                    clsFB FbHaml = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == ItemHamlFB);
+                                                    if (FbHaml != null)
+                                                    {
+                                                        List<clsRizMetreUsers> lstRMForDelForHaml = _context.RizMetreUserses.Where(x => x.FBId == FbHaml.ID && x.ForItem == strFBShomareh.Trim() && x.Type == "3").ToList();
+                                                        _context.RizMetreUserses.RemoveRange(lstRMForDelForHaml);
+                                                    }
                                                 }
                                             }
-
 
                                             var varFBUsersAdded = _context.FBs.Where(x => x.BarAvordId == BarAvordId && x.Shomareh == strFBShomarehAdded).ToList();
                                             DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);

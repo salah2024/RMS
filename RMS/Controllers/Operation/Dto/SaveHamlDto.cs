@@ -11,4 +11,5 @@ public class SaveHamlDto
     public decimal? Tool { get; set; }
     public decimal? Arz { get; set; }
     public decimal? Ertefa { get; set; }
+    public int LevelNumber { get; set; }
 }

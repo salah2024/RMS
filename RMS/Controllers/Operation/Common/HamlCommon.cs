@@ -20,6 +20,7 @@ public static class HamlCommon
             decimal? Tool = request.Tool;
             decimal? Arz = request.Arz;
             decimal? Ertefa = request.Ertefa;
+            int LevelNumber = request.LevelNumber;
 
             long NewShomareh = 1;
             clsRizMetreUsers? rizMetreUser = _context.RizMetreUserses.Include(x => x.FB).OrderByDescending(x => x.Shomareh).FirstOrDefault(x => x.FB.BarAvordId == BarAvordUserId);
@@ -83,6 +84,7 @@ public static class HamlCommon
                         RizMetre.Type = "3";
                         RizMetre.ForItem = strItemHamlFB;
                         RizMetre.UseItem = "";
+                        RizMetre.LevelNumber = LevelNumber;
 
                         NewShomareh++;
                         ///محاسبه مقدار جزء

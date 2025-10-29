@@ -16,6 +16,7 @@ public class clsOperation
     public clsOperation? Parent { get; set; }
     public string? FunctionCall { get; set; }
     public long Order { get; set; }
+    public bool? CheckData { get; set; }
     public List<clsOperation>? Children { get; set; }
     public clsOperation_ItemsFB Operation_ItemsFBs { get; set; }
 }

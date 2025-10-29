@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RMS.Controllers.Operation.Dto;
 using RMS.Models.Common;
 using RMS.Models.Dto.ItemsFieldsDto;
@@ -37,27 +38,48 @@ namespace RMS.Controllers.Operation
                                      BahayeVahed = FB.BahayeVahed,
                                  }).Where(x => x.Year == request.Year && x.NoeFB == request.NoeFB);
 
-            var operation = (from op in _context.Operations
-                             join Sh_Items in ShomarehItems
-                             on op.Id equals Sh_Items.OperationId
-                             into joinTable
-                             from jT in joinTable.DefaultIfEmpty()
-                             where op.Year == request.Year
-                             select new
-                             {
-                                 ID = op.Id,
-                                 order = op.Order,
-                                 ParentId = op.ParentId,
-                                 OperationName = op.OperationName,
-                                 FunctionCall = op.FunctionCall == null ? "" : op.FunctionCall,
-                                 Sharh = jT.Sharh,
-                                 ItemsFBShomareh = jT.ItemsFBShomareh == null ? "" : jT.ItemsFBShomareh,
-                                 Year = op.Year,
-                             })
+            List<AllOperationDto> operation = (from op in _context.Operations
+                                               join Sh_Items in ShomarehItems
+                                               on op.Id equals Sh_Items.OperationId
+                                               into joinTable
+                                               from jT in joinTable.DefaultIfEmpty()
+                                               where op.Year == request.Year
+                                               select new AllOperationDto
+                                               {
+                                                   ID = op.Id,
+                                                   order = op.Order,
+                                                   ParentId = op.ParentId,
+                                                   OperationName = op.OperationName,
+                                                   FunctionCall = op.FunctionCall == null ? "" : op.FunctionCall,
+                                                   Sharh = jT.Sharh,
+                                                   ItemsFBShomareh = jT.ItemsFBShomareh == null ? "" : jT.ItemsFBShomareh,
+                                                   Year = op.Year,
+                                                   CheckData = op.CheckData
+                                               })
                              .OrderBy(x => x.order)
                              .ThenBy(x => x.ID)
                              .ToList();
-            return new JsonResult(operation);
+
+            List<AllOperationDto> NewOperation = new List<AllOperationDto>();
+
+            foreach (var item in operation)
+            {
+                if (item.CheckData != null)
+                {
+                    if (item.CheckData.Value)
+                    {
+                        long RMCount = _context.RizMetreUserses.Include(x => x.FB).Where(x => x.FB.BarAvordId == request.BarAvordUserId && x.FB.Shomareh == item.ItemsFBShomareh).Count();
+                        if (RMCount != 0)
+                        {
+                            NewOperation.Add(item);
+                        }
+                    }
+                }
+                else
+                    NewOperation.Add(item);
+            }
+
+            return new JsonResult(NewOperation);
         }
 
         [HttpPost]
@@ -72,17 +94,17 @@ namespace RMS.Controllers.Operation
             clsOperation_ItemsFB operation_ItemsFB = _context.Operation_ItemsFBs.First(x => x.OperationId == OperationId);
 
             List<ItemsFieldsDto> ItemsField = (from ItemF in context.ItemsFieldses
-                                         join OpItemFB in context.Operation_ItemsFBs
-                                         on ItemF.ItemShomareh equals OpItemFB.ItemsFBShomareh
-                                         select new ItemsFieldsDto
-                                         {
-                                             ItemShomareh = ItemF.ItemShomareh,
-                                             NoeFB = ItemF.NoeFB,
-                                             IsEnteringValue = ItemF.IsEnteringValue,
-                                             Vahed = ItemF.Vahed,
-                                             FieldType = ItemF.FieldType,
-                                             OperationId = OpItemFB.OperationId
-                                         }).Where(x => x.ItemShomareh == operation_ItemsFB.ItemsFBShomareh && x.NoeFB == NoeFB).OrderBy(x => x.FieldType).ToList();
+                                               join OpItemFB in context.Operation_ItemsFBs
+                                               on ItemF.ItemShomareh equals OpItemFB.ItemsFBShomareh
+                                               select new ItemsFieldsDto
+                                               {
+                                                   ItemShomareh = ItemF.ItemShomareh,
+                                                   NoeFB = ItemF.NoeFB,
+                                                   IsEnteringValue = ItemF.IsEnteringValue,
+                                                   Vahed = ItemF.Vahed,
+                                                   FieldType = ItemF.FieldType,
+                                                   OperationId = OpItemFB.OperationId
+                                               }).Where(x => x.ItemShomareh == operation_ItemsFB.ItemsFBShomareh && x.NoeFB == NoeFB).OrderBy(x => x.FieldType).ToList();
 
             List<ItemsHasConditionConditionContextForCheckOperationDto> lstItemsHasCondition = _context.ItemsHasCondition_ConditionContexts
                 .Where(cc => cc.Year == Year)
