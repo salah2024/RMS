@@ -1555,3 +1555,7 @@ Red Default
     .ReturnItemsStar:hover {
         cursor: pointer;
     }
+
+.form-control{
+    direction:ltr;
+}

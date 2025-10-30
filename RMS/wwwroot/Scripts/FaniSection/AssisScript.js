@@ -541,6 +541,7 @@ function OperationClick(Operation) {
                     result = response.result;
                     if (result == "OK") {
                         lstItemsFields = response.lstItemsFields;
+                        lstItemsFieldEssentialValue = response.lstItemsFieldEssentialValue;
                         ItemsFBShomareh = response.itemsFBShomareh;
                         str = response.str;
                         FBId = response.fbId;
@@ -552,7 +553,7 @@ function OperationClick(Operation) {
                         $('#ula' + Operation).show();
                         $('#HDFOperationId').val(Operation);
 
-                        AddRizMetreUsers(Operation, FBId, lstItemsFields, 1, ItemsFBShomareh);
+                        AddRizMetreUsers(Operation, FBId, lstItemsFields, lstItemsFieldEssentialValue, 1, ItemsFBShomareh);
 
                         GetRizMetreWithFBId(1);
                         //$('#divShowRizMetre').html($('#uldiva' + Operation).html());
@@ -964,24 +965,66 @@ function CheckInfoRizMetre() {
     if (!($.isNumeric(Vazn))) return 6;
     return 0;
 }
-function AddRizMetreUsers(OperationId, FBId, Array, LevelNumber, ItemsFBShomareh) {
+function AddRizMetreUsers(OperationId, FBId, Array, lstItemsFieldEssentialValue, LevelNumber, ItemsFBShomareh) {
 
+    debugger;
     ArraySplit = Array.split(',');
+    lstItemsFieldEssentialValueSplit = lstItemsFieldEssentialValue.split(',');
     $('#HDFOperationId').val(OperationId);
     $('#HDFFBID').val(FBId);
     $('#HDFIsFromAddedOperation').val('false');
     $('.NoRizMetre').addClass('displayNone');
+    //var str = '';
+    //str += "<div id=\"divNewRow\" class=\"row styleRowTable\"><div class=\"col-md-1\"><i class=\"fa fa-plus SaveRMUStyle\"></i></div>";
+    //str += "<div class=\"col-md-2\"><input type=\"text\"  class=\"form-control spanStyleMitraSmall\" id=\"txtSharh" + OperationId + "\ value=\"\"/></div>";
+    //str += "<div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[0] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtTedad" + OperationId + "\ value=\"\"/></div>";
+    //str += " <div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[1] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtTool" + OperationId + "\ value=\"\"/></div>";
+    //str += "<div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[2] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtArz" + OperationId + "\ value=\"\"/></div>";
+    //str += "<div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[3] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtErtefa" + OperationId + "\ value=\"\"/></div>";
+    //str += "<div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[4] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtVazn" + OperationId + "\ value=\"\"/></div>";
+    //str += "<div class=\"col-md-1\">0</div>";
+    //str += "<div class=\"col-md-2\"><input type=\"text\" class=\"form-control spanStyleMitraSmall\" id=\"txtDes" + OperationId + "\ value=\"\"/></div>";
+    //str += "<div class=\"col-md-1\"><button type=\"button\" onclick=\"SaveRMUClick($(this),'" + FBId + "','false','" + OperationId + "'," + LevelNumber + ")\" class=\"ButtonRowsSaveStyle\"><i id=\"iSave\" class=\"fa fa-save SaveRMUStyle\"></i></button></div></div>";
+
+
     var str = '';
-    str += "<div id=\"divNewRow\" class=\"row styleRowTable\"><div class=\"col-md-1\"><i class=\"fa fa-plus SaveRMUStyle\"></i></div>";
-    str += "<div class=\"col-md-2\"><input type=\"text\"  class=\"form-control spanStyleMitraSmall\" id=\"txtSharh" + OperationId + "\ value=\"\"/></div>";
-    str += "<div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[0] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtTedad" + OperationId + "\ value=\"\"/></div>";
-    str += " <div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[1] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtTool" + OperationId + "\ value=\"\"/></div>";
-    str += "<div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[2] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtArz" + OperationId + "\ value=\"\"/></div>";
-    str += "<div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[3] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtErtefa" + OperationId + "\ value=\"\"/></div>";
-    str += "<div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[4] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtVazn" + OperationId + "\ value=\"\"/></div>";
+    str += "<div id=\"divNewRow\" class=\"row styleRowTable\">";
+    str += "<div class=\"col-md-1\"><i class=\"fa fa-plus SaveRMUStyle\"></i></div>";
+
+    // Sharh
+    str += "<div class=\"col-md-2\"><input type=\"text\" class=\"form-control spanStyleMitraSmall\" id=\"txtSharh" + OperationId + "\" value=\"\"/></div>";
+
+    // تابع تولید input
+    function createInput(index, fieldName) {
+        var isActive = (ArraySplit[index] === "True");
+        var isEssential = (lstItemsFieldEssentialValueSplit[index] === "True");
+
+        var disabledAttr = isActive ? "" : "disabled=\"disabled\"";
+        var classes = "form-control spanStyleMitraSmall";
+        if (isActive) {
+            classes += " HasEnteringValue";
+            if (isEssential) {
+                classes += " EssentialValue";
+            }
+        }
+
+        return "<div class=\"col-md-1\"><input type=\"text\" " + disabledAttr + " class=\"" + classes + "\" id=\"txt" + fieldName + OperationId + "\" value=\"\"/></div>";
+    }
+
+    // سایر فیلدها
+    str += createInput(0, "Tedad");
+    str += createInput(1, "Tool");
+    str += createInput(2, "Arz");
+    str += createInput(3, "Ertefa");
+    str += createInput(4, "Vazn");
+
     str += "<div class=\"col-md-1\">0</div>";
-    str += "<div class=\"col-md-2\"><input type=\"text\" class=\"form-control spanStyleMitraSmall\" id=\"txtDes" + OperationId + "\ value=\"\"/></div>";
-    str += "<div class=\"col-md-1\"><button type=\"button\" onclick=\"SaveRMUClick($(this),'" + FBId + "','false','" + OperationId + "'," + LevelNumber + ")\" class=\"ButtonRowsSaveStyle\"><i id=\"iSave\" class=\"fa fa-save SaveRMUStyle\"></i></button></div></div>";
+    str += "<div class=\"col-md-2\"><input type=\"text\" class=\"form-control spanStyleMitraSmall\" id=\"txtDes" + OperationId + "\" value=\"\"/></div>";
+    str += "<div class=\"col-md-1\"><button type=\"button\" onclick=\"SaveRMUClick($(this),'" + FBId + "','false','" + OperationId + "'," + LevelNumber + ")\" class=\"ButtonRowsSaveStyle\"><i id=\"iSave\" class=\"fa fa-save SaveRMUStyle\"></i></button></div>";
+    str += "</div>";
+
+
+
     if (LevelNumber == 1) {
         $('#Grid' + ItemsFBShomareh).append(str);
 
@@ -1074,34 +1117,34 @@ function SaveRMUClick(object, FBId, IsFromAddedOperation, OperationId, LevelNumb
             debugger;
             Sharh = $(this).val();
         }
-        //if ($(this).attr('id').startsWith('txtTedad')) {
-        //    //if ($(this).hasClass('HasEnteringValue')) {
-        //    if ($.isNumeric(parseFloat($(this).val()))) {
-        //        Tedad = $(this).val().replace(/\,/g, '');
-        //        $(this).removeClass('blinking');
-        //    }
-        //    else {
-        //        $(this).addClass('blinking');
-        //        $(this).removeClass('TextEdit');
-        //        Check = false;
-        //    }
-        //    //}
-
-        //}
-
         if ($(this).attr('id').startsWith('txtTedad')) {
-            if ($(this).val() != '') {
+            if ($(this).hasClass('EssentialValue')) {
                 if ($.isNumeric(parseFloat($(this).val()))) {
                     Tedad = $(this).val().replace(/\,/g, '');
+                    $(this).removeClass('blinking');
                 }
                 else {
                     $(this).addClass('blinking');
+                    $(this).removeClass('TextEdit');
                     Check = false;
                 }
             }
+            else Tedad = $(this).val().replace(/\,/g, '');
         }
+
+        //if ($(this).attr('id').startsWith('txtTedad')) {
+        //    if ($(this).val() != '') {
+        //        if ($.isNumeric(parseFloat($(this).val()))) {
+        //            Tedad = $(this).val().replace(/\,/g, '');
+        //        }
+        //        else {
+        //            $(this).addClass('blinking');
+        //            Check = false;
+        //        }
+        //    }
+        //}
         else if ($(this).attr('id').startsWith('txtTool')) {
-            if ($(this).hasClass('HasEnteringValue')) {
+            if ($(this).hasClass('EssentialValue')) {
                 if ($.isNumeric(parseFloat($(this).val()))) {
                     Tool = $(this).val().replace(/\,/g, '');
                     $(this).removeClass('blinking');
@@ -1115,10 +1158,10 @@ function SaveRMUClick(object, FBId, IsFromAddedOperation, OperationId, LevelNumb
                     Check = false;
                 }
             }
-            else Tool = undefined;
+            else Tool = $(this).val().replace(/\,/g, '');
         }
         else if ($(this).attr('id').startsWith('txtArz')) {
-            if ($(this).hasClass('HasEnteringValue')) {
+            if ($(this).hasClass('EssentialValue')) {
                 if ($.isNumeric(parseFloat($(this).val()))) {
                     Arz = $(this).val().replace(/\,/g, '');
                     $(this).removeClass('blinking');
@@ -1132,10 +1175,10 @@ function SaveRMUClick(object, FBId, IsFromAddedOperation, OperationId, LevelNumb
                     Check = false;
                 }
             }
-            else Arz = undefined;
+            else Arz = $(this).val().replace(/\,/g, '');
         }
         else if ($(this).attr('id').startsWith('txtErtefa')) {
-            if ($(this).hasClass('HasEnteringValue')) {
+            if ($(this).hasClass('EssentialValue')) {
                 if ($.isNumeric(parseFloat($(this).val()))) {
                     Ertefa = $(this).val().replace(/\,/g, '');
                     $(this).removeClass('blinking');
@@ -1149,10 +1192,10 @@ function SaveRMUClick(object, FBId, IsFromAddedOperation, OperationId, LevelNumb
                     Check = false;
                 }
             }
-            else Ertefa = undefined;
+            else Ertefa = $(this).val().replace(/\,/g, '');
         }
         else if ($(this).attr('id').startsWith('txtVazn')) {
-            if ($(this).hasClass('HasEnteringValue')) {
+            if ($(this).hasClass('EssentialValue')) {
                 if ($.isNumeric(parseFloat($(this).val()))) {
                     Vazn = $(this).val().replace(/\,/g, '');
                     $(this).removeClass('blinking');
@@ -1166,7 +1209,7 @@ function SaveRMUClick(object, FBId, IsFromAddedOperation, OperationId, LevelNumb
                     Check = false;
                 }
             }
-            else Vazn = undefined;
+            else Vazn = $(this).val().replace(/\,/g, '');
         }
         else if ($(this).attr('id').startsWith('txtDes'))
             Des = $(this).val();
@@ -1188,11 +1231,11 @@ function SaveRMUClick(object, FBId, IsFromAddedOperation, OperationId, LevelNumb
 
         var vardata11 = new Object();
         vardata11.Sharh = Sharh;
-        vardata11.Tedad = Tedad === undefined ? null : Tedad;
-        vardata11.Tool = Tool === undefined ? null : Tool;
-        vardata11.Arz = Arz === undefined ? null : Arz;
-        vardata11.Ertefa = Ertefa === undefined ? null : Ertefa;
-        vardata11.Vazn = Vazn === undefined ? null : Vazn;
+        vardata11.Tedad = Tedad === undefined || Tedad ==='' ? null : Tedad;
+        vardata11.Tool = Tool === undefined || Tool ==='' ? null : Tool;
+        vardata11.Arz = Arz === undefined || Arz ==='' ? null : Arz;
+        vardata11.Ertefa = Ertefa === undefined || Ertefa ==='' ? null : Ertefa;
+        vardata11.Vazn = Vazn === undefined || Vazn ==='' ? null : Vazn;
         vardata11.Des = Des;
         vardata11.FBId = FBId;
         vardata11.BarAvordUserId = BarAvordUserId;
@@ -1589,6 +1632,7 @@ function RizMetreSelectClick(Id) {
 
 ////////////
 function UpdateRMUClick(Id) {
+    debugger;
     Obj = $('#iUpdate' + Id);
     Obj.prop('disabled', true);
     $('#HDFIsFromAddedOperation').val('false');
@@ -1601,7 +1645,18 @@ function UpdateRMUClick(Id) {
     Sharh = $('#txtSharh' + Id).val();
     Des = $('#txtDes' + Id).val();
 
-    //if ($('#txtTedad' + Id).hasClass('HasEnteringValue')) {
+    if ($('#txtTedad' + Id).hasClass('EssentialValue')) {
+        if ($.isNumeric(parseFloat($('#txtTedad' + Id).val()))) {
+            Tedad = $('#txtTedad' + Id).val().replace(/\,/g, '');
+        }
+        else {
+            $('#txtTedad' + Id).addClass('blinking');
+            Check = $('#txtTedad' + Id).val().replace(/\,/g, '');
+        }
+    }
+    else Tedad = $('#txtTedad' + Id).val().replace(/\,/g, '');
+
+    //if ($('#txtTedad' + Id).val() != '') {
     //    if ($.isNumeric(parseFloat($('#txtTedad' + Id).val()))) {
     //        Tedad = $('#txtTedad' + Id).val().replace(/\,/g, '');
     //    }
@@ -1610,20 +1665,9 @@ function UpdateRMUClick(Id) {
     //        Check = false;
     //    }
     //}
-    //else Tedad = 0;
-
-    if ($('#txtTedad' + Id).val() != '') {
-        if ($.isNumeric(parseFloat($('#txtTedad' + Id).val()))) {
-            Tedad = $('#txtTedad' + Id).val().replace(/\,/g, '');
-        }
-        else {
-            $('#txtTedad' + Id).addClass('blinking');
-            Check = false;
-        }
-    }
 
     firstObjectHasFocus = null;
-    if ($('#txtTool' + Id).hasClass('HasEnteringValue')) {
+    if ($('#txtTool' + Id).hasClass('EssentialValue')) {
         if ($.isNumeric(parseFloat($('#txtTool' + Id).val()))) {
             Tool = $('#txtTool' + Id).val().replace(/\,/g, '');
             $('#txtTool' + Id).removeClass('blinking');
@@ -1637,9 +1681,9 @@ function UpdateRMUClick(Id) {
             Check = false;
         }
     }
-    else Tool = undefined;
+    else Tool = $('#txtTool' + Id).val().replace(/\,/g, '');
 
-    if ($('#txtArz' + Id).hasClass('HasEnteringValue')) {
+    if ($('#txtArz' + Id).hasClass('EssentialValue')) {
         if ($.isNumeric(parseFloat($('#txtArz' + Id).val()))) {
             Arz = $('#txtArz' + Id).val().replace(/\,/g, '');
             $('#txtArz' + Id).removeClass('blinking');
@@ -1654,9 +1698,9 @@ function UpdateRMUClick(Id) {
             Check = false;
         }
     }
-    else Arz = undefined;
+    else Arz = $('#txtArz' + Id).val().replace(/\,/g, '');
 
-    if ($('#txtErtefa' + Id).hasClass('HasEnteringValue')) {
+    if ($('#txtErtefa' + Id).hasClass('EssentialValue')) {
         if ($.isNumeric(parseFloat($('#txtErtefa' + Id).val()))) {
             Ertefa = $('#txtErtefa' + Id).val().replace(/\,/g, '');
             $('#txtErtefa' + Id).removeClass('blinking');
@@ -1671,9 +1715,9 @@ function UpdateRMUClick(Id) {
             Check = false;
         }
     }
-    else Ertefa = undefined;
+    else Ertefa = $('#txtErtefa' + Id).val().replace(/\,/g, '');
 
-    if ($('#txtVazn' + Id).hasClass('HasEnteringValue')) {
+    if ($('#txtVazn' + Id).hasClass('EssentialValue')) {
         if ($.isNumeric(parseFloat($('#txtVazn' + Id).val()))) {
             Vazn = $('#txtVazn' + Id).val().replace(/\,/g, '');
             $('#txtVazn' + Id).removeClass('blinking');
@@ -1688,7 +1732,7 @@ function UpdateRMUClick(Id) {
             Check = false;
         }
     }
-    else Vazn = undefined;
+    else Vazn = $('#txtVazn' + Id).val().replace(/\,/g, '');
 
     BarAvordUserId = $('#HDFBarAvordUserID').val();
 
@@ -1697,11 +1741,11 @@ function UpdateRMUClick(Id) {
     var vardata = new Object();
     vardata.Id = Id;
     vardata.Sharh = Sharh;
-    vardata.Tedad = Tedad === undefined ? null : Tedad;
-    vardata.Tool = Tool === undefined ? null : Tool;
-    vardata.Arz = Arz === undefined ? null : Arz;
-    vardata.Ertefa = Ertefa === undefined ? null : Ertefa;
-    vardata.Vazn = Vazn === undefined ? null : Vazn;
+    vardata.Tedad = Tedad === undefined || Tedad === '' ? null : Tedad;
+    vardata.Tool = Tool === undefined || Tool === '' ? null : Tool;
+    vardata.Arz = Arz === undefined || Arz === '' ? null : Arz;
+    vardata.Ertefa = Ertefa === undefined || Ertefa === '' ? null : Ertefa;
+    vardata.Vazn = Vazn === undefined || Vazn === '' ? null : Vazn;
     vardata.Des = Des;
     vardata.NoeFB = NoeFB;
     vardata.Year = Year;

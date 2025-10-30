@@ -400,6 +400,7 @@ function UpdateRMUAddedItemsClick(Id, ItemHasConditionId, ConditionGroupId) {
 }
 /////
 
+
 function GetRizMetreWithFBId(LevelNumber) {
     NoeFB = parseInt($('#HDFNoeFB').val());
     BarAvordUserId = $('#HDFBarAvordUserID').val();
@@ -430,6 +431,11 @@ function GetRizMetreWithFBId(LevelNumber) {
                 lstItemsFields = itemsFields.map(x => (x.isEnteringValue ? true : false)).join(",");
             }
 
+            //var lstItemsFieldsEssentialValue = "";
+            //for (var i = 0; i < itemsFields.length; i++) {
+            //    lstItemsFieldsEssentialValue = itemsFields.map(x => (x.essentialValue ? true : false)).join(",");
+            //}
+
             var str = "";
 
             if (rizMetreUsers.length == 0) {
@@ -445,7 +451,68 @@ function GetRizMetreWithFBId(LevelNumber) {
                 $('#divAddedItems' + Operation).slideUp(1000);
             }
             else {
+                // تابع ساخت input
+                function makeInput(index, fieldName, value,id) {
+                    const item = itemsFields[index];
+                    const isActive = item.isEnteringValue === true;
+                    const isEssential = item.essentialValue === true;
+
+                    const disabledAttr = isActive ? "" : " disabled='disabled'";
+                    let classes = "form-control spanStyleMitraSmall TextEdit row-input";
+                    if (isActive) {
+                        classes += " HasEnteringValue";
+                        if (isEssential) {
+                            classes += " EssentialValue";
+                            if (value == '') classes += " blinking";
+                        }
+                    }
+
+                    return "<div class='col-md-1'><input type='text'" + disabledAttr + " class='" + classes + "' id='txt" + fieldName + id + "' value='" + value + "'/></div>";
+                }
+
                 rizMetreUsers.forEach(function (row) {
+
+                    //let id = row.id;
+
+                    //let strTedad = parseFloat(row.tedad) === 0 ? "0" : isNaN(parseFloat(row.tedad)) ? "" : parseFloat(row.tedad).toString();
+                    //let strTool = parseFloat(row.tool) === 0 ? "0" : isNaN(parseFloat(row.tool)) ? "" : parseFloat(row.tool).toString();
+                    //let strArz = parseFloat(row.arz) === 0 ? "0" : isNaN(parseFloat(row.arz)) ? "" : parseFloat(row.arz).toString();
+                    //let strErtefa = parseFloat(row.ertefa) === 0 ? "0" : isNaN(parseFloat(row.ertefa)) ? "" : parseFloat(row.ertefa).toString();
+                    //let strVazn = parseFloat(row.vazn) === 0 ? "0" : isNaN(parseFloat(row.vazn)) ? "" : parseFloat(row.vazn).toString();
+                    //let MeghdarJoz = parseFloat(row.meghdarJoz) === 0 ? "0" : isNaN(parseFloat(row.meghdarJoz)) ? "" : parseFloat(row.meghdarJoz).toString();
+
+                    //str += "<div class='row styleRowTable' onclick=\"RizMetreSelectClick('" + id + "')\">";
+                    //str += "<div class='col-md-1'><div class='col-md-12' style='padding-left:0px;'><span>" + row.shomareh + "</span></div></div>";
+
+                    //str += "<div class='col-md-2'><input type='text' class='form-control spanStyleMitraSmall TextEdit row-input' id='txtSharh" + id + "' value='" + row.sharh + "'/></div>";
+
+                    //str += "<div class='col-md-1'><input type='text'" + (itemsFields[0].isEnteringValue !== true ? " disabled='disabled'" : "") +
+                    //    " class='form-control spanStyleMitraSmall TextEdit row-input" + (itemsFields[0].isEnteringValue === true ? " HasEnteringValue " : "") + "' id='txtTedad" + id + "' value='" + strTedad + "'/></div>";
+
+                    //str += "<div class='col-md-1'><input type='text'" + (itemsFields[1].isEnteringValue !== true ? " disabled='disabled'" : "") +
+                    //    " class='form-control spanStyleMitraSmall TextEdit row-input" + (itemsFields[1].isEnteringValue === true ? " HasEnteringValue " : "") + "' id='txtTool" + id + "' value='" + strTool + "'/></div>";
+
+                    //str += "<div class='col-md-1'><input type='text'" + (itemsFields[2].isEnteringValue !== true ? " disabled='disabled'" : "") +
+                    //    " class='form-control spanStyleMitraSmall TextEdit row-input" + (itemsFields[2].isEnteringValue === true ? " HasEnteringValue " : "") + "' id='txtArz" + id + "' value='" + strArz + "'/></div>";
+
+                    //str += "<div class='col-md-1'><input type='text'" + (itemsFields[3].isEnteringValue !== true ? " disabled='disabled'" : "") +
+                    //    " class='form-control spanStyleMitraSmall TextEdit row-input" + (itemsFields[3].isEnteringValue === true ? " HasEnteringValue " : "") + "' id='txtErtefa" + id + "' value='" + strErtefa + "'/></div>";
+
+                    //str += "<div class='col-md-1'><input type='text'" + (itemsFields[4].isEnteringValue !== true ? " disabled='disabled'" : "") +
+                    //    " class='form-control spanStyleMitraSmall TextEdit row-input" + (itemsFields[4].isEnteringValue === true ? " HasEnteringValue " : "") + "' id='txtVazn" + id + "' value='" + strVazn + "'/></div>";
+
+                    //str += "<div class='col-md-1 RMMJozStyle'>" + (MeghdarJoz === 0 ? "" : MeghdarJoz) + "</div>";
+
+                    //str += "<div class='col-md-2'><input type='text' class='form-control input-sm TextEdit row-input' id='txtDes" + id + "' value='" + row.des + "'/></div>";
+
+                    //str += "<div class='col-md-1'>" +
+                    //    "<i class='fa fa-edit EditRMUStyle displayNone' id='iEdit" + id + "' onclick=\"EditRMUClick('" + id + "', '" + Operation + "', '" + row.fbId + "', '" + lstItemsFields + "')\"></i>" +
+                    //    "<button type=\"button\" id='iUpdate" + id + "' onclick=\"UpdateRMUClick('" + id + "')\" class=\"ButtonRowsSaveStyle\"><i id=\"iSave\" class=\"fa fa-save SaveRMUStyle\"></i></button>" +
+                    //    "<button type=\"button\" onclick=\"DeleteRMUClick('" + id + "')\" class=\"ButtonRowsSaveStyle\"><i id=\"iSave\" class=\"fa fa-trash DelRMUStyle\"></i></button></div>";
+
+                    //str += "</div>";
+
+                    debugger;
 
                     let id = row.id;
 
@@ -459,22 +526,14 @@ function GetRizMetreWithFBId(LevelNumber) {
                     str += "<div class='row styleRowTable' onclick=\"RizMetreSelectClick('" + id + "')\">";
                     str += "<div class='col-md-1'><div class='col-md-12' style='padding-left:0px;'><span>" + row.shomareh + "</span></div></div>";
 
-                    str += "<div class='col-md-2'><input type='text' class='form-control spanStyleMitraSmall TextEdit row-input' id='txtSharh" + id + "' value='" + row.sharh + "'/></div>";
+                    str += "<div class='col-md-2'><input type='text' class='form-control spanStyleMitraSmall TextEdit row-input' id='txtSharh" + id + "' value='" + row.sharh + "'/></div>";                  
 
-                    str += "<div class='col-md-1'><input type='text'" + (itemsFields[0].isEnteringValue !== true ? " disabled='disabled'" : "") +
-                        " class='form-control spanStyleMitraSmall TextEdit row-input" + (itemsFields[0].isEnteringValue === true ? " HasEnteringValue " : "") + "' id='txtTedad" + id + "' value='" + strTedad + "'/></div>";
-
-                    str += "<div class='col-md-1'><input type='text'" + (itemsFields[1].isEnteringValue !== true ? " disabled='disabled'" : "") +
-                        " class='form-control spanStyleMitraSmall TextEdit row-input" + (itemsFields[1].isEnteringValue === true ? " HasEnteringValue " : "") + "' id='txtTool" + id + "' value='" + strTool + "'/></div>";
-
-                    str += "<div class='col-md-1'><input type='text'" + (itemsFields[2].isEnteringValue !== true ? " disabled='disabled'" : "") +
-                        " class='form-control spanStyleMitraSmall TextEdit row-input" + (itemsFields[2].isEnteringValue === true ? " HasEnteringValue " : "") + "' id='txtArz" + id + "' value='" + strArz + "'/></div>";
-
-                    str += "<div class='col-md-1'><input type='text'" + (itemsFields[3].isEnteringValue !== true ? " disabled='disabled'" : "") +
-                        " class='form-control spanStyleMitraSmall TextEdit row-input" + (itemsFields[3].isEnteringValue === true ? " HasEnteringValue " : "") + "' id='txtErtefa" + id + "' value='" + strErtefa + "'/></div>";
-
-                    str += "<div class='col-md-1'><input type='text'" + (itemsFields[4].isEnteringValue !== true ? " disabled='disabled'" : "") +
-                        " class='form-control spanStyleMitraSmall TextEdit row-input" + (itemsFields[4].isEnteringValue === true ? " HasEnteringValue " : "") + "' id='txtVazn" + id + "' value='" + strVazn + "'/></div>";
+                    // فیلدها
+                    str += makeInput(0, "Tedad", strTedad,id);
+                    str += makeInput(1, "Tool", strTool, id);
+                    str += makeInput(2, "Arz", strArz, id);
+                    str += makeInput(3, "Ertefa", strErtefa, id);
+                    str += makeInput(4, "Vazn", strVazn, id);
 
                     str += "<div class='col-md-1 RMMJozStyle'>" + (MeghdarJoz === 0 ? "" : MeghdarJoz) + "</div>";
 
@@ -482,10 +541,11 @@ function GetRizMetreWithFBId(LevelNumber) {
 
                     str += "<div class='col-md-1'>" +
                         "<i class='fa fa-edit EditRMUStyle displayNone' id='iEdit" + id + "' onclick=\"EditRMUClick('" + id + "', '" + Operation + "', '" + row.fbId + "', '" + lstItemsFields + "')\"></i>" +
-                        "<button type=\"button\" id='iUpdate" + id + "' onclick=\"UpdateRMUClick('" + id + "')\" class=\"ButtonRowsSaveStyle\"><i id=\"iSave\" class=\"fa fa-save SaveRMUStyle\"></i></button>" +
-                        "<button type=\"button\" onclick=\"DeleteRMUClick('" + id + "')\" class=\"ButtonRowsSaveStyle\"><i id=\"iSave\" class=\"fa fa-trash DelRMUStyle\"></i></button></div>";
+                        "<button type='button' id='iUpdate" + id + "' onclick=\"UpdateRMUClick('" + id + "')\" class='ButtonRowsSaveStyle'><i id='iSave' class='fa fa-save SaveRMUStyle'></i></button>" +
+                        "<button type='button' onclick=\"DeleteRMUClick('" + id + "')\" class='ButtonRowsSaveStyle'><i id='iSave' class='fa fa-trash DelRMUStyle'></i></button></div>";
 
                     str += "</div>";
+
                 });
                 debugger;
                 //var $targetDiv = $("#Grid" + ItemsFBShomareh).find(".RMCollectStyle");

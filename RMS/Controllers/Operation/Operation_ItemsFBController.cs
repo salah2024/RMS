@@ -80,6 +80,7 @@ public class Operation_ItemsFBController(ApplicationDbContext context) : Control
         List<clsItemsFields> ItemFields = _context.ItemsFieldses.Where(x => x.ItemShomareh == strItemShomareh1 && x.NoeFB == request.NoeFB).OrderBy(x => x.FieldType).ToList();
 
         string lstItemsFields = "";
+        string lstItemsFieldEssentialValue = "";
         bool blnItemHasEzafeBaha = false;
         //for (int i = 0; i < DtItemsFields.Rows.Count; i++)
         //{
@@ -89,6 +90,7 @@ public class Operation_ItemsFBController(ApplicationDbContext context) : Control
         foreach (var item in ItemFields)
         {
             lstItemsFields += item.IsEnteringValue + ",";
+            lstItemsFieldEssentialValue += item.EssentialValue + ",";
         }
         Guid guIDCheck = new Guid();
         if (FBId != guIDCheck)
@@ -747,7 +749,8 @@ public class Operation_ItemsFBController(ApplicationDbContext context) : Control
                 FBId = FBId,
                 ItemsFBShomareh = Dt.Rows[0]["ItemsFBShomareh"].ToString(),
                 str = str,
-                lstItemsFields = lstItemsFields
+                lstItemsFields = lstItemsFields,
+                lstItemsFieldEssentialValue = lstItemsFieldEssentialValue
             };
 
             return new JsonResult(result);//("OK_" + FBId.ToString() + "_" + Dt.Rows[0]["ItemsFBShomareh"].ToString() + "_" + str);

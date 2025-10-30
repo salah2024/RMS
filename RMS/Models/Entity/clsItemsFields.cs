@@ -17,6 +17,7 @@ public class clsItemsFields
     public string Vahed { get; set; }      // مثلاً: "متر", "عدد", ...
 
     public bool IsEnteringValue { get; set; }
+    public bool EssentialValue { get; set; }
 
     public string? DefaultValue { get; set; }
 

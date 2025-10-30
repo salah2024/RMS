@@ -1974,27 +1974,27 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
             if (DtItemsFields.Rows[0]["IsEnteringValue"].ToString() == "True")
                 RizMetre.Tedad = Tedad;
             else
-                RizMetre.Tedad = null;
+                RizMetre.Tedad = OldRizMetre.Tedad;
 
             if (DtItemsFields.Rows[1]["IsEnteringValue"].ToString() == "True")
                 RizMetre.Tool = Tool;
             else
-                RizMetre.Tool = null;
+                RizMetre.Tool = OldRizMetre.Tool;
 
             if (DtItemsFields.Rows[2]["IsEnteringValue"].ToString() == "True")
                 RizMetre.Arz = Arz;
             else
-                RizMetre.Arz = null;
+                RizMetre.Arz = OldRizMetre.Arz;
 
             if (DtItemsFields.Rows[3]["IsEnteringValue"].ToString() == "True")
                 RizMetre.Ertefa = Ertefa;
             else
-                RizMetre.Ertefa = null;
+                RizMetre.Ertefa = OldRizMetre.Ertefa;
 
             if (DtItemsFields.Rows[4]["IsEnteringValue"].ToString() == "True")
                 RizMetre.Vazn = Vazn;
             else
-                RizMetre.Vazn = null;
+                RizMetre.Vazn = OldRizMetre.Vazn;
 
             RizMetre.ID = Id;
             RizMetre.Sharh = Sharh.Trim();
