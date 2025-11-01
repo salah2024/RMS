@@ -82,6 +82,89 @@ namespace RMS.Controllers.Operation
             return new JsonResult(NewOperation);
         }
 
+
+        public JsonResult GetTreeForOneOperation([FromBody] GetTreeInputDto request)
+        {
+
+            clsOperation? Operation = _context.Operations.FirstOrDefault(x => x.LatinName == request.OpName);
+            if (Operation != null)
+            {
+
+                var ShomarehItems = (from op_Item in _context.Operation_ItemsFBs
+                                     join FB in _context.FehrestBahas
+                                     on op_Item.ItemsFBShomareh equals FB.Shomareh
+                                     select new
+                                     {
+                                         ItemsFBShomareh = op_Item.ItemsFBShomareh,
+                                         OperationId = op_Item.OperationId,
+                                         Sharh = FB.Sharh,
+                                         Year = FB.Sal,
+                                         NoeFB = FB.NoeFB,
+                                         Vahed = FB.Vahed,
+                                         BahayeVahed = FB.BahayeVahed,
+                                     }).Where(x => x.Year == request.Year && x.NoeFB == request.NoeFB);
+                // پیدا کردن parentId
+                var parentId = _context.Operations
+                    .Where(x => x.Year == request.Year && x.LatinName == "transport")
+                    .Select(x => (int?)x.Id)      // ← خروجی nullable تا اگر نبود، null بدهد
+                    .FirstOrDefault();
+
+                var shItemsQ = ShomarehItems.AsQueryable();
+
+                var operation = (from op in _context.Operations
+                                 join sh in shItemsQ
+                                     on op.Id equals sh.OperationId into joinTable
+                                 from jT in joinTable.DefaultIfEmpty()
+                                 where op.Year == request.Year
+                                       && op.ParentId == parentId   // ← فقط فرزندان، خود والد نمی‌آید
+                                 select new AllOperationDto
+                                 {
+                                     ID = op.Id,
+                                     order = op.Order,
+                                     ParentId = op.ParentId,                // اگر DTO nullable است
+                                     OperationName = op.OperationName,
+                                     FunctionCall = op.FunctionCall == null ? "" : op.FunctionCall,
+                                     Sharh = jT.Sharh,
+                                     ItemsFBShomareh = jT.ItemsFBShomareh == null ? "" : jT.ItemsFBShomareh,
+                                     Year = op.Year,
+                                     CheckData = op.CheckData
+                                 })
+                                 .OrderBy(x => x.order)
+                                 .ThenBy(x => x.ID)
+                                 .ToList();
+
+
+                List<AllOperationDto> NewOperation = new List<AllOperationDto>();
+
+                foreach (var item in operation)
+                {
+                    if (item.CheckData != null)
+                    {
+                        if (item.CheckData.Value)
+                        {
+                            long RMCount = _context.RizMetreUserses.Include(x => x.FB).Where(x => x.FB.BarAvordId == request.BarAvordUserId && x.FB.Shomareh == item.ItemsFBShomareh).Count();
+                            if (RMCount != 0)
+                            {
+                                NewOperation.Add(item);
+                            }
+                        }
+                    }
+                    else
+                        NewOperation.Add(item);
+                }
+
+                var result = new
+                {
+                    AllOperation = NewOperation,
+                    OperationId = Operation.Id
+                };
+                return new JsonResult(result);
+            }
+            else
+                return null;
+        }
+
+
         [HttpPost]
         public ActionResult CheckOperationHasExistActiveCondition([FromBody] CheckOperationHasExistActiveConditionInputDto request)
         {

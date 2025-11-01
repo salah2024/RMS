@@ -39,7 +39,7 @@
 }
 
 
-            var gParents = [];
+var gParents = [];
 function createTree(data, parentId) {
     var html = "";
     var children = data.filter(function (item) {

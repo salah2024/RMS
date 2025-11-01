@@ -2703,10 +2703,10 @@ namespace RMS.Models.Common
                             if (lstItemsRelatedToItemHaml.Count != 0)
                             {
                                 strItemHamlFB = lstItemsRelatedToItemHaml.Select(x => x.ItemHamlFB.Trim()).ToList();
-                                clsFB? FbHaml = _context.FBs.FirstOrDefault(x => x.BarAvordId == ItemHasCon.BarAvordId && strItemHamlFB.Contains(x.Shomareh));
-                                if (FbHaml != null)
+                                List<clsFB> lstFbHaml = _context.FBs.Where(x => x.BarAvordId == ItemHasCon.BarAvordId && strItemHamlFB.Contains(x.Shomareh)).ToList();
+                                if (lstFbHaml.Count != 0)
                                 {
-                                    List<clsRizMetreUsers> lstRMForDelForHaml = _context.RizMetreUserses.Where(x => x.FBId == FbHaml.ID
+                                    List<clsRizMetreUsers> lstRMForDelForHaml = _context.RizMetreUserses.Where(x => lstFbHaml.Select(x=>x.ID).Contains(x.FBId)
                                         && x.ForItem == strShomareh1.Trim() && x.Type == "3" && x.Shomareh == RizMetre.Shomareh).ToList();
                                     _context.RizMetreUserses.RemoveRange(lstRMForDelForHaml);
                                 }
@@ -2900,10 +2900,10 @@ namespace RMS.Models.Common
                                 if (lstItemsRelatedToItemHaml.Count != 0)
                                 {
                                     strItemHamlFB = lstItemsRelatedToItemHaml.Select(x => x.ItemHamlFB.Trim()).ToList();
-                                    clsFB? FbHaml = _context.FBs.FirstOrDefault(x => x.BarAvordId == ItemHasCon.BarAvordId && strItemHamlFB.Contains(x.Shomareh));
-                                    if (FbHaml != null)
+                                    List<clsFB> lstFbHaml = _context.FBs.Where(x => x.BarAvordId == ItemHasCon.BarAvordId && strItemHamlFB.Contains(x.Shomareh)).ToList();
+                                    if (lstFbHaml.Count != 0)
                                     {
-                                        List<clsRizMetreUsers> lstRMForDelForHaml = _context.RizMetreUserses.Where(x => x.FBId == FbHaml.ID
+                                        List<clsRizMetreUsers> lstRMForDelForHaml = _context.RizMetreUserses.Where(x => lstFbHaml.Select(x=>x.ID).Contains(x.FBId)
                                             && x.ForItem == strCurrentFBShomareh.Trim() && x.Type == "3" && x.Shomareh == lngShomareh).ToList();
                                         _context.RizMetreUserses.RemoveRange(lstRMForDelForHaml);
                                     }

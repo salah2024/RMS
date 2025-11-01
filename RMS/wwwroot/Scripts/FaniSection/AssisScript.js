@@ -112,6 +112,7 @@ function deleteItemsCondition(Id, ConditionGroupId, ItemsFBShomareh, LevelNumber
             if (info[0] == "OK") {
                 GetRizMetreWithFBId(LevelNumber);
                 GetItemsAddedAndRelForRizMetre(LevelNumber);
+                GetTreeForOneOperation();
                 $('#divShowRizMetre' + Id).slideUp(500);
 
                 toastr.success('اضافه بهای آیتم انتخابی حذف گردید', 'موفقیت');
@@ -240,6 +241,7 @@ function ConfirmItemsCondition(object, Id, ConditionGroupId, LevelNumber) {
                     $(this).removeClass('blinking');
                 });
                 GetAndShowAddItems(Id, ConditionGroupId);
+                GetTreeForOneOperation();
 
                 debugger;
 
@@ -1261,6 +1263,7 @@ function SaveRMUClick(object, FBId, IsFromAddedOperation, OperationId, LevelNumb
                     ClearInput(object);
                     GetRizMetreWithFBId(LevelNumber);
                     GetItemsAddedAndRelForRizMetre(LevelNumber);
+                    GetTreeForOneOperation();
                     $("#divItemsAddedAndRel" + info[1] + " div[id^='divShowRizMetre']").each(function () {
                         if ($(this).css("display") === "block") {
 
@@ -2004,7 +2007,7 @@ function DeleteRMUClick(id) {
     vardata.Id = id;
     vardata.NoeFB = NoeFB;
     vardata.BarAvordUserId = BarAvordUserId;
-    vardata.FBId = FBId;
+    vardata.FBId = FBId; UpdateRMUClick
     vardata.OperationId = OperationId;
     vardata.Year = Year;
 
@@ -2029,6 +2032,7 @@ function DeleteRMUClick(id) {
                 });
 
                 GetRizMetreWithFBId(1);
+                GetTreeForOneOperation();
             }
         },
         error: function () {

@@ -7,5 +7,6 @@ namespace RMS.Controllers.Operation.Dto
         public int Year { get; set; }
         public NoeFehrestBaha NoeFB { get; set; }
         public Guid BarAvordUserId { get; set; }
+        public string OpName { get; set; }
     }
 }
