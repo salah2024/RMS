@@ -1,4 +1,6 @@
-﻿namespace RMS.Controllers.BarAvordUser.Dto
+﻿using RMS.Models.Entity;
+
+namespace RMS.Controllers.BarAvordUser.Dto
 {
     public class ViewUserBarAvordOutPutDto
     {
@@ -11,6 +13,7 @@
         public decimal BahayeKol { get; set; }
         public Guid? FBId { get; set; }
         public List<ViewUserBarAvordOutPutRizMetreDto> RizMetre { get; set; }
+        public List<ItemsFieldForUserBarAvordOutPutDto> ItemsFields { get; set; }
     }
 
     public class ViewUserBarAvordOutPutRizMetreDto

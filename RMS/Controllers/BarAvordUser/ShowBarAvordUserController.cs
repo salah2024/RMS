@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RMS.Controllers.BarAvordUser.Dto;
+using RMS.Models.Entity;
 
 namespace RMS.Controllers.BarAvordUser
 {
@@ -118,7 +119,8 @@ namespace RMS.Controllers.BarAvordUser
                 BahayeVahedNew = x.fbItem != null ? x.fbItem.BahayeVahedNew : 0,
                 Vahed = x.fehrest.Vahed,
                 FBId = x.fbItem?.ID,
-                RizMetre = new List<ViewUserBarAvordOutPutRizMetreDto>()
+                RizMetre = new List<ViewUserBarAvordOutPutRizMetreDto>(),
+                ItemsFields = new List<ItemsFieldForUserBarAvordOutPutDto>()
             }).ToList();
 
             var fehrestShomarehs = barAvordInFehrest.Select(x => x.ItemFbShomareh).ToHashSet();
@@ -132,15 +134,16 @@ namespace RMS.Controllers.BarAvordUser
                     BahayeVahed = fb.BahayeVahed,
                     Vahed = fb.Vahed,
                     FBId = fb.ID,
-                    RizMetre = new List<ViewUserBarAvordOutPutRizMetreDto>()
-                })
-                .ToList();
+                    RizMetre = new List<ViewUserBarAvordOutPutRizMetreDto>(),
+                    ItemsFields = new List<ItemsFieldForUserBarAvordOutPutDto>()
+                }).ToList();
+
             var userBarAvordOutPut = barAvordInFehrest
                 .Concat(barAvordOnlyInFbItems)
                 .OrderBy(x => x.ItemFbShomareh)
                 .ToList();
 
-
+            List<clsItemsFields> itemsFields = _context.ItemsFieldses.Where(x => x.NoeFB == request.NoeFB).OrderBy(x => x.FieldType).ToList();
 
             foreach (var item in userBarAvordOutPut)
             {
@@ -153,15 +156,26 @@ namespace RMS.Controllers.BarAvordUser
                         Meghdar += RM.MeghdarJoz != null ? RM.MeghdarJoz.Value : 0;
                     }
                 }
+
+                List<ItemsFieldForUserBarAvordOutPutDto> currentItemsFields = itemsFields
+                    .Where(x => x.ItemShomareh.Trim() == item.ItemFbShomareh).Select(x=> new ItemsFieldForUserBarAvordOutPutDto
+                    {
+                        Id=x.Id,
+                        ItemShomareh=x.ItemShomareh.Trim(),
+                        FieldType=x.FieldType,
+                        Vahed=x.Vahed,
+                        IsEnteringValue=x.IsEnteringValue,
+                        EssentialValue=x.EssentialValue
+                    }).ToList();
+
+                item.ItemsFields.AddRange(currentItemsFields);
+
                 item.Meghdar = Meghdar;
                 decimal dBahayeKol = Meghdar * (item.BahayeVahedNew != 0 ? item.BahayeVahedNew : (item.BahayeVahed == null || item.BahayeVahed == "" ? 0 : decimal.Parse(item.BahayeVahed)));
                 item.BahayeKol = dBahayeKol;
 
             }
-
-
             return new JsonResult(userBarAvordOutPut);
         }
-
     }
 }

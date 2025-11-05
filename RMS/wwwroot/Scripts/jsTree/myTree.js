@@ -54,6 +54,10 @@ function createTree(data, parentId) {
             var funcCall = item.functionCall.trim();
             var fbShomareh = item.itemsFBShomareh.trim();
             var sharh = item.sharh;
+            var HasEnteringValue = item.hasEnteringValue;
+            var MaxValue = item.maxValue;
+            var MinValue = item.minValue;
+            var currentValue = item.operationDefaultValue;
 
             if (fbShomareh === "") {
                 if (funcCall !== "") {
@@ -70,57 +74,68 @@ function createTree(data, parentId) {
                     html += "</ul></li>";
                 }
             } else {
-     //           if (!gParents.includes(parentId)) {
-     //               if (gParents.length != 0) {
-     //                   debugger;
-     //                   html += `</tbody></table>`;
-     //               }
-     //               gParents.push(parentId);
-     //               html += `
-     //               <table border="1" style="width:100%; border-collapse: collapse;">
-     //           <thead>
-     //               <tr>
-     //                   <th>شماره</th>
-     //                   <th>شرح</th>
-     //                   <th>عملیات</th>
-     //                   <th>عملیات</th>
-     //               </tr>
-     //           </thead>
-     //           <tbody>`;
+                html += `
+            <li>
+            <div style="display: flex; align-items: center; gap: 5px;">
+            <a id="a${id}" onclick="OperationClick('${id}')"> 
+            ${fbShomareh} - ${sharh}
+            <span id="span${id}"></span>
+            </a>
+            <span id="spanOpShomareh${fbShomareh}"></span>
+                ${HasEnteringValue ? `<input class="form-control_1" type="number" value="${currentValue}" style="width:70px;" onchange="onInputChange('${id}', this,${MaxValue})" />` : ''}
+            </div>
+            </li>`;
 
-     //           }
-
-     //           html += `
-     //               <tr>
-     //               <td>${fbShomareh}</td>
-     //               <td><a id="a${id}" onclick="OperationClick('${id}')">${sharh}</a></td>
-     //               <td><span id="span${id}"></span></td>
-     //               <td><span id="spanOpShomareh${fbShomareh}"></span></td>
-     //               </tr>
-					//`;
-
-     //           html += "<tr><td><div id=\"ula" + id + "\" class=\"row\" style=\"display: none; margin:10px\">" +
-     //               "<div id=\"uldiva" + id + "\" class=\"col-md-12\" style=\"border:1px solid #79c7ea;" +
-     //               "padding-left:0px;padding-right:0px;text-align:center;border-radius:5px !important;\">" +
-     //               "</div></div></td></tr>";
-
-               
-
-                
-
-
-
-                html += "<li><a id=\"a" + id + "\" onclick=\"OperationClick('" + id + "')\">" +
-                	fbShomareh + " - " + sharh + "<span id=\"span" + id + "\"></span></a>" +
-                	"<span id=\"spanOpShomareh" + fbShomareh + "\"></span></li>";
-
-                html += "<div id=\"ula" + id + "\" class=\"row\" style=\"display: none; margin:10px\">" +
-                	"<div id=\"uldiva" + id + "\" class=\"col-md-12\" style=\"border:1px solid #79c7ea;" +
-                	"padding-left:0px;padding-right:0px;text-align:center;border-radius:5px !important;\">" +
-                	"</div></div>";
+                html += `<div id="ula${id}" class="row" style="display: none; margin:10px">
+                    <div id="uldiva${id}" class="col-md-12" 
+                    style="border:1px solid #79c7ea;padding-left:0px;padding-right:0px;text-align:center;border-radius:5px !important;">
+                    </div></div>`;
             }
         });
     }
 
     return html;
 }
+
+function onInputChange(id, obj, maxValue) {
+    value = obj.value;
+    if (value > maxValue) {
+        toastr.info('مقدار وارد شده بیش از مقدار مجاز میباشد', 'اطلاع');
+        $(obj).addClass('blinking');
+        return false;
+    }
+
+    BarAvordUserId = $('#HDFBarAvordUserID').val();
+
+    var vardata = new Object();
+    vardata.OperationId = id;
+    vardata.Value = value;
+    vardata.BarAvordId = BarAvordUserId;
+
+    $.ajax({
+        type: "POST",
+        url: '/Operation/SaveHamlValue',
+        dataType: "json",
+        data: JSON.stringify(vardata),
+        contentType: "application/json; charset=utf-8",
+        success: function (data) {
+            toastr.success('ثبت بدرستی انجام گرفت', 'موفقیت');
+
+        },
+        error: function (msg) {
+            toastr.error('مشکل در درج ریزه متره جدید', 'خطا');
+        }
+    });
+
+    console.log(`Input for item ${id} changed to: ${value}`);
+
+    // مثال: نمایش مقدار در span مربوط به همان آیتم
+    const span = document.getElementById(`span${id}`);
+    if (span) {
+        span.textContent = ` مقدار: ${value}`;
+    }
+
+    // در اینجا می‌توانی مقدار را در آرایه، سرور، یا هر متغیر دیگری ذخیره کنی
+    // saveInputValue(id, value);
+}
+

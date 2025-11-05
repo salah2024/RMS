@@ -1040,12 +1040,16 @@ namespace RMS.Controllers.Operation
                                                 {
 
                                                     string strItemHamlFB = "";
-                                                    decimal? Zarib = 0;
+                                                    decimal? Zarib1 = null;
+                                                    decimal? Zarib2 = null;
+                                                    decimal? Zarib3 = null;
                                                     if (itemsRelatedToItemHaml != null)
                                                     {
                                                         strItemHamlFB = itemsRelatedToItemHaml.ItemHamlFB.Trim();
-                                                        Zarib = itemsRelatedToItemHaml.Zarib;
-                                                        Vazn = Zarib;
+                                                        Zarib1 = itemsRelatedToItemHaml.Zarib1;
+                                                        Zarib2 = itemsRelatedToItemHaml.Zarib2;
+                                                        Zarib3 = itemsRelatedToItemHaml.Zarib3;
+                                                        Tool = Zarib1;
                                                         blnHasHaml = true;
                                                     }
 
@@ -1079,10 +1083,10 @@ namespace RMS.Controllers.Operation
                                                         RizMetreHaml.ShomarehNew = ShomareNew.ToString();
                                                         RizMetreHaml.Sharh = " حمل ";
                                                         RizMetreHaml.Tedad = Tedad;
-                                                        RizMetreHaml.Tool = Tool;
-                                                        RizMetreHaml.Arz = Arz;
-                                                        RizMetreHaml.Ertefa = Ertefa;
-                                                        RizMetreHaml.Vazn = Vazn;
+                                                        RizMetreHaml.Tool = Zarib1;
+                                                        RizMetreHaml.Arz = Zarib2;
+                                                        RizMetreHaml.Ertefa = Zarib3;
+                                                        //RizMetreHaml.Vazn = Vazn;
                                                         RizMetreHaml.Des = "آیتم - " + strItemShomareh;
                                                         RizMetreHaml.FBId = gFBIdHaml;
                                                         RizMetreHaml.OperationsOfHamlId = 1;
@@ -1093,13 +1097,14 @@ namespace RMS.Controllers.Operation
 
                                                         ///محاسبه مقدار جزء
                                                         decimal? dMeghdarJozHaml = null;
-                                                        if (Tedad == null && Tool == null && Arz == null && Ertefa == null && Vazn == null)
+                                                        if (Tedad == null && Zarib1 == null && Zarib2 == null && Zarib3 == null)
                                                             dMeghdarJozHaml = null;
                                                         else
-                                                            dMeghdarJozHaml = (Tedad == null ? 1 : Tedad.Value) * (Tool == null ? 1 : Tool.Value) *
-                                                            (Arz == null ? 1 : Arz.Value) * (Ertefa == null ? 1 : Ertefa.Value) * (Vazn == null ? 1 : Vazn.Value);
+                                                            dMeghdarJozHaml = (Tedad == null ? 1 : Tedad.Value) * (Zarib1 == null ? 1 : Zarib1.Value) *
+                                                            (Zarib2 == null ? 1 : Zarib2.Value) * (Zarib3 == null ? 1 : Zarib3.Value);
 
-                                                        RizMetreHaml.MeghdarJoz = dMeghdarJozHaml;
+                                                        RizMetreHaml.Vazn = dMeghdarJozHaml;
+                                                        //RizMetreHaml.MeghdarJoz = dMeghdarJozHaml;
                                                         _context.RizMetreUserses.Add(RizMetreHaml);
                                                     }
 
@@ -1937,17 +1942,16 @@ namespace RMS.Controllers.Operation
                                                 foreach (var itemsRelatedToItemHaml in lstItemsRelatedToItemHaml)
                                                 {
                                                     string strItemHamlFB = "";
-                                                    decimal? Zarib = 0;
+                                                    decimal? Zarib1 = null;
+                                                    decimal? Zarib2 = null;
+                                                    decimal? Zarib3 = null;
                                                     if (itemsRelatedToItemHaml != null)
                                                     {
                                                         strItemHamlFB = itemsRelatedToItemHaml.ItemHamlFB.Trim();
-                                                        Zarib = itemsRelatedToItemHaml.Zarib;
-                                                        Vazn = Zarib;
-                                                        blnHasHaml = true;
-                                                    }
+                                                        Zarib1 = itemsRelatedToItemHaml.Zarib1;
+                                                        Zarib2 = itemsRelatedToItemHaml.Zarib2;
+                                                        Zarib3 = itemsRelatedToItemHaml.Zarib3;
 
-                                                    if (blnHasHaml)
-                                                    {
                                                         clsFB? FBHaml = _context.FBs.FirstOrDefault(x => x.BarAvordId == guBAId && x.Shomareh == strItemHamlFB);
                                                         Guid gFBIdHaml = new Guid();
                                                         if (FBHaml != null)
@@ -1975,11 +1979,11 @@ namespace RMS.Controllers.Operation
                                                         ShomareNew++;
                                                         RizMetreHaml.ShomarehNew = ShomareNew.ToString();
                                                         RizMetreHaml.Sharh = " حمل ";
-                                                        RizMetreHaml.Tedad = Tedad;
-                                                        RizMetreHaml.Tool = Tool;
-                                                        RizMetreHaml.Arz = Arz;
-                                                        RizMetreHaml.Ertefa = Ertefa;
-                                                        RizMetreHaml.Vazn = Vazn;
+                                                        RizMetreHaml.Tedad = null;
+                                                        RizMetreHaml.Tool = Zarib1;
+                                                        RizMetreHaml.Arz = Zarib2;
+                                                        RizMetreHaml.Ertefa = Zarib3;
+                                                        //RizMetreHaml.Vazn = Vazn;
                                                         RizMetreHaml.Des = "آیتم - " + strItemShomareh;
                                                         RizMetreHaml.FBId = gFBIdHaml;
                                                         RizMetreHaml.OperationsOfHamlId = 1;
@@ -1987,16 +1991,18 @@ namespace RMS.Controllers.Operation
                                                         RizMetreHaml.Type = "3";
                                                         RizMetreHaml.ForItem = DtFB.Rows[0]["Shomareh"].ToString().Trim();
                                                         RizMetreHaml.UseItem = "";
+                                                        decimal? dAllZarib = (Zarib1 != null ? Zarib1.Value : 1) * (Zarib2 != null ? Zarib2.Value : 1) * (Zarib3 != null ? Zarib3.Value : 1);
 
                                                         ///محاسبه مقدار جزء
-                                                        decimal? dMeghdarJozHaml = null;
-                                                        if (Tedad == null && Tool == null && Arz == null && Ertefa == null && Vazn == null)
-                                                            dMeghdarJozHaml = null;
-                                                        else
-                                                            dMeghdarJozHaml = (Tedad == null ? 1 : Tedad.Value) * (Tool == null ? 1 : Tool.Value) *
-                                                            (Arz == null ? 1 : Arz.Value) * (Ertefa == null ? 1 : Ertefa.Value) * (Vazn == null ? 1 : Vazn.Value);
+                                                        //decimal? dMeghdarJozHaml = null;
+                                                        //if (Tedad == null && Tool == null && Arz == null && Ertefa == null && Vazn == null)
+                                                        //    dMeghdarJozHaml = null;
+                                                        //else
+                                                        //    dMeghdarJozHaml = (Tedad == null ? 1 : Tedad.Value) * (Tool == null ? 1 : Tool.Value) *
+                                                        //    (Arz == null ? 1 : Arz.Value) * (Ertefa == null ? 1 : Ertefa.Value) * (Vazn == null ? 1 : Vazn.Value);
 
-                                                        RizMetreHaml.MeghdarJoz = dMeghdarJozHaml;
+                                                        RizMetreHaml.Vazn = dMeghdarJoz;
+                                                        RizMetreHaml.MeghdarJoz = dAllZarib * dMeghdarJoz;
                                                         _context.RizMetreUserses.Add(RizMetreHaml);
                                                     }
 

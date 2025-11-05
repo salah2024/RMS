@@ -17,6 +17,9 @@ public class clsOperation
     public string? FunctionCall { get; set; }
     public long Order { get; set; }
     public bool? CheckData { get; set; }
+    public bool? HasEnteringValue { get; set; }
+    public decimal? MinValue { get; set; }
+    public decimal? MaxValue { get; set; }
     public List<clsOperation>? Children { get; set; }
     public clsOperation_ItemsFB Operation_ItemsFBs { get; set; }
 }

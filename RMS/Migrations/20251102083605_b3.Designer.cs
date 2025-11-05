@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace RMS.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251102083605_b3")]
+    partial class b3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2058,13 +2061,7 @@ namespace RMS.Migrations
                     b.Property<long>("Year")
                         .HasColumnType("bigint");
 
-                    b.Property<decimal?>("Zarib1")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<decimal?>("Zarib2")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<decimal?>("Zarib3")
+                    b.Property<decimal?>("Zarib")
                         .HasColumnType("decimal(18,4)");
 
                     b.HasKey("Id");

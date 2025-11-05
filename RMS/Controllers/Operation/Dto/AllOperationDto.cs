@@ -11,5 +11,7 @@ public class AllOperationDto
     public string ItemsFBShomareh { get; set; }
     public int Year { get; set; }
     public bool? CheckData { get; set; }
+    public bool? HasEnteringValue { get; set; }
+    public decimal? OperationDefaultValue { get; set; }
 
 }

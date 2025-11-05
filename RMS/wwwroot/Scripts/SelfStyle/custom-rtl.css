@@ -1409,11 +1409,12 @@ hr {
     -webkit-transition: unset;
     -o-transition: unset;
     transition: unset;
+    text-align:center;
 }
 
-.form-control[disabled]{
-    background-color: #f9f9f9;
-}
+    .form-control[disabled] {
+        background-color: #ffecec;
+    }
 
 .btn {
   border-width: 0;

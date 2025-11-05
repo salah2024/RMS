@@ -11,6 +11,10 @@ public class clsItemsRelatedToItemHaml
     public string ItemFB { get; set; }
     public string ItemHamlFB { get; set; }
     [Column(TypeName = "decimal(18,4)")]
-    public decimal? Zarib { get; set; }
+    public decimal? Zarib1 { get; set; }
+    [Column(TypeName = "decimal(18,4)")]
+    public decimal? Zarib2 { get; set; }
+    [Column(TypeName = "decimal(18,4)")]
+    public decimal? Zarib3 { get; set; }
     public long Year { get; set; }
 }
