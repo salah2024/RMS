@@ -132,7 +132,6 @@ namespace RMS.Controllers.BoardStand
 
                         clsRizMetreUsers RizMetreUsers = new clsRizMetreUsers();
                         RizMetreUsers.Shomareh = Shomareh;
-                        Shomareh++;
                         RizMetreUsers.Sharh = item.Sharh;
 
                         RizMetreUsers.Tedad = item.Tedad * Tedad;
@@ -193,6 +192,9 @@ namespace RMS.Controllers.BoardStand
                             LevelNumber = 1
                         };
                         HamlCommon.SaveHaml(requestSaveHaml, context);
+
+                        Shomareh++;
+
                     }
                 }
             }
