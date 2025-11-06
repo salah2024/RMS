@@ -234,36 +234,46 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
         entity.MeghdarJoz = dMeghdarJoz;
 
 
+        /////////////
+        ///ویرایش حمل///
+        /////////////
+        ///
+
         clsFB? currentFb = context.FBs.FirstOrDefault(x => x.ID == entity.FBId);
         if (currentFb != null)
         {
             string currentShomareh = currentFb.Shomareh;
-            clsBarAvordHaml? barAvordHaml = context.BarAvordHamls.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.FBShomareh == currentShomareh);
-            if (barAvordHaml != null)
+            List<clsBarAvordHaml> lstBarAvordHaml = context.BarAvordHamls.Where(x => x.BarAvordId == BarAvordId && x.FBShomareh == currentShomareh).ToList();
+            if (lstBarAvordHaml.Count != 0)
             {
+                List<Guid> lstBarAvordHamlIds = lstBarAvordHaml.Select(x => x.ID).ToList();
                 List<clsBarAvordHamlRizMetre> lstBAHRM =
-                    context.BarAvordHamlRizMetres.Where(x => x.BarAvordHamlId == barAvordHaml.ID).ToList();
+                    context.BarAvordHamlRizMetres.Where(x => lstBarAvordHamlIds.Contains(x.BarAvordHamlId)).ToList();
                 List<Guid> lstRizMetreIds = lstBAHRM.Select(x => x.RizMetreId).ToList();
                 if (lstBAHRM.Count != 0)
                 {
                     clsRizMetreUsers? RizMetreForHaml = context.RizMetreUserses.FirstOrDefault(x => lstRizMetreIds.Contains(x.ID) && x.Shomareh == entity.Shomareh);
                     if (RizMetreForHaml != null)
                     {
-                        RizMetreForHaml.Tedad = Tedad;
-                        RizMetreForHaml.Tool = Tool;
-                        RizMetreForHaml.Arz = Arz;
-                        RizMetreForHaml.Ertefa = Ertefa;
-                        decimal dMeghdarJozHaml = 0;
-                        if (Tedad == null && Tool == null && Arz == null && Ertefa == null)
-                            dMeghdarJozHaml = 0;
+                        //    RizMetreForHaml.Tedad = Tedad;
+                        //    RizMetreForHaml.Tool = Tool;
+                        //    RizMetreForHaml.Arz = Arz;
+                        //    RizMetreForHaml.Ertefa = Ertefa;
+                        decimal? dMeghdarJozHaml = null;
+                        if (RizMetreForHaml.Tedad == null && RizMetreForHaml.Tool == null && RizMetreForHaml.Arz == null && RizMetreForHaml.Ertefa == null)
+                            dMeghdarJozHaml = null;
                         else
-                            dMeghdarJozHaml += (Tedad == null ? 1 : Tedad.Value) * (Tool == null ? 1 : Tool.Value) *
-                            (Arz == null ? 1 : Arz.Value) * (Ertefa == null ? 1 : Ertefa.Value) * (RizMetreForHaml.Vazn == null ? 1 : RizMetreForHaml.Vazn.Value);
-                        RizMetreForHaml.MeghdarJoz = dMeghdarJozHaml;
+                            dMeghdarJozHaml = (RizMetreForHaml.Tedad == null ? 1 : RizMetreForHaml.Tedad.Value) * (RizMetreForHaml.Tool == null ? 1 : RizMetreForHaml.Tool.Value) *
+                            (RizMetreForHaml.Arz == null ? 1 : RizMetreForHaml.Arz.Value) * (RizMetreForHaml.Ertefa == null ? 1 : RizMetreForHaml.Ertefa.Value)
+                            * (RizMetreForHaml.Vazn == null ? 1 : RizMetreForHaml.Vazn.Value);
+
+                        RizMetreForHaml.Vazn = dMeghdarJoz;
+                        RizMetreForHaml.MeghdarJoz = (dMeghdarJozHaml == null ? 1 : dMeghdarJozHaml) * dMeghdarJoz;
                     }
                 }
             }
         }
+
         context.SaveChanges();
 
         decimal SumMeghdarJoz = context.RizMetreUserses.Where(x => x.FBId == entity.FBId).Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
@@ -338,5 +348,45 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
 
 
         return new JsonResult("OK_" + dMeghdarJoz + "_" + SumMeghdarJoz + "_" + JameFasl);
+    }
+
+    public ActionResult DeleteRizMetre([FromBody] DeleteRizMetreInputFromShowBarAvordDto request)
+    {
+        try
+        {
+            Guid BarAvordUserId = request.BarAvordUserId;
+            clsRizMetreUsers? entity = context.RizMetreUserses.Find(request.Id);
+            if (entity != null)
+            {
+                context.RizMetreUserses.Remove(entity);
+
+                ///////////
+                //حذف حمل//
+                ///////////
+                clsFB? FB = context.FBs.FirstOrDefault(x => x.ID == entity.FBId);
+
+                if (FB != null)
+                {
+                    DeleteHamlDto deleteHaml = new DeleteHamlDto
+                    {
+                        BarAvordId = BarAvordUserId,
+                        FBShomareh = FB.Shomareh,
+                        RMShomareh = entity.Shomareh,
+                    };
+                    HamlCommon.DeleteHaml(deleteHaml, context);
+                }
+                /////////////
+                //////////////
+                //////////////
+                ///
+            }
+            context.SaveChanges();
+            return new JsonResult("OK");
+
+        }
+        catch (Exception)
+        {
+            return new JsonResult("NOK");
+        }
     }
 }

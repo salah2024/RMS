@@ -319,7 +319,7 @@ function renderTable(data, Code) {
 				<tr style="background-color: #aa87ff;">
 					<th style="width: 5🔄%;text-align:center;color: #3a007a;font-size: 12px;">*</th>
 					<th style="width: 7%;text-align:center;color: #3a007a;font-size: 12px;">شماره فهرست بها</th>
-					<th style="width: 55%;;color: #3a007a;font-size: 16px;">شرح فهرست بها</th>
+					<th style="width: 55%;color: #3a007a;font-size: 16px;">شرح فهرست بها</th>
 					<th style="width: 7%;text-align:center;color: #3a007a;font-size: 12px;">واحد</th>
 					<th style="width: 7%;text-align:center;color: #3a007a;font-size: 12px;">بهای واحد</th>
 					<th style="width: 9%;text-align:center;color: #3a007a;font-size: 12px;">
@@ -393,8 +393,8 @@ function renderTable(data, Code) {
         if (Array.isArray(item.rizMetre) && item.rizMetre.length > 0) {
             rizRowsHtml += item.rizMetre.map(riz =>
                 `
-		<tr class="riz-row-data" data-id="${riz.id}" data-itemsFields='${JSON.stringify(item.itemsFields).replace(/"/g, '&quot;')}' onclick="EditRizMetreRow(this,'${riz.id}','${item.itemFbShomareh}','${rizId}','${item.fbId}','${Code}')" style="cursor:pointer;">
-		<td style="text-align:center">${riz.shomareh == null ? '' : riz.shomareh}</td>
+		<tr class="riz-row-data" style="direction:ltr" data-id="${riz.id}" data-itemsFields='${JSON.stringify(item.itemsFields).replace(/"/g, '&quot;')}' onclick="EditRizMetreRow(this,'${riz.id}','${item.itemFbShomareh}','${rizId}','${item.fbId}','${Code}')" style="cursor:pointer;">
+		<td style="text-align:center">${riz.shomarehNew == null ? '' : riz.shomarehNew}</td>
 		<td><span>${riz.sharh}</span></td>
 		<td style="text-align:center"><span>${riz.tedad == null ? '' : riz.tedad}</span></td>
 		<td style="text-align:center"><span>${riz.tool == null ? '' : riz.tool}</span></td>
@@ -404,7 +404,7 @@ function renderTable(data, Code) {
 		<td style="text-align:center"><span id="spanMeghdarJoz">${riz.meghdarJoz == null ? '' : riz.meghdarJoz}</span></td>
 		<td><span>${riz.des ?? ''}</span></td>
 		<td style="text-align:center">
-			<i class="fa fa-trash DelRMUStyle" onclick="DeleteRizMetre('${riz.id}','${item.itemFbShomareh}','${rizId}','${item.fbId}','${Code}')"></i>
+			<i class="fa fa-trash DelRMUStyle" onclick="event.stopPropagation();DeleteRizMetre('${riz.id}','${item.itemFbShomareh}','${rizId}','${item.fbId}','${Code}')"></i>
 		</td>
 		</tr>
 		`).join('');
@@ -719,7 +719,7 @@ function cancelEditRow(row, rizMetreId, Shomareh, rizId1, FBId) {
     actionCell1.empty();
     if (actionCell1.find('.fa-trash').length === 0) {
         actionCell1.append(`
-		<i class="fa fa-trash DelRMUStyle ms-2" onclick="DeleteRizMetre('${rizMetreId}','${Shomareh}','${rizId1}','${FBId}')"></i>
+		<i class="fa fa-trash DelRMUStyle ms-2" onclick="event.stopPropagation();DeleteRizMetre('${rizMetreId}','${Shomareh}','${rizId1}','${FBId}')"></i>
 	`);
     }
 }
@@ -1043,7 +1043,7 @@ function GetCurrentRizMetreUsers(Shomareh, rizId, FBId, Code) {
             if (Array.isArray(rizMetreUsers) && rizMetreUsers.length > 0) {
                 rizRowsHtml += rizMetreUsers.map(riz => `
                     <tr class="riz-row-data" data-id="${riz.id}" data-itemsFields='${JSON.stringify(lstItemsFields).replace(/"/g, '&quot;')}' onclick="EditRizMetreRow(this,'${riz.id}','${Shomareh}','${rizId}','${FBId}','${Code}')" style="cursor:pointer;">
-					<td style="text-align:center">${riz.shomareh}</td>
+					<td style="text-align:center">${riz.shomarehNew}</td>
 					<td><span>${riz.sharh}</span></td>
 					<td style="text-align:center"><span>${riz.tedad == null ? '' : riz.tedad}</span></td>
 					<td style="text-align:center"><span>${riz.tool == null ? '' : riz.tool}</span></td>
@@ -1052,7 +1052,7 @@ function GetCurrentRizMetreUsers(Shomareh, rizId, FBId, Code) {
 					<td style="text-align:center"><span>${riz.vazn == null ? '' : riz.vazn}</span></td>
 					<td style="text-align:center"><span id="spanMeghdarJoz">${riz.meghdarJoz == null ? '' : riz.meghdarJoz}</span></td>
 					<td><span>${riz.des ?? ''}</span></td>
-                    <td style="text-align:center"><i class="fa fa-trash DelRMUStyle" onclick="DeleteRizMetre('${riz.id}','${Shomareh}','${rizId}','${FBId}','${Code}')"></i></td>
+                    <td style="text-align:center"><i class="fa fa-trash DelRMUStyle" onclick="event.stopPropagation();DeleteRizMetre('${riz.id}','${Shomareh}','${rizId}','${FBId}','${Code}')"></i></td>
                     </tr>
                 `).join('');
             }
@@ -1150,11 +1150,14 @@ function GetCurrentRizMetreUsers(Shomareh, rizId, FBId, Code) {
 }
 
 function DeleteRizMetre(RizMetreId, Shomareh, rizId, FBId, Code) {
+    BarAvordUserId = $('#HDFBarAvordUserID').val();
 
     var vardata = new Object();
     vardata.Id = RizMetreId;
+    vardata.BarAvordUserId = BarAvordUserId;
+
     $.ajax({
-        url: "/RizMetreUser/DeleteRizMetre",
+        url: "/RizMetreUserFromShowBarAvord/DeleteRizMetre",
         method: "POST",
         data: JSON.stringify(vardata),
         contentType: "application/json; charset=utf-8",

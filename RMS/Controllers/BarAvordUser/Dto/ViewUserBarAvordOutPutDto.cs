@@ -20,6 +20,7 @@ namespace RMS.Controllers.BarAvordUser.Dto
     {
         public Guid Id { get; set; }
         public long Shomareh { get; set; }
+        public string? ShomarehNew { get; set; }
         public string Sharh { get; set; }
         public decimal? Tedad { get; set; }
         public decimal? Tool { get; set; }

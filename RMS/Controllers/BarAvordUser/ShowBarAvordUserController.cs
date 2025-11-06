@@ -22,6 +22,7 @@ namespace RMS.Controllers.BarAvordUser
                     Id = riz.ID,
                     Sharh = riz.Sharh,
                     Shomareh = riz.Shomareh,
+                    ShomarehNew = riz.ShomarehNew,
                     Arz = riz.Arz,
                     Des = riz.Des,
                     Ertefa = riz.Ertefa,
@@ -31,7 +32,6 @@ namespace RMS.Controllers.BarAvordUser
                     FBId = riz.FBId,
                     MeghdarJoz = riz.MeghdarJoz
                 }).OrderBy(x => x.Shomareh).ToList();
-
 
 
             var fbItems = (from fb in _context.FBs

@@ -1,8 +1,10 @@
-﻿using System.Xml;
+﻿using System.Linq;
+using System.Xml;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RMS.Controllers.Board.Dto;
 using RMS.Controllers.BoardStand.Dto;
+using RMS.Controllers.Operation.Common;
 using RMS.Controllers.Operation.Dto;
 using RMS.Models.Entity;
 using static RMS.Models.Common.BoardEnum;
@@ -58,10 +60,32 @@ namespace RMS.Controllers.BoardStand
 
             List<Guid> lstRizMetreForBarAvordAddedBoardStandIds = RizMetreForBarAvordAddedBoardStands.Select(x => x.RizMetreId).ToList();
 
-            var entities = lstRizMetreForBarAvordAddedBoardStandIds.Select(id => new clsRizMetreUsers { ID = id }).ToList();
+            //var entities = lstRizMetreForBarAvordAddedBoardStandIds.Select(id => new clsRizMetreUsers { ID = id }).ToList();
+
+            List<clsRizMetreUsers> entities = _context.RizMetreUserses.Where(x => lstRizMetreForBarAvordAddedBoardStandIds.Contains(x.ID)).ToList();
 
             _context.RizMetreUserses.RemoveRange(entities);
             _context.BarAvordAddedBoardStands.RemoveRange(lstBarAvordAddedBoardStand);
+
+
+            ///////////
+            //حذف حمل//
+            ///////////
+            foreach (var entity in entities)
+            {
+                clsFB? FB = context.FBs.FirstOrDefault(x => x.ID == entity.FBId);
+
+                if (FB != null)
+                {
+                    DeleteHamlDto deleteHaml = new DeleteHamlDto
+                    {
+                        BarAvordId = BaravordId,
+                        FBShomareh = FB.Shomareh,
+                        RMShomareh = entity.Shomareh,
+                    };
+                    HamlCommon.DeleteHaml(deleteHaml, context);
+                }
+            }
 
             _context.SaveChanges();
 
@@ -148,37 +172,31 @@ namespace RMS.Controllers.BoardStand
                             RizMetreId = RizMetreUsers.ID,
                         };
                         _context.RizMetreForBarAvordAddedBoardStands.Add(rizMetreForBarAvordAddedBoardStand);
+
+
+
+                        /////////////
+                        ///درج حمل///
+                        /////////////
+                        ///
+
+
+                        ///درج ریز متره
+                        SaveHamlDto requestSaveHaml = new SaveHamlDto
+                        {
+                            BarAvordUserId = BaravordId,
+                            Year = Year,
+                            ItemFBShomareh = strAddedItem,
+                            //BarAvordHamlId = gBarAvordHamlId,
+                            Shomareh = Shomareh,
+                            MeghdarJoz = dMeghdarJoz,
+                            LevelNumber = 1
+                        };
+                        HamlCommon.SaveHaml(requestSaveHaml, context);
                     }
                 }
             }
             _context.SaveChanges();
-
-            switch (BoardStandType)
-            {
-                case 1:
-                    {
-
-
-                        //clsFB? FBUsers = _context.FBs.FirstOrDefault(x => x.BarAvordId == BaravordId && x.Shomareh == strAddedItem);
-                        //Guid FBId = new Guid();
-                        //if (FBUsers == null)
-                        //{
-                        //    clsFB FBSave = new clsFB();
-                        //    FBSave.BarAvordId = BaravordId;
-                        //    FBSave.Shomareh = strAddedItem;
-                        //    FBSave.BahayeVahedZarib = 0;
-                        //    _context.FBs.Add(FBSave);
-                        //    _context.SaveChanges();
-                        //    FBId = FBSave.ID;
-                        //}
-                        //else
-                        //    FBId = FBUsers.ID;
-
-                        break;
-                    }
-                default:
-                    break;
-            }
 
             return new JsonResult("OK");
         }
@@ -192,8 +210,8 @@ namespace RMS.Controllers.BoardStand
 
                 List<Guid> lstBoardStandItemIds = _context.BoardStandItemses.Where(x => x.BoardStandType == BoardStandType).Select(x => x.ID).ToList();
 
-                List<clsBarAvordAddedBoardStand> lstBarAvordAddedBoardStand= _context.BarAvordAddedBoardStands.Where(x => x.BarAvordId == BaravordId && lstBoardStandItemIds.Contains(x.BoardStandItemId)).ToList();
-                
+                List<clsBarAvordAddedBoardStand> lstBarAvordAddedBoardStand = _context.BarAvordAddedBoardStands.Where(x => x.BarAvordId == BaravordId && lstBoardStandItemIds.Contains(x.BoardStandItemId)).ToList();
+
                 List<clsRizMetreForBarAvordAddedBoardStand> RizMetreForBarAvordAddedBoardStands = _context.RizMetreForBarAvordAddedBoardStands.Include(x => x.BarAvordAddedBoardStand)
                     .Where(x => x.BarAvordAddedBoardStand.BarAvordId == BaravordId && lstBoardStandItemIds.Contains(x.BarAvordAddedBoardStand.BoardStandItemId)).ToList();
 
@@ -201,11 +219,30 @@ namespace RMS.Controllers.BoardStand
 
                 List<Guid> lstRizMetreForBarAvordAddedBoardStandIds = RizMetreForBarAvordAddedBoardStands.Select(x => x.RizMetreId).ToList();
 
-                var entities = lstRizMetreForBarAvordAddedBoardStandIds.Select(id => new clsRizMetreUsers { ID = id }).ToList();
+                //var entities = lstRizMetreForBarAvordAddedBoardStandIds.Select(id => new clsRizMetreUsers { ID = id }).ToList();
+                List<clsRizMetreUsers> entities = _context.RizMetreUserses.Where(x => lstRizMetreForBarAvordAddedBoardStandIds.Contains(x.ID)).ToList();
 
                 _context.RizMetreUserses.RemoveRange(entities);
                 _context.BarAvordAddedBoardStands.RemoveRange(lstBarAvordAddedBoardStand);
 
+                ///////////
+                //حذف حمل//
+                ///////////
+                foreach (var entity in entities)
+                {
+                    clsFB? FB = context.FBs.FirstOrDefault(x => x.ID == entity.FBId);
+
+                    if (FB != null)
+                    {
+                        DeleteHamlDto deleteHaml = new DeleteHamlDto
+                        {
+                            BarAvordId = BaravordId,
+                            FBShomareh = FB.Shomareh,
+                            RMShomareh = entity.Shomareh,
+                        };
+                        HamlCommon.DeleteHaml(deleteHaml, context);
+                    }
+                }
                 _context.SaveChanges();
 
                 return new JsonResult("OK");
