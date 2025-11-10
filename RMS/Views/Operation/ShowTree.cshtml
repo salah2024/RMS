@@ -1,4 +1,4 @@
-﻿@using RMS.Models.Entity
+﻿﻿@using RMS.Models.Entity
 @model IEnumerable<clsOperation>
 @{
 	ViewBag.Title = "ShowTree";
@@ -47,10 +47,10 @@
 					border-right: 1px solid rgb(100,100,100);
 				}
 		/*.NewStyle {
-																			background-image: url() !important;
-																			width: 0px !important;
-																			height: 0px !important;
-																		}*/
+															background-image: url() !important;
+															width: 0px !important;
+															height: 0px !important;
+														}*/
 
 		.col-md-1 {
 			padding-left: 2px;
@@ -78,6 +78,22 @@
 		.ActiveAddRelItemTab {
 			background-color: rgb(46, 112, 155);
 		}
+
+		.KMStyle {
+			color: #fff;
+			background-color: #c32f2f;
+			border-radius: 3px;
+			padding: 0px 10px;
+		}
+
+		.LegalOpStyle {
+			color: blue;
+		}
+
+			.LegalOpStyle:hover {
+				text-decoration: underline;
+				cursor: pointer;
+			}
 	</style>
 
 
@@ -91,7 +107,6 @@
 	<link href="~/Scripts/jsTree/my-treeStyle.css" rel="stylesheet">
 
 	<link href="~/Scripts/SelfStyle/BoardStyle.css" rel="stylesheet">
-	<link href="~/Scripts/SelfStyle/KhakRiziStyle.css" rel="stylesheet">
 	<link href="~/Scripts/SelfStyle/KhakBardariStyle.css" rel="stylesheet">
 
 	<script src="~/Scripts/jsTree/jstree.min.js"></script>
@@ -101,10 +116,6 @@
 	<script src="~/Scripts/FaniSection/AbnieFani.js"></script>
 	<script src="~/Scripts/FaniSection/AmalyateKhaki.js"></script>
 	<script src="~/Scripts/FaniSection/AmalyateKhaki2.js"></script>
-	<script src="~/Scripts/FaniSection/KhakRizi.js"></script>
-	<script src="~/Scripts/FaniSection/KhakRiziEdit.js"></script>
-	<script src="~/Scripts/FaniSection/PayKani.js"></script>
-	<script src="~/Scripts/FaniSection/ChanelKani.js"></script>
 	<script src="~/Scripts/FaniSection/AmalyateKhakiEzafeBaha.js"></script>
 	<script src="~/Scripts/FaniSection/AmalyateKhakiGharzeh.js"></script>
 	<script src="~/Scripts/FaniSection/AssisScript.js"></script>
@@ -184,9 +195,11 @@
 			   Year = $('#HDFYear').val();
 			   NoeFB = $('#HDFNoeFB').val();
 			   BarAvordUserId = $('#HDFBarAvordUserID').val();
+
 			   vardata.Year =parseInt(Year);
 			   vardata.NoeFB = parseInt(NoeFB);
 			   vardata.BarAvordUserId = BarAvordUserId;
+			   vardata.OpName = '';
 			   $.ajax({
 				   type: "POST",
 				   url: "@Url.Action("GetTree")",
@@ -194,6 +207,8 @@
 				   contentType: "application/json; charset=utf-8",
 				   dataType: "json",
 				   success: function (data) {
+
+
 							   //let arrNotIn = [];
 		   //let a = [];
 
@@ -344,8 +359,14 @@
 				   var html= createTree(data,0);
 
 					   $('#jstree').html(html);
-					   $('li a').each(function () {
+					   $('#jstree li a').each(function () {
 						   $(this).addClass('OpMenuStyle');
+						   // if($(this).attr('id')=='a1404229')
+						   // {
+							  //  alert($(this).attr('id'));
+							  //  //$(this).parent().parent().find('ula1404229').slideDown(500);
+							  //  $('#ula1404229').Show();
+						   // }
 						   $(this).click(function () {
 							   CurrentId = $(this).attr('id');
 							   ParentId = $(this).parent().parent();
@@ -356,7 +377,7 @@
 							   $('#ul' + $(this).attr('id')).toggle(1000);
 						   });
 					   });
-					   $('li ul').each(function () {
+					   $('#jstree li ul').each(function () {
 						   $(this).hide();
 					   });
 					   //TreeView(a, plugin);
@@ -366,55 +387,6 @@
 				   }
 			   });
 		   }
-
-		//////////////
-		function GetTreeForOneOperation() {
-			   plugin = ['wholerow'];
-			   var vardata = new Object();
-			   Year = $('#HDFYear').val();
-			   NoeFB = $('#HDFNoeFB').val();
-			   BarAvordUserId = $('#HDFBarAvordUserID').val();
-			   vardata.Year =parseInt(Year);
-			   vardata.NoeFB = parseInt(NoeFB);
-			   vardata.BarAvordUserId = BarAvordUserId;
-			   vardata.OpName = 'transport';
-			   $.ajax({
-				   type: "POST",
-				   url: "@Url.Action("GetTreeForOneOperation")",
-				   data: JSON.stringify(vardata),
-				   contentType: "application/json; charset=utf-8",
-				   dataType: "json",
-				   success: function (data) {
-
-					   debugger;
-
-					   AllOperation=data.allOperation;
-					   OperationId=data.operationId;
-
-					   var html= createTree(AllOperation,OperationId);
-					   $('#ula'+OperationId).html(html);
-					   $('li a').each(function () {
-						   $(this).addClass('OpMenuStyle');
-						   $(this).off('click').on('click',function () {
-							   CurrentId = $(this).attr('id');
-							   ParentId = $(this).parent().parent();
-							   $("#" + ParentId.attr('id') + " [id^='ula']").each(function () {
-								   if ($(this).attr('id') != ('ul'+CurrentId))
-									   $(this).slideUp(1000);
-							   });
-							   $('#ul' + $(this).attr('id')).toggle(1000);
-						   });
-					   });
-					   // $('li ul').each(function () {
-						  //  $(this).hide();
-					   // });
-					   //TreeView(a, plugin);
-					},
-				   error: function (response) {
-					   toastr('danger', 'خطا', 'مشکلی بوجود آمده، مجددا بعدا امتحان نمایید')
-				   }
-			   });
-		}
 
 
 
@@ -438,7 +410,6 @@
 			color: #fff;
 			text-align: center;
 			border-radius: 3px;
-			direction: ltr;
 		}
 
 		.displayNone {

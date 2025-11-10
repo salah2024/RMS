@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Numerics;
+using Azure;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RMS.Controllers.Operation.Dto;
 using RMS.Models.Common;
@@ -26,10 +28,10 @@ public class OperationController(ApplicationDbContext context) : Controller
     {
         var ShomarehItems = (from op_Item in _context.Operation_ItemsFBs
                              join FB in _context.FehrestBahas
-                             on op_Item.ItemsFBShomareh equals FB.Shomareh
+                             on op_Item.ItemsFBShomareh.Substring(0, 6) equals FB.Shomareh.Trim()
                              select new
                              {
-                                 ItemsFBShomareh = op_Item.ItemsFBShomareh,
+                                 ItemsFBShomareh = op_Item.ItemsFBShomareh.Substring(0,6),
                                  OperationId = op_Item.OperationId,
                                  Sharh = FB.Sharh,
                                  Year = FB.Sal,
@@ -38,28 +40,73 @@ public class OperationController(ApplicationDbContext context) : Controller
                                  BahayeVahed = FB.BahayeVahed,
                              }).Where(x => x.Year == request.Year && x.NoeFB == request.NoeFB);
 
-        List<AllOperationDto> operation = (from op in _context.Operations
-                                           join Sh_Items in ShomarehItems
-                                           on op.Id equals Sh_Items.OperationId
-                                           into joinTable
-                                           from jT in joinTable.DefaultIfEmpty()
-                                           where op.Year == request.Year
-                                           select new AllOperationDto
-                                           {
-                                               ID = op.Id,
-                                               order = op.Order,
-                                               ParentId = op.ParentId,
-                                               OperationName = op.OperationName,
-                                               FunctionCall = op.FunctionCall == null ? "" : op.FunctionCall,
-                                               Sharh = jT.Sharh,
-                                               ItemsFBShomareh = jT.ItemsFBShomareh == null ? "" : jT.ItemsFBShomareh,
-                                               Year = op.Year,
-                                               CheckData = op.CheckData,
-                                               HasEnteringValue = op.HasEnteringValue
-                                           })
-                         .OrderBy(x => x.order)
-                         .ThenBy(x => x.ID)
-                         .ToList();
+        //List<AllOperationDto> operation = (from op in _context.Operations
+        //                                   join OperationDetail in _context.OperationDetails
+        //                                   on op.Id equals OperationDetail.OperationId
+        //                                   join Sh_Items in ShomarehItems
+        //                                   on op.Id equals Sh_Items.OperationId
+        //                                   into joinTable
+        //                                   from jT in joinTable.DefaultIfEmpty()
+        //                                   where op.Year == request.Year
+        //                                   select new AllOperationDto
+        //                                   {
+        //                                       ID = op.Id,
+        //                                       order = op.Order,
+        //                                       ParentId = op.ParentId,
+        //                                       OperationName = op.OperationName,
+        //                                       FunctionCall = op.FunctionCall == null ? "" : op.FunctionCall,
+        //                                       Sharh = jT.Sharh,
+        //                                       ItemsFBShomareh = jT.ItemsFBShomareh == null ? "" : jT.ItemsFBShomareh,
+        //                                       Year = op.Year,
+        //                                       CheckData = OperationDetail.CheckData,
+        //                                       HasEnteringValue = OperationDetail.HasEnteringValue
+        //                                   })
+        //                 .OrderBy(x => x.order)
+        //                 .ThenBy(x => x.ID)
+        //                 .ToList();
+
+
+        // فرض: در AllOperationDto => public bool? HasEnteringValue { get; set; }
+        // نوع CheckData را هم نال‌پذیر بگیرید (مثلاً string? یا هر نوع واقعی آن به صورت ?)
+
+        // 1) بخش دیتابیسی را بگیرید
+        var baseRows = (
+            from op in _context.Operations
+            where op.Year == request.Year
+            join od in _context.OperationDetails
+                on op.Id equals od.OperationId into odGroup
+            from od in odGroup.DefaultIfEmpty()
+            select new { op, od }
+        ).ToList();
+
+        // 2) لاکاپ کمکی از ShomarehItems در حافظه
+        var siLookup = ShomarehItems.ToLookup(s => s.OperationId);
+
+        // 3) جوین سمت کلاینت + نگاشت به DTO
+        var operation = baseRows
+            .SelectMany(x => siLookup[x.op.Id].DefaultIfEmpty(),
+                (x, si) => new AllOperationDto
+                {
+                    ID = x.op.Id,
+                    order = x.op.Order,                       // در DTO nullable باشد اگر در DB nullable است
+                    ParentId = x.op.ParentId,                 // ترجیحاً nullable
+                    Year = x.op.Year,
+                    OperationName = x.op.OperationName ?? "",
+                    FunctionCall = x.op.FunctionCall ?? "",
+                    Sharh = si?.Sharh ?? "",
+                    ItemsFBShomareh = si?.ItemsFBShomareh ?? "",
+                    CheckData = x.od?.CheckData,
+                    HasEnteringValue = x.od?.HasEnteringValue,
+                    MaxValue = x.od?.MaxValue,
+                    MinValue = x.od?.MinValue,
+                    MaxMinValue=x.od?.MaxMinValue
+                })
+            .OrderBy(x => x.order)
+            .ThenBy(x => x.ID)
+            .ToList();
+
+
+
 
         List<AllOperationDto> NewOperation = new List<AllOperationDto>();
 
@@ -121,6 +168,8 @@ public class OperationController(ApplicationDbContext context) : Controller
             var shItemsQ = ShomarehItems.AsQueryable();
 
             var operation = (from op in _context.Operations
+                             join OpeartionDetail in _context.OperationDetails
+                             on op.Id equals OpeartionDetail.OperationId
                              join sh in shItemsQ
                                  on op.Id equals sh.OperationId into joinTable
                              from jT in joinTable.DefaultIfEmpty()
@@ -136,8 +185,8 @@ public class OperationController(ApplicationDbContext context) : Controller
                                  Sharh = jT.Sharh,
                                  ItemsFBShomareh = jT.ItemsFBShomareh == null ? "" : jT.ItemsFBShomareh,
                                  Year = op.Year,
-                                 CheckData = op.CheckData,
-                                 HasEnteringValue = op.HasEnteringValue
+                                 CheckData = OpeartionDetail.CheckData,
+                                 HasEnteringValue = OpeartionDetail.HasEnteringValue
                              })
                              .OrderBy(x => x.order)
                              .ThenBy(x => x.ID)
@@ -179,32 +228,62 @@ public class OperationController(ApplicationDbContext context) : Controller
         clsOperation_ItemsFB? operation_ItemsFB = _context.Operation_ItemsFBs.FirstOrDefault(x => x.OperationId == request.OperationId);
         if (operation_ItemsFB != null)
         {
-            decimal currentValue = request.Value;
             string ItemsFBShomareh = operation_ItemsFB.ItemsFBShomareh;
             Guid BarAvordId = request.BarAvordId;
-            clsBarAvordHaml? barAvordHaml = _context.BarAvordHamls.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.FBShomarehHaml == ItemsFBShomareh);
-            if (barAvordHaml != null)
+            List<clsBarAvordHaml> lstBarAvordHaml = _context.BarAvordHamls.Where(x => x.BarAvordId == BarAvordId && x.FBShomarehHaml == ItemsFBShomareh).ToList();
+            if (lstBarAvordHaml.Count != 0)
             {
-                _context.Entry(barAvordHaml).CurrentValues
-                    .SetValues(new
-                    {
-                        Value = request.Value
-                    });
-
-                List<clsBarAvordHamlRizMetre> lstBaravordHaml = _context.BarAvordHamlRizMetres.Where(x => x.BarAvordHamlId == barAvordHaml.ID).ToList();
-                List<clsRizMetreUsers> lstRizMetre = _context.RizMetreUserses.Where(x => lstBaravordHaml.Select(x => x.RizMetreId).Contains(x.ID)).ToList();
-
-                foreach (var item in lstRizMetre)
+                foreach (var barAvordHaml in lstBarAvordHaml)
                 {
-                    decimal? dMeghdarJoz = (item.Tool != null ? item.Tool : 1) * (item.Arz != null ? item.Arz : 1) * 
-                                           (item.Ertefa != null ? item.Ertefa : 1) * (item.Vazn != null ? item.Vazn : 1) * currentValue;
-                    _context.Entry(item).CurrentValues.SetValues(new
+                    decimal dValue = request.Value;
+                    decimal dFinaValue = 0;
+                    clsOperationDetail? operationDetail = _context.OperationDetails.FirstOrDefault(x => x.OperationId == request.OperationId);
+                    if (operationDetail != null)
                     {
-                        Tedad = currentValue,
-                        MeghdarJoz = dMeghdarJoz
-                    });
-                }
+                        if (operationDetail.UseMinForInsert)
+                        {
+                            if (request.Value >= operationDetail.MinValue)
+                            {
+                                dFinaValue = request.Value;
+                            }
+                            else
+                                dFinaValue = (operationDetail.MinValue == null ? 0 : operationDetail.MinValue.Value);
+                        }
+                        else
+                        {
+                            decimal? MaxValue = operationDetail.MaxValue;
+                            if (MaxValue != null)
+                            {
+                                if (request.Value > MaxValue.Value)
+                                    dValue = MaxValue.Value;
+                                else
+                                    dValue = request.Value;
+                            }
+                            dFinaValue = dValue - (operationDetail.MinValue == null ? 0 : operationDetail.MinValue.Value);
+                        }
+                    }
 
+                    _context.Entry(barAvordHaml).CurrentValues
+                        .SetValues(new
+                        {
+                            Value = request.Value
+                        });
+
+
+                    List<clsBarAvordHamlRizMetre> lstBaravordHaml = _context.BarAvordHamlRizMetres.Where(x => x.BarAvordHamlId == barAvordHaml.ID).ToList();
+                    List<clsRizMetreUsers> lstRizMetre = _context.RizMetreUserses.Where(x => lstBaravordHaml.Select(x => x.RizMetreId).Contains(x.ID)).ToList();
+
+                    foreach (var item in lstRizMetre)
+                    {
+                        decimal? dMeghdarJoz = (item.Tool != null ? item.Tool : 1) * (item.Arz != null ? item.Arz : 1) *
+                                               (item.Ertefa != null ? item.Ertefa : 1) * (item.Vazn != null ? item.Vazn : 1) * dFinaValue;
+                        _context.Entry(item).CurrentValues.SetValues(new
+                        {
+                            Tedad = dFinaValue,
+                            MeghdarJoz = dMeghdarJoz
+                        });
+                    }
+                }
                 _context.SaveChanges();
             }
         }

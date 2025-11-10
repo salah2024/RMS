@@ -88,7 +88,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
         if (Tedad == null && Tool == null && Arz == null && Ertefa == null && Vazn == null)
             dMeghdarJoz = 0;
         else
-            dMeghdarJoz += (Tedad == null ? 1 : Tedad.Value) * (Tool == null ? 1 : Tool.Value) *
+            dMeghdarJoz = (Tedad == null ? 1 : Tedad.Value) * (Tool == null ? 1 : Tool.Value) *
             (Arz == null ? 1 : Arz.Value) * (Ertefa == null ? 1 : Ertefa.Value) * (Vazn == null ? 1 : Vazn.Value);
         RizMetre.MeghdarJoz = dMeghdarJoz;
 
@@ -104,7 +104,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
             ///درج حمل///
             /////////////
             ///
-            
+
 
             ///درج ریز متره
             SaveHamlDto requestSaveHaml = new SaveHamlDto
@@ -4007,190 +4007,547 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
         List<int> lst = new List<int>();
         bool blnIsEzafeBahaAddedItems = false;
         string strDes = "";
-        if (IsFromAddedOperation == "false")
+        var varOperationHasAddedOperations = (from OpHasOp in _context.OperationHasAddedOperationses
+                                              join OpHasOpType in _context.OperationHasAddedOperationsTypes
+                                              on OpHasOp.Type equals OpHasOpType.Id
+                                              join OpHasOpLevelNumber in _context.OperationHasAddedOperationsLevelNumbers
+                                              on OpHasOp.Id equals OpHasOpLevelNumber.OperationHasAddedOperationsId
+                                              where OpHasOpLevelNumber.LevelNumber == LevelNumber
+                                              select new
+                                              {
+                                                  OperationId = OpHasOp.OperationId,
+                                                  AddedOperationId = OpHasOp.AddedOperationId,
+                                                  Type = OpHasOp.Type,
+                                                  ButtonName = OpHasOpType.TypeName,
+                                                  LatinName = OpHasOpType.LatinName
+                                              }).Where(x => x.OperationId == Operation).ToList();
+        DataTable DtOperationHasAddedOperations = varOperationHasAddedOperations.ToDataTable();
+
+        if (DtOperationHasAddedOperations.Rows.Count != 0)
         {
-            str += "<div class=\"styleHeaderTable1\">" +
-                "<div class=\"row\">" +
-                "<div class=\"col-md-3\">" +
-                "<input id=\"btnAddedItems" + DtOpItems.Rows[0]["OperationId"].ToString().Trim() + "\" style=\"border:0;\" type=\"button\" onclick=\"ShowForms('divAddedItems','" + DtOpItems.Rows[0]["OperationId"].ToString().Trim() + "'," + LevelNumber + ")\" value=\"اضافه / کسر بها - آیتم های مرتبط\" class=\"spanStyleMitraSmall spanFrameNameStyle ActiveAddRelItemTab\"/>" +
-                "</div>";
-            var varOperationHasAddedOperations = (from OpHasOp in _context.OperationHasAddedOperationses
-                                                  join OpHasOpType in _context.OperationHasAddedOperationsTypes
-                                                  on OpHasOp.Type equals OpHasOpType.Id
-                                                  join OpHasOpLevelNumber in _context.OperationHasAddedOperationsLevelNumbers
-                                                  on OpHasOp.Id equals OpHasOpLevelNumber.OperationHasAddedOperationsId
-                                                  where OpHasOpLevelNumber.LevelNumber == LevelNumber
-                                                  select new
-                                                  {
-                                                      OperationId = OpHasOp.OperationId,
-                                                      AddedOperationId = OpHasOp.AddedOperationId,
-                                                      Type = OpHasOp.Type,
-                                                      ButtonName = OpHasOpType.TypeName,
-                                                      LatinName = OpHasOpType.LatinName
-                                                  }).Where(x => x.OperationId == Operation).ToList();
-            DataTable DtOperationHasAddedOperations = varOperationHasAddedOperations.ToDataTable();
-
-            //str += "<div class=\"col-md-2\">" +
-            //    "<input id=\"btnRelItems" + DtOpItems.Rows[0]["OperationId"].ToString().Trim() + "\" style=\"border:0;\" type=\"button\" onclick=\"ShowForms('divRelItems','" + DtOpItems.Rows[0]["OperationId"].ToString().Trim() + "'," + LevelNumber + ")\" class=\"spanStyleMitraSmall spanFrameNameStyle\" value=\"آیتم های مرتبط\"/>" +
-            //    "</div>" +
-            str += "</div>";
-
-            if (DtItemsHasCondition.Rows.Count != 0)
+            if (IsFromAddedOperation == "false")
             {
-                string strItemAdded = strShomareh; //Dt.Rows[0]["Shomareh"].ToString().Trim();
+                str += "<div class=\"styleHeaderTable1\">" +
+                    "<div class=\"row\">" +
+                    "<div class=\"col-md-3\">" +
+                    "<input id=\"btnAddedItems" + DtOpItems.Rows[0]["OperationId"].ToString().Trim() + "\" style=\"border:0;\" type=\"button\" onclick=\"ShowForms('divAddedItems','" + DtOpItems.Rows[0]["OperationId"].ToString().Trim() + "'," + LevelNumber + ")\" value=\"اضافه / کسر بها - آیتم های مرتبط\" class=\"spanStyleMitraSmall spanFrameNameStyle ActiveAddRelItemTab\"/>" +
+                    "</div>";
 
-                DataRow[] DrItemsHasCondition = DtItemsHasCondition.Select("ItemFBShomareh=" + strShomareh + " and IsShow=1");
-                DataTable DtItemsHasConditionFiltered = new DataTable();
-                if (DrItemsHasCondition.Length != 0)
-                {
-                    DtItemsHasConditionFiltered = DrItemsHasCondition.CopyToDataTable();
-                }
+                //str += "<div class=\"col-md-2\">" +
+                //    "<input id=\"btnRelItems" + DtOpItems.Rows[0]["OperationId"].ToString().Trim() + "\" style=\"border:0;\" type=\"button\" onclick=\"ShowForms('divRelItems','" + DtOpItems.Rows[0]["OperationId"].ToString().Trim() + "'," + LevelNumber + ")\" class=\"spanStyleMitraSmall spanFrameNameStyle\" value=\"آیتم های مرتبط\"/>" +
+                //    "</div>" +
+                str += "</div>";
 
-                bool blnItemsHasConditionChecked = true;
-                for (int k = 0; k < DtItemsHasConditionFiltered.Rows.Count; k++)
+                if (DtItemsHasCondition.Rows.Count != 0)
                 {
-                    string strIsParent = DtItemsHasConditionFiltered.Rows[k]["ParentId"].ToString().Trim();
-                    if (strIsParent != "0")
+                    string strItemAdded = strShomareh; //Dt.Rows[0]["Shomareh"].ToString().Trim();
+
+                    DataRow[] DrItemsHasCondition = DtItemsHasCondition.Select("ItemFBShomareh=" + strShomareh + " and IsShow=1");
+                    DataTable DtItemsHasConditionFiltered = new DataTable();
+                    if (DrItemsHasCondition.Length != 0)
                     {
-                        long lngIsParent = long.Parse(strIsParent);
-                        var varItemsHasConditionAddedToFBWithParentId = (from ItHasConAddToFB in _context.ItemsHasConditionAddedToFBs
-                                                                         join ItAddToFB in _context.ItemsAddingToFBs
-                                                                         on ItHasConAddToFB.ItemsHasCondition_ConditionContextId equals
-                                                                         ItAddToFB.ItemsHasCondition_ConditionContextId
-                                                                         select new
-                                                                         {
-                                                                             FBShomareh = ItHasConAddToFB.FBShomareh,
-                                                                             BarAvordUserId = ItHasConAddToFB.BarAvordId,
-                                                                             Meghdar = ItHasConAddToFB.Meghdar,
-                                                                             ItemsHasCondition_ConditionContextId = ItHasConAddToFB.ItemsHasCondition_ConditionContextId,
-                                                                             AddedItems = ItAddToFB.AddedItems
-                                                                         }).Where(x => x.ItemsHasCondition_ConditionContextId == lngIsParent).ToList();
-                        DataTable DtItemsHasConditionAddedToFBWithParentId = varItemsHasConditionAddedToFBWithParentId.ToDataTable();
-
-                        if (DtItemsHasConditionAddedToFBWithParentId.Rows.Count == 0)
-                        {
-                            blnItemsHasConditionChecked = false;
-                        }
+                        DtItemsHasConditionFiltered = DrItemsHasCondition.CopyToDataTable();
                     }
 
-                    if (blnItemsHasConditionChecked)
+                    bool blnItemsHasConditionChecked = true;
+                    for (int k = 0; k < DtItemsHasConditionFiltered.Rows.Count; k++)
                     {
-                        var IsContain = lst.Contains(int.Parse(DtItemsHasConditionFiltered.Rows[k]["ConditionGroupId"].ToString()));
-                        if (IsContain != true)
+                        string strIsParent = DtItemsHasConditionFiltered.Rows[k]["ParentId"].ToString().Trim();
+                        if (strIsParent != "0")
                         {
-                            lst.Add(int.Parse(DtItemsHasConditionFiltered.Rows[k]["ConditionGroupId"].ToString()));
-                        }
-                    }
-                }
+                            long lngIsParent = long.Parse(strIsParent);
+                            var varItemsHasConditionAddedToFBWithParentId = (from ItHasConAddToFB in _context.ItemsHasConditionAddedToFBs
+                                                                             join ItAddToFB in _context.ItemsAddingToFBs
+                                                                             on ItHasConAddToFB.ItemsHasCondition_ConditionContextId equals
+                                                                             ItAddToFB.ItemsHasCondition_ConditionContextId
+                                                                             select new
+                                                                             {
+                                                                                 FBShomareh = ItHasConAddToFB.FBShomareh,
+                                                                                 BarAvordUserId = ItHasConAddToFB.BarAvordId,
+                                                                                 Meghdar = ItHasConAddToFB.Meghdar,
+                                                                                 ItemsHasCondition_ConditionContextId = ItHasConAddToFB.ItemsHasCondition_ConditionContextId,
+                                                                                 AddedItems = ItAddToFB.AddedItems
+                                                                             }).Where(x => x.ItemsHasCondition_ConditionContextId == lngIsParent).ToList();
+                            DataTable DtItemsHasConditionAddedToFBWithParentId = varItemsHasConditionAddedToFBWithParentId.ToDataTable();
 
-                str += "<div id=\"divAddedItems" + DtOpItems.Rows[0]["OperationId"].ToString().Trim() + "\" class=\"col-md-12\" style=\"padding:25px 5px 2px 5px;margin-bottom:5px;margin-bottom:5px;border:1px solid #c4d4db;border-radius:4px !important;text-align:right;display:none\">";
-                for (int m = 0; m < lst.Count; m++)
-                {
-                    DataRow[] DrItemsHasConditionWithItemFBShomarehFiltered = DtItemsHasConditionFiltered.Select("ConditionGroupId=" + lst[m]);
-
-                    if (DrItemsHasConditionWithItemFBShomarehFiltered.Length != 0)
-                    {
-                        if (DrItemsHasConditionWithItemFBShomarehFiltered.Length > 1)
-                        {
-                            bool blnCheckIsSelectData = false;
-                            for (int ii = 0; ii < DrItemsHasConditionWithItemFBShomarehFiltered.Length; ii++)
+                            if (DtItemsHasConditionAddedToFBWithParentId.Rows.Count == 0)
                             {
-                                DataRow[] Dr = DtItemsHasConditionAddedToFB.Select("ItemsHasCondition_ConditionContextId=" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString());
-                                if (Dr.Length != 0)
-                                {
-                                    blnCheckIsSelectData = true;
-                                }
+                                blnItemsHasConditionChecked = false;
                             }
+                        }
 
-                            if (blnCheckIsSelectData)
-                                str += "<div class=\"col-md-4\" style=\"color:#0002b1;padding-left:0px;padding-right:0px\"><input type=\"checkbox\" checked=\"checked\" onclick=\"OpenConditionDetails($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ItemFBShomareh"].ToString().Trim() + "')\"/><span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"OpenConditionDetailsOnly('" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + strShomareh + "')\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupName"].ToString().Trim() + "</span></div>";
-                            else
-                                str += "<div class=\"col-md-4\" style=\"color:#0002b1;padding-left:0px;padding-right:0px\"><input type=\"checkbox\" onclick=\"OpenConditionDetails($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ItemFBShomareh"].ToString().Trim() + "')\"/><span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"OpenConditionDetailsOnly('" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + strShomareh + "')\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupName"].ToString().Trim() + "</span></div>";
-
-                            str += "<div class=\"col-md-12\" id=\"divConditionGroup" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + strShomareh + "\" style=\"display:None;background-color:#ffe7e7;border:1px solid #bfe0ed;margin-bottom:20px;border-radius:5px !important;\">";
-                            for (int ii = 0; ii < DrItemsHasConditionWithItemFBShomarehFiltered.Length; ii++)
+                        if (blnItemsHasConditionChecked)
+                        {
+                            var IsContain = lst.Contains(int.Parse(DtItemsHasConditionFiltered.Rows[k]["ConditionGroupId"].ToString()));
+                            if (IsContain != true)
                             {
-                                string strType = "";
-                                if (DrItemsHasConditionWithItemFBShomarehFiltered.Length > 1)
-                                {
-                                    strType = "radio";
-                                }
-                                else
-                                {
-                                    strType = "checkbox";
-                                }
-                                DataRow[] Dr = DtItemsHasConditionAddedToFB.Select("ItemsHasCondition_ConditionContextId=" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString());
+                                lst.Add(int.Parse(DtItemsHasConditionFiltered.Rows[k]["ConditionGroupId"].ToString()));
+                            }
+                        }
+                    }
 
-                                if (DrItemsHasConditionWithItemFBShomarehFiltered[ii]["HasEnteringValue"].ToString() == "True")
-                                {
-                                    string strMeghdar = "0";
-                                    strDes = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["HasDes"].ToString().Trim() == "True" ?
-                                        "<span onclick=\"ShowConditionDes(" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionContextId"].ToString().Trim() + ")\" class=\"spanConditionDes\">" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["TitleDes"].ToString().Trim() + "</span>" : "";
+                    str += "<div id=\"divAddedItems" + DtOpItems.Rows[0]["OperationId"].ToString().Trim() + "\" class=\"col-md-12\" style=\"padding:25px 5px 2px 5px;margin-bottom:5px;margin-bottom:5px;border:1px solid #c4d4db;border-radius:4px !important;text-align:right;display:none\">";
+                    for (int m = 0; m < lst.Count; m++)
+                    {
+                        DataRow[] DrItemsHasConditionWithItemFBShomarehFiltered = DtItemsHasConditionFiltered.Select("ConditionGroupId=" + lst[m]);
 
-                                    if (DrItemsHasConditionWithItemFBShomarehFiltered[ii]["EnteringCount"].ToString() == "1")
+                        if (DrItemsHasConditionWithItemFBShomarehFiltered.Length != 0)
+                        {
+                            if (DrItemsHasConditionWithItemFBShomarehFiltered.Length > 1)
+                            {
+                                bool blnCheckIsSelectData = false;
+                                for (int ii = 0; ii < DrItemsHasConditionWithItemFBShomarehFiltered.Length; ii++)
+                                {
+                                    DataRow[] Dr = DtItemsHasConditionAddedToFB.Select("ItemsHasCondition_ConditionContextId=" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString());
+                                    if (Dr.Length != 0)
                                     {
-                                        string strDesForEnteringValue = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["DesForEnteringValue"].ToString().Trim();
-                                        if (Dr.Length != 0)
-                                        {
-                                            string strMinValue = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["MinValue"].ToString().Trim();
-                                            string strMaxValue = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["MaxValue"].ToString().Trim();
+                                        blnCheckIsSelectData = true;
+                                    }
+                                }
 
-                                            strMeghdar = decimal.Parse(Dr[0]["Meghdar"].ToString().Trim()).ToString("G29");
-                                            str += "<div class=\"row col-md-12\" style=\"margin:10px;\">"
-                                                + "<div class=\"col-5\">"
-                                                + "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\" onchange=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\" type=\"" + strType
-                                                + "\" name=\"group" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + strShomareh + "\" checked=\"checked\"/><span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString() + "')\" style=\"color:#000296;\">"
+                                if (blnCheckIsSelectData)
+                                    str += "<div class=\"col-md-4\" style=\"color:#0002b1;padding-left:0px;padding-right:0px\"><input type=\"checkbox\" checked=\"checked\" onclick=\"OpenConditionDetails($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ItemFBShomareh"].ToString().Trim() + "')\"/><span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"OpenConditionDetailsOnly('" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + strShomareh + "')\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupName"].ToString().Trim() + "</span></div>";
+                                else
+                                    str += "<div class=\"col-md-4\" style=\"color:#0002b1;padding-left:0px;padding-right:0px\"><input type=\"checkbox\" onclick=\"OpenConditionDetails($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ItemFBShomareh"].ToString().Trim() + "')\"/><span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"OpenConditionDetailsOnly('" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + strShomareh + "')\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupName"].ToString().Trim() + "</span></div>";
+
+                                str += "<div class=\"col-md-12\" id=\"divConditionGroup" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + strShomareh + "\" style=\"display:None;background-color:#ffe7e7;border:1px solid #bfe0ed;margin-bottom:20px;border-radius:5px !important;\">";
+                                for (int ii = 0; ii < DrItemsHasConditionWithItemFBShomarehFiltered.Length; ii++)
+                                {
+                                    string strType = "";
+                                    if (DrItemsHasConditionWithItemFBShomarehFiltered.Length > 1)
+                                    {
+                                        strType = "radio";
+                                    }
+                                    else
+                                    {
+                                        strType = "checkbox";
+                                    }
+                                    DataRow[] Dr = DtItemsHasConditionAddedToFB.Select("ItemsHasCondition_ConditionContextId=" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString());
+
+                                    if (DrItemsHasConditionWithItemFBShomarehFiltered[ii]["HasEnteringValue"].ToString() == "True")
+                                    {
+                                        string strMeghdar = "0";
+                                        strDes = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["HasDes"].ToString().Trim() == "True" ?
+                                            "<span onclick=\"ShowConditionDes(" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionContextId"].ToString().Trim() + ")\" class=\"spanConditionDes\">" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["TitleDes"].ToString().Trim() + "</span>" : "";
+
+                                        if (DrItemsHasConditionWithItemFBShomarehFiltered[ii]["EnteringCount"].ToString() == "1")
+                                        {
+                                            string strDesForEnteringValue = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["DesForEnteringValue"].ToString().Trim();
+                                            if (Dr.Length != 0)
+                                            {
+                                                string strMinValue = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["MinValue"].ToString().Trim();
+                                                string strMaxValue = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["MaxValue"].ToString().Trim();
+
+                                                strMeghdar = decimal.Parse(Dr[0]["Meghdar"].ToString().Trim()).ToString("G29");
+                                                str += "<div class=\"row col-md-12\" style=\"margin:10px;\">"
+                                                    + "<div class=\"col-5\">"
+                                                    + "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\" onchange=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\" type=\"" + strType
+                                                    + "\" name=\"group" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + strShomareh + "\" checked=\"checked\"/><span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString() + "')\" style=\"color:#000296;\">"
+                                                        + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["Context"].ToString().Trim() + "</span>" +
+                                                        "</div>"
+                                                        + "<div class=\"col-2\" style=\"padding-right:10px;text-align: left;\">"
+                                                        + "<span class=\"spanStyleEnteringValue\">" + strDesForEnteringValue + "</span>"
+                                                        + "</div>"
+                                                        + "<div class=\"col-2\" style=\"padding-right:10px;\">" +
+                                                        "<input style=\"text-align:center;width:100px;\"" +
+                                                        " min=\"" + strMinValue + "\" max=\"" + strMaxValue + "\" DefaultValue=\"" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["DefaultValue"].ToString().Trim() + "\" step=\"" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["StepChange"].ToString().Trim() + "\" type=\"number\" id=\"txtMeghdar" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\" onchange=\"textMeghdarOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + "'," + LevelNumber + ")\" class=\"form-control spanStyleMitraMedium\" value=\"" + strMeghdar
+                                                        + "\"/>" +
+                                                        "</div>" +
+                                                        "<div class=\"col-2\" style=\"padding-right:10px;\">" + strDes + "</div>";
+                                                str += "</div>";
+                                                str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\"></div>";
+
+                                            }
+                                            else
+                                            {
+                                                string strMinValue = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["MinValue"].ToString().Trim();
+                                                string strMaxValue = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["MaxValue"].ToString().Trim();
+
+                                                str += "<div class=\"row col-md-12\" style=\"margin:10px;\">"
+                                                    + "<div class=\"col-5\">"
+                                                    + "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\" onchange=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\" type=\"" + strType
+                                                    + "\" name=\"group" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + strShomareh + "\" />" +
+                                                    "<span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString() + "')\" style=\"color:#000296;\">"
                                                     + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["Context"].ToString().Trim() + "</span>" +
                                                     "</div>"
                                                     + "<div class=\"col-2\" style=\"padding-right:10px;text-align: left;\">"
                                                     + "<span class=\"spanStyleEnteringValue\">" + strDesForEnteringValue + "</span>"
                                                     + "</div>"
                                                     + "<div class=\"col-2\" style=\"padding-right:10px;\">" +
-                                                    "<input style=\"text-align:center;width:100px;\"" +
-                                                    " min=\"" + strMinValue + "\" max=\"" + strMaxValue + "\" DefaultValue=\"" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["DefaultValue"].ToString().Trim() + "\" step=\"" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["StepChange"].ToString().Trim() + "\" type=\"number\" id=\"txtMeghdar" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\" onchange=\"textMeghdarOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + "'," + LevelNumber + ")\" class=\"form-control spanStyleMitraMedium\" value=\"" + strMeghdar
+                                                    "<input style=\"text-align:center;width:100px;\" " +
+                                                    " min=\"" + strMinValue + "\" max=\"" + strMaxValue + "\"  DefaultValue=\"" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["DefaultValue"].ToString().Trim() + "\" step=\"" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["StepChange"].ToString().Trim() + "\" type=\"number\" id=\"txtMeghdar" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\" class=\"form-control spanStyleMitraMedium\" onchange=\"textMeghdarOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + "'," + LevelNumber + ")\"" +
+                                                    " step=\"" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["StepChange"].ToString().Trim() + "\" value=\"" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["DefaultValue"].ToString().Trim()
                                                     + "\"/>" +
                                                     "</div>" +
                                                     "<div class=\"col-2\" style=\"padding-right:10px;\">" + strDes + "</div>";
-                                            str += "</div>";
-                                            str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\"></div>";
+                                                str += "</div>";
+
+                                                str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\"></div>";
+                                            }
+                                        }
+                                        else if (DrItemsHasConditionWithItemFBShomarehFiltered[ii]["EnteringCount"].ToString() == "2")
+                                        {
+                                            if (Dr.Length != 0)
+                                            {
+                                                string[] strDesForEnteringValue = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["DesForEnteringValue"].ToString().Trim().Split('_');
+                                                string[] strDefaultValue = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["DefaultValue"].ToString().Trim().Split('_');
+                                                string[] strMinValue = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["MinValue"].ToString().Trim().Split('_');
+                                                string[] strMaxValue = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["MaxValue"].ToString().Trim().Split('_');
+                                                string[] strStepChange = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["StepChange"].ToString().Trim().Split('_');
+
+                                                string strDV1 = (strDefaultValue.Length >= 1 ? decimal.Parse(strDefaultValue[0]).ToString("G29") : "");
+                                                string strDV2 = (strDefaultValue.Length == 2 ? decimal.Parse(strDefaultValue[1]).ToString("G29") : "");
+
+                                                string strMin1 = (strMinValue.Length >= 1 ? decimal.Parse(strMinValue[0]).ToString("G29") : "");
+                                                string strMin2 = (strMinValue.Length == 2 ? decimal.Parse(strMinValue[1]).ToString("G29") : "");
+
+                                                string strMax1 = (strMaxValue.Length >= 1 ? decimal.Parse(strMaxValue[0]).ToString("G29") : "");
+                                                string strMax2 = (strMaxValue.Length == 2 ? decimal.Parse(strMaxValue[1]).ToString("G29") : "");
+
+                                                string strMeghdar1 = decimal.Parse(Dr[0]["Meghdar"].ToString().Trim()).ToString("G29");
+                                                string strMeghdar2 = decimal.Parse(Dr[0]["Meghdar2"].ToString().Trim()).ToString("G29");
+
+                                                // strMeghdar1 = (strDefaultValue.Length >= 1 ? decimal.Parse(strDefaultValue[0]).ToString("G29") : "");
+                                                //string strMeghdar2 = (strDefaultValue.Length == 2 ? decimal.Parse(strDefaultValue[1]).ToString("G29") : "");
+                                                str += "<div class=\"row col-md-12\" style=\"margin:10px;\">"
+                                                    + "<div class=\"row col-3\">"
+                                                    + "<div class=\"col-1\">"
+                                                    + "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\" onchange=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\" type=\"" + strType
+                                                    + "\" name=\"group" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + strShomareh + "\" checked=\"checked\"/>"
+                                                    + "</div>"
+                                                    + "<div class=\"col-10\">"
+                                                    + "<span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString() + "')\" style=\"color:#000296;\">"
+                                                        + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["Context"].ToString().Trim()
+                                                        + "</span>"
+                                                        + "</div>"
+                                                        + "</div>"
+                                                        + "<div class=\"col-2\" style=\"padding-right:10px;text-align: left;\">"
+                                                        + "<span class=\"spanStyleEnteringValue\">" + strDesForEnteringValue[0] + "</span>"
+                                                        + "</div>"
+                                                        + "<div class=\"col-1\" style=\"padding-right:10px;\">"
+                                                        + "<input style=\"text-align:center;width:100px;\" max=\"" + strMax2 + "\" min=\"" + strMin2 + "\" defaultvalue=\"" + strDV1 + "\" step=\"" + strStepChange[0]
+                                                        + "\" type=\"number\" id=\"txtMeghdar" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "_1\" onchange=\"textMeghdarOnChange($(this),'"
+                                                        + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + "'," + LevelNumber + ")\" class=\"form-control spanStyleMitraMedium\" value=\"" + strMeghdar1 + "\"/>"
+                                                        + "</div>"
+                                                        + "<div class=\"col-1\" style=\"padding-right:10px;text-align: left;\">"
+                                                        + "<span class=\"spanStyleEnteringValue\">" + strDesForEnteringValue[1] + "</span>"
+                                                        + "</div>"
+                                                        + "<div class=\"col-1\" style=\"padding-right:10px;\">"
+                                                        + "<input style=\"text-align:center;width:100px;\" max=\"" + strMax2 + "\" min=\"" + strMin2 + "\" defaultvalue=\"" + strDV2 + "\" step=\"" + strStepChange[1]
+                                                        + "\" type=\"number\" id=\"txtMeghdar" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "_2\" onchange=\"textMeghdarOnChange($(this),'"
+                                                        + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + "'," + LevelNumber + ")\" class=\"form-control spanStyleMitraMedium\" value=\"" + strMeghdar2 + "\"/>"
+                                                        + "</div>"
+                                                        + "<div class=\"col-2\" style=\"padding-right:10px;\">" + strDes + "</div>"
+                                                        + "</div>";
+                                                //str += "</div>";
+                                                str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\"></div>";
+                                            }
+                                            else
+                                            {
+                                                string[] strDesForEnteringValue = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["DesForEnteringValue"].ToString().Trim().Split('_');
+                                                string[] strDefaultValue = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["DefaultValue"].ToString().Trim().Split('_');
+                                                string[] strStepChange = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["StepChange"].ToString().Trim().Split('_');
+                                                string[] strMinValue = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["MinValue"].ToString().Trim().Split('_');
+                                                string[] strMaxValue = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["MaxValue"].ToString().Trim().Split('_');
+
+
+                                                string strMin1 = (strMinValue.Length >= 1 ? decimal.Parse(strMinValue[0]).ToString("G29") : "");
+                                                string strMin2 = (strMinValue.Length == 2 ? decimal.Parse(strMinValue[1]).ToString("G29") : "");
+
+                                                string strMax1 = (strMaxValue.Length >= 1 ? decimal.Parse(strMaxValue[0]).ToString("G29") : "");
+                                                string strMax2 = (strMaxValue.Length == 2 ? decimal.Parse(strMaxValue[1]).ToString("G29") : "");
+
+
+                                                string strMeghdar1 = (strDefaultValue.Length >= 1 ? decimal.Parse(strDefaultValue[0]).ToString("G29") : "");
+                                                string strMeghdar2 = (strDefaultValue.Length == 2 ? decimal.Parse(strDefaultValue[1]).ToString("G29") : "");
+
+                                                str += "<div class=\"row col-md-12\" style=\"margin:10px;\">"
+                                                    + "<div class=\"row col-3\">"
+                                                    + "<div class=\"col-1\">"
+                                                    + "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\" onchange=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\" type=\"" + strType
+                                                    + "\" name=\"group" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + strShomareh + "\" />"
+                                                    + "</div>"
+                                                    + "<div class=\"col-10\">"
+                                                    + "<span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString() + "')\" style=\"color:#000296;\">"
+                                                    + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["Context"].ToString().Trim()
+                                                    + "</span>"
+                                                    + "</div>"
+                                                    + "</div>"
+                                                    + "<div class=\"col-2\" style=\"padding-right:10px;text-align: left;\">"
+                                                    + "<span class=\"spanStyleEnteringValue\">" + strDesForEnteringValue[0] + "</span>"
+                                                    + "</div>"
+                                                    + "<div class=\"col-1\" style=\"padding-right:10px;\">"
+                                                    + "<input style=\"text-align:center;width:100px;\" type=\"number\" id=\"txtMeghdar" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "_1\" class=\"form-control spanStyleMitraMedium\" onchange=\"textMeghdarOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + "'," + LevelNumber + ")\""
+                                                    + " min=\"" + strMin1 + "\" max=\"" + strMax1 + "\" defaultvalue=\"" + strMeghdar1 + "\" step=\"" + strStepChange[0] + "\" value=\"\"/>"
+                                                    + "</div>"
+                                                    + "<div class=\"col-1\" style=\"padding-right:10px;text-align: left;\">"
+                                                    + "<span class=\"spanStyleEnteringValue\">" + (strDesForEnteringValue.Length > 1 ? strDesForEnteringValue[1] : "") + "</span>"
+                                                    + "</div>"
+                                                    + "<div class=\"col-1\" style=\"padding-right:10px;\">"
+                                                    + "<input style=\"text-align:center;width:100px;\" type=\"number\" id=\"txtMeghdar" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "_2\" class=\"form-control spanStyleMitraMedium\" onchange=\"textMeghdarOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + "'," + LevelNumber + ")\""
+                                                    + " min=\"" + strMin2 + "\" max=\"" + strMax2 + "\" defaultvalue=\"" + strMeghdar2 + "\" step=\"" + (strStepChange.Length > 1 ? strStepChange[1] : "") + "\" value=\"\"/>"
+                                                    + "</div>"
+                                                    + "<div class=\"col-1\" style=\"padding-right:10px;\">" + strDes + "</div>"
+                                                    + "</div>";
+                                                // + "</div>";
+
+                                                str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\"></div>";
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (Dr.Length != 0)
+                                        {
+                                            if (DrItemsHasConditionWithItemFBShomarehFiltered[ii]["MoveToRel"].ToString() != "True")
+                                            {
+                                                strDes = DrItemsHasConditionWithItemFBShomarehFiltered[0]["HasDes"].ToString().Trim() == "True" ? "<div class=\"col-4\"><span onclick=\"ShowConditionDes("
+                                                    + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionContextId"].ToString().Trim() + ")\" class=\"spanConditionDes\">" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["TitleDes"].ToString().Trim() + "</span></div>" : "";
+                                                if (DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ViewCheckAllRecords"].ToString() == "True")
+                                                {
+                                                    clsRizMetreUsers clsRizMetreUsers = new clsRizMetreUsers();
+                                                    Guid guNew = new Guid();
+                                                    blnIsEzafeBahaAddedItems = DastyarCommon.CheckLakeGiriIsAddingRizMetreUsers1(strShomareh, DrItemsHasConditionWithItemFBShomarehFiltered[ii]["AddedItems"].ToString().Trim(), BarAvordId, guNew);
+                                                    string strEzafeBahaIsChecked = "";
+                                                    if (blnIsEzafeBahaAddedItems)
+                                                    {
+                                                        strEzafeBahaIsChecked = "checked=\"checked\"";
+                                                    }
+                                                    str += "<div class=\"row col-md-12\" style=\"padding-left: 0px;padding-right: 0px;text-align:right\"><div class=\"col-7\"><input type=\"checkbox\" style=\"border:0px\" class=\"RizMetreUsersAddStyle spanStyleMitraSmall\" "
+                                                        + strEzafeBahaIsChecked + " onclick=\"ShowAndTickAllEzafeBahaAndLakeGiri($(this),'" + strShomareh + "','"
+                                                        + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "'," + LevelNumber + "',"
+                                                        + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "')\"/><span class=\"spanStyleMitraSmall spanLakeGiriStyle\""
+                                                        + " onclick=\"ShowEzafeBahaAndLakeGiriOnly(this,'" + strShomareh
+                                                        + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "');\">"
+                                                        + DrItemsHasConditionWithItemFBShomarehFiltered[0]["Context"].ToString().Trim() + "</span></div>" + strDes + "</div>";
+                                                    str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\"></div>";
+
+                                                    blnItemHasEzafeBaha = true;
+                                                }
+                                                else
+                                                {
+                                                    str += "<div class=\"row col-md-12\" style=\"padding-left:0px;margin:10px;\"><div class=\"col-7\"><input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\" onchange=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\" checked=\"checked\" name=\"group"
+                                                        + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString() + strShomareh + "\" type=\"" + strType + "\"/><span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString() + "')\" style=\"color:#000296;\">"
+                                                         + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["Context"].ToString().Trim() + "</span></div>" + strDes + "</div>";
+
+                                                    str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\"></div>";
+
+                                                    //str += "<script>GetAndShowAddItems('" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + "')</script>";
+                                                }
+                                            }
+                                            else
+                                            {
+                                                strDes = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["HasDes"].ToString().Trim() == "True" ? "<div class=\"col-4\"><span onclick=\"ShowConditionDes(" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionContextId"].ToString().Trim()
+                                                    + ")\" class=\"spanConditionDes\">" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["TitleDes"].ToString().Trim() + "</span></div>" : "";
+                                                if (DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ViewCheckAllRecords"].ToString() == "True")
+                                                {
+                                                    clsRizMetreUsers clsRizMetreUsers = new clsRizMetreUsers();
+                                                    Guid guNew = new Guid();
+                                                    blnIsEzafeBahaAddedItems = DastyarCommon.CheckLakeGiriIsAddingRizMetreUsers1(strShomareh, DrItemsHasConditionWithItemFBShomarehFiltered[ii]["AddedItems"].ToString(), BarAvordId, guNew);
+                                                    string strEzafeBahaIsChecked = "";
+                                                    if (blnIsEzafeBahaAddedItems)
+                                                    {
+                                                        strEzafeBahaIsChecked = "checked=\"checked\"";
+                                                    }
+                                                    strItemsShowInRelItems += "<div class=\"row col-md-12\" style=\"padding-left:0px;padding-right:0px;text-align:right\"><div class=\"col-7\">" +
+                                                        "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\" type=\"checkbox\" style=\"border:0px\" class=\"RizMetreUsersAddStyle spanStyleMitraSmall\" "
+                                                        + strEzafeBahaIsChecked + " onclick=\"ShowAndTickAllEzafeBahaAndLakeGiri($(this),'" + strShomareh + "','"
+                                                        + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString() + "'," + LevelNumber + ",'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "')\"/><span class=\"spanStyleMitraSmall spanLakeGiriStyle\""
+                                                        + " onclick=\"ShowEzafeBahaAndLakeGiriOnly(this,'" + strShomareh + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "');\">"
+                                                        + DrItemsHasConditionWithItemFBShomarehFiltered[0]["Context"].ToString().Trim() + "</span></div>" + strDes + "</div>";
+                                                    str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\"></div>";
+
+                                                    blnItemHasEzafeBaha = true;
+                                                }
+                                                else
+                                                {
+                                                    strItemsShowInRelItems += "<div class=\"row col-md-12\" style=\"padding-right:0px;margin:10px;text-align: right;\"><div class=\"col-7\">" +
+                                                        "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\" onchange=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\" checked=\"checked\" name=\"group"
+                                                        + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString() + strShomareh + "\" type=\"" + strType + "\"/><span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString() + "')\" style=\"color:#000296;\">"
+                                                        + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["Context"].ToString().Trim() + "</span></div>" + strDes + "</div>";
+
+                                                    str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\"></div>";
+
+                                                    //str += "<script>GetAndShowAddItems('" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + "')</script>";
+
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            strDes = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["HasDes"].ToString().Trim() == "True" ? "<div class=\"col-4\"><span onclick=\"ShowConditionDes(" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionContextId"].ToString().Trim()
+                                                + ")\" class=\"spanConditionDes\">" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["TitleDes"].ToString().Trim() + "</span></div>" : "";
+                                            if (DrItemsHasConditionWithItemFBShomarehFiltered[ii]["MoveToRel"].ToString() != "True")
+                                            {
+                                                if (DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ViewCheckAllRecords"].ToString() == "True")
+                                                {
+                                                    clsRizMetreUsers clsRizMetreUsers = new clsRizMetreUsers();
+                                                    Guid guNew = new Guid();
+                                                    blnIsEzafeBahaAddedItems = DastyarCommon.CheckLakeGiriIsAddingRizMetreUsers1(strShomareh, DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString(), BarAvordId, guNew);
+                                                    string strEzafeBahaIsChecked = "";
+                                                    if (blnIsEzafeBahaAddedItems)
+                                                    {
+                                                        strEzafeBahaIsChecked = "checked=\"checked\"";
+                                                    }
+
+                                                    str += "<div class=\"row col-md-12\" style=\"text-align:right\"><div class=\"col-7\">" +
+                                                        "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\" type=\"checkbox\" style=\"border:0px\" class=\"RizMetreUsersAddStyle spanStyleMitraSmall\" " + strEzafeBahaIsChecked + " onclick=\"ShowAndTickAllEzafeBahaAndLakeGiri($(this),'" + strShomareh + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "'," + LevelNumber + ",'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "')\"/><span class=\"spanStyleMitraSmall spanLakeGiriStyle\"" +
+                                                        " onclick=\"ShowEzafeBahaAndLakeGiriOnly(this,'" + strShomareh + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "');\">" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["Context"].ToString().Trim() + "</span></div>" + strDes + "</div>";
+                                                    blnItemHasEzafeBaha = true;
+                                                }
+                                                else
+                                                {
+
+                                                    str += "<div class=\"row col-md-12\" style=\"padding-right:0px;margin:10px;\"><div class=\"col-7\">" +
+                                                        "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\" onchange=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\" name=\"group"
+                                                         + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString() + strShomareh + "\" type=\"" + strType + "\"/><span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString() + "')\" style=\"color:#000296;\">"
+                                                         + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["Context"].ToString().Trim() + "</span></div>" + strDes + "</div>";
+
+                                                    str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\"></div>";
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ViewCheckAllRecords"].ToString() == "True")
+                                                {
+                                                    clsRizMetreUsers clsRizMetreUsers = new clsRizMetreUsers();
+                                                    Guid guNew = new Guid();
+                                                    blnIsEzafeBahaAddedItems = DastyarCommon.CheckLakeGiriIsAddingRizMetreUsers1(strShomareh, DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString(), BarAvordId, guNew);
+                                                    string strEzafeBahaIsChecked = "";
+                                                    if (blnIsEzafeBahaAddedItems)
+                                                    {
+                                                        strEzafeBahaIsChecked = "checked=\"checked\"";
+                                                    }
+
+                                                    strItemsShowInRelItems += "<div class=\"col-md-12\" style=\"padding-left:0px;padding-right:0px;text-align:right\"><div class=\"col-7\">" +
+                                                        "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\" type=\"checkbox\" style=\"border:0px\" class=\"RizMetreUsersAddStyle spanStyleMitraSmall\" " + strEzafeBahaIsChecked + " onclick=\"ShowAndTickAllEzafeBahaAndLakeGiri($(this),'" + strShomareh + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "'," + LevelNumber + ",'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "')\"/><span class=\"spanStyleMitraSmall spanLakeGiriStyle\"" +
+                                                        " onclick=\"ShowEzafeBahaAndLakeGiriOnly(this,'" + strShomareh + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString() + "'," + LevelNumber + ",'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "');\">" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["Context"].ToString().Trim() + "</span></div>" + strDes + "</div>";
+                                                    blnItemHasEzafeBaha = true;
+                                                }
+                                                else
+                                                {
+
+                                                    strItemsShowInRelItems += "<div class=\"row col-md-12\" style=\"padding-right:0px;margin:10px;text-align: right;\"><div class=\"col-7\">" +
+                                                        "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\" onchange=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\" name=\"group"
+                                                        + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString() + strShomareh + "\" type=\"" + strType + "\"/><span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString() + "')\" style=\"color:#000296;\">"
+                                                        + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["Context"].ToString().Trim() + "</span></div>" + strDes + "</div>";
+
+                                                    str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\"></div>";
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                str += "</div>";
+                            }
+                            else
+                            {
+                                DataRow[] Dr = DtItemsHasConditionAddedToFB.Select("ItemsHasCondition_ConditionContextId=" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString());
+
+                                strDes = DrItemsHasConditionWithItemFBShomarehFiltered[0]["HasDes"].ToString().Trim() == "True" ? "<div class=\"col-md-4\"><span onclick=\"ShowConditionDes(" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionContextId"].ToString().Trim()
+                                    + ")\" class=\"spanConditionDes\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["TitleDes"].ToString().Trim() + "</span></div>" : "";
+                                if (DrItemsHasConditionWithItemFBShomarehFiltered[0]["HasEnteringValue"].ToString() == "True")
+                                {
+                                    if (DrItemsHasConditionWithItemFBShomarehFiltered[0]["EnteringCount"].ToString() == "1")
+                                    {
+                                        if (Dr.Length != 0)
+                                        {
+                                            string strDesForEnteringValue = DrItemsHasConditionWithItemFBShomarehFiltered[0]["DesForEnteringValue"].ToString().Trim();
+
+                                            string strMeghdar = decimal.Parse(Dr[0]["Meghdar"].ToString().Trim()).ToString("G29");
+                                            str += "<div class=\"col-md-12\" style=\"color:#0002b1;padding-left:0px;padding-right:0px\">";
+                                            str += "<div class=\"row\" style=\"margin: 0px;\">";
+                                            str += "<div class=\"col-md-5 conditionElementStyle\">"
+                                                + "<input type=\"checkbox\" checked=\"checked\" id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\""
+                                                + " onclick=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber
+                                                + ")\"/>" +
+                                                "<span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "')\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupName"].ToString().Trim() + "</span>"
+                                                + "</div>";
+
+                                            str += "<div class=\"col-2\" style=\"padding-right:10px;text-align: left;\">"
+                                                + "<span class=\"spanStyleEnteringValue\">" + strDesForEnteringValue + "</span>"
+                                                + "</div>";
+
+                                            str += "<div class=\"col-md-1\">"
+                                                + " <input style=\"text-align:center;padding:3px;border: 1px solid #d5d0ff;\""
+                                                + " max =\"" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["MaxValue"].ToString().Trim() + "\""
+                                                + " min =\"" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["MinValue"].ToString().Trim() + "\""
+                                                + " DefaultValue =\"" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["DefaultValue"].ToString().Trim() + "\""
+                                                + " step=\"" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["StepChange"].ToString().Trim() + "\" type=\"number\" id=\"txtMeghdar"
+                                                + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\" onchange=\"textMeghdarOnChange($(this),'"
+                                                + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"] + "'," + LevelNumber + ")\" class=\"form-control spanStyleMitraMedium\" value=\"" + strMeghdar + "\"/></div>";
+                                            str += strDes;
+
+                                            str += "</div></div>";
+
+                                            str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\"></div>";
 
                                         }
                                         else
                                         {
-                                            string strMinValue = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["MinValue"].ToString().Trim();
-                                            string strMaxValue = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["MaxValue"].ToString().Trim();
+                                            /////////
+                                            //////////ghjghj
+                                            //////////////
+                                            if (DrItemsHasConditionWithItemFBShomarehFiltered[0]["ViewCheckAllRecords"].ToString() == "True")
+                                            {
+                                                clsRizMetreUsers clsRizMetreUsers = new clsRizMetreUsers();
+                                                Guid guNew = new Guid();
+                                                blnIsEzafeBahaAddedItems = DastyarCommon.CheckLakeGiriIsAddingRizMetreUsers1(strShomareh, DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString(), BarAvordId, guNew);
+                                                string strEzafeBahaIsChecked = "";
+                                                if (blnIsEzafeBahaAddedItems)
+                                                {
+                                                    strEzafeBahaIsChecked = "checked=\"checked\"";
+                                                }
 
-                                            str += "<div class=\"row col-md-12\" style=\"margin:10px;\">"
-                                                + "<div class=\"col-5\">"
-                                                + "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\" onchange=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\" type=\"" + strType
-                                                + "\" name=\"group" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + strShomareh + "\" />" +
-                                                "<span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString() + "')\" style=\"color:#000296;\">"
-                                                + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["Context"].ToString().Trim() + "</span>" +
-                                                "</div>"
-                                                + "<div class=\"col-2\" style=\"padding-right:10px;text-align: left;\">"
-                                                + "<span class=\"spanStyleEnteringValue\">" + strDesForEnteringValue + "</span>"
-                                                + "</div>"
-                                                + "<div class=\"col-2\" style=\"padding-right:10px;\">" +
-                                                "<input style=\"text-align:center;width:100px;\" " +
-                                                " min=\"" + strMinValue + "\" max=\"" + strMaxValue + "\"  DefaultValue=\"" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["DefaultValue"].ToString().Trim() + "\" step=\"" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["StepChange"].ToString().Trim() + "\" type=\"number\" id=\"txtMeghdar" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\" class=\"form-control spanStyleMitraMedium\" onchange=\"textMeghdarOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + "'," + LevelNumber + ")\"" +
-                                                " step=\"" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["StepChange"].ToString().Trim() + "\" value=\"" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["DefaultValue"].ToString().Trim()
-                                                + "\"/>" +
-                                                "</div>" +
-                                                "<div class=\"col-2\" style=\"padding-right:10px;\">" + strDes + "</div>";
-                                            str += "</div>";
+                                                str += "<div class=\"col-md-6\" style=\"padding-left:0px;padding-right:0px;text-align:right\">" +
+                                                    "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\" type=\"checkbox\" style=\"border:0px\" class=\"RizMetreUsersAddStyle spanStyleMitraSmall\" " + strEzafeBahaIsChecked + " onclick=\"ShowAndTickAllEzafeBahaAndLakeGiri($(this),'" + strShomareh + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "'," + LevelNumber + ",'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "')\"/><span class=\"spanStyleMitraSmall spanLakeGiriStyle\"" +
+                                                    " onclick=\"ShowEzafeBahaAndLakeGiriOnly(this,'" + strShomareh + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "');\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["Context"].ToString().Trim() + "</span>" + strDes + "</div>";
+                                                blnItemHasEzafeBaha = true;
+                                                str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\"></div>";
 
-                                            str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\"></div>";
+                                            }
+                                            else
+                                            {
+                                                string strDesForEnteringValue = DrItemsHasConditionWithItemFBShomarehFiltered[0]["DesForEnteringValue"].ToString().Trim();
+
+                                                str += "<div class=\"col-md-12\" style=\"color:#0002b1;padding-left:0px;padding-right:0px\">";
+                                                str += "<div class=\"row\" style=\"margin: 0px;\">";
+                                                str += "<div class=\"col-md-5 conditionElementStyle\">"
+                                                    + "<input type=\"checkbox\" id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\""
+                                                    + " onclick=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber
+                                                    + ")\"/><span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "')\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupName"].ToString().Trim() + "</span></div>";
+
+                                                str += "<div class=\"col-2\" style=\"padding-right:10px;text-align: left;\">"
+                                              + "<span class=\"spanStyleEnteringValue\">" + strDesForEnteringValue + "</span>"
+                                              + "</div>";
+
+                                                str += "<div class=\"col-md-1\">"
+                                                    + "<input style=\"text-align:center;padding:3px;border: 1px solid #d5d0ff;\" type=\"number\""
+                                                    + " max =\"" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["MaxValue"].ToString().Trim() + "\""
+                                                    + " min =\"" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["MinValue"].ToString().Trim() + "\""
+                                                    + " DefaultValue =\"" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["DefaultValue"].ToString().Trim() + "\""
+                                                    + " step=\"" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["StepChange"].ToString().Trim() + "\" value=\""
+                                                    + DrItemsHasConditionWithItemFBShomarehFiltered[0]["DefaultValue"].ToString().Trim() + "\" id=\"txtMeghdar"
+                                                    + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\" onchange=\"textMeghdarOnChange($(this),'"
+                                                    + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"] + "'," + LevelNumber + ")\" class=\"form-control spanStyleMitraMedium\"/></div>";
+                                                str += strDes;
+                                                str += "</div></div>";
+                                                str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\"></div>";
+
+                                            }
                                         }
                                     }
-                                    else if (DrItemsHasConditionWithItemFBShomarehFiltered[ii]["EnteringCount"].ToString() == "2")
+                                    else if (DrItemsHasConditionWithItemFBShomarehFiltered[0]["EnteringCount"].ToString() == "2")
                                     {
+                                        string strType = "checkbox";
+
                                         if (Dr.Length != 0)
                                         {
-                                            string[] strDesForEnteringValue = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["DesForEnteringValue"].ToString().Trim().Split('_');
-                                            string[] strDefaultValue = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["DefaultValue"].ToString().Trim().Split('_');
-                                            string[] strMinValue = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["MinValue"].ToString().Trim().Split('_');
-                                            string[] strMaxValue = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["MaxValue"].ToString().Trim().Split('_');
-                                            string[] strStepChange = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["StepChange"].ToString().Trim().Split('_');
+                                            string[] strDesForEnteringValue = DrItemsHasConditionWithItemFBShomarehFiltered[0]["DesForEnteringValue"].ToString().Trim().Split('_');
+                                            string[] strDefaultValue = DrItemsHasConditionWithItemFBShomarehFiltered[0]["DefaultValue"].ToString().Trim().Split('_');
+                                            string[] strMinValue = DrItemsHasConditionWithItemFBShomarehFiltered[0]["MinValue"].ToString().Trim().Split('_');
+                                            string[] strMaxValue = DrItemsHasConditionWithItemFBShomarehFiltered[0]["MaxValue"].ToString().Trim().Split('_');
+                                            string[] strStepChange = DrItemsHasConditionWithItemFBShomarehFiltered[0]["StepChange"].ToString().Trim().Split('_');
 
                                             string strDV1 = (strDefaultValue.Length >= 1 ? decimal.Parse(strDefaultValue[0]).ToString("G29") : "");
                                             string strDV2 = (strDefaultValue.Length == 2 ? decimal.Parse(strDefaultValue[1]).ToString("G29") : "");
@@ -4207,45 +4564,42 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                             // strMeghdar1 = (strDefaultValue.Length >= 1 ? decimal.Parse(strDefaultValue[0]).ToString("G29") : "");
                                             //string strMeghdar2 = (strDefaultValue.Length == 2 ? decimal.Parse(strDefaultValue[1]).ToString("G29") : "");
                                             str += "<div class=\"row col-md-12\" style=\"margin:10px;\">"
-                                                + "<div class=\"row col-3\">"
-                                                + "<div class=\"col-1\">"
-                                                + "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\" onchange=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\" type=\"" + strType
-                                                + "\" name=\"group" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + strShomareh + "\" checked=\"checked\"/>"
-                                                + "</div>"
-                                                + "<div class=\"col-10\">"
-                                                + "<span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString() + "')\" style=\"color:#000296;\">"
-                                                    + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["Context"].ToString().Trim()
+                                                + "<div class=\"row col-4\">"
+                                                + "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\" onchange=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\" type=\"" + strType
+                                                + "\" name=\"group" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + strShomareh + "\" checked=\"checked\"/>"
+
+                                                + "<span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "')\" style=\"color:#000296;\">"
+                                                    + DrItemsHasConditionWithItemFBShomarehFiltered[0]["Context"].ToString().Trim()
                                                     + "</span>"
-                                                    + "</div>"
                                                     + "</div>"
                                                     + "<div class=\"col-2\" style=\"padding-right:10px;text-align: left;\">"
                                                     + "<span class=\"spanStyleEnteringValue\">" + strDesForEnteringValue[0] + "</span>"
                                                     + "</div>"
                                                     + "<div class=\"col-1\" style=\"padding-right:10px;\">"
-                                                    + "<input style=\"text-align:center;width:100px;\" max=\"" + strMax2 + "\" min=\"" + strMin2 + "\" defaultvalue=\"" + strDV1 + "\" step=\"" + strStepChange[0]
-                                                    + "\" type=\"number\" id=\"txtMeghdar" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "_1\" onchange=\"textMeghdarOnChange($(this),'"
-                                                    + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + "'," + LevelNumber + ")\" class=\"form-control spanStyleMitraMedium\" value=\"" + strMeghdar1 + "\"/>"
+                                                    + "<input style=\"text-align:center;width:100px;border: 1px solid #d5d0ff;\" max=\"" + strMax2 + "\" min=\"" + strMin2 + "\" defaultvalue=\"" + strDV1 + "\" step=\"" + strStepChange[0]
+                                                    + "\" type=\"number\" id=\"txtMeghdar" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "_1\" onchange=\"textMeghdarOnChange($(this),'"
+                                                    + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + "'," + LevelNumber + ")\" class=\"form-control spanStyleMitraMedium\" value=\"" + strMeghdar1 + "\"/>"
                                                     + "</div>"
                                                     + "<div class=\"col-1\" style=\"padding-right:10px;text-align: left;\">"
                                                     + "<span class=\"spanStyleEnteringValue\">" + strDesForEnteringValue[1] + "</span>"
                                                     + "</div>"
                                                     + "<div class=\"col-1\" style=\"padding-right:10px;\">"
-                                                    + "<input style=\"text-align:center;width:100px;\" max=\"" + strMax2 + "\" min=\"" + strMin2 + "\" defaultvalue=\"" + strDV2 + "\" step=\"" + strStepChange[1]
-                                                    + "\" type=\"number\" id=\"txtMeghdar" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "_2\" onchange=\"textMeghdarOnChange($(this),'"
-                                                    + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + "'," + LevelNumber + ")\" class=\"form-control spanStyleMitraMedium\" value=\"" + strMeghdar2 + "\"/>"
+                                                    + "<input style=\"text-align:center;width:100px;border: 1px solid #d5d0ff;\" max=\"" + strMax2 + "\" min=\"" + strMin2 + "\" defaultvalue=\"" + strDV2 + "\" step=\"" + strStepChange[1]
+                                                    + "\" type=\"number\" id=\"txtMeghdar" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "_2\" onchange=\"textMeghdarOnChange($(this),'"
+                                                    + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + "'," + LevelNumber + ")\" class=\"form-control spanStyleMitraMedium\" value=\"" + strMeghdar2 + "\"/>"
                                                     + "</div>"
                                                     + "<div class=\"col-2\" style=\"padding-right:10px;\">" + strDes + "</div>"
                                                     + "</div>";
                                             //str += "</div>";
-                                            str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\"></div>";
+                                            str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\"></div>";
                                         }
                                         else
                                         {
-                                            string[] strDesForEnteringValue = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["DesForEnteringValue"].ToString().Trim().Split('_');
-                                            string[] strDefaultValue = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["DefaultValue"].ToString().Trim().Split('_');
-                                            string[] strStepChange = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["StepChange"].ToString().Trim().Split('_');
-                                            string[] strMinValue = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["MinValue"].ToString().Trim().Split('_');
-                                            string[] strMaxValue = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["MaxValue"].ToString().Trim().Split('_');
+                                            string[] strDesForEnteringValue = DrItemsHasConditionWithItemFBShomarehFiltered[0]["DesForEnteringValue"].ToString().Trim().Split('_');
+                                            string[] strDefaultValue = DrItemsHasConditionWithItemFBShomarehFiltered[0]["DefaultValue"].ToString().Trim().Split('_');
+                                            string[] strStepChange = DrItemsHasConditionWithItemFBShomarehFiltered[0]["StepChange"].ToString().Trim().Split('_');
+                                            string[] strMinValue = DrItemsHasConditionWithItemFBShomarehFiltered[0]["MinValue"].ToString().Trim().Split('_');
+                                            string[] strMaxValue = DrItemsHasConditionWithItemFBShomarehFiltered[0]["MaxValue"].ToString().Trim().Split('_');
 
 
                                             string strMin1 = (strMinValue.Length >= 1 ? decimal.Parse(strMinValue[0]).ToString("G29") : "");
@@ -4259,126 +4613,49 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                             string strMeghdar2 = (strDefaultValue.Length == 2 ? decimal.Parse(strDefaultValue[1]).ToString("G29") : "");
 
                                             str += "<div class=\"row col-md-12\" style=\"margin:10px;\">"
-                                                + "<div class=\"row col-3\">"
-                                                + "<div class=\"col-1\">"
-                                                + "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\" onchange=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\" type=\"" + strType
-                                                + "\" name=\"group" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + strShomareh + "\" />"
-                                                + "</div>"
-                                                + "<div class=\"col-10\">"
-                                                + "<span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString() + "')\" style=\"color:#000296;\">"
-                                                + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["Context"].ToString().Trim()
+                                                + "<div class=\"row col-4\">"
+                                                + "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\" onchange=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\" type=\"" + strType
+                                                + "\" name=\"group" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + strShomareh + "\" />"
+                                                + "<span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "')\" style=\"color:#000296;\">"
+                                                + DrItemsHasConditionWithItemFBShomarehFiltered[0]["Context"].ToString().Trim()
                                                 + "</span>"
-                                                + "</div>"
                                                 + "</div>"
                                                 + "<div class=\"col-2\" style=\"padding-right:10px;text-align: left;\">"
                                                 + "<span class=\"spanStyleEnteringValue\">" + strDesForEnteringValue[0] + "</span>"
                                                 + "</div>"
                                                 + "<div class=\"col-1\" style=\"padding-right:10px;\">"
-                                                + "<input style=\"text-align:center;width:100px;\" type=\"number\" id=\"txtMeghdar" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "_1\" class=\"form-control spanStyleMitraMedium\" onchange=\"textMeghdarOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + "'," + LevelNumber + ")\""
+                                                + "<input style=\"text-align:center;width:100px;border: 1px solid #d5d0ff;\" type=\"number\" id=\"txtMeghdar" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "_1\" class=\"form-control spanStyleMitraMedium\" onchange=\"textMeghdarOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + "'," + LevelNumber + ")\""
                                                 + " min=\"" + strMin1 + "\" max=\"" + strMax1 + "\" defaultvalue=\"" + strMeghdar1 + "\" step=\"" + strStepChange[0] + "\" value=\"\"/>"
                                                 + "</div>"
                                                 + "<div class=\"col-1\" style=\"padding-right:10px;text-align: left;\">"
                                                 + "<span class=\"spanStyleEnteringValue\">" + (strDesForEnteringValue.Length > 1 ? strDesForEnteringValue[1] : "") + "</span>"
                                                 + "</div>"
                                                 + "<div class=\"col-1\" style=\"padding-right:10px;\">"
-                                                + "<input style=\"text-align:center;width:100px;\" type=\"number\" id=\"txtMeghdar" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "_2\" class=\"form-control spanStyleMitraMedium\" onchange=\"textMeghdarOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + "'," + LevelNumber + ")\""
+                                                + "<input style=\"text-align:center;width:100px;border: 1px solid #d5d0ff;\" type=\"number\" id=\"txtMeghdar" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "_2\" class=\"form-control spanStyleMitraMedium\" onchange=\"textMeghdarOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + "'," + LevelNumber + ")\""
                                                 + " min=\"" + strMin2 + "\" max=\"" + strMax2 + "\" defaultvalue=\"" + strMeghdar2 + "\" step=\"" + (strStepChange.Length > 1 ? strStepChange[1] : "") + "\" value=\"\"/>"
                                                 + "</div>"
                                                 + "<div class=\"col-1\" style=\"padding-right:10px;\">" + strDes + "</div>"
                                                 + "</div>";
                                             // + "</div>";
 
-                                            str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\"></div>";
+                                            str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\"></div>";
                                         }
+
                                     }
                                 }
                                 else
                                 {
+
                                     if (Dr.Length != 0)
                                     {
-                                        if (DrItemsHasConditionWithItemFBShomarehFiltered[ii]["MoveToRel"].ToString() != "True")
+                                        strDes = DrItemsHasConditionWithItemFBShomarehFiltered[0]["HasDes"].ToString().Trim() == "True" ? "<div class=\"col-4\"><span onclick=\"ShowConditionDes(" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionContextId"].ToString().Trim()
+                                            + ")\" class=\"spanConditionDes\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["TitleDes"].ToString().Trim() + "</span></div>" : "";
+
+                                        if (DrItemsHasConditionWithItemFBShomarehFiltered[0]["MoveToRel"].ToString() != "True")
                                         {
-                                            strDes = DrItemsHasConditionWithItemFBShomarehFiltered[0]["HasDes"].ToString().Trim() == "True" ? "<div class=\"col-4\"><span onclick=\"ShowConditionDes("
-                                                + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionContextId"].ToString().Trim() + ")\" class=\"spanConditionDes\">" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["TitleDes"].ToString().Trim() + "</span></div>" : "";
-                                            if (DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ViewCheckAllRecords"].ToString() == "True")
+                                            if (DrItemsHasConditionWithItemFBShomarehFiltered[0]["ViewCheckAllRecords"].ToString() == "True")
                                             {
-                                                clsRizMetreUsers clsRizMetreUsers = new clsRizMetreUsers();
-                                                Guid guNew = new Guid();
-                                                blnIsEzafeBahaAddedItems = DastyarCommon.CheckLakeGiriIsAddingRizMetreUsers1(strShomareh, DrItemsHasConditionWithItemFBShomarehFiltered[ii]["AddedItems"].ToString().Trim(), BarAvordId, guNew);
-                                                string strEzafeBahaIsChecked = "";
-                                                if (blnIsEzafeBahaAddedItems)
-                                                {
-                                                    strEzafeBahaIsChecked = "checked=\"checked\"";
-                                                }
-                                                str += "<div class=\"row col-md-12\" style=\"padding-left: 0px;padding-right: 0px;text-align:right\"><div class=\"col-7\"><input type=\"checkbox\" style=\"border:0px\" class=\"RizMetreUsersAddStyle spanStyleMitraSmall\" "
-                                                    + strEzafeBahaIsChecked + " onclick=\"ShowAndTickAllEzafeBahaAndLakeGiri($(this),'" + strShomareh + "','"
-                                                    + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "'," + LevelNumber + "',"
-                                                    + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "')\"/><span class=\"spanStyleMitraSmall spanLakeGiriStyle\""
-                                                    + " onclick=\"ShowEzafeBahaAndLakeGiriOnly(this,'" + strShomareh
-                                                    + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "');\">"
-                                                    + DrItemsHasConditionWithItemFBShomarehFiltered[0]["Context"].ToString().Trim() + "</span></div>" + strDes + "</div>";
-                                                str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\"></div>";
-
-                                                blnItemHasEzafeBaha = true;
-                                            }
-                                            else
-                                            {
-                                                str += "<div class=\"row col-md-12\" style=\"padding-left:0px;margin:10px;\"><div class=\"col-7\"><input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\" onchange=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\" checked=\"checked\" name=\"group"
-                                                    + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString() + strShomareh + "\" type=\"" + strType + "\"/><span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString() + "')\" style=\"color:#000296;\">"
-                                                     + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["Context"].ToString().Trim() + "</span></div>" + strDes + "</div>";
-
-                                                str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\"></div>";
-
-                                                //str += "<script>GetAndShowAddItems('" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + "')</script>";
-                                            }
-                                        }
-                                        else
-                                        {
-                                            strDes = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["HasDes"].ToString().Trim() == "True" ? "<div class=\"col-4\"><span onclick=\"ShowConditionDes(" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionContextId"].ToString().Trim()
-                                                + ")\" class=\"spanConditionDes\">" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["TitleDes"].ToString().Trim() + "</span></div>" : "";
-                                            if (DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ViewCheckAllRecords"].ToString() == "True")
-                                            {
-                                                clsRizMetreUsers clsRizMetreUsers = new clsRizMetreUsers();
-                                                Guid guNew = new Guid();
-                                                blnIsEzafeBahaAddedItems = DastyarCommon.CheckLakeGiriIsAddingRizMetreUsers1(strShomareh, DrItemsHasConditionWithItemFBShomarehFiltered[ii]["AddedItems"].ToString(), BarAvordId, guNew);
-                                                string strEzafeBahaIsChecked = "";
-                                                if (blnIsEzafeBahaAddedItems)
-                                                {
-                                                    strEzafeBahaIsChecked = "checked=\"checked\"";
-                                                }
-                                                strItemsShowInRelItems += "<div class=\"row col-md-12\" style=\"padding-left:0px;padding-right:0px;text-align:right\"><div class=\"col-7\">" +
-                                                    "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\" type=\"checkbox\" style=\"border:0px\" class=\"RizMetreUsersAddStyle spanStyleMitraSmall\" "
-                                                    + strEzafeBahaIsChecked + " onclick=\"ShowAndTickAllEzafeBahaAndLakeGiri($(this),'" + strShomareh + "','"
-                                                    + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString() + "'," + LevelNumber + ",'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "')\"/><span class=\"spanStyleMitraSmall spanLakeGiriStyle\""
-                                                    + " onclick=\"ShowEzafeBahaAndLakeGiriOnly(this,'" + strShomareh + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "');\">"
-                                                    + DrItemsHasConditionWithItemFBShomarehFiltered[0]["Context"].ToString().Trim() + "</span></div>" + strDes + "</div>";
-                                                str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\"></div>";
-
-                                                blnItemHasEzafeBaha = true;
-                                            }
-                                            else
-                                            {
-                                                strItemsShowInRelItems += "<div class=\"row col-md-12\" style=\"padding-right:0px;margin:10px;text-align: right;\"><div class=\"col-7\">" +
-                                                    "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\" onchange=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\" checked=\"checked\" name=\"group"
-                                                    + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString() + strShomareh + "\" type=\"" + strType + "\"/><span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString() + "')\" style=\"color:#000296;\">"
-                                                    + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["Context"].ToString().Trim() + "</span></div>" + strDes + "</div>";
-
-                                                str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\"></div>";
-
-                                                //str += "<script>GetAndShowAddItems('" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + "')</script>";
-
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        strDes = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["HasDes"].ToString().Trim() == "True" ? "<div class=\"col-4\"><span onclick=\"ShowConditionDes(" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionContextId"].ToString().Trim()
-                                            + ")\" class=\"spanConditionDes\">" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["TitleDes"].ToString().Trim() + "</span></div>" : "";
-                                        if (DrItemsHasConditionWithItemFBShomarehFiltered[ii]["MoveToRel"].ToString() != "True")
-                                        {
-                                            if (DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ViewCheckAllRecords"].ToString() == "True")
-                                            {
-                                                clsRizMetreUsers clsRizMetreUsers = new clsRizMetreUsers();
+                                                clsRizMetreUsers rizMetreUser = new clsRizMetreUsers();
                                                 Guid guNew = new Guid();
                                                 blnIsEzafeBahaAddedItems = DastyarCommon.CheckLakeGiriIsAddingRizMetreUsers1(strShomareh, DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString(), BarAvordId, guNew);
                                                 string strEzafeBahaIsChecked = "";
@@ -4388,26 +4665,36 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                                 }
 
                                                 str += "<div class=\"row col-md-12\" style=\"text-align:right\"><div class=\"col-7\">" +
-                                                    "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\" type=\"checkbox\" style=\"border:0px\" class=\"RizMetreUsersAddStyle spanStyleMitraSmall\" " + strEzafeBahaIsChecked + " onclick=\"ShowAndTickAllEzafeBahaAndLakeGiri($(this),'" + strShomareh + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "'," + LevelNumber + ",'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "')\"/><span class=\"spanStyleMitraSmall spanLakeGiriStyle\"" +
-                                                    " onclick=\"ShowEzafeBahaAndLakeGiriOnly(this,'" + strShomareh + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "');\">" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["Context"].ToString().Trim() + "</span></div>" + strDes + "</div>";
+                                                    "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\" type=\"checkbox\" style=\"border:0px\" class=\"RizMetreUsersAddStyle spanStyleMitraSmall\" " + strEzafeBahaIsChecked + " onclick=\"ShowAndTickAllEzafeBahaAndLakeGiri($(this),'" + strShomareh + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "'," + LevelNumber + ",'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "')\"/><span class=\"spanStyleMitraSmall spanLakeGiriStyle\"" +
+                                                    " onclick=\"ShowEzafeBahaAndLakeGiriOnly(this,'" + strShomareh + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "');\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["Context"].ToString().Trim() + "</span></div>" + strDes + "</div>";
+                                                str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\"></div>";
+
+                                                //str += "<script>GetAndShowAddItems('" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + "')</script>";
+
                                                 blnItemHasEzafeBaha = true;
                                             }
                                             else
                                             {
+                                                //str += "<div class=\"col-md-4 conditionElementStyle\" style=\"color:#0002b1;padding-left:0px;padding-right:0px\"><input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\" type=\"checkbox\" checked=\"checked\" onclick=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\"/>"
+                                                //    + "<span onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "')\" class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupName"].ToString().Trim() + "</span></div>";
 
-                                                str += "<div class=\"row col-md-12\" style=\"padding-right:0px;margin:10px;\"><div class=\"col-7\">" +
-                                                    "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\" onchange=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\" name=\"group"
-                                                     + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString() + strShomareh + "\" type=\"" + strType + "\"/><span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString() + "')\" style=\"color:#000296;\">"
-                                                     + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["Context"].ToString().Trim() + "</span></div>" + strDes + "</div>";
+                                                str += "<div class=\"row col-md-12 conditionElementStyle\" style=\"color:#0002b1;padding-left:0px;padding-right:0px\">" +
+                                                    "<div class=\"col-7\"><input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString()
+                                                    + "\" type=\"checkbox\" checked=\"checked\" onclick=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim()
+                                                    + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\"/><span onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','"
+                                                    + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "')\" class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupName"].ToString().Trim() + "</span></div>"
+                                                    + strDes
+                                                    + "</div>";
 
-                                                str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\"></div>";
+                                                str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\"></div>";
+
                                             }
                                         }
                                         else
                                         {
-                                            if (DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ViewCheckAllRecords"].ToString() == "True")
+                                            if (DrItemsHasConditionWithItemFBShomarehFiltered[0]["ViewCheckAllRecords"].ToString() == "True")
                                             {
-                                                clsRizMetreUsers clsRizMetreUsers = new clsRizMetreUsers();
+                                                clsRizMetreUsers rizMetreUser = new clsRizMetreUsers();
                                                 Guid guNew = new Guid();
                                                 blnIsEzafeBahaAddedItems = DastyarCommon.CheckLakeGiriIsAddingRizMetreUsers1(strShomareh, DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString(), BarAvordId, guNew);
                                                 string strEzafeBahaIsChecked = "";
@@ -4416,374 +4703,118 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                                     strEzafeBahaIsChecked = "checked=\"checked\"";
                                                 }
 
-                                                strItemsShowInRelItems += "<div class=\"col-md-12\" style=\"padding-left:0px;padding-right:0px;text-align:right\"><div class=\"col-7\">" +
-                                                    "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\" type=\"checkbox\" style=\"border:0px\" class=\"RizMetreUsersAddStyle spanStyleMitraSmall\" " + strEzafeBahaIsChecked + " onclick=\"ShowAndTickAllEzafeBahaAndLakeGiri($(this),'" + strShomareh + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "'," + LevelNumber + ",'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "')\"/><span class=\"spanStyleMitraSmall spanLakeGiriStyle\"" +
-                                                    " onclick=\"ShowEzafeBahaAndLakeGiriOnly(this,'" + strShomareh + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString() + "'," + LevelNumber + ",'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "');\">" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["Context"].ToString().Trim() + "</span></div>" + strDes + "</div>";
+                                                str += "<div class=\"col-md-6\" style=\"padding-left:0px;padding-right:0px;text-align:right\">" +
+                                                    "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\" type=\"checkbox\" style=\"border:0px\" class=\"RizMetreUsersAddStyle spanStyleMitraSmall\" " + strEzafeBahaIsChecked + " onclick=\"ShowAndTickAllEzafeBahaAndLakeGiri($(this),'" + strShomareh + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "'," + LevelNumber + ",'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "')\"/><span class=\"spanStyleMitraSmall spanLakeGiriStyle\"" +
+                                                    " onclick=\"ShowEzafeBahaAndLakeGiriOnly(this,'" + strShomareh + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "');\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["Context"].ToString().Trim() + "</span>" + strDes + "</div>";
+                                                blnItemHasEzafeBaha = true;
+                                            }
+                                            else
+                                            {
+                                                str += "<div class=\"col-md-12\" style=\"padding-right:0px;margin:10px;text-align: right;\"><div class=\"col-md-5\"><input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\" onchange=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\" checked=\"checked\" name=\"group"
+                                                    + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + strShomareh + "\" type=\"checkbox\"/><span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "')\" style=\"color:#000296;\">"
+                                                    + DrItemsHasConditionWithItemFBShomarehFiltered[0]["Context"].ToString().Trim() + "</span></div>" + strDes + "</div>";
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        strDes = DrItemsHasConditionWithItemFBShomarehFiltered[0]["HasDes"].ToString().Trim() == "True" ? "<div class=\"col-4\"><span onclick=\"ShowConditionDes(" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionContextId"].ToString().Trim()
+                                            + ")\" class=\"spanConditionDes\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["TitleDes"].ToString().Trim() + "</span></div>" : "";
+                                        if (DrItemsHasConditionWithItemFBShomarehFiltered[0]["MoveToRel"].ToString() != "True")
+                                        {
+                                            if (DrItemsHasConditionWithItemFBShomarehFiltered[0]["ViewCheckAllRecords"].ToString() == "True")
+                                            {
+                                                clsRizMetreUsers rizMetreUser = new clsRizMetreUsers();
+                                                Guid guNew = new Guid();
+                                                blnIsEzafeBahaAddedItems = DastyarCommon.CheckLakeGiriIsAddingRizMetreUsers1(strShomareh, DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString(), BarAvordId, guNew);
+                                                string strEzafeBahaIsChecked = "";
+                                                if (blnIsEzafeBahaAddedItems)
+                                                {
+                                                    strEzafeBahaIsChecked = "checked=\"checked\"";
+                                                }
+
+                                                str += "<div class=\"row col-md-12\" style=\"text-align:right\"><div class=\"col-7\">" +
+                                                    "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\" type=\"checkbox\" style=\"border:0px\" class=\"RizMetreUsersAddStyle spanStyleMitraSmall\" " + strEzafeBahaIsChecked + " onclick=\"ShowAndTickAllEzafeBahaAndLakeGiri($(this),'" + strShomareh + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "'," + LevelNumber + ",'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "')\"/><span class=\"spanStyleMitraSmall spanLakeGiriStyle\"" +
+                                                    " onclick=\"ShowEzafeBahaAndLakeGiriOnly(this,'" + strShomareh + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "');\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["Context"].ToString().Trim() + "</span></div>" + strDes + "</div>";
+
+                                                str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\"></div>";
+
+                                                blnItemHasEzafeBaha = true;
+                                            }
+                                            else
+                                            {
+                                                str += "<div class=\"row col-md-12 conditionElementStyle\" style=\"color:#0002b1;padding-left:0px;padding-right:0px\">" +
+                                                    "<div class=\"col-7\"><input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString()
+                                                    + "\" type=\"checkbox\" onclick=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim()
+                                                    + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\"/><span onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','"
+                                                    + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "')\" class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupName"].ToString().Trim() + "</span></div>"
+                                                    + strDes
+                                                    + "</div>";
+
+                                                str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\"></div>";
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (DrItemsHasConditionWithItemFBShomarehFiltered[0]["ViewCheckAllRecords"].ToString() == "True")
+                                            {
+                                                clsRizMetreUsers rizMetreUser = new clsRizMetreUsers();
+                                                Guid guID = new Guid();
+
+                                                blnIsEzafeBahaAddedItems = DastyarCommon.CheckLakeGiriIsAddingRizMetreUsers1(strShomareh, DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString(), BarAvordId, guID);
+                                                string strEzafeBahaIsChecked = "";
+                                                if (blnIsEzafeBahaAddedItems)
+                                                {
+                                                    strEzafeBahaIsChecked = "checked=\"checked\"";
+                                                }
+
+                                                str += "<div class=\"col-md-12\" style=\"padding-left: 0px;padding-right: 0px;text-align: right;\"><div class=\"col-md-5\">" +
+                                                    "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\" type=\"checkbox\" style=\"border:0px\" class=\"RizMetreUsersAddStyle spanStyleMitraSmall\" " + strEzafeBahaIsChecked + " onclick=\"ShowAndTickAllEzafeBahaAndLakeGiri($(this),'" + strShomareh + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "'," + LevelNumber + ",'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "')\"/><span class=\"spanStyleMitraSmall spanLakeGiriStyle\"" +
+                                                    " onclick=\"ShowEzafeBahaAndLakeGiriOnly(this,'" + strShomareh + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "');\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["Context"].ToString().Trim() + "</span></div>" + strDes + "</div>";
                                                 blnItemHasEzafeBaha = true;
                                             }
                                             else
                                             {
 
-                                                strItemsShowInRelItems += "<div class=\"row col-md-12\" style=\"padding-right:0px;margin:10px;text-align: right;\"><div class=\"col-7\">" +
-                                                    "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\" onchange=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\" name=\"group"
-                                                    + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString() + strShomareh + "\" type=\"" + strType + "\"/><span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ConditionGroupId"].ToString() + "')\" style=\"color:#000296;\">"
-                                                    + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["Context"].ToString().Trim() + "</span></div>" + strDes + "</div>";
-
-                                                str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ID"].ToString() + "\"></div>";
+                                                str += "<div class=\"col-md-12\" style=\"padding-right:0px;margin:10px;text-align: right;\"><div class=\"col-7\"><input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\" onchange=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\" name=\"group"
+                                                    + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + strShomareh + "\" type=\"checkbox\"/><span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "')\" style=\"color:#000296;\">"
+                                                    + DrItemsHasConditionWithItemFBShomarehFiltered[0]["Context"].ToString().Trim() + "</span></div>" + strDes + "</div>";
                                             }
-                                        }
-                                    }
-                                }
-                            }
-                            str += "</div>";
-                        }
-                        else
-                        {
-                            DataRow[] Dr = DtItemsHasConditionAddedToFB.Select("ItemsHasCondition_ConditionContextId=" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString());
-
-                            strDes = DrItemsHasConditionWithItemFBShomarehFiltered[0]["HasDes"].ToString().Trim() == "True" ? "<div class=\"col-md-4\"><span onclick=\"ShowConditionDes(" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionContextId"].ToString().Trim()
-                                + ")\" class=\"spanConditionDes\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["TitleDes"].ToString().Trim() + "</span></div>" : "";
-                            if (DrItemsHasConditionWithItemFBShomarehFiltered[0]["HasEnteringValue"].ToString() == "True")
-                            {
-                                if (DrItemsHasConditionWithItemFBShomarehFiltered[0]["EnteringCount"].ToString() == "1")
-                                {
-                                    if (Dr.Length != 0)
-                                    {
-                                        string strDesForEnteringValue = DrItemsHasConditionWithItemFBShomarehFiltered[0]["DesForEnteringValue"].ToString().Trim();
-
-                                        string strMeghdar = decimal.Parse(Dr[0]["Meghdar"].ToString().Trim()).ToString("G29");
-                                        str += "<div class=\"col-md-12\" style=\"color:#0002b1;padding-left:0px;padding-right:0px\">";
-                                        str += "<div class=\"row\" style=\"margin: 0px;\">";
-                                        str += "<div class=\"col-md-5 conditionElementStyle\">"
-                                            + "<input type=\"checkbox\" checked=\"checked\" id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\""
-                                            + " onclick=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber
-                                            + ")\"/>" +
-                                            "<span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "')\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupName"].ToString().Trim() + "</span>"
-                                            + "</div>";
-
-                                        str += "<div class=\"col-2\" style=\"padding-right:10px;text-align: left;\">"
-                                            + "<span class=\"spanStyleEnteringValue\">" + strDesForEnteringValue + "</span>"
-                                            + "</div>";
-
-                                        str += "<div class=\"col-md-1\">"
-                                            + " <input style=\"text-align:center;padding:3px;border: 1px solid #d5d0ff;\""
-                                            + " max =\"" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["MaxValue"].ToString().Trim() + "\""
-                                            + " min =\"" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["MinValue"].ToString().Trim() + "\""
-                                            + " DefaultValue =\"" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["DefaultValue"].ToString().Trim() + "\""
-                                            + " step=\"" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["StepChange"].ToString().Trim() + "\" type=\"number\" id=\"txtMeghdar"
-                                            + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\" onchange=\"textMeghdarOnChange($(this),'"
-                                            + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"] + "'," + LevelNumber + ")\" class=\"form-control spanStyleMitraMedium\" value=\"" + strMeghdar + "\"/></div>";
-                                        str += strDes;
-
-                                        str += "</div></div>";
-
-                                        str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\"></div>";
-
-                                    }
-                                    else
-                                    {
-                                        /////////
-                                        //////////ghjghj
-                                        //////////////
-                                        if (DrItemsHasConditionWithItemFBShomarehFiltered[0]["ViewCheckAllRecords"].ToString() == "True")
-                                        {
-                                            clsRizMetreUsers clsRizMetreUsers = new clsRizMetreUsers();
-                                            Guid guNew = new Guid();
-                                            blnIsEzafeBahaAddedItems = DastyarCommon.CheckLakeGiriIsAddingRizMetreUsers1(strShomareh, DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString(), BarAvordId, guNew);
-                                            string strEzafeBahaIsChecked = "";
-                                            if (blnIsEzafeBahaAddedItems)
-                                            {
-                                                strEzafeBahaIsChecked = "checked=\"checked\"";
-                                            }
-
-                                            str += "<div class=\"col-md-6\" style=\"padding-left:0px;padding-right:0px;text-align:right\">" +
-                                                "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\" type=\"checkbox\" style=\"border:0px\" class=\"RizMetreUsersAddStyle spanStyleMitraSmall\" " + strEzafeBahaIsChecked + " onclick=\"ShowAndTickAllEzafeBahaAndLakeGiri($(this),'" + strShomareh + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "'," + LevelNumber + ",'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "')\"/><span class=\"spanStyleMitraSmall spanLakeGiriStyle\"" +
-                                                " onclick=\"ShowEzafeBahaAndLakeGiriOnly(this,'" + strShomareh + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "');\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["Context"].ToString().Trim() + "</span>" + strDes + "</div>";
-                                            blnItemHasEzafeBaha = true;
-                                            str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\"></div>";
-
-                                        }
-                                        else
-                                        {
-                                            string strDesForEnteringValue = DrItemsHasConditionWithItemFBShomarehFiltered[0]["DesForEnteringValue"].ToString().Trim();
-
-                                            str += "<div class=\"col-md-12\" style=\"color:#0002b1;padding-left:0px;padding-right:0px\">";
-                                            str += "<div class=\"row\" style=\"margin: 0px;\">";
-                                            str += "<div class=\"col-md-5 conditionElementStyle\">"
-                                                + "<input type=\"checkbox\" id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\""
-                                                + " onclick=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber
-                                                + ")\"/><span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "')\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupName"].ToString().Trim() + "</span></div>";
-
-                                            str += "<div class=\"col-2\" style=\"padding-right:10px;text-align: left;\">"
-                                          + "<span class=\"spanStyleEnteringValue\">" + strDesForEnteringValue + "</span>"
-                                          + "</div>";
-
-                                            str += "<div class=\"col-md-1\">"
-                                                + "<input style=\"text-align:center;padding:3px;border: 1px solid #d5d0ff;\" type=\"number\""
-                                                + " max =\"" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["MaxValue"].ToString().Trim() + "\""
-                                                + " min =\"" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["MinValue"].ToString().Trim() + "\""
-                                                + " DefaultValue =\"" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["DefaultValue"].ToString().Trim() + "\""
-                                                + " step=\"" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["StepChange"].ToString().Trim() + "\" value=\""
-                                                + DrItemsHasConditionWithItemFBShomarehFiltered[0]["DefaultValue"].ToString().Trim() + "\" id=\"txtMeghdar"
-                                                + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\" onchange=\"textMeghdarOnChange($(this),'"
-                                                + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"] + "'," + LevelNumber + ")\" class=\"form-control spanStyleMitraMedium\"/></div>";
-                                            str += strDes;
-                                            str += "</div></div>";
-                                            str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\"></div>";
-
-                                        }
-                                    }
-                                }
-                                else if (DrItemsHasConditionWithItemFBShomarehFiltered[0]["EnteringCount"].ToString() == "2")
-                                {
-                                    string strType = "checkbox";
-
-                                    if (Dr.Length != 0)
-                                    {
-                                        string[] strDesForEnteringValue = DrItemsHasConditionWithItemFBShomarehFiltered[0]["DesForEnteringValue"].ToString().Trim().Split('_');
-                                        string[] strDefaultValue = DrItemsHasConditionWithItemFBShomarehFiltered[0]["DefaultValue"].ToString().Trim().Split('_');
-                                        string[] strMinValue = DrItemsHasConditionWithItemFBShomarehFiltered[0]["MinValue"].ToString().Trim().Split('_');
-                                        string[] strMaxValue = DrItemsHasConditionWithItemFBShomarehFiltered[0]["MaxValue"].ToString().Trim().Split('_');
-                                        string[] strStepChange = DrItemsHasConditionWithItemFBShomarehFiltered[0]["StepChange"].ToString().Trim().Split('_');
-
-                                        string strDV1 = (strDefaultValue.Length >= 1 ? decimal.Parse(strDefaultValue[0]).ToString("G29") : "");
-                                        string strDV2 = (strDefaultValue.Length == 2 ? decimal.Parse(strDefaultValue[1]).ToString("G29") : "");
-
-                                        string strMin1 = (strMinValue.Length >= 1 ? decimal.Parse(strMinValue[0]).ToString("G29") : "");
-                                        string strMin2 = (strMinValue.Length == 2 ? decimal.Parse(strMinValue[1]).ToString("G29") : "");
-
-                                        string strMax1 = (strMaxValue.Length >= 1 ? decimal.Parse(strMaxValue[0]).ToString("G29") : "");
-                                        string strMax2 = (strMaxValue.Length == 2 ? decimal.Parse(strMaxValue[1]).ToString("G29") : "");
-
-                                        string strMeghdar1 = decimal.Parse(Dr[0]["Meghdar"].ToString().Trim()).ToString("G29");
-                                        string strMeghdar2 = decimal.Parse(Dr[0]["Meghdar2"].ToString().Trim()).ToString("G29");
-
-                                        // strMeghdar1 = (strDefaultValue.Length >= 1 ? decimal.Parse(strDefaultValue[0]).ToString("G29") : "");
-                                        //string strMeghdar2 = (strDefaultValue.Length == 2 ? decimal.Parse(strDefaultValue[1]).ToString("G29") : "");
-                                        str += "<div class=\"row col-md-12\" style=\"margin:10px;\">"
-                                            + "<div class=\"row col-4\">"
-                                            + "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\" onchange=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\" type=\"" + strType
-                                            + "\" name=\"group" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + strShomareh + "\" checked=\"checked\"/>"
-
-                                            + "<span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "')\" style=\"color:#000296;\">"
-                                                + DrItemsHasConditionWithItemFBShomarehFiltered[0]["Context"].ToString().Trim()
-                                                + "</span>"
-                                                + "</div>"
-                                                + "<div class=\"col-2\" style=\"padding-right:10px;text-align: left;\">"
-                                                + "<span class=\"spanStyleEnteringValue\">" + strDesForEnteringValue[0] + "</span>"
-                                                + "</div>"
-                                                + "<div class=\"col-1\" style=\"padding-right:10px;\">"
-                                                + "<input style=\"text-align:center;width:100px;border: 1px solid #d5d0ff;\" max=\"" + strMax2 + "\" min=\"" + strMin2 + "\" defaultvalue=\"" + strDV1 + "\" step=\"" + strStepChange[0]
-                                                + "\" type=\"number\" id=\"txtMeghdar" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "_1\" onchange=\"textMeghdarOnChange($(this),'"
-                                                + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + "'," + LevelNumber + ")\" class=\"form-control spanStyleMitraMedium\" value=\"" + strMeghdar1 + "\"/>"
-                                                + "</div>"
-                                                + "<div class=\"col-1\" style=\"padding-right:10px;text-align: left;\">"
-                                                + "<span class=\"spanStyleEnteringValue\">" + strDesForEnteringValue[1] + "</span>"
-                                                + "</div>"
-                                                + "<div class=\"col-1\" style=\"padding-right:10px;\">"
-                                                + "<input style=\"text-align:center;width:100px;border: 1px solid #d5d0ff;\" max=\"" + strMax2 + "\" min=\"" + strMin2 + "\" defaultvalue=\"" + strDV2 + "\" step=\"" + strStepChange[1]
-                                                + "\" type=\"number\" id=\"txtMeghdar" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "_2\" onchange=\"textMeghdarOnChange($(this),'"
-                                                + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + "'," + LevelNumber + ")\" class=\"form-control spanStyleMitraMedium\" value=\"" + strMeghdar2 + "\"/>"
-                                                + "</div>"
-                                                + "<div class=\"col-2\" style=\"padding-right:10px;\">" + strDes + "</div>"
-                                                + "</div>";
-                                        //str += "</div>";
-                                        str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\"></div>";
-                                    }
-                                    else
-                                    {
-                                        string[] strDesForEnteringValue = DrItemsHasConditionWithItemFBShomarehFiltered[0]["DesForEnteringValue"].ToString().Trim().Split('_');
-                                        string[] strDefaultValue = DrItemsHasConditionWithItemFBShomarehFiltered[0]["DefaultValue"].ToString().Trim().Split('_');
-                                        string[] strStepChange = DrItemsHasConditionWithItemFBShomarehFiltered[0]["StepChange"].ToString().Trim().Split('_');
-                                        string[] strMinValue = DrItemsHasConditionWithItemFBShomarehFiltered[0]["MinValue"].ToString().Trim().Split('_');
-                                        string[] strMaxValue = DrItemsHasConditionWithItemFBShomarehFiltered[0]["MaxValue"].ToString().Trim().Split('_');
-
-
-                                        string strMin1 = (strMinValue.Length >= 1 ? decimal.Parse(strMinValue[0]).ToString("G29") : "");
-                                        string strMin2 = (strMinValue.Length == 2 ? decimal.Parse(strMinValue[1]).ToString("G29") : "");
-
-                                        string strMax1 = (strMaxValue.Length >= 1 ? decimal.Parse(strMaxValue[0]).ToString("G29") : "");
-                                        string strMax2 = (strMaxValue.Length == 2 ? decimal.Parse(strMaxValue[1]).ToString("G29") : "");
-
-
-                                        string strMeghdar1 = (strDefaultValue.Length >= 1 ? decimal.Parse(strDefaultValue[0]).ToString("G29") : "");
-                                        string strMeghdar2 = (strDefaultValue.Length == 2 ? decimal.Parse(strDefaultValue[1]).ToString("G29") : "");
-
-                                        str += "<div class=\"row col-md-12\" style=\"margin:10px;\">"
-                                            + "<div class=\"row col-4\">"
-                                            + "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\" onchange=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\" type=\"" + strType
-                                            + "\" name=\"group" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + strShomareh + "\" />"
-                                            + "<span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "')\" style=\"color:#000296;\">"
-                                            + DrItemsHasConditionWithItemFBShomarehFiltered[0]["Context"].ToString().Trim()
-                                            + "</span>"
-                                            + "</div>"
-                                            + "<div class=\"col-2\" style=\"padding-right:10px;text-align: left;\">"
-                                            + "<span class=\"spanStyleEnteringValue\">" + strDesForEnteringValue[0] + "</span>"
-                                            + "</div>"
-                                            + "<div class=\"col-1\" style=\"padding-right:10px;\">"
-                                            + "<input style=\"text-align:center;width:100px;border: 1px solid #d5d0ff;\" type=\"number\" id=\"txtMeghdar" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "_1\" class=\"form-control spanStyleMitraMedium\" onchange=\"textMeghdarOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + "'," + LevelNumber + ")\""
-                                            + " min=\"" + strMin1 + "\" max=\"" + strMax1 + "\" defaultvalue=\"" + strMeghdar1 + "\" step=\"" + strStepChange[0] + "\" value=\"\"/>"
-                                            + "</div>"
-                                            + "<div class=\"col-1\" style=\"padding-right:10px;text-align: left;\">"
-                                            + "<span class=\"spanStyleEnteringValue\">" + (strDesForEnteringValue.Length > 1 ? strDesForEnteringValue[1] : "") + "</span>"
-                                            + "</div>"
-                                            + "<div class=\"col-1\" style=\"padding-right:10px;\">"
-                                            + "<input style=\"text-align:center;width:100px;border: 1px solid #d5d0ff;\" type=\"number\" id=\"txtMeghdar" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "_2\" class=\"form-control spanStyleMitraMedium\" onchange=\"textMeghdarOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + "'," + LevelNumber + ")\""
-                                            + " min=\"" + strMin2 + "\" max=\"" + strMax2 + "\" defaultvalue=\"" + strMeghdar2 + "\" step=\"" + (strStepChange.Length > 1 ? strStepChange[1] : "") + "\" value=\"\"/>"
-                                            + "</div>"
-                                            + "<div class=\"col-1\" style=\"padding-right:10px;\">" + strDes + "</div>"
-                                            + "</div>";
-                                        // + "</div>";
-
-                                        str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\"></div>";
-                                    }
-
-                                }
-                            }
-                            else
-                            {
-
-                                if (Dr.Length != 0)
-                                {
-                                    strDes = DrItemsHasConditionWithItemFBShomarehFiltered[0]["HasDes"].ToString().Trim() == "True" ? "<div class=\"col-4\"><span onclick=\"ShowConditionDes(" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionContextId"].ToString().Trim()
-                                        + ")\" class=\"spanConditionDes\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["TitleDes"].ToString().Trim() + "</span></div>" : "";
-
-                                    if (DrItemsHasConditionWithItemFBShomarehFiltered[0]["MoveToRel"].ToString() != "True")
-                                    {
-                                        if (DrItemsHasConditionWithItemFBShomarehFiltered[0]["ViewCheckAllRecords"].ToString() == "True")
-                                        {
-                                            clsRizMetreUsers rizMetreUser = new clsRizMetreUsers();
-                                            Guid guNew = new Guid();
-                                            blnIsEzafeBahaAddedItems = DastyarCommon.CheckLakeGiriIsAddingRizMetreUsers1(strShomareh, DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString(), BarAvordId, guNew);
-                                            string strEzafeBahaIsChecked = "";
-                                            if (blnIsEzafeBahaAddedItems)
-                                            {
-                                                strEzafeBahaIsChecked = "checked=\"checked\"";
-                                            }
-
-                                            str += "<div class=\"row col-md-12\" style=\"text-align:right\"><div class=\"col-7\">" +
-                                                "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\" type=\"checkbox\" style=\"border:0px\" class=\"RizMetreUsersAddStyle spanStyleMitraSmall\" " + strEzafeBahaIsChecked + " onclick=\"ShowAndTickAllEzafeBahaAndLakeGiri($(this),'" + strShomareh + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "'," + LevelNumber + ",'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "')\"/><span class=\"spanStyleMitraSmall spanLakeGiriStyle\"" +
-                                                " onclick=\"ShowEzafeBahaAndLakeGiriOnly(this,'" + strShomareh + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "');\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["Context"].ToString().Trim() + "</span></div>" + strDes + "</div>";
-                                            str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\"></div>";
-
-                                            //str += "<script>GetAndShowAddItems('" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + "')</script>";
-
-                                            blnItemHasEzafeBaha = true;
-                                        }
-                                        else
-                                        {
-                                            //str += "<div class=\"col-md-4 conditionElementStyle\" style=\"color:#0002b1;padding-left:0px;padding-right:0px\"><input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\" type=\"checkbox\" checked=\"checked\" onclick=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\"/>"
-                                            //    + "<span onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "')\" class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupName"].ToString().Trim() + "</span></div>";
-
-                                            str += "<div class=\"row col-md-12 conditionElementStyle\" style=\"color:#0002b1;padding-left:0px;padding-right:0px\">" +
-                                                "<div class=\"col-7\"><input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString()
-                                                + "\" type=\"checkbox\" checked=\"checked\" onclick=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim()
-                                                + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\"/><span onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','"
-                                                + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "')\" class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupName"].ToString().Trim() + "</span></div>"
-                                                + strDes
-                                                + "</div>";
-
-                                            str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\"></div>";
-
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (DrItemsHasConditionWithItemFBShomarehFiltered[0]["ViewCheckAllRecords"].ToString() == "True")
-                                        {
-                                            clsRizMetreUsers rizMetreUser = new clsRizMetreUsers();
-                                            Guid guNew = new Guid();
-                                            blnIsEzafeBahaAddedItems = DastyarCommon.CheckLakeGiriIsAddingRizMetreUsers1(strShomareh, DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString(), BarAvordId, guNew);
-                                            string strEzafeBahaIsChecked = "";
-                                            if (blnIsEzafeBahaAddedItems)
-                                            {
-                                                strEzafeBahaIsChecked = "checked=\"checked\"";
-                                            }
-
-                                            str += "<div class=\"col-md-6\" style=\"padding-left:0px;padding-right:0px;text-align:right\">" +
-                                                "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\" type=\"checkbox\" style=\"border:0px\" class=\"RizMetreUsersAddStyle spanStyleMitraSmall\" " + strEzafeBahaIsChecked + " onclick=\"ShowAndTickAllEzafeBahaAndLakeGiri($(this),'" + strShomareh + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "'," + LevelNumber + ",'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "')\"/><span class=\"spanStyleMitraSmall spanLakeGiriStyle\"" +
-                                                " onclick=\"ShowEzafeBahaAndLakeGiriOnly(this,'" + strShomareh + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "');\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["Context"].ToString().Trim() + "</span>" + strDes + "</div>";
-                                            blnItemHasEzafeBaha = true;
-                                        }
-                                        else
-                                        {
-                                            str += "<div class=\"col-md-12\" style=\"padding-right:0px;margin:10px;text-align: right;\"><div class=\"col-md-5\"><input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\" onchange=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\" checked=\"checked\" name=\"group"
-                                                + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + strShomareh + "\" type=\"checkbox\"/><span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "')\" style=\"color:#000296;\">"
-                                                + DrItemsHasConditionWithItemFBShomarehFiltered[0]["Context"].ToString().Trim() + "</span></div>" + strDes + "</div>";
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    strDes = DrItemsHasConditionWithItemFBShomarehFiltered[0]["HasDes"].ToString().Trim() == "True" ? "<div class=\"col-4\"><span onclick=\"ShowConditionDes(" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionContextId"].ToString().Trim()
-                                        + ")\" class=\"spanConditionDes\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["TitleDes"].ToString().Trim() + "</span></div>" : "";
-                                    if (DrItemsHasConditionWithItemFBShomarehFiltered[0]["MoveToRel"].ToString() != "True")
-                                    {
-                                        if (DrItemsHasConditionWithItemFBShomarehFiltered[0]["ViewCheckAllRecords"].ToString() == "True")
-                                        {
-                                            clsRizMetreUsers rizMetreUser = new clsRizMetreUsers();
-                                            Guid guNew = new Guid();
-                                            blnIsEzafeBahaAddedItems = DastyarCommon.CheckLakeGiriIsAddingRizMetreUsers1(strShomareh, DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString(), BarAvordId, guNew);
-                                            string strEzafeBahaIsChecked = "";
-                                            if (blnIsEzafeBahaAddedItems)
-                                            {
-                                                strEzafeBahaIsChecked = "checked=\"checked\"";
-                                            }
-
-                                            str += "<div class=\"row col-md-12\" style=\"text-align:right\"><div class=\"col-7\">" +
-                                                "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\" type=\"checkbox\" style=\"border:0px\" class=\"RizMetreUsersAddStyle spanStyleMitraSmall\" " + strEzafeBahaIsChecked + " onclick=\"ShowAndTickAllEzafeBahaAndLakeGiri($(this),'" + strShomareh + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "'," + LevelNumber + ",'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "')\"/><span class=\"spanStyleMitraSmall spanLakeGiriStyle\"" +
-                                                " onclick=\"ShowEzafeBahaAndLakeGiriOnly(this,'" + strShomareh + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "');\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["Context"].ToString().Trim() + "</span></div>" + strDes + "</div>";
-
-                                            str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\"></div>";
-
-                                            blnItemHasEzafeBaha = true;
-                                        }
-                                        else
-                                        {
-                                            str += "<div class=\"row col-md-12 conditionElementStyle\" style=\"color:#0002b1;padding-left:0px;padding-right:0px\">" +
-                                                "<div class=\"col-7\"><input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString()
-                                                + "\" type=\"checkbox\" onclick=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim()
-                                                + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\"/><span onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','"
-                                                + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "')\" class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupName"].ToString().Trim() + "</span></div>"
-                                                + strDes
-                                                + "</div>";
-
-                                            str += "<div class=\"col-12\" style=\"margin-top: 20px;margin-bottom: 40px;border: 1px solid #f7caf6;display:none\" id=\"divShowRizMetre" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\"></div>";
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (DrItemsHasConditionWithItemFBShomarehFiltered[0]["ViewCheckAllRecords"].ToString() == "True")
-                                        {
-                                            clsRizMetreUsers rizMetreUser = new clsRizMetreUsers();
-                                            Guid guID = new Guid();
-
-                                            blnIsEzafeBahaAddedItems = DastyarCommon.CheckLakeGiriIsAddingRizMetreUsers1(strShomareh, DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString(), BarAvordId, guID);
-                                            string strEzafeBahaIsChecked = "";
-                                            if (blnIsEzafeBahaAddedItems)
-                                            {
-                                                strEzafeBahaIsChecked = "checked=\"checked\"";
-                                            }
-
-                                            str += "<div class=\"col-md-12\" style=\"padding-left: 0px;padding-right: 0px;text-align: right;\"><div class=\"col-md-5\">" +
-                                                "<input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\" type=\"checkbox\" style=\"border:0px\" class=\"RizMetreUsersAddStyle spanStyleMitraSmall\" " + strEzafeBahaIsChecked + " onclick=\"ShowAndTickAllEzafeBahaAndLakeGiri($(this),'" + strShomareh + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "'," + LevelNumber + ",'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "')\"/><span class=\"spanStyleMitraSmall spanLakeGiriStyle\"" +
-                                                " onclick=\"ShowEzafeBahaAndLakeGiriOnly(this,'" + strShomareh + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "');\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["Context"].ToString().Trim() + "</span></div>" + strDes + "</div>";
-                                            blnItemHasEzafeBaha = true;
-                                        }
-                                        else
-                                        {
-
-                                            str += "<div class=\"col-md-12\" style=\"padding-right:0px;margin:10px;text-align: right;\"><div class=\"col-7\"><input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "\" onchange=\"CheckedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\" name=\"group"
-                                                + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + strShomareh + "\" type=\"checkbox\"/><span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "')\" style=\"color:#000296;\">"
-                                                + DrItemsHasConditionWithItemFBShomarehFiltered[0]["Context"].ToString().Trim() + "</span></div>" + strDes + "</div>";
                                         }
                                     }
                                 }
                             }
                         }
                     }
-                }
 
+                    //if (DtOperationHasAddedOperations.Rows.Count != 0)
+                    //{
+                    //    for (int i = 0; i < DtOperationHasAddedOperations.Rows.Count; i++)
+                    //    {
+
+                    //        int RelType = DastyarCommon.GetRelType(DtOperationHasAddedOperations.Rows[i]["LatinName"].ToString().Trim());
+                    //        string strChecked = "";
+                    //        //string strItemsFBShomareh = DtOpItems.Rows[0]["ItemsFBShomareh"].ToString().Trim();
+                    //        var varItemsFBShomarehValueShomareh = _context.ItemsFBShomarehValueShomarehs.Where(x => x.FBShomareh == strItemsFBShomareh && x.BarAvordId == BarAvordId && x.Type == RelType).ToList();
+                    //        DataTable DtItemsFBShomarehValueShomareh = varItemsFBShomarehValueShomareh.ToDataTable();
+
+                    //        if (DtItemsFBShomarehValueShomareh.Rows.Count != 0)
+                    //            strChecked = "Checked=\"Checked\"";
+                    //        str += "<div class=\"col-md-6\" style=\"padding-left: 0px;padding-right: 0px;text-align: right;\">" +
+                    //            "<input type=\"checkbox\" style=\"border:0px\" " + strChecked + " class=\"RizMetreUsersAddStyle spanStyleMitraSmall\" onclick=\"CheckOperationHasAddedOperations($(this),'" + DtOperationHasAddedOperations.Rows[i]["AddedOperationId"].ToString().Trim() + "','" + DtOpItems.Rows[0]["ItemsFBShomareh"].ToString().Trim() + "','" + DtOperationHasAddedOperations.Rows[i]["Type"].ToString().Trim() + "','" + DtOperationHasAddedOperations.Rows[i]["LatinName"].ToString().Trim() + "'," + LevelNumber + ")\"/>" +
+                    //            "<span class=\"spanStyleMitraSmall spanLakeGiriStyle\" onclick=\"CheckOperationHasAddedOperationsOnly($(this),'" + DtOperationHasAddedOperations.Rows[i]["AddedOperationId"].ToString().Trim() + "','" + DtOpItems.Rows[0]["ItemsFBShomareh"].ToString().Trim() + "','" + DtOperationHasAddedOperations.Rows[i]["Type"].ToString().Trim() + "','" + DtOperationHasAddedOperations.Rows[i]["LatinName"].ToString().Trim() + "'," + LevelNumber + ")\">" + DtOperationHasAddedOperations.Rows[i]["ButtonName"].ToString().Trim()
+                    //            + "</span></div>";
+                    //    }
+                    //}
+
+                    str += "</div>";
+
+
+                    //}
+                }
+                str += "</div>";
+
+                //str += "<div id=\"divRelItems" + DtOpItems.Rows[0]["OperationId"].ToString().Trim() + "\" class=\"col-md-12\" style=\"padding:25px 5px 4px 5px;border:1px solid #c4d4db;border-radius:4px !important;display:none\">";
                 //if (DtOperationHasAddedOperations.Rows.Count != 0)
                 //{
                 //    for (int i = 0; i < DtOperationHasAddedOperations.Rows.Count; i++)
@@ -4799,43 +4830,16 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                 //            strChecked = "Checked=\"Checked\"";
                 //        str += "<div class=\"col-md-6\" style=\"padding-left: 0px;padding-right: 0px;text-align: right;\">" +
                 //            "<input type=\"checkbox\" style=\"border:0px\" " + strChecked + " class=\"RizMetreUsersAddStyle spanStyleMitraSmall\" onclick=\"CheckOperationHasAddedOperations($(this),'" + DtOperationHasAddedOperations.Rows[i]["AddedOperationId"].ToString().Trim() + "','" + DtOpItems.Rows[0]["ItemsFBShomareh"].ToString().Trim() + "','" + DtOperationHasAddedOperations.Rows[i]["Type"].ToString().Trim() + "','" + DtOperationHasAddedOperations.Rows[i]["LatinName"].ToString().Trim() + "'," + LevelNumber + ")\"/>" +
-                //            "<span class=\"spanStyleMitraSmall spanLakeGiriStyle\" onclick=\"CheckOperationHasAddedOperationsOnly($(this),'" + DtOperationHasAddedOperations.Rows[i]["AddedOperationId"].ToString().Trim() + "','" + DtOpItems.Rows[0]["ItemsFBShomareh"].ToString().Trim() + "','" + DtOperationHasAddedOperations.Rows[i]["Type"].ToString().Trim() + "','" + DtOperationHasAddedOperations.Rows[i]["LatinName"].ToString().Trim() + "'," + LevelNumber + ")\">" + DtOperationHasAddedOperations.Rows[i]["ButtonName"].ToString().Trim()
+                //            "<span class=\"spanStyleMitraSmall spanLakeGiriStyle\" onclick=\"CheckOperationHasAddedOperationsOnly($(this),'" + DtOperationHasAddedOperations.Rows[i]["AddedOperationId"].ToString().Trim() + "','" + DtOpItems.Rows[0]["ItemsFBShomareh"].ToString().Trim() + "','" + DtOperationHasAddedOperations.Rows[i]["Type"].ToString().Trim() + "','" + DtOperationHasAddedOperations.Rows[i]["LatinName"].ToString().Trim() + "'," + LevelNumber + ")\">" + DtOperationHasAddedOperations.Rows[i]["ButtonName"].ToString().Trim() 
                 //            + "</span></div>";
                 //    }
                 //}
-
-                str += "</div>";
-
-
+                //if (strItemsShowInRelItems != "")
+                //{
+                //    str += strItemsShowInRelItems;
                 //}
+                //str += "</div></div>";
             }
-            str += "</div>";
-
-            //str += "<div id=\"divRelItems" + DtOpItems.Rows[0]["OperationId"].ToString().Trim() + "\" class=\"col-md-12\" style=\"padding:25px 5px 4px 5px;border:1px solid #c4d4db;border-radius:4px !important;display:none\">";
-            //if (DtOperationHasAddedOperations.Rows.Count != 0)
-            //{
-            //    for (int i = 0; i < DtOperationHasAddedOperations.Rows.Count; i++)
-            //    {
-
-            //        int RelType = DastyarCommon.GetRelType(DtOperationHasAddedOperations.Rows[i]["LatinName"].ToString().Trim());
-            //        string strChecked = "";
-            //        //string strItemsFBShomareh = DtOpItems.Rows[0]["ItemsFBShomareh"].ToString().Trim();
-            //        var varItemsFBShomarehValueShomareh = _context.ItemsFBShomarehValueShomarehs.Where(x => x.FBShomareh == strItemsFBShomareh && x.BarAvordId == BarAvordId && x.Type == RelType).ToList();
-            //        DataTable DtItemsFBShomarehValueShomareh = varItemsFBShomarehValueShomareh.ToDataTable();
-
-            //        if (DtItemsFBShomarehValueShomareh.Rows.Count != 0)
-            //            strChecked = "Checked=\"Checked\"";
-            //        str += "<div class=\"col-md-6\" style=\"padding-left: 0px;padding-right: 0px;text-align: right;\">" +
-            //            "<input type=\"checkbox\" style=\"border:0px\" " + strChecked + " class=\"RizMetreUsersAddStyle spanStyleMitraSmall\" onclick=\"CheckOperationHasAddedOperations($(this),'" + DtOperationHasAddedOperations.Rows[i]["AddedOperationId"].ToString().Trim() + "','" + DtOpItems.Rows[0]["ItemsFBShomareh"].ToString().Trim() + "','" + DtOperationHasAddedOperations.Rows[i]["Type"].ToString().Trim() + "','" + DtOperationHasAddedOperations.Rows[i]["LatinName"].ToString().Trim() + "'," + LevelNumber + ")\"/>" +
-            //            "<span class=\"spanStyleMitraSmall spanLakeGiriStyle\" onclick=\"CheckOperationHasAddedOperationsOnly($(this),'" + DtOperationHasAddedOperations.Rows[i]["AddedOperationId"].ToString().Trim() + "','" + DtOpItems.Rows[0]["ItemsFBShomareh"].ToString().Trim() + "','" + DtOperationHasAddedOperations.Rows[i]["Type"].ToString().Trim() + "','" + DtOperationHasAddedOperations.Rows[i]["LatinName"].ToString().Trim() + "'," + LevelNumber + ")\">" + DtOperationHasAddedOperations.Rows[i]["ButtonName"].ToString().Trim() 
-            //            + "</span></div>";
-            //    }
-            //}
-            //if (strItemsShowInRelItems != "")
-            //{
-            //    str += strItemsShowInRelItems;
-            //}
-            //str += "</div></div>";
         }
 
         return new JsonResult(str);

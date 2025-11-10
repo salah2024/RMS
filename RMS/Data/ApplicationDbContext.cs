@@ -102,6 +102,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<clsAmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetre> AmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetres { get; set; }
     public DbSet<clsBarAvordHaml> BarAvordHamls { get; set; }
     public DbSet<clsBarAvordHamlRizMetre> BarAvordHamlRizMetres { get; set; }
+    public DbSet<clsOperationDetail> OperationDetails { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

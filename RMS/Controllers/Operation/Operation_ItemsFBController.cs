@@ -77,7 +77,7 @@ public class Operation_ItemsFBController(ApplicationDbContext context) : Control
         //DataTable DtItemsFields = varItemsFields.ToDataTable();
 
 
-        List<clsItemsFields> ItemFields = _context.ItemsFieldses.Where(x => x.ItemShomareh == strItemShomareh1 && x.NoeFB == request.NoeFB).OrderBy(x => x.FieldType).ToList();
+        List<clsItemsFields> ItemFields = _context.ItemsFieldses.Where(x => x.ItemShomareh == strItemShomareh1.Substring(0,6) && x.NoeFB == request.NoeFB).OrderBy(x => x.FieldType).ToList();
 
         string lstItemsFields = "";
         string lstItemsFieldEssentialValue = "";
@@ -784,7 +784,7 @@ public class Operation_ItemsFBController(ApplicationDbContext context) : Control
         //                          OpItemFB.OperationId
         //                      }).Where(x => x.ItemShomareh == strItemShomareh && x.NoeFB == request.NoeFB).OrderBy(x => x.FieldType).ToList();
 
-        List<clsItemsFields> itemsFields = _context.ItemsFieldses.Where(x => x.ItemShomareh == strItemShomareh && x.NoeFB == request.NoeFB).OrderBy(x => x.FieldType).ToList();
+        List<clsItemsFields> itemsFields = _context.ItemsFieldses.Where(x => x.ItemShomareh == strItemShomareh.Substring(0,6) && x.NoeFB == request.NoeFB).OrderBy(x => x.FieldType).ToList();
 
         var varRizMetreUsers = (from RUsers in _context.RizMetreUserses
                                 join fb in _context.FBs on RUsers.FBId equals fb.ID

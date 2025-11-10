@@ -13,5 +13,7 @@ public class AllOperationDto
     public bool? CheckData { get; set; }
     public bool? HasEnteringValue { get; set; }
     public decimal? OperationDefaultValue { get; set; }
-
+    public decimal? MaxValue { get; set; }
+    public decimal? MinValue { get; set; }
+    public string? MaxMinValue { get; set; }
 }
