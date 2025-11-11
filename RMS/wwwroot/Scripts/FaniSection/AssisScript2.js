@@ -389,6 +389,7 @@ function UpdateRMUAddedItemsClick(Id, ItemHasConditionId, ConditionGroupId) {
 /////
 
 function GetRizMetreWithFBId(LevelNumber) {
+    debugger;
     NoeFB = parseInt($('#HDFNoeFB').val());
     BarAvordUserId = $('#HDFBarAvordUserID').val();
     Year = $('#HDFYear').val();
@@ -445,7 +446,7 @@ function GetRizMetreWithFBId(LevelNumber) {
                     let MeghdarJoz = parseFloat(row.meghdarJoz) === 0 ? "0" : isNaN(parseFloat(row.meghdarJoz)) ? "" : parseFloat(row.meghdarJoz).toString();
 
                     str += "<div class='row styleRowTable' onclick=\"RizMetreSelectClick('" + id + "')\">";
-                    str += "<div class='col-md-1'><div class='col-md-12' style='padding-left:0px;'><span>" + row.shomareh + "</span></div></div>";
+                    str += "<div class='col-md-1'><div class='col-md-12' style='padding-left:0px;'><span>" + row.shomarehNew + "</span></div></div>";
 
                     str += "<div class='col-md-2'><input type='text' class='form-control spanStyleMitraSmall TextEdit row-input' id='txtSharh" + id + "' value='" + row.sharh + "'/></div>";
 

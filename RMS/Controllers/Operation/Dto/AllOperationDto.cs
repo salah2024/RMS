@@ -6,6 +6,7 @@ public class AllOperationDto
     public long order { get; set; }
     public long? ParentId { get; set; }
     public string OperationName { get; set; }
+    public string? LatinName { get; set; }
     public string FunctionCall { get; set; }
     public string Sharh { get; set; }
     public string ItemsFBShomareh { get; set; }
@@ -16,4 +17,6 @@ public class AllOperationDto
     public decimal? MaxValue { get; set; }
     public decimal? MinValue { get; set; }
     public string? MaxMinValue { get; set; }
+    public string? Description { get; set; }
+    public bool? CheckNecessary { get; set; }
 }

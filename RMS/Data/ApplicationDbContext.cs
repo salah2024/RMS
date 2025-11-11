@@ -103,6 +103,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<clsBarAvordHaml> BarAvordHamls { get; set; }
     public DbSet<clsBarAvordHamlRizMetre> BarAvordHamlRizMetres { get; set; }
     public DbSet<clsOperationDetail> OperationDetails { get; set; }
+    public DbSet<clsBarAvordHamlNecessaryLimit> BarAvordHamlNecessaryLimits { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

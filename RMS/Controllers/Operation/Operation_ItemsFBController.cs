@@ -77,7 +77,7 @@ public class Operation_ItemsFBController(ApplicationDbContext context) : Control
         //DataTable DtItemsFields = varItemsFields.ToDataTable();
 
 
-        List<clsItemsFields> ItemFields = _context.ItemsFieldses.Where(x => x.ItemShomareh == strItemShomareh1.Substring(0,6) && x.NoeFB == request.NoeFB).OrderBy(x => x.FieldType).ToList();
+        List<clsItemsFields> ItemFields = _context.ItemsFieldses.Where(x => x.ItemShomareh == strItemShomareh1.Substring(0, 6) && x.NoeFB == request.NoeFB).OrderBy(x => x.FieldType).ToList();
 
         string lstItemsFields = "";
         string lstItemsFieldEssentialValue = "";
@@ -784,7 +784,7 @@ public class Operation_ItemsFBController(ApplicationDbContext context) : Control
         //                          OpItemFB.OperationId
         //                      }).Where(x => x.ItemShomareh == strItemShomareh && x.NoeFB == request.NoeFB).OrderBy(x => x.FieldType).ToList();
 
-        List<clsItemsFields> itemsFields = _context.ItemsFieldses.Where(x => x.ItemShomareh == strItemShomareh.Substring(0,6) && x.NoeFB == request.NoeFB).OrderBy(x => x.FieldType).ToList();
+        List<clsItemsFields> itemsFields = _context.ItemsFieldses.Where(x => x.ItemShomareh == strItemShomareh.Substring(0, 6) && x.NoeFB == request.NoeFB).OrderBy(x => x.FieldType).ToList();
 
         var varRizMetreUsers = (from RUsers in _context.RizMetreUserses
                                 join fb in _context.FBs on RUsers.FBId equals fb.ID
@@ -793,6 +793,7 @@ public class Operation_ItemsFBController(ApplicationDbContext context) : Control
                                 {
                                     ID = RUsers.ID,
                                     Shomareh = RUsers.Shomareh,
+                                    ShomarehNew = RUsers.ShomarehNew,
                                     Sharh = RUsers.Sharh,
                                     Tedad = RUsers.Tedad,
                                     Tool = RUsers.Tool,
@@ -1182,8 +1183,8 @@ public class Operation_ItemsFBController(ApplicationDbContext context) : Control
         DataTable DtRizMetreUsersAll = clsConvert.ToDataTable(varRizMetreUsersAll);
 
         long ShomareNew = 1;
-        clsRizMetreUsers? RizMetre = _context.RizMetreUserses.Include(x => x.FB).OrderByDescending(x => x.InsertDateTime).ThenByDescending(x=>x.Shomareh).FirstOrDefault(x => x.FB.BarAvordId == BarAvordUserId);
-        if (RizMetre!=null)
+        clsRizMetreUsers? RizMetre = _context.RizMetreUserses.Include(x => x.FB).OrderByDescending(x => x.InsertDateTime).ThenByDescending(x => x.Shomareh).FirstOrDefault(x => x.FB.BarAvordId == BarAvordUserId);
+        if (RizMetre != null)
         {
             long currentShomareNew = RizMetre.ShomarehNew == null || RizMetre.ShomarehNew.Trim() == "" ? 1 : long.Parse(RizMetre.ShomarehNew);
             if (currentShomareNew > RizMetre.Shomareh)

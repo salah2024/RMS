@@ -31,7 +31,7 @@ public class OperationController(ApplicationDbContext context) : Controller
                              on op_Item.ItemsFBShomareh.Substring(0, 6) equals FB.Shomareh.Trim()
                              select new
                              {
-                                 ItemsFBShomareh = op_Item.ItemsFBShomareh.Substring(0,6),
+                                 ItemsFBShomareh = op_Item.ItemsFBShomareh,
                                  OperationId = op_Item.OperationId,
                                  Sharh = FB.Sharh,
                                  Year = FB.Sal,
@@ -92,6 +92,7 @@ public class OperationController(ApplicationDbContext context) : Controller
                     ParentId = x.op.ParentId,                 // ترجیحاً nullable
                     Year = x.op.Year,
                     OperationName = x.op.OperationName ?? "",
+                    LatinName = x.op.LatinName ?? "",
                     FunctionCall = x.op.FunctionCall ?? "",
                     Sharh = si?.Sharh ?? "",
                     ItemsFBShomareh = si?.ItemsFBShomareh ?? "",
@@ -99,14 +100,12 @@ public class OperationController(ApplicationDbContext context) : Controller
                     HasEnteringValue = x.od?.HasEnteringValue,
                     MaxValue = x.od?.MaxValue,
                     MinValue = x.od?.MinValue,
-                    MaxMinValue=x.od?.MaxMinValue
+                    Description = x.od?.Description,
+                    CheckNecessary = null
                 })
             .OrderBy(x => x.order)
             .ThenBy(x => x.ID)
             .ToList();
-
-
-
 
         List<AllOperationDto> NewOperation = new List<AllOperationDto>();
 
@@ -114,11 +113,25 @@ public class OperationController(ApplicationDbContext context) : Controller
 
         foreach (var item in operation)
         {
+            if (item.LatinName != null)
+            {
+                if (item.LatinName.Trim().ToLower() == "transport")
+                {
+                    clsBarAvordHamlNecessaryLimit? barAvordHamlNecessaryLimit = _context.BarAvordHamlNecessaryLimits.FirstOrDefault(x => x.BarAvordId == request.BarAvordUserId);
+                    if (barAvordHamlNecessaryLimit != null)
+                    {
+                        item.CheckNecessary = true;
+                    }
+                    else
+                        item.CheckNecessary = false;
+                }
+            }
             if (item.CheckData != null)
             {
                 if (item.CheckData.Value)
                 {
-                    clsBarAvordHaml? barAvordHaml = _context.BarAvordHamls.FirstOrDefault(x => x.BarAvordId == request.BarAvordUserId && x.FBShomarehHaml == item.ItemsFBShomareh);
+                    clsBarAvordHaml? barAvordHaml = _context.BarAvordHamls.FirstOrDefault(x => x.BarAvordId == request.BarAvordUserId && x.FBShomarehHaml == item.ItemsFBShomareh.Trim());
+
                     if (barAvordHaml != null)
                     {
                         item.OperationDefaultValue = barAvordHaml.Value;
@@ -129,6 +142,8 @@ public class OperationController(ApplicationDbContext context) : Controller
                     {
                         NewOperation.Add(item);
                     }
+
+                    item.ItemsFBShomareh = item.ItemsFBShomareh.Trim() == "" ? "" : item.ItemsFBShomareh.Substring(0, 6);
                 }
             }
             else
@@ -201,11 +216,20 @@ public class OperationController(ApplicationDbContext context) : Controller
                 {
                     if (item.CheckData.Value)
                     {
+                        clsBarAvordHaml? barAvordHaml = _context.BarAvordHamls.FirstOrDefault(x => x.BarAvordId == request.BarAvordUserId && x.FBShomarehHaml == item.ItemsFBShomareh.Trim());
+
+                        if (barAvordHaml != null)
+                        {
+                            item.OperationDefaultValue = barAvordHaml.Value;
+                        }
+
                         long RMCount = _context.RizMetreUserses.Include(x => x.FB).Where(x => x.FB.BarAvordId == request.BarAvordUserId && x.FB.Shomareh == item.ItemsFBShomareh).Count();
                         if (RMCount != 0)
                         {
                             NewOperation.Add(item);
                         }
+
+                        item.ItemsFBShomareh = item.ItemsFBShomareh.Trim() == "" ? "" : item.ItemsFBShomareh.Substring(0, 6);
                     }
                 }
                 else
@@ -223,6 +247,35 @@ public class OperationController(ApplicationDbContext context) : Controller
             return null;
     }
 
+    public ActionResult ChangeBarAvordHamlNecessaryLimit([FromBody] ChangeBarAvordHamlNecessaryLimitDto request)
+    {
+        try
+        {
+            bool Checked = request.blnChecked;
+            Guid BarAvordId = request.BarAvordId;
+            if (Checked)
+            {
+                _context.BarAvordHamlNecessaryLimits.Add(new clsBarAvordHamlNecessaryLimit
+                {
+                    BarAvordId = BarAvordId,
+                });
+            }
+            else
+            {
+                clsBarAvordHamlNecessaryLimit? barAvordHamlNecessaryLimit = _context.BarAvordHamlNecessaryLimits.FirstOrDefault(x => x.BarAvordId == BarAvordId);
+                if (barAvordHamlNecessaryLimit != null)
+                {
+                    _context.BarAvordHamlNecessaryLimits.Remove(barAvordHamlNecessaryLimit);
+                }
+            }
+            _context.SaveChanges();
+            return new JsonResult("OK");
+        }
+        catch (Exception)
+        {
+            return new JsonResult("NOK");
+        }
+    }
     public ActionResult SaveHamlValue([FromBody] SaveHamlValueDto request)
     {
         clsOperation_ItemsFB? operation_ItemsFB = _context.Operation_ItemsFBs.FirstOrDefault(x => x.OperationId == request.OperationId);
@@ -235,7 +288,7 @@ public class OperationController(ApplicationDbContext context) : Controller
             {
                 foreach (var barAvordHaml in lstBarAvordHaml)
                 {
-                    decimal dValue = request.Value;
+                    decimal dValue = 0;
                     decimal dFinaValue = 0;
                     clsOperationDetail? operationDetail = _context.OperationDetails.FirstOrDefault(x => x.OperationId == request.OperationId);
                     if (operationDetail != null)
@@ -251,13 +304,24 @@ public class OperationController(ApplicationDbContext context) : Controller
                         }
                         else
                         {
+                            if (request.Value >= operationDetail.MinValue)
+                            {
+                                dValue = request.Value;
+                            }
+                            else
+                                dValue = (operationDetail.MinValue == null ? 0 : operationDetail.MinValue.Value);
+
                             decimal? MaxValue = operationDetail.MaxValue;
                             if (MaxValue != null)
                             {
-                                if (request.Value > MaxValue.Value)
-                                    dValue = MaxValue.Value;
-                                else
-                                    dValue = request.Value;
+                                clsBarAvordHamlNecessaryLimit? barAvordHamlNecessaryLimit = _context.BarAvordHamlNecessaryLimits.FirstOrDefault(x => x.BarAvordId == BarAvordId);
+                                if (barAvordHamlNecessaryLimit == null)
+                                {
+                                    if (request.Value > MaxValue.Value)
+                                        dValue = MaxValue.Value;
+                                    else
+                                        dValue = request.Value;
+                                }
                             }
                             dFinaValue = dValue - (operationDetail.MinValue == null ? 0 : operationDetail.MinValue.Value);
                         }

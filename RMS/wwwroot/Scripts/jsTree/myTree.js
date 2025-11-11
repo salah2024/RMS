@@ -84,49 +84,55 @@ function createTree(data, parentId) {
             var MinValue = item.minValue;
             var MaxValue = item.maxValue;
             var currentValue = item.operationDefaultValue;
+            var Description = item.description == null ? "" : "(" + item.description + ")";
+            var CheckNecessary = item.checkNecessary;
 
             if (fbShomareh === "") {
                 if (funcCall !== "") {
                     html += `
-      <li>
-          <a onclick="${funcCall}('${id}')" id="a${id}">
-              ${operationName}
-              <span id="span${id}"></span>
-          </a>
-          <span id="spanOpShomareh${id}"></span>
-          <ul style="margin-top:5px" id="ula${id}"></ul>
-      </li>`;
+                <li>
+                    <a onclick="${funcCall}('${id}')" id="a${id}">
+                     ${operationName}
+                    <span id="span${id}"></span>
+                    </a>
+                    <span id="spanOpShomareh${id}"></span>
+                    <ul style="margin-top:5px" id="ula${id}"></ul>
+                </li>`;
                 } else {
+                    var strCheckNecessary = CheckNecessary == true ? "checked" : "";
                     html += `<li>
                            <div style="display: flex; align-items: center; gap: 5px;">
                            <a id="a${id}">${operationName}
                            <span id="span${id}"></span></a>
-                           ${HasEnteringValue ? `<input type="checkbox" class="form-control_1" type="number" value="${currentValue}" 
-                                  style="width:15px;margin-right:250px" onchange="onInputChange11('${id}', this)" /><span>عدم الزام محدودیت فاصله حمل</span><span class="LegalOpStyle">براساس تبصره 2 بند 1 فصل 20</span>` : ''}
-                                  <span id="spanOpShomareh${id}"></span>
-                           </div>
+                           ${HasEnteringValue ? `<input type="checkbox" ${strCheckNecessary} class="form-control_1"
+                                    style="width:15px;margin-right:250px" onchange="onCheckBoxChange(this)" /><span>عدم الزام محدودیت فاصله حمل</span><span class="LegalOpStyle">براساس تبصره 2 بند 1 فصل 20</span>` : ''}
+                                    <span id="spanOpShomareh${id}"></span>
+                                    </div>
                            <ul id="ula${id}">`;
                     html += createTree(data, id); // Recursive call
                     html += `</ul></li>`;
                 }
+
+               
+
             } else {
                 debugger;
                 showAddedRecord = !HasEnteringValue;
                 html += `
                 <li style="display: flex; align-items: center; gap: 5px;">
-             <a id="a${id}" onclick="OperationClick('${id}',${showAddedRecord})">
-             ${fbShomareh}-${sharh} <span id="span${id}"></span></a>
-            <span id="spanOpShomareh${fbShomareh}"></span>
-            ${HasEnteringValue ? `<input class="form-control_1" type="number" value="${currentValue}" 
-            style="width:100px;margin-right:30px" onchange="onInputChange('${id}', this,${MaxValue})" />
-            <span> کیلومتر </span><span style="color:blue">${MinValue != 0 ? ' از کیلومتر ' + ` <span class="KMStyle">` + MinValue + `</span>` : ''}</span>
-            <span style="color:blue">${(MaxValue != 0 && MaxValue != null) ? ' سقف فاصله ' + ` <span class="KMStyle">` + MaxValue + `</span>` : ''}</span>` : ''}
-            </li>`;
+                <a id="a${id}" onclick="OperationClick('${id}',${showAddedRecord})">
+                    ${fbShomareh}-${sharh} <span id="span${id}"></span><span style="color:red">${Description}</span></a>
+                    <span id="spanOpShomareh${fbShomareh}"></span>
+                        ${HasEnteringValue ? `<input class="form-control_1" type="number" value="${currentValue}" 
+                        style="width:100px;margin-right:30px" onchange="onInputChange('${id}', this,${MaxValue},${currentValue})" />
+                    <span> کیلومتر </span><span style="color:blue">${MinValue != 0 ? ' از کیلومتر ' + ` <span class="KMStyle">` + MinValue + `</span>` : ''}</span>
+                <span style="color:blue">${(MaxValue != 0 && MaxValue != null) ? ' سقف فاصله ' + ` <span class="KMStyle">` + MaxValue + `</span>` : ''}</span>` : ''}
+                </li>`;
 
                 html += `<div id="ula${id}" class="row" style="display: none; margin:10px">
-             <div id="uldiva${id}" class="col-md-12" style="border:1px solid #79c7ea;padding-left:0px;padding-right:0px;text-align:center;border-radius:5px !important;">
-             </div>
-          </div>`;
+                        <div id="uldiva${id}" class="col-md-12" style="border:1px solid #79c7ea;padding-left:0px;padding-right:0px;text-align:center;border-radius:5px !important;">
+                        </div>
+                        </div>`;
 
                 //html += "<li><a id=\"a" + id + "\" onclick=\"OperationClick('" + id + "')\">" +
                 //    fbShomareh + " - " + sharh + "<span id=\"span" + id + "\"></span></a>" +
@@ -137,23 +143,51 @@ function createTree(data, parentId) {
                 //    "padding-left:0px;padding-right:0px;text-align:center;border-radius:5px !important;\">" +
                 //    "</div></div>";
             }
-
-
-
         });
     }
-
     return html;
 }
 
-function onInputChange(id, obj, maxValue) {
+function onCheckBoxChange(obj) {
     debugger;
-    maxValue = maxValue === null ? 0 : maxValue;
+    value = obj.checked;
+    BarAvordUserId = $('#HDFBarAvordUserID').val();
+
+    var vardata = new Object();
+    vardata.blnChecked = value;
+    vardata.BarAvordId = BarAvordUserId;
+
+    $.ajax({
+        type: "POST",
+        url: '/Operation/ChangeBarAvordHamlNecessaryLimit',
+        dataType: "json",
+        data: JSON.stringify(vardata),
+        contentType: "application/json; charset=utf-8",
+        success: function (data) {
+            toastr.success('ثبت بدرستی انجام گرفت', 'موفقیت');
+        },
+        error: function (msg) {
+            toastr.error('مشکل در ثبت اطلاعات', 'خطا');
+        }
+    });
+}
+
+function onInputChange(id, obj, maxValue, currentValue) {
+    debugger;
+    FBId = $('#HDFFBID').val();
+    if (FBId == '') {
+        toastr.info('هیچ یک از آیتم ها انتخاب نشده', 'اطلاع');
+        obj.value = currentValue;
+        return;
+    }
+
     value = parseFloat(obj.value);
-    if (value < maxValue) {
-        toastr.info('حداکثر مقدار مجاز ثبت گردید', 'اطلاع');
-        //$(obj).addClass('blinking');
-        //return false;
+    if (maxValue != null) {
+        if (value > maxValue) {
+            toastr.info('حداکثر مقدار مجاز ثبت گردید', 'اطلاع');
+            //$(obj).addClass('blinking');
+            //return false;
+        }
     }
 
     BarAvordUserId = $('#HDFBarAvordUserID').val();
