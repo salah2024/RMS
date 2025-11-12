@@ -64,7 +64,6 @@
 //    });
 //}
 
-
 var gParents = [];
 function createTree(data, parentId) {
     var html = "";
@@ -89,7 +88,7 @@ function createTree(data, parentId) {
 
             if (fbShomareh === "") {
                 if (funcCall !== "") {
-                    html += `
+                html += `
                 <li>
                     <a onclick="${funcCall}('${id}')" id="a${id}">
                      ${operationName}
@@ -112,9 +111,6 @@ function createTree(data, parentId) {
                     html += createTree(data, id); // Recursive call
                     html += `</ul></li>`;
                 }
-
-               
-
             } else {
                 debugger;
                 showAddedRecord = !HasEnteringValue;
@@ -164,7 +160,13 @@ function onCheckBoxChange(obj) {
         data: JSON.stringify(vardata),
         contentType: "application/json; charset=utf-8",
         success: function (data) {
-            toastr.success('ثبت بدرستی انجام گرفت', 'موفقیت');
+            if (data == "OK") {
+
+                toastr.success('ثبت بدرستی انجام گرفت', 'موفقیت');
+                GetTreeForOneOperation();
+            }
+            else
+                toastr.error('مشکل در درج', 'خطا');
         },
         error: function (msg) {
             toastr.error('مشکل در ثبت اطلاعات', 'خطا');

@@ -57,7 +57,6 @@ public class clsRizMetreUsers : clsBaseEntity
     /// </summary>
     public long? ConditionContextId { get; set; }
     public string? ConditionContextRel { get; set; }
-
     /// <summary>
     /// جهت بررسی اینکه ریز متره از کدام سطح فراخوانی شده است
     /// سطح دوم سطوحیست که به آیتم های مربوط میشود که خودشان اضافه بهای سطح اول هستند

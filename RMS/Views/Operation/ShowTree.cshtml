@@ -47,10 +47,10 @@
 					border-right: 1px solid rgb(100,100,100);
 				}
 		/*.NewStyle {
-															background-image: url() !important;
-															width: 0px !important;
-															height: 0px !important;
-														}*/
+																			background-image: url() !important;
+																			width: 0px !important;
+																			height: 0px !important;
+																		}*/
 
 		.col-md-1 {
 			padding-left: 2px;
@@ -388,6 +388,53 @@
 			   });
 		   }
 
+		   //////////////
+		   function GetTreeForOneOperation() {
+			   debugger;
+			   plugin = ['wholerow'];
+			   var vardata = new Object();
+			   Year = $('#HDFYear').val();
+			   NoeFB = $('#HDFNoeFB').val();
+			   BarAvordUserId = $('#HDFBarAvordUserID').val();
+
+			   vardata.Year = parseInt(Year);
+			   vardata.NoeFB = parseInt(NoeFB);
+			   vardata.BarAvordUserId = BarAvordUserId;
+			   vardata.OpName = 'transport';
+			   $.ajax({
+				   type: "POST",
+				   url: "@Url.Action("GetTreeForOneOperation")",
+				   data: JSON.stringify(vardata),
+				   contentType: "application/json; charset=utf-8",
+				   dataType: "json",
+				   success: function (data) {
+					   AllOperation=data.allOperation;
+					   OperationId=data.operationId;
+					   debugger;
+				   var html= createTree(AllOperation,OperationId);
+
+					   $('#ula1404229').html(html);
+					   $('#ula1404229 li a').each(function () {
+						   $(this).addClass('OpMenuStyle');
+						   $(this).click(function () {
+							   CurrentId = $(this).attr('id');
+							   ParentId = $(this).parent().parent();
+							   $("#" + ParentId.attr('id') + " [id^='ula']").each(function () {
+								   if ($(this).attr('id') != ('ul'+CurrentId))
+									   $(this).slideUp(1000);
+							   });
+							   $('#ul' + $(this).attr('id')).toggle(1000);
+						   });
+					   });
+					   $('#ula1404229 li ul').each(function () {
+						   $(this).hide();
+					   });
+					},
+				   error: function (response) {
+					   toastr('danger', 'خطا', 'مشکلی بوجود آمده، مجددا بعدا امتحان نمایید')
+				   }
+			   });
+		   }
 
 
 

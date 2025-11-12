@@ -2,6 +2,7 @@
 using Azure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using RMS.Controllers.Operation.Dto;
 using RMS.Models.Common;
 using RMS.Models.Dto.ItemsFieldsDto;
@@ -134,7 +135,7 @@ public class OperationController(ApplicationDbContext context) : Controller
 
                     if (barAvordHaml != null)
                     {
-                        item.OperationDefaultValue = barAvordHaml.Value;
+                        item.OperationDefaultValue = barAvordHaml?.Value;
                     }
 
                     long RMCount = _context.RizMetreUserses.Include(x => x.FB).Where(x => x.FB.BarAvordId == request.BarAvordUserId && x.FB.Shomareh == item.ItemsFBShomareh).Count();
@@ -182,31 +183,68 @@ public class OperationController(ApplicationDbContext context) : Controller
 
             var shItemsQ = ShomarehItems.AsQueryable();
 
-            var operation = (from op in _context.Operations
-                             join OpeartionDetail in _context.OperationDetails
-                             on op.Id equals OpeartionDetail.OperationId
-                             join sh in shItemsQ
-                                 on op.Id equals sh.OperationId into joinTable
-                             from jT in joinTable.DefaultIfEmpty()
-                             where op.Year == request.Year
-                                   && op.ParentId == parentId   // ← فقط فرزندان، خود والد نمی‌آید
-                             select new AllOperationDto
-                             {
-                                 ID = op.Id,
-                                 order = op.Order,
-                                 ParentId = op.ParentId,                // اگر DTO nullable است
-                                 OperationName = op.OperationName,
-                                 FunctionCall = op.FunctionCall == null ? "" : op.FunctionCall,
-                                 Sharh = jT.Sharh,
-                                 ItemsFBShomareh = jT.ItemsFBShomareh == null ? "" : jT.ItemsFBShomareh,
-                                 Year = op.Year,
-                                 CheckData = OpeartionDetail.CheckData,
-                                 HasEnteringValue = OpeartionDetail.HasEnteringValue
-                             })
-                             .OrderBy(x => x.order)
-                             .ThenBy(x => x.ID)
-                             .ToList();
+            //var operation = (from op in _context.Operations
+            //                 join OpeartionDetail in _context.OperationDetails
+            //                 on op.Id equals OpeartionDetail.OperationId
+            //                 join sh in shItemsQ
+            //                     on op.Id equals sh.OperationId into joinTable
+            //                 from jT in joinTable.DefaultIfEmpty()
+            //                 where op.Year == request.Year
+            //                       && op.ParentId == parentId   // ← فقط فرزندان، خود والد نمی‌آید
+            //                 select new AllOperationDto
+            //                 {
+            //                     ID = op.Id,
+            //                     order = op.Order,
+            //                     ParentId = op.ParentId,                // اگر DTO nullable است
+            //                     OperationName = op.OperationName,
+            //                     FunctionCall = op.FunctionCall == null ? "" : op.FunctionCall,
+            //                     Sharh = jT.Sharh,
+            //                     ItemsFBShomareh = jT.ItemsFBShomareh == null ? "" : jT.ItemsFBShomareh,
+            //                     Year = op.Year,
+            //                     CheckData = OpeartionDetail.CheckData,
+            //                     HasEnteringValue = OpeartionDetail.HasEnteringValue
+            //                 })
+            //                 .OrderBy(x => x.order)
+            //                 .ThenBy(x => x.ID)
+            //                 .ToList();
 
+
+            var baseRows = (
+           from op in _context.Operations
+           where op.Year == request.Year
+           join od in _context.OperationDetails
+               on op.Id equals od.OperationId into odGroup
+           from od in odGroup.DefaultIfEmpty()
+           select new { op, od }
+            ).ToList();
+
+            // 2) لاکاپ کمکی از ShomarehItems در حافظه
+            var siLookup = ShomarehItems.ToLookup(s => s.OperationId);
+
+            // 3) جوین سمت کلاینت + نگاشت به DTO
+            var operation = baseRows
+                .SelectMany(x => siLookup[x.op.Id].DefaultIfEmpty(),
+                    (x, si) => new AllOperationDto
+                    {
+                        ID = x.op.Id,
+                        order = x.op.Order,                       // در DTO nullable باشد اگر در DB nullable است
+                        ParentId = x.op.ParentId,                 // ترجیحاً nullable
+                        Year = x.op.Year,
+                        OperationName = x.op.OperationName ?? "",
+                        LatinName = x.op.LatinName ?? "",
+                        FunctionCall = x.op.FunctionCall ?? "",
+                        Sharh = si?.Sharh ?? "",
+                        ItemsFBShomareh = si?.ItemsFBShomareh ?? "",
+                        CheckData = x.od?.CheckData,
+                        HasEnteringValue = x.od?.HasEnteringValue,
+                        MaxValue = x.od?.MaxValue,
+                        MinValue = x.od?.MinValue,
+                        Description = x.od?.Description,
+                        CheckNecessary = null
+                    })
+                .OrderBy(x => x.order)
+                .ThenBy(x => x.ID)
+                .ToList();
 
             List<AllOperationDto> NewOperation = new List<AllOperationDto>();
 
@@ -249,32 +287,110 @@ public class OperationController(ApplicationDbContext context) : Controller
 
     public ActionResult ChangeBarAvordHamlNecessaryLimit([FromBody] ChangeBarAvordHamlNecessaryLimitDto request)
     {
-        try
+        //try
+        //{
+        List<clsBarAvordHaml> lstBarAvordHaml = _context.BarAvordHamls.Where(x => x.BarAvordId == request.BarAvordId).ToList();
+        List<string> lstBarAvordHamlShomarehHamls = lstBarAvordHaml.Select(x => x.FBShomarehHaml).ToList();
+        List<Guid> lstBarAvordHamlIds = lstBarAvordHaml.Select(x => x.ID).ToList();
+        List<clsOperation_ItemsFB> lstOperation_ItemsFB = _context.Operation_ItemsFBs.Where(x => lstBarAvordHamlShomarehHamls.Contains(x.ItemsFBShomareh.Substring(0, 6))).ToList();
+        List<long> lstOperationDetailIds = lstOperation_ItemsFB.Select(x => x.OperationId).ToList();
+        List<clsOperationDetail> lstOperationDetails = _context.OperationDetails.Where(x => lstOperationDetailIds.Contains(x.OperationId)).ToList();
+        List<clsBarAvordHamlRizMetre> lstBarAvordHamlRizMetre = _context.BarAvordHamlRizMetres.Where(x => lstBarAvordHamlIds.Contains(x.BarAvordHamlId)).ToList();
+
+        bool Checked = request.blnChecked;
+        Guid BarAvordId = request.BarAvordId;
+        if (Checked)
         {
-            bool Checked = request.blnChecked;
-            Guid BarAvordId = request.BarAvordId;
-            if (Checked)
+            _context.BarAvordHamlNecessaryLimits.Add(new clsBarAvordHamlNecessaryLimit
             {
-                _context.BarAvordHamlNecessaryLimits.Add(new clsBarAvordHamlNecessaryLimit
-                {
-                    BarAvordId = BarAvordId,
-                });
-            }
-            else
+                BarAvordId = BarAvordId,
+            });
+
+            //در این صورت بایستی کیلومتراژ ها بدون محدودیت باشند
+            foreach (var item in lstBarAvordHaml)
             {
-                clsBarAvordHamlNecessaryLimit? barAvordHamlNecessaryLimit = _context.BarAvordHamlNecessaryLimits.FirstOrDefault(x => x.BarAvordId == BarAvordId);
-                if (barAvordHamlNecessaryLimit != null)
+                clsOperation_ItemsFB? operation_ItemsFB = lstOperation_ItemsFB.FirstOrDefault(x => x.ItemsFBShomareh == item.FBShomarehHaml);
+                if (operation_ItemsFB != null)
                 {
-                    _context.BarAvordHamlNecessaryLimits.Remove(barAvordHamlNecessaryLimit);
+
+                    clsOperationDetail? operationDetail = _context.OperationDetails.FirstOrDefault(x => x.OperationId == operation_ItemsFB.OperationId);
+                    if (operationDetail != null)
+                    {
+                        decimal? dValue = item.ValueBase;
+                        decimal? dFinaValue = 0;
+
+                        dFinaValue = dValue - (operationDetail.MinValue == null ? 0 : operationDetail.MinValue.Value);
+
+                        item.Value = dFinaValue;
+                        item.ValueBase = dValue;
+
+                        clsBarAvordHamlRizMetre barAvordHamlRizMetre = lstBarAvordHamlRizMetre.First(x => x.BarAvordHamlId == item.ID);
+
+                        List<clsRizMetreUsers> lstRizMetreUsers = _context.RizMetreUserses.Where(x => x.ID == barAvordHamlRizMetre.RizMetreId).ToList();
+                        foreach (var RizMetreUser in lstRizMetreUsers)
+                        {
+                            _context.Entry(RizMetreUser).CurrentValues.SetValues(new
+                            {
+                                Tedad = dFinaValue,
+                                MeghdarJoz= dFinaValue* RizMetreUser.Vazn
+                            });
+                        }
+                    }
                 }
             }
-            _context.SaveChanges();
-            return new JsonResult("OK");
         }
-        catch (Exception)
+        else
         {
-            return new JsonResult("NOK");
+            clsBarAvordHamlNecessaryLimit? barAvordHamlNecessaryLimit = _context.BarAvordHamlNecessaryLimits.FirstOrDefault(x => x.BarAvordId == BarAvordId);
+            if (barAvordHamlNecessaryLimit != null)
+            {
+
+                //در این حالت بایستی کیلومتراژ ها دارای محدودیت باشند
+                _context.BarAvordHamlNecessaryLimits.Remove(barAvordHamlNecessaryLimit);
+
+                foreach (var item in lstBarAvordHaml)
+                {
+                    clsOperation_ItemsFB? operation_ItemsFB = lstOperation_ItemsFB.FirstOrDefault(x => x.ItemsFBShomareh == item.FBShomarehHaml);
+                    if (operation_ItemsFB != null)
+                    {
+
+                        clsOperationDetail? operationDetail = _context.OperationDetails.FirstOrDefault(x => x.OperationId == operation_ItemsFB.OperationId);
+                        if (operationDetail != null)
+                        {
+                            clsBarAvordHamlRizMetre barAvordHamlRizMetre = lstBarAvordHamlRizMetre.First(x => x.BarAvordHamlId == item.ID);
+
+                            List<clsRizMetreUsers> lstRizMetreUsers = _context.RizMetreUserses.Where(x => x.ID == barAvordHamlRizMetre.RizMetreId).ToList();
+                            foreach (var RizMetreUser in lstRizMetreUsers)
+                            {
+                                decimal? dValue = 0;
+                                decimal? dFinaValue = 0;
+                                if (item.ValueBase > operationDetail.MaxValue)
+                                    dValue = operationDetail.MaxValue;
+                                else
+                                    dValue = item.ValueBase;
+
+                                dFinaValue = dValue - (operationDetail.MinValue == null ? 0 : operationDetail.MinValue.Value);
+
+                                item.Value = dFinaValue;
+
+                                _context.Entry(RizMetreUser).CurrentValues.SetValues(new
+                                {
+                                    Tedad = dFinaValue,
+                                    MeghdarJoz = dFinaValue * RizMetreUser.Vazn
+                                });
+                            }
+                        }
+                    }
+                }
+            }
         }
+        _context.SaveChanges();
+        return new JsonResult("OK");
+        //}
+        //catch (Exception)
+        //{
+        //    return new JsonResult("NOK");
+        //}
     }
     public ActionResult SaveHamlValue([FromBody] SaveHamlValueDto request)
     {
@@ -330,7 +446,8 @@ public class OperationController(ApplicationDbContext context) : Controller
                     _context.Entry(barAvordHaml).CurrentValues
                         .SetValues(new
                         {
-                            Value = request.Value
+                            ValueBase = request.Value,
+                            Value = dFinaValue
                         });
 
 
