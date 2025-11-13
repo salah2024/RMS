@@ -1,0 +1,74 @@
+﻿@using RMS.Models.Account.Dto
+@model RegisterInPanelDto
+<html lang="fa">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>کاربر جدید</title>
+</head>
+<body>
+    <div class="login-container">
+        <form asp-action="Register" asp-controller="Account" method="post">
+            <div class="form-group">
+                <label asp-for="UserName">نام کاربری</label>
+                <input asp-for="UserName" class="form-control" placeholder="نام کاربری خود را وارد کنید" />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="FullName">نام</label>
+                <input asp-for="FullName" class="form-control" placeholder="نام خود را وارد کنید" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Role">نقش در سیستم</label>
+                <select asp-for="Role" class="form-control">
+                    <option value="">انتخاب نقش...</option>
+                    <option value="Karfarma">کارفرما</option>
+                    <option value="Mashaver">مشاور</option>
+                    <option value="Peymankar">پیمانکار</option>
+                    <option value="Nazer">ناظر</option>
+                </select>
+                <span asp-validation-for="Role" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Mobile">شماره همراه</label>
+                <input asp-for="Mobile" class="form-control" placeholder="شماره همراه" />
+                <span asp-validation-for="Mobile" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Address">آدرس</label>
+                <input asp-for="Address" class="form-control" placeholder="آدرس" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="NationalCode">شماره ملی</label>
+                <input asp-for="NationalCode" class="form-control" placeholder="شماره ملی" />
+                <span asp-validation-for="NationalCode" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Password">رمز عبور</label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ConfirmPassword">تکرار رمز عبور</label>
+                <input asp-for="ConfirmPassword" class="form-control" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="login-btn">ثبت‌ نام</button>
+        </form>
+    </div>
+
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+    }
+</body>
+</html>

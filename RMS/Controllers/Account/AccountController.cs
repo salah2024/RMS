@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using RMS.Services.JWT;
 
 public class AccountController : Controller
 {
@@ -11,14 +12,16 @@ public class AccountController : Controller
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ITokenService _tokenService;
 
     public AccountController(IConfiguration configuration, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager,
-                             IHttpContextAccessor httpContextAccessor)
+                             IHttpContextAccessor httpContextAccessor, ITokenService tokenService)
     {
         _configuration = configuration;
         _userManager = userManager;
         _signInManager = signInManager;
         _httpContextAccessor = httpContextAccessor;
+        _tokenService = tokenService;
     }
 
     [HttpGet]
@@ -77,22 +80,38 @@ public class AccountController : Controller
             return BadRequest("Invalid client request");
 
         var user = await _userManager.FindByNameAsync(model.UserName);
-        if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
-        {
-            // احراز هویت کاربر
-            var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
+        if (user == null)
+            return Unauthorized("نام کاربری یا رمز اشتباه است");
 
-            var token = GenerateToken(user);  // توکن رو تولید کن
-            SetTokenInCookie(token);          // توکن رو در کوکی ذخیره کن
-            return RedirectToAction("Index", "Dashboard");
-            //return Ok(new { message = "Login successful" });
-        }
-        else
-        {
-            ModelState.AddModelError(string.Empty, "نام کاربری یا رمز عبور نادرست است.");
-        }
+        var check = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
+        if (!check.Succeeded)
+            return Unauthorized("نام کاربری یا رمز اشتباه است");
 
-        return Unauthorized();
+        var jwtToken = await _tokenService.CreateTokenAsync(user);
+
+        return Json(new
+        {
+            token = jwtToken,
+            user = new { user.UserName, user.FullName, user.PhoneNumber }
+        });
+
+        //var user = await _userManager.FindByNameAsync(model.UserName);
+        //if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
+        //{
+        //    // احراز هویت کاربر
+        //    var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
+
+        //    var token = GenerateToken(user);  // توکن رو تولید کن
+        //    SetTokenInCookie(token);          // توکن رو در کوکی ذخیره کن
+        //    return RedirectToAction("Index", "Dashboard");
+        //    //return Ok(new { message = "Login successful" });
+        //}
+        //else
+        //{
+        //    ModelState.AddModelError(string.Empty, "نام کاربری یا رمز عبور نادرست است.");
+        //}
+
+        //return Unauthorized();
     }
 
     private string GenerateToken(ApplicationUser user)

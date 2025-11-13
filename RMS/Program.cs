@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using RMS.Services.JWT;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,20 +17,32 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
+// خواندن تنظیمات JWT
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
 
 // پیکربندی سرویس‌های Authentication برای JWT
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+builder.Services
+    .AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        // اگر همزمان کوکی هم می‌خوای، می‌تونیم تنظیمش کنیم، فعلاً فقط JWT
+    })
     .AddJwtBearer(options =>
     {
+        options.RequireHttpsMetadata = false; // در محیط واقعی true
+        options.SaveToken = true;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidateAudience = true,
-            ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"]))
+            ValidateLifetime = true,
+            ValidIssuer = jwtSettings["Issuer"],
+            ValidAudience = jwtSettings["Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ClockSkew = TimeSpan.Zero // توکن دقیقاً با انقضا باطل شود
         };
     });
 
@@ -53,6 +66,9 @@ builder.Services.AddAuthorization();
 
 // MVC Only
 builder.Services.AddControllersWithViews();
+
+// سرویس تولید توکن
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 var app = builder.Build();
 

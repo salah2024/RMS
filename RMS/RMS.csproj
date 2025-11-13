@@ -32,6 +32,7 @@
   <ItemGroup>
     <Folder Include="Content\Style\css\" />
     <Folder Include="Content\Style\js\" />
+    <Folder Include="Models\RegisterInPanel\" />
   </ItemGroup>
 
 </Project>
