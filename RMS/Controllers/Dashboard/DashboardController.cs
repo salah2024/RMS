@@ -7,6 +7,6 @@ public class DashboardController : Controller
     // صفحه اصلی داشبورد
     public IActionResult Index()
     {
-        return PartialView();
+        return View();
     }
 }

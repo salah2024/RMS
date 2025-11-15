@@ -32,4 +32,10 @@ public class EnumForEntity
         WithoutProject = 1,
         WithProject = 2
     }
+
+    public enum UserType
+    {
+        Real=1,//حقیقی
+        Legal=2//حقوقی
+    }
 }

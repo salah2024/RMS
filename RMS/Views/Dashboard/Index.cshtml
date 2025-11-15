@@ -5,6 +5,7 @@
 
 @{
     ViewBag.Title = "Index";
+    Layout = "_Layout";
 }
 <style>
     .DashboardMenu {
@@ -261,7 +262,7 @@
             dataType: "json",
             success: function (response) {
                 if (response == "OK")
-                    window.location.href = '../Report/Index';
+                    window.location.href = '/Operation/ShowTree';
             },
             error: function (response) {
                 toastr.error('خطا', 'خطا');

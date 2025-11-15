@@ -1,0 +1,10 @@
+﻿@using RMS.Models.Entity
+@using static RMS.Models.Common.EnumForEntity
+@model IEnumerable<clsUserDetail>
+
+@{
+    ViewData["Title"] = "شرکت‌ها";
+    Layout = "_Layout";
+}
+
+@Html.Partial("_ViewCompanyForm", Model)

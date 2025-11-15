@@ -1,0 +1,65 @@
+﻿@using RMS.Models.Entity
+@model clsUserDetail
+
+<div class="container mt-4" dir="rtl">
+    <h4>ویرایش اطلاعات شرکت</h4>
+    <hr />
+
+    <form asp-action="Edit" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="ID" />
+
+        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label asp-for="CompanyName" class="form-label">نام شرکت</label>
+                <input asp-for="CompanyName" class="form-control" />
+                <span asp-validation-for="CompanyName" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="CEOName" class="form-label">نام مدیرعامل</label>
+                <input asp-for="CEOName" class="form-control" />
+                <span asp-validation-for="CEOName" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="NationalCode" class="form-label">شناسه ملی</label>
+                <input asp-for="NationalCode" class="form-control" />
+                <span asp-validation-for="NationalCode" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="PostalCode" class="form-label">کد پستی</label>
+                <input asp-for="PostalCode" class="form-control" />
+                <span asp-validation-for="PostalCode" class="text-danger small"></span>
+            </div>
+
+            <div class="col-12">
+                <label asp-for="Address" class="form-label">آدرس</label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">نام کاربری</label>
+                <input class="form-control" value="@Model.User?.UserName" disabled />
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">موبایل</label>
+                <input class="form-control" value="@Model.User?.PhoneNumber" disabled />
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-success">ذخیره</button>
+            <a asp-action="Index" class="btn btn-secondary ajax-link">بازگشت</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

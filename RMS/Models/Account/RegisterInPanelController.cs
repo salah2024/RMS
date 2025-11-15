@@ -1,27 +1,33 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using RMS.Models.Account.Dto;
+using RMS.Models.Entity;
 using RMS.Services.JWT;
+using static RMS.Models.Common.EnumForEntity;
 
 namespace RMS.Models.Account;
 
+[AllowAnonymous]
 public class RegisterInPanelController : Controller
 {
-    private readonly UserManager<IdentityUser> _userManager;
-    private readonly SignInManager<IdentityUser> _signInManager;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly ITokenService _tokenService;
+    private readonly ApplicationDbContext _context;
 
     public RegisterInPanelController(
-       UserManager<IdentityUser> userManager,
-       SignInManager<IdentityUser> signInManager,
-       RoleManager<IdentityRole> roleManager,
-       ITokenService tokenService)
+        UserManager<ApplicationUser> userManager,
+        SignInManager<ApplicationUser> signInManager,
+        RoleManager<IdentityRole> roleManager,
+        ITokenService tokenService,
+        ApplicationDbContext context)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _roleManager = roleManager;
         _tokenService = tokenService;
+        _context = context;
     }
 
     [HttpPost]
@@ -29,13 +35,22 @@ public class RegisterInPanelController : Controller
     public async Task<IActionResult> Register(RegisterInPanelDto model)
     {
         if (!ModelState.IsValid)
-            return View(model);
+        {
+            ViewBag.Roles = _roleManager.Roles.ToList();
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                // درخواست از طریق ajax-link → فقط فرم
+                return PartialView("_RegisterForm", model);
+            }
+            return View("Index", model);
+        }
 
         var user = new ApplicationUser
         {
             UserName = model.UserName,
             PhoneNumber = model.Mobile,
-            FullName = model.FullName,
+            FullName = "",
             RegisterDate = DateTime.UtcNow
         };
 
@@ -50,26 +65,52 @@ public class RegisterInPanelController : Controller
 
             await _userManager.AddToRoleAsync(user, model.Role);
 
+            clsUserDetail userDetail = new clsUserDetail
+            {
+                NationalCode = model.NationalCode,
+                UserId = user.Id,
+                userType = UserType.Legal,
+            };
+            _context.UserDetails.Add(userDetail);
+            await _context.SaveChangesAsync();
+
             // ساخت JWT
             var jwtToken = await _tokenService.CreateTokenAsync(user);
 
-            // اگر API داری، بهتره JSON برگردونی
-            return Json(new
-            {
-                token = jwtToken,
-                user = new { user.UserName, user.FullName, user.PhoneNumber }
-            });
+            return RedirectToAction("Index", "ViewCompany");
+
         }
         foreach (var error in result.Errors)
         {
             ModelState.AddModelError(string.Empty, error.Description);
         }
 
-        return View(model);
+        ViewBag.Roles = _roleManager.Roles.ToList();
+
+        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            return PartialView("_RegisterForm", model);
+        return View("Index", model);
     }
 
-    public async Task<IActionResult> Index()
+    [HttpGet]
+    public async Task<IActionResult> CheckUserName(string userName)
     {
-        return View();
+        if (string.IsNullOrWhiteSpace(userName))
+            return Json(new { exists = false });
+
+        var user = await _userManager.FindByNameAsync(userName);
+
+        return Json(new { exists = user != null });
+    }
+
+    public IActionResult Index()
+    {
+        ViewBag.Roles = _roleManager.Roles.ToList();
+        var model = new RegisterInPanelDto();
+
+        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            return PartialView("_RegisterForm", model);
+
+        return PartialView(model);
     }
 }

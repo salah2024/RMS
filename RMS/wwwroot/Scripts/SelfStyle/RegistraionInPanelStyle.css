@@ -1,0 +1,94 @@
+﻿.form-control {
+    height: 40px;
+}
+
+.register-form-container {
+    direction: rtl;
+    text-align: right;
+    padding-top: 30px; /* فاصله از بالا */
+    padding-right: 30px; /* فاصله از راست */
+    max-width: 450px; /* عرض منطقی برای فرم */
+}
+
+.register-form-container .form-label {
+    font-weight: 600;
+ }
+
+.register-wrapper {
+    min-height: calc(100vh - 120px); /* کمی فاصله از بالا/پایین */
+    padding: 1.5rem;
+    direction: rtl;
+    text-align: right;
+}
+
+.register-card {
+    max-width: 600px;
+    width: 100%;
+    border-radius: 1rem;
+}
+
+    .register-card .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #eee;
+    }
+
+.register-card .card-header h5 {
+      font-weight: 600;
+   }
+
+.login-btn {
+    border-radius: 999px;
+    padding: 0.6rem 1.2rem;
+    font-weight: 600;
+}
+
+
+/* فاصله فرم از بالا و راست */
+.register-form-container {
+    direction: rtl;
+    text-align: right;
+    padding-top: 30px;
+    padding-right: 30px;
+    max-width: 450px;
+}
+
+/* بزرگتر شدن ارتفاع ورودی‌ها */
+.custom-input {
+    height: 46px !important;
+    padding: 10px 12px;
+    font-size: 15px;
+    border-radius: 6px;
+}
+
+    /* انتخابگر هم مثل input شود (Bootstrap معمولاً فرق دارد) */
+    .custom-input.form-control,
+    .custom-input.form-select {
+        background-color: #fff;
+        border: 1px solid #ced4da;
+        box-shadow: none;
+    }
+
+    .custom-input:focus {
+        border-color: #86b7fe;
+        outline: none;
+        box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.25);
+    }
+
+/* برچسب‌ها شکیل‌تر */
+.form-label {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+
+/* موبایل: کمی فاصله بیشتر بین فیلدها */
+@media (max-width: 576px) {
+    .register-card {
+        box-shadow: none;
+        border-radius: 0.75rem;
+    }
+
+    .register-wrapper {
+        padding: 0.75rem;
+    }
+}

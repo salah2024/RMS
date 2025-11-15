@@ -21,7 +21,7 @@ public class OperationController(ApplicationDbContext context) : Controller
     }
     public ActionResult ShowTree()
     {
-        return PartialView();
+        return View();
     }
 
 

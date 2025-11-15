@@ -1,0 +1,94 @@
+﻿@model RegisterInPanelDto
+
+<div class="register-form-container" dir="rtl">
+    <form asp-controller="RegisterInPanel"
+          asp-action="Register"
+          method="post">
+
+        @Html.AntiForgeryToken()
+
+        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Role" class="form-label">نقش در سیستم</label>
+            <select asp-for="Role" class="form-control custom-input" style="width:100%;direction:rtl">
+                <option value="">انتخاب نقش...</option>
+                @foreach (var role in ViewBag.Roles)
+                {
+                    <option value="@role.Id">@role.Name</option>
+                }
+            </select>
+            <span asp-validation-for="Role" class="text-danger small"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="NationalCode" class="form-label">شناسه ملی</label>
+            <input asp-for="NationalCode" class="form-control custom-input" placeholder="شناسه ملی" />
+            <span asp-validation-for="NationalCode" class="text-danger small"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Mobile" class="form-label">شماره همراه</label>
+            <input asp-for="Mobile" class="form-control custom-input" placeholder="شماره همراه" />
+            <span asp-validation-for="Mobile" class="text-danger small"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="UserName" class="form-label">نام کاربری</label>
+            <input asp-for="UserName" class="form-control custom-input" id="UserNameInput" placeholder="نام کاربری خود را وارد کنید" />
+            <span asp-validation-for="UserName" class="text-danger small"></span>
+            <span id="UserNameCheckMsg" class="small mt-1 d-block"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Password" class="form-label">رمز عبور</label>
+            <input asp-for="Password" class="form-control custom-input" type="password" />
+            <span asp-validation-for="Password" class="text-danger small"></span>
+        </div>
+
+        <div class="form-group mb-4">
+            <label asp-for="ConfirmPassword" class="form-label">تکرار رمز عبور</label>
+            <input asp-for="ConfirmPassword" class="form-control custom-input" type="password" />
+            <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary px-4">ثبت‌ نام</button>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function () {
+
+            $('#UserNameInput').on('change', function () {
+                debugger;
+                var username = $(this).val();
+
+                if (username.length < 3) {
+                    $('#UserNameCheckMsg').text('');
+                    return;
+                }
+
+                $.ajax({
+                    url: '/RegisterInPanel/CheckUserName',
+                    type: 'GET',
+                    data: { userName: username },
+                    success: function (result) {
+                        if (result.exists) {
+                            $('#UserNameCheckMsg').text('این نام کاربری قبلاً ثبت شده است.')
+                                .css('color', 'red');
+                        } else {
+                            $('#UserNameCheckMsg').text('نام کاربری آزاد است.')
+                                .css('color', 'green');
+                        }
+                    }
+                });
+
+            });
+
+        });
+    </script>
+}
+

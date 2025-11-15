@@ -104,6 +104,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<clsBarAvordHamlRizMetre> BarAvordHamlRizMetres { get; set; }
     public DbSet<clsOperationDetail> OperationDetails { get; set; }
     public DbSet<clsBarAvordHamlNecessaryLimit> BarAvordHamlNecessaryLimits { get; set; }
+    public DbSet<clsUserDetail> UserDetails { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -119,6 +120,13 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .OnDelete(DeleteBehavior.Restrict);
 
 
+        modelBuilder.Entity<clsUserDetail>()
+        .HasOne(d => d.User)
+        .WithOne(u => u.UserDetail)      // اگر در ApplicationUser این پراپرتی رو داری
+        .HasForeignKey<clsUserDetail>(d => d.UserId)
+        .OnDelete(DeleteBehavior.Cascade);
+
+
         modelBuilder.Entity<QuesForAbnieFaniValuesDto>().HasNoKey();
 
         modelBuilder.Entity<ItemsFBShomarehValueShomarehUpdateProcedureDto>().HasNoKey();
@@ -127,28 +135,28 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         modelBuilder.Entity<GetExistingKMPayKaniInfoWithBarAvordDto>().HasNoKey();
 
         modelBuilder.Entity<clsOperationHasAddedOperations>()
-            .HasOne(x => x.Operation)
-            .WithMany()
-            .HasForeignKey(x => x.OperationId)
-            .OnDelete(DeleteBehavior.Restrict); // یا DeleteBehavior.NoAction
+                .HasOne(x => x.Operation)
+                .WithMany()
+                .HasForeignKey(x => x.OperationId)
+                .OnDelete(DeleteBehavior.Restrict); // یا DeleteBehavior.NoAction
 
         modelBuilder.Entity<clsAppOperationInfoDetails>()
-            .HasOne(x => x.AppQuestion) // یا اسم navigation property مربوطه
-            .WithMany() // یا .WithMany(q => q.OperationInfoDetails) اگر داشته باشی
-            .HasForeignKey(x => x.QuetionId)
-            .OnDelete(DeleteBehavior.Restrict); // یا DeleteBehavior.NoAction
+                .HasOne(x => x.AppQuestion) // یا اسم navigation property مربوطه
+                .WithMany() // یا .WithMany(q => q.OperationInfoDetails) اگر داشته باشی
+                .HasForeignKey(x => x.QuetionId)
+                .OnDelete(DeleteBehavior.Restrict); // یا DeleteBehavior.NoAction
 
         modelBuilder.Entity<clsItemsHasCondition_ConditionContext>()
-        .HasOne(x => x.ItemsHasCondition) // این اسم navigation property مربوطه‌ست
-        .WithMany() // یا .WithMany(i => i.AddedToFBs) اگه تعریف شده
-        .HasForeignKey(x => x.ItemsHasConditionId)
-        .OnDelete(DeleteBehavior.Restrict); // یا DeleteBehavior.NoAction
-      
+            .HasOne(x => x.ItemsHasCondition) // این اسم navigation property مربوطه‌ست
+            .WithMany() // یا .WithMany(i => i.AddedToFBs) اگه تعریف شده
+            .HasForeignKey(x => x.ItemsHasConditionId)
+            .OnDelete(DeleteBehavior.Restrict); // یا DeleteBehavior.NoAction
+
         modelBuilder.Entity<clsItemsHasConditionAddedToFB>()
-        .HasOne(x => x.ItemsHasCondition_ConditionContext) // این اسم navigation property مربوطه‌ست
-        .WithMany() // یا .WithMany(i => i.AddedToFBs) اگه تعریف شده
-        .HasForeignKey(x => x.ItemsHasCondition_ConditionContextId)
-        .OnDelete(DeleteBehavior.Restrict); // یا DeleteBehavior.NoAction
+            .HasOne(x => x.ItemsHasCondition_ConditionContext) // این اسم navigation property مربوطه‌ست
+            .WithMany() // یا .WithMany(i => i.AddedToFBs) اگه تعریف شده
+            .HasForeignKey(x => x.ItemsHasCondition_ConditionContextId)
+            .OnDelete(DeleteBehavior.Restrict); // یا DeleteBehavior.NoAction
 
     }
 }
