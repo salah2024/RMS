@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-namespace RMS.Models.Account.Dto;
+namespace RMS.Controllers.RegisterInPanel.Dto;
 
 public class CustomIdentityErrorDescriber : IdentityErrorDescriber
 {

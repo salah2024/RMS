@@ -105,6 +105,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<clsOperationDetail> OperationDetails { get; set; }
     public DbSet<clsBarAvordHamlNecessaryLimit> BarAvordHamlNecessaryLimits { get; set; }
     public DbSet<clsUserDetail> UserDetails { get; set; }
+    public DbSet<clsFosoulItem> FosoulItems { get; set; }
+    public DbSet<clsZaribBalaSari> ZaribBalaSaris { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

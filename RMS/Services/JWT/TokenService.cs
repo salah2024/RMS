@@ -19,19 +19,41 @@ public class TokenService : ITokenService
 
     public async Task<string> CreateTokenAsync(ApplicationUser user)
     {
-        var jwtSettings = _configuration.GetSection("Jwt");
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]));
+        var jwtSection = _configuration.GetSection("Jwt");
+        var keyValue = jwtSection["Key"];
 
+        if (string.IsNullOrWhiteSpace(keyValue))
+            throw new InvalidOperationException("JWT Key is not configured.");
+
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyValue));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var claims = new List<Claim>
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-                new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName ?? ""),
-                new Claim("FullName", user.FullName ?? ""),
-            };
+        // زمان انقضا
+        var expireMinutesString = jwtSection["ExpireMinutes"];
+        if (!int.TryParse(expireMinutesString, out var expireMinutes))
+            expireMinutes = 60; // مقدار پیش‌فرض
 
-        // نقش‌ها را هم به توکن اضافه کنیم
+        var now = DateTime.UtcNow;
+
+        var claims = new List<Claim>
+    {
+        // استانداردهای JWT
+        new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+        new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName ?? string.Empty),
+        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+        new Claim(JwtRegisteredClaimNames.Iat,
+                  new DateTimeOffset(now).ToUnixTimeSeconds().ToString(),
+                  ClaimValueTypes.Integer64),
+
+        // Claimهای استاندارد برای ASP.NET Core
+        new Claim(ClaimTypes.NameIdentifier, user.Id),
+        new Claim(ClaimTypes.Name, user.UserName ?? string.Empty),
+
+        // Claim سفارشی
+        new Claim("FullName", user.FullName ?? string.Empty)
+    };
+
+        // نقش‌ها
         var roles = await _userManager.GetRolesAsync(user);
         foreach (var role in roles)
         {
@@ -39,10 +61,11 @@ public class TokenService : ITokenService
         }
 
         var token = new JwtSecurityToken(
-            issuer: jwtSettings["Issuer"],
-            audience: jwtSettings["Audience"],
+            issuer: jwtSection["Issuer"],
+            audience: jwtSection["Audience"],
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(double.Parse(jwtSettings["ExpireMinutes"])),
+            notBefore: now,
+            expires: now.AddMinutes(expireMinutes),
             signingCredentials: creds
         );
 

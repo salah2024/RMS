@@ -1,0 +1,698 @@
+﻿@using RMS.Models.Entity
+@{
+	var BaravordUser = (IEnumerable<clsBaravordUser>)ViewBag.BaravordUser;
+}
+
+<style>
+	.DashboardMenu {
+		cursor: pointer;
+		padding: 6px 5px;
+		border: 1px solid #101d53;
+		border-radius: 5px;
+		background-color: #101d53;
+		color: #fff;
+	}
+
+		.DashboardMenu:hover {
+			background-color: #283877;
+		}
+
+	.OwnerStyle {
+		height: 180px;
+		border: 1px solid #101d53;
+		border-top: 0px;
+		background-color: #fff;
+	}
+
+	.DetailsStyle {
+		text-align: justify;
+		padding: 10px 20px;
+		font-size: 14px;
+		line-height: 2;
+	}
+
+	.modal-body {
+		padding: 1.5rem;
+	}
+
+	.modal-lg {
+		max-width: 684px;
+	}
+
+	.form-control {
+		height: 25px;
+		border: 1px solid #afa1b5;
+	}
+
+	.modal-body {
+		padding: 0px;
+	}
+</style>
+
+<script>
+	$(document).ready(function () {
+		ViewBarAvordClick();
+	});
+
+		// بعد از این‌که جدولت پُر شد (مثلاً بعد از success هم می‌تونی بذاری یا در اسکریپت جدا)
+	// فیلتر کردن روی تغییر کاراکتر در input
+	$(document).on('keyup', '#txtSearchTitle', function () {
+		var value = $(this).val().toLowerCase();
+
+		$("#tableBody tr").each(function () {
+			// ستون عنوان: سومین td (اولی مخفی، دومی شماره، سومی عنوان)
+			var titleText = $(this).find("td:nth-child(3)").text().toLowerCase();
+
+			if (titleText.indexOf(value) > -1) {
+				$(this).show();
+			} else {
+				$(this).hide();
+			}
+		});
+	});
+
+		$(document).on("click", ".btnDelete", function (e) {
+
+		var btn = $(this);
+		var id = btn.data("id");
+		var row = btn.closest("tr");
+
+		// جلوگیری از چند بار نمایش
+		$(".confirm-box").remove();
+
+		// ایجاد پیام کوچک تأیید
+		var confirmBox = $(`
+			<div class='confirm-box'
+				 style='position:absolute;
+						background:#fff;
+						border:1px solid #ccc;
+						padding:5px 10px;
+						border-radius:5px;
+						font-size:12px;
+						z-index:999;
+						box-shadow:0 2px 6px rgba(0,0,0,0.2);'>
+
+				حذف شود؟
+				<button class='btnYes' style='margin-left:10px;font-size:12px;'>بله</button>
+				<button class='btnNo' style='font-size:12px;'>خیر</button>
+			</div>
+		`);
+
+		$("body").append(confirmBox);
+
+		// موقعیت کنار دکمه
+		var pos = btn.offset();
+		confirmBox.css({
+			top: pos.top + 30,
+			left: pos.left - 100
+		});
+
+		// دکمه‌ها
+		confirmBox.find(".btnYes").on("click", function () {
+			confirmBox.remove();
+			DeleteBaravord(id,row);
+		});
+
+		confirmBox.find(".btnNo").on("click", function () {
+			confirmBox.remove();
+		});
+	});
+
+		function DeleteBaravord(id,row) {
+			debugger;
+			var vardata = new Object();
+			vardata.Id = id;
+			$.ajax({
+			type: "POST",
+			url: "/BaravordUser/DeleteBarAvordUser",
+			data: JSON.stringify(vardata),
+			contentType: "application/json; charset=utf-8",
+			dataType: "json",
+			success: function (response) {
+				debugger;
+				if(response=="OK")
+				{
+				 toastr.success('حذف بدرستی صورت گرفت', 'موفق');
+				 debugger;
+				 row.fadeOut(500, function () {
+					$(this).remove();
+				 });	
+				}
+			},
+			error: function (response) {
+				toastr.error('مشکل در حذف برآورد', 'خطا');
+
+			}
+			});
+		}
+
+
+	////////////////
+	// function FillNoeFB() {
+	//     var vardata = new Object();
+	//     vardata.LatinName = "FehrestBahaType";
+	//     $.ajax({
+	//         type: "POST",
+	//         url: "/BaseInfo/GetBaseInfoNoeFB",
+	//         data: JSON.stringify(vardata),
+	//         contentType: "application/json; charset=utf-8",
+	//         dataType: "json",
+	//         success: function (response) {
+	//             str = '';
+	//             if (response.length!=0) {
+	//                 $.each(response, function(i,val) {
+	//                     str += `
+	//                             <option value="`+val.ID+`">`+val.Name+`</option>
+	//                         `
+	//                 });
+	//                 $('#drdNoeFB').html(str);
+	//             }
+	//             else { }
+	//         },
+	//         error: function (response) {
+	//             toastr.error('مشکل در درج برآورد جدید', 'خطا');
+	//         }
+	//     });
+	// }
+	///////////
+	function Save() {
+		NoeFB = $('#drdNoeFB').find(":selected").val();
+		Year = $('#drdYear').val();
+		UserName = $('#HDFUserName').val();
+		var vardata = new Object();
+		vardata.Title = $('#txtTitle').val();
+		vardata.NoeFB =parseInt(NoeFB);
+		vardata.Year =parseInt(Year);
+		vardata.Type = 1;
+		vardata.UserName = "salah"; //UserName;
+		$.ajax({
+			type: "POST",
+			url: "/BaravordUser/CreateNewBU",
+			data: JSON.stringify(vardata),
+			contentType: "application/json; charset=utf-8",
+			dataType: "json",
+			success: function (response) {
+				info = response.split('_');
+				if (info[0] == "OK") {
+					toastr.success('درج بدرستی صورت گرفت', 'موفق');
+					$('#HDFID').val(info[1]);
+					$('#HDFNoeFB').val(NoeFB);
+					$('#HDFYear').val(Year);
+					goToBarAvord();
+				}
+				else if (info[0] == "NOK") {
+					toastr.info('دسترسی نامعتبر', 'اطلاع');
+				}
+				else {
+					toastr.error('مشکل در درج برآورد جدید', 'خطا');
+				}
+			},
+			error: function (response) {
+				toastr.error('مشکل در درج برآورد جدید', 'خطا');
+			}
+		});
+	}
+	////////////
+
+	function SaveInTable(btn) {
+		$(btn).attr('disabled',true);
+		// پیدا کردن ردیف والد
+		var $row = $(btn).closest("tr");
+
+		// ساخت آبجکت ورودی ها از روی همان ردیف
+		var inputs = {
+			name: $row.find("input#new_name").val().trim(),
+			noeFB: $row.find("select#new_noeFB").val(),
+			//date: $row.find("input#new_date").val().trim(),
+			year: $row.find("select#new_year").val()
+		};
+
+		// --- اعتبارسنجی ---
+		if (inputs.name === "") {
+			toastr.warning("عنوان وارد نشده است");
+			return;
+		}
+
+		if (!inputs.noeFB) {
+			toastr.warning("فهرست بها انتخاب نشده است");
+			return;
+		}
+
+		// if (inputs.date === "") {
+		// 	toastr.warning("تاریخ وارد نشده است");
+		// 	return;
+		// }
+
+		if (!inputs.year) {
+			toastr.warning("سال انتخاب نشده است");
+			return;
+		}
+
+		// --- ساخت آبجکت نهایی برای ارسال به سرور ---
+		var vardata = {
+			Title: inputs.name,
+			NoeFB: parseInt(inputs.noeFB),
+			Year: parseInt(inputs.year),
+			Type: 1,
+			UserName: "salah"
+		};
+
+		// --- فراخوانی AJAX ---
+		$.ajax({
+			type: "POST",
+			url: "/BaravordUser/CreateNewBU",
+			data: JSON.stringify(vardata),
+			contentType: "application/json; charset=utf-8",
+			dataType: "json",
+
+			success: function (response) {
+				let info = response.split("_");
+
+				if (info[0] === "OK") {
+
+					toastr.success("درج با موفقیت انجام شد");
+
+					// مقادیر برگشتی
+					$("#HDFID").val(info[1]);
+					$("#HDFNoeFB").val(inputs.noeFB);
+					$("#HDFYear").val(inputs.year);
+
+					// پاک کردن مقادیر ردیف
+					$row.find("input").val("");
+
+					goToBarAvord();
+				}
+				else if (info[0] === "NOK") {
+					toastr.info("دسترسی نامعتبر");
+				}
+				else {
+					toastr.error("خطا در درج");
+				}
+			},
+
+			error: function () {
+				toastr.error("خطا در ارتباط با سرور");
+				btn.removeAttr('disabled',true);
+			}
+		});
+	}
+	////////////
+	function CreateBarAvordClick() {
+		//FillNoeFB();
+		$('#aCreateBarAvord').click();
+	}
+	/////
+	function ViewBarAvordClick() {
+		$.ajax({
+			type: "POST",
+			url: "/BaravordUser/List",
+			data: JSON.stringify(""),
+			contentType: "application/json; charset=utf-8",
+			dataType: "json",
+			success: function (response) {
+				$.each(response, function () {
+					var row =
+					$(`<tr>
+						<td style='display:none'></td>
+						<td width="10%"></td>
+						<td width="30%"></td>
+						<td width="20%"></td>
+						<td width="20%"></td>
+						<td width="10%"></td>
+						<td style='display:none'></td>
+						<td width="10%">
+							<button type="button" onclick="Delete(this)" class="ButtonRowsSaveStyle btnDelete"  data-id="${$(this)[0].buId}">
+								<i id="iSave" class="fa fa-trash DelRMUStyle"></i>
+							</button>
+						</td>
+					   </tr>`)
+					row.find("td:nth-child(1)").html($(this)[0].buId);
+					row.find("td:nth-child(2)").html($(this)[0].buNum);
+					row.find("td:nth-child(3)").html($(this)[0].buName);
+					row.find("td:nth-child(4)").html($(this)[0].noeFBName);
+					row.find("td:nth-child(5)").html($(this)[0].buInsertDateSolar);
+					row.find("td:nth-child(6)").html($(this)[0].buYear);
+					row.find("td:nth-child(7)").html($(this)[0].buNoeFB);
+					$("[id*=tableBody]").append(row);
+				});
+				$("[id*=tableBody] tr").click(function () {
+					$('.rowSelected').removeClass('rowSelected');
+					$(this).addClass('rowSelected');
+					$('#HDFID').val($(this).find("td:nth-child(1)").html());
+					$('#HDFYear').val($(this).find("td:nth-child(6)").html());
+					$('#HDFNoeFB').val($(this).find("td:nth-child(7)").html());
+				});
+
+				$("[id*=tableBody] tr").dblclick(function () {
+					goToBarAvord();
+				});
+			},
+			error: function (response) {
+				toastr.error('مشکل در بارگذاری برآورد', 'خطا');
+			}
+		});
+	}
+
+	/////
+	function ViewBarAvordReportClick() {
+		$.ajax({
+			type: "POST",
+			url: "/BaravordUser/List",
+			data: JSON.stringify(""),
+			contentType: "application/json; charset=utf-8",
+			dataType: "json",
+			success: function (response) {
+				$("[id*=table]").html('');
+				var row = $("[id*=table] tr:last-child").clone(true);
+				var row = $("<thead><tr><td style='display:none'></td><td >شماره</td ><td >عنوان</td><td >فهرست بها</td><td >تاریخ</td><td >سال</td><td style='display:none'></td></tr></thead>")
+				$("[id*=table]").append(row);
+				$("[id*=table] tr").not($("[id*=table] tr:first-child")).remove();
+				$.each(response, function () {
+					var row = $("<tr><td style='display:none'></td><td width=\"10%\"></td ><td width=\"30%\"></td><td width=\"20%\"></td><td width=\"30%\"></td><td width=\"20%\"></td><td style='display:none'></td></tr>")
+					row.find("td:nth-child(1)").html($(this)[0].ID);
+					row.find("td:nth-child(2)").html($(this)[0].Num);
+					row.find("td:nth-child(3)").html($(this)[0].Name);
+					row.find("td:nth-child(4)").html($(this)[0].NoeFBName);
+					row.find("td:nth-child(5)").html($(this)[0].Date);
+					row.find("td:nth-child(6)").html($(this)[0].Year);
+					row.find("td:nth-child(7)").html($(this)[0].NoeFB);
+					$("[id*=table]").append(row);
+				});
+				$("[id*=table] tr").click(function () {
+					$('.rowSelected').removeClass('rowSelected');
+					$(this).addClass('rowSelected');
+					$('#HDFID').val($(this).find("td:nth-child(1)").html());
+					$('#HDFYear').val($(this).find("td:nth-child(6)").html());
+					$('#HDFNoeFB').val($(this).find("td:nth-child(7)").html());
+				});
+
+				$("[id*=table] tr").dblclick(function () {
+					goToBarAvordReport();
+				});
+
+				$('#aViewBarAvordReport').click();
+			},
+			error: function (response) {
+				toastr.error('مشکل در بارگذاری برآورد', 'خطا');
+			}
+		});
+	}
+
+	function goToBarAvord(){
+		var BAId = $('#HDFID').val();
+		var NoeFB = $('#HDFNoeFB').val();
+		var Year = $('#HDFYear').val();
+		var vardata = new Object();
+		vardata.BAId = BAId;
+		vardata.Year = parseInt(Year);
+		vardata.NoeFB = parseInt(NoeFB);
+		$.ajax({
+			type: "POST",
+			url: "/BaseInfo/SetViewBag",
+			data: JSON.stringify(vardata),
+			contentType: "application/json; charset=utf-8",
+			dataType: "json",
+			success: function (response) {
+				if (response == "OK")
+				   {
+					   $('#content-body').html('<div class="text-center p-5">در حال بارگذاری...</div>'); // پیام موقت
+						$('#content-body').load('/Operation/ShowTree');
+						$('.modal-backdrop.fade.show').remove();
+
+					   }
+			},
+			error: function (response) {
+				toastr.error('خطا', 'خطا');
+			}
+		});
+	}
+
+	function goToBarAvordReport() {
+		var BAId = $('#HDFID').val();
+		var NoeFB = $('#HDFNoeFB').val();
+		var Year = $('#HDFYear').val();
+		var vardata = new Object();
+		vardata.BAId = BAId;
+		vardata.Year = Year;
+		vardata.NoeFB = NoeFB;
+		$.ajax({
+			type: "POST",
+			url: "/BaseInfo/SetViewBag",
+			data: JSON.stringify(vardata),
+			contentType: "application/json; charset=utf-8",
+			dataType: "json",
+			success: function (response) {
+				if (response == "OK")
+					window.location.href = '/Operation/ShowTree';
+			},
+			error: function (response) {
+				toastr.error('خطا', 'خطا');
+			}
+		});
+	}
+</script>
+<div class="col-md-12" style="border-bottom:1px solid #101d53;">
+	<p style="font-size: 20px;font-weight: 600;">داشبورد</p>
+</div>
+<div class="col-12">
+	<div class="row">
+		<div class="col-12" style="padding-top:10px;padding-bottom:10px;background-color: #101d53; border-bottom: 1px solid #fff;color: #fff;">
+			<span>برآوردها</span>
+		</div>
+
+		<div class="col-12" style="padding-top:5px;padding-bottom:5px;background-color: #edb4f7">
+			<div class="row">
+				<div class="col-1" style="text-align:left">جستجو براساس:</div>
+				<div class="col-1" style="text-align:left">عنوان:</div>
+				<div class="col-3"><input id="txtSearchTitle" class="form_control" type="text" /></div>
+			</div>
+		</div>
+		<div class="col-12">
+			<table id="table" class="table" style="text-align:center">
+				<thead>
+					<tr>
+						<td style='display:none'></td>
+						<td width="10%">شماره</td>
+						<td width="30%">عنوان</td>
+						<td width="20%">فهرست بها</td>
+						<td width="20%">تاریخ</td>
+						<td width="10%">سال فهرست بها</td>
+						<td style='display:none'></td>
+						<td width="10%"></td>
+					</tr>
+				</thead>
+			</table>
+		</div>
+		<div class="col-12" style="overflow:auto;max-height:500px">
+			<table id="table" class="table" style="text-align:center">
+				<tbody id="tableBody" style="overflow:auto;max-height:400px">
+				</tbody>
+			</table>
+		</div>
+		<div class="col-12">
+			<table class="table new-row" style="text-align:center">
+				<tr style="background-color: #f4d4ff;">
+					<td style="display:none"></td>
+					<td width="10%"><i class="fa fa-plus SaveRMUStyle"></i></td>
+					<td width="30%"><input id="new_name" class="form-control input" /></td>
+					<td width="20%">
+						<select id="new_noeFB" style="width:100%">
+							<option id="234" value="234">راه و باند</option>
+							<option id="232" value="232">راهداری</option>
+							<option id="233" value="233">ابنیه</option>
+						</select>
+					</td>
+					<td width="20%"></td>
+					<td width="10%">
+						<select id="new_year" style="width:100%">
+							<option id="1404" value="1404">1404</option>
+							<option id="1405" value="1405">1405</option>
+							<option id="1406" value="1406">1406</option>
+						</select>
+					</td>
+					<td style="display:none"></td>
+					<td width="10%" style="text-align:center">
+						<button type="button" onclick="SaveInTable(this)" class="ButtonRowsSaveStyle"><i id="iSave" class="fa fa-save SaveRMUStyle"></i></button>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
+@* <div class="row col-md-12" style="margin-top:20px">
+	<div class="col-md-3">
+		<div class="col-md-12 OwnerStyle">
+			<div class="row DashboardMenu" onclick="CreateBarAvordClick()">
+				<div class="col-md-2">
+					<i style="color: #14e114;font-size: 26px;" class="fa fa-plus-square"></i>
+				</div>
+				<div class="col-md-10">
+					<h4>ایجاد برآورد جدید</h4>
+				</div>
+			</div>
+			<div class="row DetailsStyle">
+				<span>از طریق این منو میتوانید برآورد جدید ایجاد نمایید، و آیتم های لازمه را به برآورد خود اضافه نمایید</span>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-3">
+		<div class="col-md-12 OwnerStyle">
+			<div class="row DashboardMenu" onclick="ViewBarAvordClick()">
+				<div class="col-md-2">
+					<i style="color: #e0e4fb;font-size: 26px;" class="fa fa-eye"></i>
+				</div>
+				<div class="col-md-10">
+					<h4>مشاهده برآورد</h4>
+				</div>
+			</div>
+			<div class="row DetailsStyle">
+				<span>از طریق این منو میتوانید برآوردهای قبلی خود را مشاهده نمایید، و آیتم های لازمه را در برآورد خود ویرایش نمایید</span>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-3">
+		<div class="col-md-12 OwnerStyle">
+			<div class="row DashboardMenu" onclick="ViewBarAvordReportClick()">
+				<div class="col-md-2">
+					<i style="color: #fff;font-size: 26px;" class="fa fa-sticky-note"></i>
+				</div>
+				<div class="col-md-10">
+					<h4>گزارشات مربوط به برآورد</h4>
+				</div>
+			</div>
+			<div class="row DetailsStyle">
+				<span>از طریق این منو میتوانید گزارشات مربوط به برآوردهای قبلی خود را مشاهده نمایید</span>
+			</div>
+		</div>
+	</div>
+</div>
+ *@
+
+<a id="aCreateBarAvord" style="display:none" data-toggle="modal" href="#CreateBarAvordShow"></a>
+<div class="modal fade" id="CreateBarAvordShow" tabindex="-1" role="dialog"
+	 aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-title" id="largeModalLabel">ایجاد برآورد جدید</h2>
+				<button id="btnCloseFormNewB" type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="form-horizontal popStyle" id="divShowCreateBarAvord">
+					<div class="row">
+						<div class="col-md-2" style="text-align:left">
+							<span>عنوان:</span>
+						</div>
+						<div class="col-md-10">
+							<input id="txtTitle" type="text" name="" value="" class="form-control input-sm" />
+						</div>
+					</div>
+				</div>
+				<div class="form-horizontal popStyle" id="divShowCreateBarAvord">
+					<div class="row">
+						<div class="col-md-2" style="text-align:left">
+							<span>نوع فهرست بها:</span>
+						</div>
+						<div class="col-md-10">
+							<select id="drdNoeFB" style="width:100%">
+								<option id="234" value="234">راه و باند</option>
+								<option id="232" value="232">راهداری</option>
+								<option id="233" value="233">ابنیه</option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="form-horizontal popStyle" id="divShowCreateBarAvord">
+					<div class="row">
+						<div class="col-md-2" style="text-align:left">
+							<span>سال:</span>
+						</div>
+						<div class="col-md-10">
+							<select id="drdYear" style="width:100%">
+								@* <option id="1397" value="1397">1397</option>
+                                <option id="1398" value="1398">1398</option>
+                                <option id="1399" value="1399">1399</option>
+                                <option id="1400" value="1400">1400</option>
+                                <option id="1401" value="1401">1401</option>
+                                <option id="1402" value="1402">1402</option>
+                                <option id="1403" value="1403">1403</option> *@
+								<option id="1404" value="1404">1404</option>
+								@* <option id="1405" value="1405">1405</option>
+                                <option id="1406" value="1406">1406</option>
+                                <option id="1407" value="1407">1407</option>
+                                <option id="1408" value="1408">1408</option> *@
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" onclick="Save()" style="width: 100px;background-color: blue;" class="btn btn-primary">ذخیره</button>
+				<button type="button" style="width: 100px;background-color: red;" class="btn btn-secondary"
+						data-dismiss="modal">
+					لغو
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+@* <a id="aViewBarAvord" style="display:none" data-toggle="modal" href="#ViewBarAvordShow"></a>
+<div class="modal fade" id="ViewBarAvordShow" tabindex="-1" role="dialog"
+	 aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-title" id="largeModalLabel">لیست برآورد</h2>
+				<button id="btnCloseViewBU" type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body" style="overflow:auto;max-height:500px;">
+				<table id="table" class="table">
+				</table>
+			</div>
+			<div class="modal-footer">
+				<button type="button" onclick="goToBarAvord()" style="width: 100px;background-color: blue;" class="btn btn-primary">انتخاب</button>
+				<button type="button" style="width: 100px;background-color: red;" class="btn btn-secondary"
+						data-dismiss="modal">
+					بستن
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+<a id="aViewBarAvordReport" style="display:none" data-toggle="modal" href="#ViewBarAvordReportShow"></a>
+<div class="modal fade" id="ViewBarAvordReportShow" tabindex="-1" role="dialog"
+	 aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2 class="modal-title" id="largeModalLabel">لیست برآورد</h2>
+				<button id="btnCloseViewBU" type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<table id="tableReport" class="table"></table>
+			</div>
+			<div class="modal-footer">
+				<button type="button" onclick="goToBarAvordReport()" style="width: 100px;background-color: blue;" class="btn btn-primary">انتخاب</button>
+				<button type="button" style="width: 100px;background-color: red;" class="btn btn-secondary"
+						data-dismiss="modal">
+					بستن
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+ *@
+
+<input type="hidden" name="" value="" id="HDFID" />
+<input type="hidden" name="" value="" id="HDFNoeFB" />
+<input type="hidden" name="" value="" id="HDFYear" />
+
+
+
+

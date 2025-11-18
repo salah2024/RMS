@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace RMS.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251118145726_c2")]
+    partial class c2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1673,28 +1676,6 @@ namespace RMS.Migrations
                     b.HasIndex("NoeFosoulId");
 
                     b.ToTable("tblFosoul");
-                });
-
-            modelBuilder.Entity("RMS.Models.Entity.clsFosoulItem", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("FBShomareh")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("FosoulId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FosoulId");
-
-                    b.ToTable("tblFosoulItem");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsGeneralProjectTiming", b =>
@@ -3704,34 +3685,6 @@ namespace RMS.Migrations
                     b.ToTable("tblZarayebTabdil");
                 });
 
-            modelBuilder.Entity("RMS.Models.Entity.clsZaribBalaSari", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<int?>("Noe1")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Noe2")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Noe3")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Year")
-                        .HasColumnType("int");
-
-                    b.Property<decimal?>("Zarib")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("tblZaribBalaSari");
-                });
-
             modelBuilder.Entity("RMS.Models.Entity.clsZaribRoadType", b =>
                 {
                     b.Property<long>("Id")
@@ -4172,17 +4125,6 @@ namespace RMS.Migrations
                         .IsRequired();
 
                     b.Navigation("NoeFosoul");
-                });
-
-            modelBuilder.Entity("RMS.Models.Entity.clsFosoulItem", b =>
-                {
-                    b.HasOne("RMS.Models.Entity.clsFosoul", "Fosoul")
-                        .WithMany()
-                        .HasForeignKey("FosoulId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Fosoul");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsGeneralProjectTiming", b =>

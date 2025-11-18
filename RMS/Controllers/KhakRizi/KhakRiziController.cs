@@ -2,6 +2,7 @@
 using System;
 using System.Data;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RMS.Controllers.AmalyateKhaki.Dto;
@@ -14,7 +15,6 @@ using RMS.Models.Entity;
 using static RMS.Models.Common.EnumForEntity;
 
 namespace RMS.Controllers.KhakRizi;
-
 public class KhakRiziController(ApplicationDbContext context) : Controller
 {
     private readonly ApplicationDbContext _context = context;

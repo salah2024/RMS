@@ -29,39 +29,38 @@
 	<link href="~/Scripts/toastr/toastr-rtl.min.css" rel="stylesheet">
 	<link href="~/Scripts/Fonts/Fonts.css" rel="stylesheet">
 	<link href="~/Scripts/SelfStyle/custom-rtl.css" rel="stylesheet">
-	<link href="~/Scripts/SelfStyle/RegistraionInPanelStyle.css" rel="stylesheet">
 	<link rel="stylesheet" href="~/assets/css/StyleCommon.css" />
 
 	<style>
 
 		html, body {
-			overflow-x: hidden;
-			width: 100%;
-			margin: 0;
-			padding: 0;
+		overflow-x: hidden;
+		width: 100%;
+		margin: 0;
+		padding: 0;
 		}
 
 
 		.navbar {
-			position: fixed;
-			top: 0;
-			left: 0;
-			right: 0;
-			z-index: 999;
-			height: 70px; /* یا مقدار واقعی */
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		z-index: 999;
+		height: 70px; /* یا مقدار واقعی */
 		}
 
 		html, body {
-			height: 100%;
-			margin: 0;
+		height: 100%;
+		margin: 0;
 		}
 
 		#content-scroll-wrapper,
 		.container-fluid,
 		.main-content,
 		.side-app {
-			max-width: 100%;
-			overflow-x: hidden;
+		max-width: 100%;
+		overflow-x: hidden;
 		}
 
 	</style>
@@ -72,52 +71,52 @@
 
 	<script>
 		$(document).ready(function () {
-			//GetUserName();
+		//GetUserName();
 		});
 		function GetUserName()
 		{
-			$.ajax({
-				type: "Get",
-				url: "/BaseInfo/GetUserName",
-				data: JSON.stringify(''),
-				contentType: "application/json; charset=utf-8",
-				dataType: "json",
-				success: function (response) {
-					var xmlDoc = $.parseXML(response);
-					var xml = $(xmlDoc);
-					tblUserName = xml.find("tblUserName");
-					$.each(tblUserName, function () {
-						$('#HDFUserName').val($(this).find("UserName").text());
-					});
-					if ($('#HDFUserName').val() == '') {
-						toastr.error('دسترسی نامعتبر', 'خطا');
-						window.location.href = '../User/LoginPage';
-					}
-					else
-						$('#divWaiting').hide();
-				},
-				error: function (response) {
-					toastr.error('خطا', 'خطا');
-				}
-			});
+		$.ajax({
+		type: "Get",
+		url: "/BaseInfo/GetUserName",
+		data: JSON.stringify(''),
+		contentType: "application/json; charset=utf-8",
+		dataType: "json",
+		success: function (response) {
+		var xmlDoc = $.parseXML(response);
+		var xml = $(xmlDoc);
+		tblUserName = xml.find("tblUserName");
+		$.each(tblUserName, function () {
+		$('#HDFUserName').val($(this).find("UserName").text());
+		});
+		if ($('#HDFUserName').val() == '') {
+		toastr.error('دسترسی نامعتبر', 'خطا');
+		window.location.href = '../User/LoginPage';
+		}
+		else
+		$('#divWaiting').hide();
+		},
+		error: function (response) {
+		toastr.error('خطا', 'خطا');
+		}
+		});
 		}
 
 		function Exit()
 		{
-			$.ajax({
-				type: "POST",
-				url: "/BaseInfo/SetViewBagEmpty",
-				data: JSON.stringify(''),
-				contentType: "application/json; charset=utf-8",
-				dataType: "json",
-				success: function (response) {
-					if (response == "OK")
-						window.location.href = '../User/LoginPage';
-				},
-				error: function (response) {
-					toastr.error('خطا', 'خطا');
-				}
-			});
+		$.ajax({
+		type: "POST",
+		url: "/BaseInfo/SetViewBagEmpty",
+		data: JSON.stringify(''),
+		contentType: "application/json; charset=utf-8",
+		dataType: "json",
+		success: function (response) {
+		if (response == "OK")
+		window.location.href = '../User/LoginPage';
+		},
+		error: function (response) {
+		toastr.error('خطا', 'خطا');
+		}
+		});
 		}
 	</script>
 
@@ -160,8 +159,8 @@
                                 </li>*@
 							</ul>
 						</li>
-						<li class="slide">
-							<a class="side-menu__item active" data-toggle="slide" href="#">
+							<li class="slide">
+								<a class="side-menu__item active" data-toggle="slide" href="#">
 								<i class="side-menu__icon fe fe-home"></i><span class="side-menu__label">مدیریت کاربران</span><i class="angle fa fa fa-angle-down"></i>
 							</a>
 							<ul class="slide-menu">

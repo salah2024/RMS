@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace RMS.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251118141027_c1")]
+    partial class c1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1677,11 +1680,9 @@ namespace RMS.Migrations
 
             modelBuilder.Entity("RMS.Models.Entity.clsFosoulItem", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("FBShomareh")
                         .IsRequired()
@@ -1690,7 +1691,22 @@ namespace RMS.Migrations
                     b.Property<long>("FosoulId")
                         .HasColumnType("bigint");
 
-                    b.HasKey("Id");
+                    b.Property<DateTime?>("InsertDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("RemoveDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UserInserter")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserRemover")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ID");
 
                     b.HasIndex("FosoulId");
 
@@ -3702,34 +3718,6 @@ namespace RMS.Migrations
                     b.HasIndex("OperationsOfHamlId");
 
                     b.ToTable("tblZarayebTabdil");
-                });
-
-            modelBuilder.Entity("RMS.Models.Entity.clsZaribBalaSari", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<int?>("Noe1")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Noe2")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Noe3")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Year")
-                        .HasColumnType("int");
-
-                    b.Property<decimal?>("Zarib")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("tblZaribBalaSari");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsZaribRoadType", b =>

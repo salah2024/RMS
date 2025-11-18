@@ -2,31 +2,29 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using RMS.Models.Entity;
-using RMS.Services.JWT;
 using static RMS.Models.Common.EnumForEntity;
 
-namespace RMS.Models.Account;
+namespace RMS.Controllers.RegisterInPanel;
 
-[AllowAnonymous]
 public class RegisterInPanelController : Controller
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly RoleManager<IdentityRole> _roleManager;
-    private readonly ITokenService _tokenService;
+    //private readonly ITokenService _tokenService;
     private readonly ApplicationDbContext _context;
 
     public RegisterInPanelController(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
         RoleManager<IdentityRole> roleManager,
-        ITokenService tokenService,
+        //ITokenService tokenService,
         ApplicationDbContext context)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _roleManager = roleManager;
-        _tokenService = tokenService;
+        //_tokenService = tokenService;
         _context = context;
     }
 
@@ -75,7 +73,7 @@ public class RegisterInPanelController : Controller
             await _context.SaveChangesAsync();
 
             // ساخت JWT
-            var jwtToken = await _tokenService.CreateTokenAsync(user);
+            //var jwtToken = await _tokenService.CreateTokenAsync(user);
 
             return RedirectToAction("Index", "ViewCompany");
 

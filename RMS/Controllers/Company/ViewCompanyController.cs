@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RMS.Models.Entity;
 using static RMS.Models.Common.EnumForEntity;
 
 namespace RMS.Controllers.Company;
-
 
 public class ViewCompanyController(ApplicationDbContext context) : Controller
 {

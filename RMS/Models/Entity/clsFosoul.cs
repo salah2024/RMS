@@ -18,5 +18,12 @@ namespace RMS.Models.Entity
         public int order { get; set; }
         public string Description { get; set; }
         public int Year { get; set; }
+
+        /// <summary>
+        /// در صورتی که این ضریب پر باشد آیتم ها ازین ضریب استفاده میکنند
+        /// و در صورتی که برابر با نال یا صفر باشد آیتم ها از جدول ضریب بالاسری استفاده میکنند
+        /// </summary>
+        [Column(TypeName = "decimal(18,4)")]
+        public decimal? Zarib { get; set; }
     }
 }

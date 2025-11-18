@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RMS.Controllers.AbnieFani.Dto;
 using RMS.Controllers.BarAvordUser.Dto;
@@ -8,7 +9,6 @@ using RMS.Models.Entity;
 using static RMS.Models.Common.EnumForEntity;
 
 namespace RMS.Controllers.Operation;
-
 public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _context) : ControllerBase
 {
     private readonly ApplicationDbContext context = _context;

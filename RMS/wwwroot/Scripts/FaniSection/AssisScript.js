@@ -2132,6 +2132,7 @@ function AddRizMetreUsersN(OperationId, FBId, Array, LevelNumber) {
     ArraySplit = Array.split(',');
     $('#HDFOperationIdN').val(OperationId);
     $('#HDFFBID').val(FBId);
+    $('#HDFFBID').val(FBId);
     $('#HDFIsFromAddedOperation').val('true');
     $('.NoRizMetre').addClass('displayNone');
     var str = '';

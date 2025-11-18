@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using Azure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
@@ -11,6 +12,7 @@ using static RMS.Models.Common.EnumForEntity;
 
 namespace RMS.Controllers.Operation;
 
+
 public class OperationController(ApplicationDbContext context) : Controller
 {
     private readonly ApplicationDbContext _context = context;
@@ -21,6 +23,9 @@ public class OperationController(ApplicationDbContext context) : Controller
     }
     public ActionResult ShowTree()
     {
+        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            return PartialView("_ViewShowTreeForm");
+
         return View();
     }
 

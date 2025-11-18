@@ -8,9 +8,9 @@ using RMS.Models.Entity;
 using static RMS.Models.Common.EnumForEntity;
 using RMS.Controllers.AmalyateKhaki.Dto;
 using RMS.Controllers.AmalyateKhaki.Common;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RMS.Controllers.PayKani;
-
 public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : Controller
 {
     private readonly ApplicationDbContext _context = context;

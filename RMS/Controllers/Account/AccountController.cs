@@ -1,27 +1,27 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using RMS.Services.JWT;
 
 public class AccountController : Controller
 {
-    private readonly IConfiguration _configuration;
+    //private readonly IConfiguration _configuration;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
-    private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly ITokenService _tokenService;
+    //private readonly IHttpContextAccessor _httpContextAccessor;
+    //private readonly ITokenService _tokenService;
 
-    public AccountController(IConfiguration configuration, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager,
-                             IHttpContextAccessor httpContextAccessor, ITokenService tokenService)
+    public AccountController(
+        //IConfiguration configuration,
+        UserManager<ApplicationUser> userManager, 
+        SignInManager<ApplicationUser> signInManager
+        //,IHttpContextAccessor httpContextAccessor
+        )
     {
-        _configuration = configuration;
+        //_configuration = configuration;
         _userManager = userManager;
         _signInManager = signInManager;
-        _httpContextAccessor = httpContextAccessor;
-        _tokenService = tokenService;
+        //_httpContextAccessor = httpContextAccessor;
+        //_tokenService = tokenService;
     }
 
     [HttpGet]
@@ -64,101 +64,154 @@ public class AccountController : Controller
         return View(model);
     }
 
-
     [HttpGet]
-    public IActionResult Login()
+    public IActionResult Login(string? returnUrl = null)
     {
+        ViewData["ReturnUrl"] = returnUrl;
         // اطمینان از ارسال مدل به ویو
         return View(new LoginViewModel());
     }
 
 
+    //[HttpPost]
+    //public async Task<IActionResult> Login(LoginViewModel model)
+    //{
+    //    if (!ModelState.IsValid)
+    //        return BadRequest("Invalid client request");
+
+    //    var user = await _userManager.FindByNameAsync(model.UserName);
+    //    if (user == null)
+    //        return Unauthorized("نام کاربری یا رمز اشتباه است");
+
+    //    var check = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
+    //    if (!check.Succeeded)
+    //        return Unauthorized("نام کاربری یا رمز اشتباه است");
+
+    //    var jwtToken = await _tokenService.CreateTokenAsync(user);
+
+    //    return Json(new
+    //    {
+    //        token = jwtToken,
+    //        user = new { user.UserName, user.FullName, user.PhoneNumber }
+    //    });
+
+    //    //var user = await _userManager.FindByNameAsync(model.UserName);
+    //    //if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
+    //    //{
+    //    //    // احراز هویت کاربر
+    //    //    var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
+
+    //    //    var token = GenerateToken(user);  // توکن رو تولید کن
+    //    //    SetTokenInCookie(token);          // توکن رو در کوکی ذخیره کن
+    //    //    return RedirectToAction("Index", "Dashboard");
+    //    //    //return Ok(new { message = "Login successful" });
+    //    //}
+    //    //else
+    //    //{
+    //    //    ModelState.AddModelError(string.Empty, "نام کاربری یا رمز عبور نادرست است.");
+    //    //}
+
+    //    //return Unauthorized();
+    //}
+
+
     [HttpPost]
-    public async Task<IActionResult> Login(LoginViewModel model)
+    public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
     {
         if (!ModelState.IsValid)
-            return BadRequest("Invalid client request");
+            return View(model);
 
         var user = await _userManager.FindByNameAsync(model.UserName);
         if (user == null)
-            return Unauthorized("نام کاربری یا رمز اشتباه است");
-
-        var check = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
-        if (!check.Succeeded)
-            return Unauthorized("نام کاربری یا رمز اشتباه است");
-
-        var jwtToken = await _tokenService.CreateTokenAsync(user);
-
-        return Json(new
         {
-            token = jwtToken,
-            user = new { user.UserName, user.FullName, user.PhoneNumber }
-        });
+            ModelState.AddModelError(string.Empty, "نام کاربری یا رمز اشتباه است");
+            return View(model);
+        }
 
-        //var user = await _userManager.FindByNameAsync(model.UserName);
-        //if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
-        //{
-        //    // احراز هویت کاربر
-        //    var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
+        //var signInResult = await _signInManager.PasswordSignInAsync(
+        //    user, model.Password, model.RememberMe, lockoutOnFailure: false);
 
-        //    var token = GenerateToken(user);  // توکن رو تولید کن
-        //    SetTokenInCookie(token);          // توکن رو در کوکی ذخیره کن
-        //    return RedirectToAction("Index", "Dashboard");
-        //    //return Ok(new { message = "Login successful" });
-        //}
-        //else
+        //if (!signInResult.Succeeded)
         //{
-        //    ModelState.AddModelError(string.Empty, "نام کاربری یا رمز عبور نادرست است.");
+        //    ModelState.AddModelError(string.Empty, "نام کاربری یا رمز اشتباه است");
+        //    return View(model);
         //}
 
-        //return Unauthorized();
-    }
+        var result = await _signInManager.PasswordSignInAsync(
+        user,
+        model.Password,
+        model.RememberMe,
+        lockoutOnFailure: false);
 
-    private string GenerateToken(ApplicationUser user)
-    {
-        var claims = new[]
+        if (!result.Succeeded)
         {
-            new Claim(ClaimTypes.Name, user.UserName),
-            new Claim(ClaimTypes.NameIdentifier, user.Id),
-            // اضافه کردن claim های بیشتر (مثل نقش‌ها) در صورت نیاز
-        };
+            ModelState.AddModelError(string.Empty, "نام کاربری یا رمز عبور اشتباه است");
+            return View(model);
+        }
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        // ساخت JWT
+        //var jwtToken = await _tokenService.CreateTokenAsync(user);
 
-        var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Audience"],
-            claims: claims,
-            expires: DateTime.Now.AddHours(1), // مدت زمان انقضا
-            signingCredentials: creds
-        );
+        // ذخیره توکن در کوکی (HttpOnly برای امنیت)
+        //Response.Cookies.Append("access_token", jwtToken, new CookieOptions
+        //{
+        //    HttpOnly = true,
+        //    Secure = true,          // اگر روی HTTPS هستید حتما true بماند
+        //    SameSite = SameSiteMode.Strict,
+        //    Expires = DateTimeOffset.UtcNow.AddHours(1)
+        //});
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            return Redirect(returnUrl);
+
+        // ریدایرکت به داشبورد
+        return RedirectToAction("Index", "Dashboard");
     }
 
-    private void SetTokenInCookie(string token)
-    {
-        // ایجاد کوکی با توکن
-        var cookieOptions = new CookieOptions
-        {
-            HttpOnly = false, // دسترسی به کوکی از جاوااسکریپت غیرفعال شود
-            Secure = false,   // استفاده از کوکی تنها در اتصالات امن (HTTPS)
-            Expires = DateTime.Now.AddDays(15), // تاریخ انقضا
-            SameSite = SameSiteMode.Strict // جلوگیری از ارسال کوکی در درخواست‌های cross-site
-        };
+    //private string GenerateToken(ApplicationUser user)
+    //{
+    //    var claims = new[]
+    //    {
+    //        new Claim(ClaimTypes.Name, user.UserName),
+    //        new Claim(ClaimTypes.NameIdentifier, user.Id),
+    //        // اضافه کردن claim های بیشتر (مثل نقش‌ها) در صورت نیاز
+    //    };
 
-        // ذخیره توکن در کوکی
-        _httpContextAccessor.HttpContext.Response.Cookies.Append("jwt", token, cookieOptions);
-    }
+    //    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]));
+    //    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+    //    var token = new JwtSecurityToken(
+    //        issuer: _configuration["Jwt:Issuer"],
+    //        audience: _configuration["Jwt:Audience"],
+    //        claims: claims,
+    //        expires: DateTime.Now.AddHours(1), // مدت زمان انقضا
+    //        signingCredentials: creds
+    //    );
+
+    //    return new JwtSecurityTokenHandler().WriteToken(token);
+    //}
+
+    //private void SetTokenInCookie(string token)
+    //{
+    //    // ایجاد کوکی با توکن
+    //    var cookieOptions = new CookieOptions
+    //    {
+    //        HttpOnly = false, // دسترسی به کوکی از جاوااسکریپت غیرفعال شود
+    //        Secure = false,   // استفاده از کوکی تنها در اتصالات امن (HTTPS)
+    //        Expires = DateTime.Now.AddDays(15), // تاریخ انقضا
+    //        SameSite = SameSiteMode.Strict // جلوگیری از ارسال کوکی در درخواست‌های cross-site
+    //    };
+
+    //    // ذخیره توکن در کوکی
+    //    _httpContextAccessor.HttpContext.Response.Cookies.Append("jwt", token, cookieOptions);
+    //}
 
     [HttpPost]
-    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Logout()
     {
         await _signInManager.SignOutAsync();
         // حذف کوکی JWT هنگام خروج از سیستم
-        _httpContextAccessor.HttpContext.Response.Cookies.Delete("jwt");
+        //_httpContextAccessor.HttpContext.Response.Cookies.Delete("jwt");
 
         // خروج از سیستم و برگشت به صفحه اصلی
         return RedirectToAction("Login", "Account");
