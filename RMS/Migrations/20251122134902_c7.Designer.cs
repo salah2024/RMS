@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace RMS.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251122134902_c7")]
+    partial class c7
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1317,16 +1320,16 @@ namespace RMS.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long>("BakhshId")
+                    b.Property<long>("Bakhsh")
                         .HasColumnType("bigint");
 
                     b.Property<Guid>("BaravordId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<long>("OstanId")
+                    b.Property<long>("Ostan")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("ShahrId")
+                    b.Property<long>("Shahr")
                         .HasColumnType("bigint");
 
                     b.Property<decimal?>("ZaribManteghe")

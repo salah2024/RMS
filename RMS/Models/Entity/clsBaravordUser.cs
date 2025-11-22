@@ -12,4 +12,9 @@ public class clsBaravordUser:clsBaseEntity
     public NoeFehrestBaha NoeFB { get; set; }
     public string Name { get; set; }
     public int Year { get; set; }
+    [Column(TypeName = "decimal(18,4)")]
+    public decimal? ZaribBalasari { get; set; }
+    [Column(TypeName = "decimal(18,4)")]
+    public decimal? ZaribManteghe { get; set; }
+
 }

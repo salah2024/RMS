@@ -933,7 +933,6 @@ function ViewRMUDetailsClick(BarAvordAddedBoardId) {
     });
 }
 function ShowBoardInfo(OperationId) {
-    debugger;
     $('#HDFOperationId').val(OperationId);
 
     var vardata = new Object();
@@ -945,7 +944,6 @@ function ShowBoardInfo(OperationId) {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (data) {
-            debugger;
             operationId = data.operationId;
 
             let str = `

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace RMS.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251119085353_c5")]
+    partial class c5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -958,49 +961,7 @@ namespace RMS.Migrations
                     b.Property<long>("ShahrId")
                         .HasColumnType("bigint");
 
-                    b.Property<decimal>("ZaribAbKhizDari")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<decimal>("ZaribAbRostaii")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<decimal>("ZaribAbiariVaZeh")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<decimal>("ZaribAbnie")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<decimal>("ZaribBargh")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<decimal>("ZaribChah")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<decimal>("ZaribEnteghalAb")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<decimal>("ZaribEnteghalFazelAb")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<decimal>("ZaribGhanat")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<decimal>("ZaribMechanic")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<decimal>("ZaribRah")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<decimal>("ZaribRahDari")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<decimal>("ZaribSad")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<decimal>("ZaribTahteFeshar")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<decimal>("ZaribToziAb")
+                    b.Property<decimal>("Zarib")
                         .HasColumnType("decimal(18,4)");
 
                     b.HasKey("Id");
@@ -1271,72 +1232,9 @@ namespace RMS.Migrations
                     b.Property<int>("Year")
                         .HasColumnType("int");
 
-                    b.Property<decimal?>("ZaribBalasari")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<decimal?>("ZaribManteghe")
-                        .HasColumnType("decimal(18,4)");
-
                     b.HasKey("ID");
 
                     b.ToTable("tblBaravordUser");
-                });
-
-            modelBuilder.Entity("RMS.Models.Entity.clsBaravordZaribBalaSari", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<Guid>("BaravordId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Monaghese")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Tarh")
-                        .HasColumnType("int");
-
-                    b.Property<decimal?>("ZaribBalasari")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BaravordId");
-
-                    b.ToTable("tblBaravordZaribBalaSari");
-                });
-
-            modelBuilder.Entity("RMS.Models.Entity.clsBaravordZaribManteghe", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("BakhshId")
-                        .HasColumnType("bigint");
-
-                    b.Property<Guid>("BaravordId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<long>("OstanId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("ShahrId")
-                        .HasColumnType("bigint");
-
-                    b.Property<decimal?>("ZaribManteghe")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BaravordId");
-
-                    b.ToTable("tblBaravordZaribManteghe");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsBaseInfo", b =>
@@ -4275,28 +4173,6 @@ namespace RMS.Migrations
                     b.Navigation("BarAvordHaml");
 
                     b.Navigation("RizMetreUser");
-                });
-
-            modelBuilder.Entity("RMS.Models.Entity.clsBaravordZaribBalaSari", b =>
-                {
-                    b.HasOne("RMS.Models.Entity.clsBaravordUser", "BaravordUser")
-                        .WithMany()
-                        .HasForeignKey("BaravordId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("BaravordUser");
-                });
-
-            modelBuilder.Entity("RMS.Models.Entity.clsBaravordZaribManteghe", b =>
-                {
-                    b.HasOne("RMS.Models.Entity.clsBaravordUser", "BaravordUser")
-                        .WithMany()
-                        .HasForeignKey("BaravordId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("BaravordUser");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsBaseInfo", b =>
