@@ -97,29 +97,27 @@ function ShowZaribMantaghe(OperationId) {
     let str = `
 <div class="row boardRowStyle" style="direction: rtl; text-align: right;">
 
-    <div class="col-md-3">
+    <div class="col-md-2">
         <label for="${ostanId}">استان</label>
         <select id="${ostanId}" class="form-control">
             <option value="">انتخاب استان</option>
         </select>
     </div>
-
-    <div class="col-md-3">
+    <div class="col-md-2" style="margin-right:20px">
         <label for="${shahrId}">شهرستان</label>
         <select id="${shahrId}" class="form-control">
             <option value="">ابتدا استان را انتخاب کنید</option>
         </select>
     </div>
-
-    <div class="col-md-3">
+    <div class="col-md-2" style="margin-right:20px">
         <label for="${bakhshId}">بخش</label>
         <select id="${bakhshId}" class="form-control">
             <option value="">ابتدا شهرستان را انتخاب کنید</option>
         </select>
     </div>
-    <div class="col-md-3" id="divZaribRah" style="padding-top: 37px;display:none">
-    <span>ضریب منطقه ای راه،باند و فرودگاه = </span>
-    <span id="spanZaribRah"></span>
+    <div class="col-md-2" id="divZaribRah" style="padding-top: 37px;display:none;margin-right:40px">
+    <span style="font-weight:bold;">ضریب منطقه ای راه،باند و فرودگاه = </span>
+    <span style="font-weight:bold;" id="spanZaribRah"></span>
     </div>
 
 </div>`;

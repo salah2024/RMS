@@ -1,4 +1,5 @@
-﻿function GetFosoul() {
+﻿var lstVaheds;
+function GetFosoul() {
     BarAvordUserId = $('#HDFBarAvordUserID').val();
     NoeFB = parseInt($('#HDFNoeFB').val());
     Year = parseInt($('#HDFYear').val());
@@ -15,7 +16,9 @@
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (response) {
-            renderTableFosoul(response);
+            Fosoul = response.fosoul;
+            lstVaheds = response.lstVaheds;
+            renderTableFosoul(Fosoul);
         },
         error: function (response) {
             toastr.error('خطا', 'خطا');
@@ -39,9 +42,12 @@ function GetBarAvord(Code, faslName) {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (response) {
+            userBarAvordOutPut = response.userBarAvordOutPut;
+            lstItemFBStars = response.lstItemFBStars;
+            debugger;
             //$('#aView').click();
             //$('#ModalTitle').text('فصل  ' + Code +'  -  '+faslName);
-            renderTable(response, Code);
+            renderTable(userBarAvordOutPut, lstItemFBStars, Code);
         },
         error: function (response) {
             toastr.error('خطا', 'خطا');
@@ -65,7 +71,7 @@ function renderTableFosoul(data) {
 		</td>
 		<td style=\"text-align:center\">
             <span id="tdjameFaslBaZarib-${item.code}">
-			    ${formatNumber(item.jameFasl.toFixed(0))}
+			    ${formatNumber(item.jameFaslWithZarib.toFixed(0))}
             </span>
           </td>
 		</tr>
@@ -213,7 +219,7 @@ function BahayeVahedNewMeghdarChange($input, FBId, itemFbShomareh) {
         $row.find('#bahayeKolFasl').text(formatNumber(bahayeKol.toFixed(0)));
     }
 
-    strStar1 = `<div class="row"><span>*</span><input class="ReturnItemsStar" type="submit" value="🔄" onclick="StarReturn(this,'${FBId}','${itemFbShomareh}')"/></div>`
+    strStar1 = `<div class="row"><span style="font-size:25px">*</span><input style="font-size:20px" class="ReturnItemsStar" type="submit" value="🔄" onclick="StarReturn(this,'${FBId}','${itemFbShomareh}')"/></div>`
 
     $('#span' + itemFbShomareh).html(strStar1);
     BahayeVahedNewSave(floatValEn, FBId, itemFbShomareh);
@@ -308,7 +314,7 @@ function StarReturn(element, FBId, itemFbShomareh) {
     });
 }
 
-function renderTable(data, Code) {
+function renderTable(data, Stars, Code) {
     debugger;
     const container = $(`#barAvordContainer-${Code}`);
     container.empty();
@@ -319,7 +325,7 @@ function renderTable(data, Code) {
 				<tr style="background-color: #aa87ff;">
 					<th style="width: 5🔄%;text-align:center;color: #3a007a;font-size: 12px;">*</th>
 					<th style="width: 7%;text-align:center;color: #3a007a;font-size: 12px;">شماره فهرست بها</th>
-					<th style="width: 55%;color: #3a007a;font-size: 16px;">شرح فهرست بها</th>
+					<th style="width: 52%;color: #3a007a;font-size: 16px;">شرح فهرست بها</th>
 					<th style="width: 7%;text-align:center;color: #3a007a;font-size: 12px;">واحد</th>
 					<th style="width: 7%;text-align:center;color: #3a007a;font-size: 12px;">بهای واحد</th>
 					<th style="width: 9%;text-align:center;color: #3a007a;font-size: 12px;">
@@ -330,6 +336,7 @@ function renderTable(data, Code) {
                     </label>
                     </th>
 					<th style="width: 10%;text-align:center;color: #3a007a;font-size: 12px;">بهای کل</th>
+					<th style="width: 3%;text-align:center;color: #3a007a;font-size: 12px;">عملیات</th>
 				</tr>
 			</thead>
 			<tbody></tbody>
@@ -338,8 +345,8 @@ function renderTable(data, Code) {
 
     const tbody = table.find('tbody');
 
-    debugger;
-    data.forEach((item, index) => {
+    var index = 0;
+    data.forEach((item) => {
 
         //var Field0 = item.itemsFields[0];
         //var Field1 = item.itemsFields[1];
@@ -358,14 +365,14 @@ function renderTable(data, Code) {
         if (BahayeVahedNew != 0) {
             bahayeVahedSetEn = BahayeVahedNew;
             strStar += `<div class="col-12" id="span${item.itemFbShomareh}">
-                        <div class="row"><span>*</span><input class="ReturnItemsStar" type="submit" value="🔄" title="بازنشانی" onclick="StarReturn(this,'${item.fbId}','${item.itemFbShomareh}')"/></div>
+                        <div class="row"><span style="font-size:25px">*</span><input  style="font-size:20px" class="ReturnItemsStar" type="submit" value="🔄" title="بازنشانی" onclick="StarReturn(this,'${item.fbId}','${item.itemFbShomareh}')"/></div>
                         </div>`;
         }
         else
             strStar += `<div class="col-12" id="span${item.itemFbShomareh}"></div>`;
 
         bahayeVahedSet = toPersianDigits(formatNumber(bahayeVahedSetEn));
-        debugger;
+
         const isBlinking = item.meghdar > 0 && (!bahayeVahedSet || parseFloat(bahayeVahedSetEn) === 0);
         const bahayeVahedInput = `
             <input id="txtBahayeVahed-${rizId}" onchange="BahayeVahedNewMeghdarChange($(this),'${item.fbId}','${item.itemFbShomareh}')" type="text" class="form-control form-control-sm ${isBlinking ? 'blinking' : ''}" 
@@ -383,6 +390,7 @@ function renderTable(data, Code) {
         <td style="text-align:center" id="meghdarFasl">${formatNumber(item.meghdar)}</td>
         <td style="text-align:center" id="bahayeKolFasl">${formatNumber(BahayeKolFix)}</td>
         <td style="text-align:center;display:none" id="bahayeVahedFasl">${item.bahayeVahed}</td>
+        <td></td>
         </tr>
         `);
 
@@ -393,7 +401,8 @@ function renderTable(data, Code) {
         if (Array.isArray(item.rizMetre) && item.rizMetre.length > 0) {
             rizRowsHtml += item.rizMetre.map(riz =>
                 `
-		<tr class="riz-row-data" style="direction:ltr" data-id="${riz.id}" data-itemsFields='${JSON.stringify(item.itemsFields).replace(/"/g, '&quot;')}' onclick="EditRizMetreRow(this,'${riz.id}','${item.itemFbShomareh}','${rizId}','${item.fbId}','${Code}')" style="cursor:pointer;">
+		<tr class="riz-row-data" style="direction:ltr" data-id="${riz.id}" data-itemsFields='${JSON.stringify(item.itemsFields).replace(/"/g, '&quot;')}'
+        onclick="EditRizMetreRow(this,'${riz.id}','${item.itemFbShomareh}','${rizId}','${item.fbId}','${Code}')" style="cursor:pointer;">
 		<td style="text-align:center">${riz.shomarehNew == null ? '' : riz.shomarehNew}</td>
 		<td><span>${riz.sharh}</span></td>
 		<td style="text-align:center"><span>${riz.tedad == null ? '' : riz.tedad}</span></td>
@@ -513,15 +522,158 @@ function renderTable(data, Code) {
 
         tbody.append(mainRow);
 
-
-
-
         tbody.append(detailRow);
+
+        index++;
     });
+
+    debugger;
+
+    Stars.forEach((item) => {
+
+        const rizId = `riz-${Code}-${index}`;
+
+        const mainRowStar = $(`
+        <tr id="rowFasl-${rizId}" class="main-row clickable-row" data-riz-id="${rizId}" style="cursor: pointer;">
+        <td style="text-align:center">*</td>
+        <td style="text-align:center">${item.shomareh}</td>
+        <td style="word-break: break-word; white-space: normal;text-align:right">${item.sharh}</td>
+        <td style="text-align:center">${item.vahedName}</td>
+        <td style="text-align:center">${item.bahayeVahed}</td>
+        <td style="text-align:center"</td>
+        <td style="text-align:center"></td>
+        <td></td>
+        </tr>
+        `);
+
+        let rizRowsHtmlStar = '';
+
+
+        if (Array.isArray(item.rizMetre) && item.rizMetre.length > 0) {
+            rizRowsHtmlStar += item.rizMetre.map(riz =>
+                `
+		<tr class="riz-row-data" style="direction:ltr" data-id="${riz.id}" data-itemsFields='${JSON.stringify(item.itemsFields).replace(/"/g, '&quot;')}'
+        onclick="EditRizMetreRowStar(this,'${riz.id}','${item.shomareh}','${rizId}','${Code}')" style="cursor:pointer;">
+		<td style="text-align:center">${riz.shomarehNew == null ? '' : riz.shomarehNew}</td>
+		<td><span>${riz.sharh}</span></td>
+		<td style="text-align:center"><span>${riz.tedad == null ? '' : riz.tedad}</span></td>
+		<td style="text-align:center"><span>${riz.tool == null ? '' : riz.tool}</span></td>
+		<td style="text-align:center"><span>${riz.arz == null ? '' : riz.arz}</span></td>
+		<td style="text-align:center"><span>${riz.ertefa == null ? '' : riz.ertefa}</span></td>
+		<td style="text-align:center"><span>${riz.vazn == null ? '' : riz.vazn}</span></td>
+		<td style="text-align:center"></td>
+		<td><span>${riz.des ?? ''}</span></td>
+		<td style="text-align:center">
+			<i class="fa fa-trash DelRMUStyle" onclick="event.stopPropagation();DeleteRizMetreStar('${riz.id}','${item.shomareh}','${rizId}','${Code}')"></i>
+		</td>
+		</tr>
+		`).join('');
+        }
+
+        rizRowsHtmlStar += `
+<tr class="riz-input-row">
+  <td style="text-align:center"></td>
+  <td><input id="txtSharh" class="form-control form-control-sm" type="text" /></td>
+
+  <td style="text-align:center">
+    <input id="txtTedad" class="" type="text"/>
+  </td>
+
+  <td style="text-align:center">
+    <input id="txtTool" class="" type="text"/>
+  </td>
+
+  <td style="text-align:center">
+    <input id="txtArz" class="" type="text"/>
+  </td>
+
+  <td style="text-align:center">
+    <input id="txtErtefa" class="" type="text"/>
+  </td>
+
+  <td style="text-align:center">
+    <input id="txtVazn" class="" type="text"/>
+  </td>
+
+  <td style="text-align:center">
+    <input id="txtMeghdarJoz" class="form-control form-control-sm" type="text" disabled />
+  </td>
+
+  <td>
+    <input id="txtDes" class="form-control form-control-sm" type="text" />
+  </td>
+
+  <td style="text-align:center">
+    <button type="button"
+      onclick="SaveRMUStarClick($(this),'${item.shomareh}','${rizId}','${Code}')"
+      class="ButtonRowsSaveStyle">
+      <i id="iSave" class="fa fa-save SaveRMUStyle"></i>
+    </button>
+  </td>
+</tr>
+`;
+
+        debugger;
+        const detailRowStar = $(`
+			<tr id="${rizId}" class="riz-row" style="display:none">
+				<td colspan="7">
+					<table class="table table-sm table-bordered mb-0">
+						<thead>
+							<tr style="background-color: #c1b9e7;">
+								<th style="width: 7%;text-align:center">ردیف</th>
+								<th style="width: 25%;">شرح ریزه متره</th>
+								<th style="width: 7%;text-align:center">تعداد</th>
+								<th style="width: 7%;text-align:center">طول</th>
+								<th style="width: 7%;text-align:center">عرض</th>
+								<th style="width: 7%;text-align:center">ارتفاع</th>
+								<th style="width: 7%;text-align:center">وزن</th>
+								<th style="width: 7%;text-align:center">مقدار جزء</th>
+								<th style="width: 20%;">توضیحات</th>
+								<th style="width: 7%;text-align:center">عملیات</th>
+							</tr>
+						</thead>
+						<tbody>
+							${rizRowsHtmlStar}
+						</tbody>
+					</table>
+				</td>
+			</tr>
+		`);
+
+        tbody.append(mainRowStar);
+        tbody.append(detailRowStar);
+
+        index++;
+
+    });
+
+
+    const RowNew = $(`
+        <tr id="rowFaslNew-${Code}" class="main-row" data-riz-code="${Code}" style="cursor: pointer;">
+        <td style="text-align:center"><div class=\"col-md-1\"><i class=\"fa fa-plus SaveRMUStyle\"></i></div></td>
+        <td style="text-align:center"><input id="inputFBShomareh-${Code}" type="text" class="form-control"/></td>
+        <td style="text-align:center"><input id="inputSharh-${Code}" type="text" class="form-control"/></td>
+        <td style="text-align:center"><select style="width: 100%;" id="selectVahed-${Code}"></select></td>
+        <td style="text-align:center"><input id="inputBahayeVahed-${Code}" type="text" class="form-control"/></td>
+        <td style="text-align:center" id="meghdarFasl-${Code}"></td>
+        <td></td>
+        <td><button type=\"button\" onclick=\"SaveNewRMUClick($(this))\" class=\"ButtonRowsSaveStyle\"><i id=\"iSave\" class=\"fa fa-save SaveRMUStyle\"></i></button></td>
+        </tr>
+        `);
+
+
+    var strOption = '';
+    $.each(lstVaheds, function () {
+        strOption += `<option value="${this.id}">${this.name}</option>`;
+    });
+
+    RowNew.find('select').append(strOption)
+
+    tbody.append(RowNew);
 
     container.append(table);
 
-    container.on('keydown', '.riz-row-data input,.riz-input-row input',  function (e) {
+    container.on('keydown', '.riz-row-data input,.riz-input-row input', function (e) {
         if (e.key === 'Enter') {
             e.preventDefault();
 
@@ -556,6 +708,7 @@ function renderTable(data, Code) {
     $(`#${Code}`).slideDown(200);
 
     $('.clickable-row').off('click').on('click', function (e) {
+        debugger;
         e.stopPropagation();
 
         if ($(e.target).is('input, button, textarea')) {
@@ -622,6 +775,28 @@ function renderTable(data, Code) {
         });
     });
 
+    initRowEvents(RowNew);
+}
+
+function initRowEvents($row) {
+    // ترتیب فوکوس: ورودی‌ها و سلکت و دکمه سیو
+    var $focusables = $row.find('input, select, button.ButtonRowsSaveStyle')
+        .filter(':visible:enabled');
+
+    $focusables.on('keydown', function (e) {
+        if (e.key === 'Enter' || e.which === 13) {
+            e.preventDefault();
+            var idx = $focusables.index(this);
+
+            // اگر قبل از دکمه هستیم → برو به بعدی
+            if (idx > -1 && idx < $focusables.length - 1) {
+                $focusables.eq(idx + 1).focus();
+            } else {
+                // آخرین المنت → روی دکمه save بایستد
+                $focusables.eq($focusables.length - 1).focus();
+            }
+        }
+    });
 }
 
 
@@ -633,6 +808,7 @@ const getDisabledAttr = (f) => f.isEnteringValue ? '' : 'disabled';
 
 function EditRizMetreRow(rowEl, rizMetreId, Shomareh, rizId, FBId, Code) {
 
+    debugger;
     const itemsFieldsStr = rowEl.getAttribute('data-itemsFields');
     const itemsFields = JSON.parse(itemsFieldsStr);
 
@@ -739,6 +915,7 @@ function convertPersianToEnglish(str) {
     return result;
 }
 
+
 function UpdateRizMetreFromRow(el, rizMetreId, Shomareh, rizId1, FBId, Code) {
     const row = $(el).closest('tr');
 
@@ -839,7 +1016,109 @@ function UpdateRizMetreFromRow(el, rizMetreId, Shomareh, rizId1, FBId, Code) {
     // برگشت به حالت نمایش
 }
 
+function SaveNewRMUClick($btn) {
+    var $button = $btn instanceof jQuery ? $btn : $($btn);
+    var $row = $button.closest('tr');
+    var code = ($row.data('riz-code') || '').toString(); // مثلا "12"
 
+    var $fbShomareh = $row.find('input[id^="inputFBShomareh-"]');
+    var $sharh = $row.find('input[id^="inputSharh-"]');
+    var $vahed = $row.find('select[id^="selectVahed-"]');
+    var $bahayeVahed = $row.find('input[id^="inputBahayeVahed-"]');
+
+    // پاک کردن خطاهای قبلی
+    $row.find('.blinking').removeClass('blinking');
+
+    var valid = true;
+    var firstInvalid = null;
+    var errorMsg = null;
+
+    function markInvalid($el, msg) {
+        $el.addClass('blinking');
+        if (!firstInvalid) {
+            firstInvalid = $el;
+            errorMsg = msg;
+        }
+        valid = false;
+    }
+
+    var fbVal = ($fbShomareh.val() || '').trim();
+    var sharhVal = ($sharh.val() || '').trim();
+    var vahedVal = ($vahed.val() || '').trim();
+    var bahayeVal = ($bahayeVahed.val() || '').trim();
+
+    // 1) خالی نبودن فیلدها
+    if (!fbVal) markInvalid($fbShomareh, 'شماره فهرست‌بها را وارد کنید.');
+    if (!sharhVal) markInvalid($sharh, 'شرح را وارد کنید.');
+    if (!vahedVal) markInvalid($vahed, 'واحد را انتخاب کنید.');
+    if (!bahayeVal) markInvalid($bahayeVahed, 'بهای واحد را وارد کنید.');
+
+    // 2) inputFBShomareh عددی باشد
+    if (fbVal && !/^\d+$/.test(fbVal)) {
+        markInvalid($fbShomareh, 'شماره فهرست‌بها باید فقط شامل ارقام باشد.');
+    }
+
+    // 3) inputFBShomareh با data-riz-code شروع شود و دقیقا 6 رقم باشد
+    if (fbVal) {
+        if (fbVal.length !== 6) {
+            markInvalid($fbShomareh, 'شماره فهرست‌بها باید دقیقا ۶ رقم باشد.');
+        } else if (code && !fbVal.startsWith(code)) {
+            markInvalid(
+                $fbShomareh,
+                'شماره فهرست‌بها باید با کد ریز فصل (' + code + ') شروع شود.'
+            );
+        }
+    }
+
+    // 4) inputBahayeVahed دسیمال باشد
+    if (bahayeVal) {
+        var normalized = bahayeVal.replace(',', '.'); // اجازه استفاده از , نیز
+        if (!/^\d+(\.\d+)?$/.test(normalized)) {
+            markInvalid($bahayeVahed, 'بهای واحد باید عدد اعشاری معتبر باشد (مثال: 123 یا 123.45).');
+        } else {
+            bahayeVal = normalized; // آماده ارسال به سرور
+        }
+    }
+
+    // اگر هر خطایی وجود داشت
+    if (!valid) {
+        toastr.info(errorMsg || 'اطلاعات وارد شده صحیح نمی‌باشند.', 'اطلاع');
+        if (firstInvalid) {
+            firstInvalid.focus(); // فوکوس روی اولین فیلد ایراددار
+        }
+        return;
+    }
+
+    BarAvordUserId = $('#HDFBarAvordUserID').val();
+
+    var vardata = new Object();
+
+    vardata.BaravordId = BarAvordUserId;
+    vardata.FBShomareh = fbVal;
+    vardata.Sharh = sharhVal;
+    vardata.VahedId = parseInt(vahedVal);
+    vardata.BahayeVahed = parseFloat(bahayeVal);
+
+    debugger;
+
+    $.ajax({
+        type: "POST",
+        url: '/ItemFBStar/SaveItemFBStar',
+        dataType: "json",
+        data: JSON.stringify(vardata),
+        contentType: "application/json; charset=utf-8",
+        success: function (data) {
+            if (data == "OK") {
+                GetBarAvord(code, "")
+                toastr.success('اطلاعات با موفقیت ذخیره شد.', 'موفق');
+            }
+        },
+        error: function () {
+            toastr.error('خطا در ذخیره اطلاعات.', 'خطا');
+        }
+    });
+
+}
 
 function SaveRMUClick(object, Shomareh, rizId, Code) {
     object.parent().parent().find('input[type=text]').each(function () {
@@ -1019,6 +1298,8 @@ function SaveRMUClick(object, Shomareh, rizId, Code) {
 }
 
 
+
+//ریزه متره های عادی
 function GetCurrentRizMetreUsers(Shomareh, rizId, FBId, Code) {
     var vardata = new Object();
     vardata.FBId = FBId;
@@ -1031,7 +1312,7 @@ function GetCurrentRizMetreUsers(Shomareh, rizId, FBId, Code) {
         dataType: "json",
         success: function (response) {
 
-            rizMetreUsers= response.rizMetreUsers;
+            rizMetreUsers = response.rizMetreUsers;
             lstItemsFields = response.lstItemsFields;
             debugger;
             const rizRow = $(`#${rizId}`);

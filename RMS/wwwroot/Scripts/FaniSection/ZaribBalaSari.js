@@ -5,9 +5,10 @@
     let str = `
 <div class="row boardRowStyle" style="direction: rtl; text-align: right;">
   <!-- گروه طرح -->
-  <div class="col-6">
   <div class="col-12">
-      <fieldset>
+  <div class="row">
+  <div class="col-3">
+      <fieldset style="margin-top:10px;">
       <legend>طرح</legend>
       <div class="form-check mb-2">
         <input class="form-check-input RadioStyle"
@@ -33,10 +34,10 @@
       </div>
     </fieldset>
   </div>
-  <div class="col-12">
+  <div class="col-5">
       <fieldset>
       <legend>مناقصه</legend>
-      <div class="form-check mb-2">
+      <div class="form-check">
         <input class="form-check-input RadioStyle"
                type="radio"
                name="tenderGroup"
@@ -71,18 +72,62 @@
       </div>
     </fieldset>
   </div>
-  
   <!-- ضریب بالاسری -->
-  <div class="col-6" style="text-align:right;display:none" id="divZaribBalaSari">
-    <fieldset>
+  <div class="col-3" style="text-align:right;display:none" id="divZaribBalaSari">
+    <div style="margin-top:50px;">
         <span style="font-weight:bold; margin-left:4px;">ضریب بالاسری = </span>
         <span id="lblZaribBalasari" style="font-weight:bold;"></span>
-    </fieldset>
+    </div>
+  </div>
   </div>
 </div>
 </div>
 </div>`;
     $('#ula' + OperationId).html(str);
+
+    GetZaribSaved();
+}
+
+function GetZaribSaved() {
+    BarAvordUserId = $('#HDFBarAvordUserID').val();
+
+    var vardata = new Object();
+    vardata.BaravordId = BarAvordUserId;
+    $.ajax({
+        type: "POST",
+        url: "/ZaribBalaSari/GetBaravordZaribBalasari",
+        data: JSON.stringify(vardata),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (data) {
+
+            // نمایش ضریب
+            if (data.length > 0) {
+                $('#divZaribBalaSari').show();
+                $('#lblZaribBalasari').html(data[0].zaribBalasari);
+            }
+
+            // انتخاب رادیوها
+            $.each(data, function () {
+
+                // اگر مقدار tarh داشت (1 یا 2)
+                if (this.tarh && this.tarh !== 0) {
+                    $(`input[type=radio][name=planGroup][value=${this.tarh}]`).prop("checked", true);
+                }
+
+                // اگر مقدار monaghese داشت (3,4,5)
+                if (this.monaghese && this.monaghese !== 0) {
+                    $(`input[type=radio][name=tenderGroup][value=${this.monaghese}]`).prop("checked", true);
+                }
+
+            });
+
+        },
+        error: function () {
+            toastr.error('مشکل در بارگزاری اطلاعات ثبت شده', 'خطا');
+        }
+    });
+
 }
 
 function getZarib() {
@@ -94,10 +139,13 @@ function getZarib() {
 
     // اگر از هر دو گروه یک مورد انتخاب شده باشد
     if (planSelected && tenderSelected) {
+        BarAvordUserId = $('#HDFBarAvordUserID').val();
+
         debugger;
         var vardata = new Object();
         vardata.planSelected = planSelected.value;
         vardata.tenderSelected = tenderSelected.value;
+        vardata.BaravordId = BarAvordUserId;
         $.ajax({
             type: "POST",
             url: "/ZaribBalaSari/GetZaribBalaSari",

@@ -7,6 +7,7 @@
         public string Code { get; set; }
         public long Order { get; set; }
         public decimal JameFasl { get; set; }
+        public decimal JameFaslWithZarib { get; set; }
         public string Description { get; set; }
     }
 }

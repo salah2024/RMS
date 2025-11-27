@@ -162,14 +162,14 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
             }
 
             List<ItemsFieldForUserBarAvordOutPutDto> currentItemsFields = itemsFields
-                .Where(x => x.ItemShomareh.Trim() == item.ItemFbShomareh).Select(x=> new ItemsFieldForUserBarAvordOutPutDto
+                .Where(x => x.ItemShomareh.Trim() == item.ItemFbShomareh).Select(x => new ItemsFieldForUserBarAvordOutPutDto
                 {
-                    Id=x.Id,
-                    ItemShomareh=x.ItemShomareh.Trim(),
-                    FieldType=x.FieldType,
-                    Vahed=x.Vahed,
-                    IsEnteringValue=x.IsEnteringValue,
-                    EssentialValue=x.EssentialValue
+                    Id = x.Id,
+                    ItemShomareh = x.ItemShomareh.Trim(),
+                    FieldType = x.FieldType,
+                    Vahed = x.Vahed,
+                    IsEnteringValue = x.IsEnteringValue,
+                    EssentialValue = x.EssentialValue
                 }).ToList();
 
             item.ItemsFields.AddRange(currentItemsFields);
@@ -179,6 +179,77 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
             item.BahayeKol = dBahayeKol;
 
         }
-        return new JsonResult(userBarAvordOutPut);
+
+        List<ItemFBStarForShowBaravordDto> lstItemFBStars = _context.ItemFBStars.Include(x => x.Vahed).Where(x => x.BaravordId == request.BarAvordUserId)
+            .Select(x => new ItemFBStarForShowBaravordDto
+            {
+                Id = x.ID,
+                BaravordId = x.BaravordId,
+                BahayeVahed = x.BahayeVahed,
+                Sharh = x.Sharh,
+                Shomareh = x.Shomareh,
+                VahedId = x.VahedId,
+                VahedName = x.Vahed.Name,
+                RizMetre = new List<ViewBarAvordItemStarOutPutRizMetreDto>()
+            }).ToList();
+
+        List<Guid> lstItemFBStarIds = lstItemFBStars.Select(x => x.Id).ToList();
+
+        var RizMetreStar = _context.RizMetreStars.Where(x => lstItemFBStarIds.Contains(x.ItemFBStarId))
+    .Select(riz => new ViewBarAvordItemStarOutPutRizMetreDto
+    {
+        Id = riz.ID,
+        Sharh = riz.Sharh,
+        Shomareh = riz.Shomareh,
+        ShomarehNew = riz.ShomarehNew,
+        Arz = riz.Arz,
+        Des = riz.Des,
+        Ertefa = riz.Ertefa,
+        Tedad = riz.Tedad,
+        Tool = riz.Tool,
+        Vazn = riz.Vazn,
+        MeghdarJoz = riz.MeghdarJoz,
+        ItemFBStarId=riz.ItemFBStarId
+    }).OrderBy(x => x.Shomareh).ToList();
+
+
+        foreach (var item in lstItemFBStars)
+        {
+            decimal Meghdar = 0;
+            foreach (var RM in RizMetreStar)
+            {
+                if (item.Id == RM.ItemFBStarId)
+                {
+                    item.RizMetre.Add(RM);
+                    Meghdar += RM.MeghdarJoz != null ? RM.MeghdarJoz.Value : 0;
+                }
+            }
+
+            //List<ItemsFieldForUserBarAvordOutPutDto> currentItemsFields = itemsFields
+            //    .Where(x => x.ItemShomareh.Trim() == item.Shomareh).Select(x => new ItemsFieldForUserBarAvordOutPutDto
+            //    {
+            //        Id = x.Id,
+            //        ItemShomareh = x.ItemShomareh.Trim(),
+            //        FieldType = x.FieldType,
+            //        Vahed = x.Vahed,
+            //        IsEnteringValue = x.IsEnteringValue,
+            //        EssentialValue = x.EssentialValue
+            //    }).ToList();
+
+            //item.ItemsFields.AddRange(currentItemsFields);
+
+            //item.Meghdar = Meghdar;
+            //decimal dBahayeKol = Meghdar * (item.BahayeVahedNew != 0 ? item.BahayeVahedNew : (item.BahayeVahed == null || item.BahayeVahed == "" ? 0 : decimal.Parse(item.BahayeVahed)));
+            //item.BahayeKol = dBahayeKol;
+
+        }
+
+        var result = new
+        {
+            userBarAvordOutPut,
+            lstItemFBStars
+        };
+
+        return new JsonResult(result);
     }
 }

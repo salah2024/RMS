@@ -112,6 +112,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<clsBakhsh> Bakhshs { get; set; }
     public DbSet<clsBaravordZaribManteghe> BaravordZaribManteghes { get; set; }
     public DbSet<clsBaravordZaribBalaSari> BaravordZaribBalaSaris { get; set; }
+    public DbSet<clsVahed> Vaheds { get; set; }
+    public DbSet<clsItemFBStar> ItemFBStars { get; set; }
+    public DbSet<clsRizMetreStar> RizMetreStars { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

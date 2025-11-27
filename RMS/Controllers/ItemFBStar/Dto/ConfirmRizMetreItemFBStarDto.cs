@@ -1,0 +1,15 @@
+﻿namespace RMS.Controllers.ItemFBStar.Dto;
+
+public class ConfirmRizMetreItemFBStarDto
+{
+    public string Sharh { get; set; }
+    public decimal? Tedad { get; set; }
+    public decimal? Tool { get; set; }
+    public decimal? Arz { get; set; }
+    public decimal? Ertefa { get; set; }
+    public decimal? Vazn { get; set; }
+    public string Des { get; set; }
+    public string Shomareh { get; set; }
+    public int Year { get; set; }
+    public Guid BarAvordUserId { get; set; }
+}

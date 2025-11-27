@@ -164,6 +164,15 @@ public class BaseInfoController(ApplicationDbContext context) : Controller
             }).OrderBy(x => x.Shomareh).ToList();
 
 
+
+        clsBaravordZaribBalaSari? baravordZaribBalaSari = _context.BaravordZaribBalaSaris.FirstOrDefault(x => x.BaravordId == request.BarAvordUserId);
+        clsBaravordZaribManteghe? baravordZaribManteghe = _context.BaravordZaribManteghes.FirstOrDefault(x => x.BaravordId == request.BarAvordUserId);
+
+        decimal zaribManteghe = baravordZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe.Value : 1 : 1;
+        decimal zaribBalaSari = baravordZaribBalaSari != null ? baravordZaribBalaSari.ZaribBalasari != null ? baravordZaribBalaSari.ZaribBalasari.Value : 1 : 1;
+
+        decimal AllZarib = zaribManteghe * zaribBalaSari;
+
         foreach (var fasl in Fosoul)
         {
             // اول FBs رو فیلتر و گروه‌بندی کن (در حافظه)
@@ -212,8 +221,19 @@ public class BaseInfoController(ApplicationDbContext context) : Controller
             }
 
             fasl.JameFasl = JameFasl;
+            fasl.JameFaslWithZarib = AllZarib * JameFasl;
         }
-        return new JsonResult(Fosoul);
+
+        List<clsVahed> lstVaheds= _context.Vaheds.ToList();
+
+        var result = new
+        {
+            lstVaheds= lstVaheds,
+            Fosoul = Fosoul,
+
+        };
+
+        return new JsonResult(result);
     }
 
     [HttpPost]
