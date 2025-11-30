@@ -136,6 +136,8 @@ public class BaseInfoController(ApplicationDbContext context) : Controller
     [HttpPost]
     public JsonResult GetFosoul([FromBody] GetFosoulInputDto request)
     {
+        Guid BarAvordUserId = request.BarAvordUserId;
+
         List<GetFosoulOutputDto> Fosoul = _context.Fosouls.Include(x => x.NoeFosoul).Where(x => x.NoeFosoul.Id == request.NoeFaslId)
             .OrderBy(x => x.order)
             .Select(x => new GetFosoulOutputDto
@@ -147,7 +149,7 @@ public class BaseInfoController(ApplicationDbContext context) : Controller
             }).ToList();
 
 
-        var RizMetre = _context.RizMetreUserses.Include(x => x.FB).Where(x => x.FB.BarAvordId == request.BarAvordUserId)
+        var RizMetre = _context.RizMetreUserses.Include(x => x.FB).Where(x => x.FB.BarAvordId == BarAvordUserId)
             .Select(riz => new ViewUserBarAvordOutPutRizMetreDto
             {
                 Id = riz.ID,
@@ -177,7 +179,7 @@ public class BaseInfoController(ApplicationDbContext context) : Controller
         {
             // اول FBs رو فیلتر و گروه‌بندی کن (در حافظه)
             var fbItems = _context.FBs
-                .Where(f => f.BarAvordId == request.BarAvordUserId)
+                .Where(f => f.BarAvordId == BarAvordUserId)
                 .GroupBy(f => f.Shomareh)
                 .Select(g => g.FirstOrDefault())
                 .ToList(); // انتقال به حافظه، جلوگیری از خطای EF
@@ -221,14 +223,48 @@ public class BaseInfoController(ApplicationDbContext context) : Controller
             }
 
             fasl.JameFasl = JameFasl;
-            fasl.JameFaslWithZarib = AllZarib * JameFasl;
+            decimal dJameFaslWithZarib = AllZarib * JameFasl;
+            fasl.JameFaslWithZarib = dJameFaslWithZarib;
+
+            List<clsItemFBStar> lstItemFBStars = _context.ItemFBStars.Where(x => x.BaravordId == BarAvordUserId && x.Shomareh.Substring(0, 2) == fasl.Code).ToList();
+            decimal AllJameFaslStar = 0;
+            decimal AllJameFaslStarWithZarib = 0;
+            foreach (var itemFBStarCurrent in lstItemFBStars)
+            {
+                decimal JameItemFBStar = 0;
+                clsItemFBStar? itemFBStar = _context.ItemFBStars.FirstOrDefault(x => x.BaravordId == BarAvordUserId && x.Shomareh.Trim() == itemFBStarCurrent.Shomareh);
+
+                decimal BahayeVahedStar = 0;
+                if (itemFBStar != null)
+                {
+                    BahayeVahedStar = itemFBStar.BahayeVahed;
+                }
+                JameItemFBStar = context.RizMetreStars.Include(x => x.ItemFBStar)
+                     .Where(x => x.ItemFBStar.BaravordId == BarAvordUserId && x.ItemFBStar.Shomareh.Trim() == itemFBStarCurrent.Shomareh)
+                     .Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
+
+                AllJameFaslStar += JameItemFBStar * BahayeVahedStar;
+                bool blnKharidTajhizat = itemFBStarCurrent.blnKharidTajhizat == null ? false : itemFBStarCurrent.blnKharidTajhizat.Value;
+                decimal ZaribStar2 = zaribBalaSari;
+                if (blnKharidTajhizat)
+                {
+                    ZaribStar2 = 1.14m;
+                }
+                AllJameFaslStarWithZarib += (JameItemFBStar * BahayeVahedStar * zaribManteghe * ZaribStar2);
+            }
+
+            fasl.JameFaslStar = AllJameFaslStar;
+            fasl.JameFaslStarWithZarib = AllJameFaslStarWithZarib;
+            fasl.JameFaslAll = AllJameFaslStar + JameFasl;
+            fasl.JameFaslWithZaribAll = dJameFaslWithZarib + AllJameFaslStarWithZarib;
+
         }
 
-        List<clsVahed> lstVaheds= _context.Vaheds.ToList();
+        List<clsVahed> lstVaheds = _context.Vaheds.ToList();
 
         var result = new
         {
-            lstVaheds= lstVaheds,
+            lstVaheds = lstVaheds,
             Fosoul = Fosoul,
 
         };

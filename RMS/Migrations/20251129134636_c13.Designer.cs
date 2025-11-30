@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace RMS.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251129134636_c13")]
+    partial class c13
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1930,8 +1933,8 @@ namespace RMS.Migrations
                     b.Property<int>("VahedId")
                         .HasColumnType("int");
 
-                    b.Property<bool?>("blnKharidTajhizat")
-                        .HasColumnType("bit");
+                    b.Property<decimal?>("Zerib")
+                        .HasColumnType("decimal(18,4)");
 
                     b.HasKey("ID");
 

@@ -12,4 +12,5 @@ public class clsItemFBStar:clsBaseEntity
     public int VahedId { get; set; }
     public clsVahed Vahed { get; set; }
     public string Sharh { get; set; }
+    public bool? blnKharidTajhizat { get; set; }
 }

@@ -7,4 +7,5 @@ public class SaveItemFBStarDto
     public decimal BahayeVahed { get; set; }
     public int VahedId { get; set; }
     public string Sharh { get; set; }
+    public bool? KharidTajhizat { get; set; }
 }

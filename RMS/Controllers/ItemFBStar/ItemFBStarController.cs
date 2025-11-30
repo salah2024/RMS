@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RMS.Controllers.BaseInfo.Dto;
 using RMS.Controllers.ItemFBStar.Dto;
 using RMS.Controllers.Operation.Common;
@@ -19,6 +20,7 @@ public class ItemFBStarController(ApplicationDbContext context) : Controller
         decimal BahayeVahed = request.BahayeVahed;
         int VahedId = request.VahedId;
         string Sharh = request.Sharh;
+        bool? blnKharidTajhizat = request.KharidTajhizat;
 
         clsItemFBStar itemFBStar = new clsItemFBStar
         {
@@ -27,12 +29,51 @@ public class ItemFBStarController(ApplicationDbContext context) : Controller
             BahayeVahed = BahayeVahed,
             VahedId = VahedId,
             Sharh = Sharh,
+            blnKharidTajhizat = blnKharidTajhizat,
         };
 
         _context.ItemFBStars.Add(itemFBStar);
         _context.SaveChanges();
 
+
         return new JsonResult("OK");
+    }
+
+    [HttpPost]
+    public JsonResult UpdateItemFBStar([FromBody] UpdateItemFBStarDto request)
+    {
+        clsItemFBStar? itemFBStar = _context.ItemFBStars.FirstOrDefault(x => x.ID == request.Id);
+        if (itemFBStar != null)
+        {
+            _context.Entry(itemFBStar).CurrentValues.SetValues(new
+            {
+                blnKharidTajhizat = request.KharidTajhizat,
+            });
+            _context.SaveChanges();
+            return new JsonResult("OK");
+        }
+        else
+            return new JsonResult("NOK");
+    }
+
+
+     [HttpPost]
+    public JsonResult DeleteItemFBStar([FromBody] DeleteItemFBStarDto request)
+    {
+        clsItemFBStar? itemFBStar = _context.ItemFBStars.FirstOrDefault(x => x.ID == request.Id);
+        if (itemFBStar != null)
+        {
+            _context.ItemFBStars.Remove(itemFBStar);
+            _context.SaveChanges();
+
+            decimal SumMeghdarJoz = context.RizMetreStars.Include(x => x.ItemFBStar)
+                .Where(x => x.ItemFBStar.Shomareh.Trim() == itemFBStar.Shomareh && x.ItemFBStar.BaravordId == itemFBStar.BaravordId)
+                .Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
+
+            return new JsonResult("OK_"+ SumMeghdarJoz);
+        }
+        else
+            return new JsonResult("NOK");
     }
 
     [HttpPost]
@@ -42,10 +83,10 @@ public class ItemFBStarController(ApplicationDbContext context) : Controller
         string ItemFBShomareh = request.ItemFBShomareh.Trim();
 
         clsItemFBStar? itemFBStar = _context.ItemFBStars.FirstOrDefault(x => x.BaravordId == BarAvordUserId && x.Shomareh == ItemFBShomareh);
-        if (itemFBStar!=null)
+        if (itemFBStar != null)
         {
 
-            List<clsRizMetreStar> lstRizMetreStars= _context.RizMetreStars.Where(x => x.ItemFBStarId == itemFBStar.ID).OrderBy(x=>x.Shomareh).ToList();
+            List<clsRizMetreStar> lstRizMetreStars = _context.RizMetreStars.Where(x => x.ItemFBStarId == itemFBStar.ID).OrderBy(x => x.Shomareh).ToList();
             return new JsonResult(lstRizMetreStars);
         }
 
@@ -71,7 +112,6 @@ public class ItemFBStarController(ApplicationDbContext context) : Controller
 
         if (itemFBStar != null)
         {
-
             clsRizMetreStar? RizMetreStar = context.RizMetreStars.Where(x => x.ItemFBStarId == itemFBStar.ID).OrderByDescending(x => x.Shomareh).FirstOrDefault();
             long Shomareh = 0;
             if (RizMetreStar != null)
@@ -93,11 +133,39 @@ public class ItemFBStarController(ApplicationDbContext context) : Controller
             RizMetreStarNew.ItemFBStarId = itemFBStar.ID;
             RizMetreStarNew.InsertDateTime = Now;
 
+            ///محاسبه مقدار جزء
+            decimal? dMeghdarJoz = null;
+            if (Tedad == null && Tool == null && Arz == null && Ertefa == null && Vazn == null)
+                dMeghdarJoz = null;
+            else
+                dMeghdarJoz = (Tedad == null ? 1 : Tedad) * (Tool == null ? 1 : Tool) *
+                (Arz == null ? 1 : Arz) * (Ertefa == null ? 1 : Ertefa) * (Vazn == null ? 1 : Vazn);
+            RizMetreStarNew.MeghdarJoz = dMeghdarJoz;
+
             _context.RizMetreStars.Add(RizMetreStarNew);
             _context.SaveChanges();
-        }
 
-        return new JsonResult("OK_");
+            decimal SumMeghdarJoz = context.RizMetreStars.Include(x => x.ItemFBStar)
+                .Where(x => x.ItemFBStar.Shomareh.Trim() == FBShomareh && x.ItemFBStar.BaravordId == BarAvordUserId)
+                .Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
+
+            decimal JameFasl = context.RizMetreStars.Include(x => x.ItemFBStar)
+                .Where(x => x.ItemFBStar.BaravordId == BarAvordUserId)
+                .Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
+
+            decimal BahayeVahedCurrent = 0;
+            clsItemFBStar? itemFBStarCurrent = _context.ItemFBStars.FirstOrDefault(x => x.BaravordId == BarAvordUserId);
+            if (itemFBStarCurrent != null)
+            {
+                BahayeVahedCurrent = itemFBStarCurrent.BahayeVahed;
+            }
+
+            decimal JameFaslInBahayeVahed = JameFasl * BahayeVahedCurrent;
+
+            return new JsonResult("OK_" + dMeghdarJoz + "_" + SumMeghdarJoz + "_" + JameFaslInBahayeVahed);
+        }
+        else
+            return new JsonResult("NOK_");
     }
 
     [HttpPost]
@@ -143,13 +211,37 @@ public class ItemFBStarController(ApplicationDbContext context) : Controller
     {
         try
         {
+            string FBShomareh = request.FBShomareh;
+            Guid BarAvordUserId = request.BarAvordId;
+
             clsRizMetreStar? entity = context.RizMetreStars.Find(request.Id);
             if (entity != null)
             {
                 context.RizMetreStars.Remove(entity);
             }
             context.SaveChanges();
-            return new JsonResult("OK");
+
+            decimal SumMeghdarJoz = context.RizMetreStars.Include(x => x.ItemFBStar)
+                .Where(x => x.ItemFBStar.Shomareh.Trim() == FBShomareh && x.ItemFBStar.BaravordId == BarAvordUserId)
+                .Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
+
+            decimal JameFasl = context.RizMetreStars.Include(x => x.ItemFBStar)
+                .Where(x => x.ItemFBStar.BaravordId == BarAvordUserId)
+                .Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
+
+            decimal BahayeVahedCurrent = 0;
+            clsItemFBStar? itemFBStarCurrent = _context.ItemFBStars.FirstOrDefault(x => x.BaravordId == BarAvordUserId);
+            if (itemFBStarCurrent != null)
+            {
+                BahayeVahedCurrent = itemFBStarCurrent.BahayeVahed;
+            }
+
+            decimal JameFaslInBahayeVahed = JameFasl * BahayeVahedCurrent;
+
+            return new JsonResult("OK_" + SumMeghdarJoz + "_" + JameFaslInBahayeVahed);
+
+
+            //return new JsonResult("OK");
 
         }
         catch (Exception)

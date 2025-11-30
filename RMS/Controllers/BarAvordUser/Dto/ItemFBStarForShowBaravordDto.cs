@@ -12,6 +12,9 @@ public class ItemFBStarForShowBaravordDto
     public int VahedId { get; set; }
     public string VahedName { get; set; }
     public string Sharh { get; set; }
+    public decimal Meghdar { get; set; }
+    public decimal BahayeKol { get; set; }
+    public bool? blnKharidTajhizat { get; set; }
     public List<ViewBarAvordItemStarOutPutRizMetreDto> RizMetre { get; set; }
     public List<ItemsFieldForUserBarAvordOutPutDto> ItemsFields { get; set; }
 

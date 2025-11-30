@@ -180,7 +180,7 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
 
         }
 
-        List<ItemFBStarForShowBaravordDto> lstItemFBStars = _context.ItemFBStars.Include(x => x.Vahed).Where(x => x.BaravordId == request.BarAvordUserId)
+        List<ItemFBStarForShowBaravordDto> lstItemFBStars = _context.ItemFBStars.Include(x => x.Vahed).Where(x => x.BaravordId == request.BarAvordUserId && x.Shomareh.Substring(0,2)== request.ShomarehFasl.Trim())
             .Select(x => new ItemFBStarForShowBaravordDto
             {
                 Id = x.ID,
@@ -190,6 +190,7 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
                 Shomareh = x.Shomareh,
                 VahedId = x.VahedId,
                 VahedName = x.Vahed.Name,
+                blnKharidTajhizat = x.blnKharidTajhizat,
                 RizMetre = new List<ViewBarAvordItemStarOutPutRizMetreDto>()
             }).ToList();
 
@@ -209,7 +210,7 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
         Tool = riz.Tool,
         Vazn = riz.Vazn,
         MeghdarJoz = riz.MeghdarJoz,
-        ItemFBStarId=riz.ItemFBStarId
+        ItemFBStarId = riz.ItemFBStarId
     }).OrderBy(x => x.Shomareh).ToList();
 
 
@@ -238,9 +239,9 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
 
             //item.ItemsFields.AddRange(currentItemsFields);
 
-            //item.Meghdar = Meghdar;
-            //decimal dBahayeKol = Meghdar * (item.BahayeVahedNew != 0 ? item.BahayeVahedNew : (item.BahayeVahed == null || item.BahayeVahed == "" ? 0 : decimal.Parse(item.BahayeVahed)));
-            //item.BahayeKol = dBahayeKol;
+            item.Meghdar = Meghdar;
+            decimal dBahayeKol = Meghdar * item.BahayeVahed;
+            item.BahayeKol = dBahayeKol;
 
         }
 

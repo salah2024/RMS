@@ -70,13 +70,33 @@ function renderTableFosoul(data) {
             </span>
 		</td>
 		<td style=\"text-align:center\">
+            <span id="tdjameFaslStar-${item.code}">
+			    ${formatNumber(item.jameFaslStar.toFixed(0))}
+            </span>
+		</td>
+        <td style=\"text-align:center\">
+            <span id="tdjameFaslAll-${item.code}">
+			    ${formatNumber(item.jameFaslAll.toFixed(0))}
+            </span>
+		</td>
+        <td style=\"text-align:center\">
             <span id="tdjameFaslBaZarib-${item.code}">
 			    ${formatNumber(item.jameFaslWithZarib.toFixed(0))}
             </span>
-          </td>
-		</tr>
+        </td>
+		<td style=\"text-align:center\">
+            <span id="tdjameFaslStarBaZarib-${item.code}">
+			    ${formatNumber(item.jameFaslStarWithZarib.toFixed(0))}
+            </span>
+        </td>
+        <td style=\"text-align:center\">
+            <span id="tdjameFaslStarBaZarib-${item.code}">
+			    ${formatNumber(item.jameFaslWithZaribAll.toFixed(0))}
+            </span>
+        </td>
+        </tr>
 		<tr id="${item.code}" style="display:none">
-			<td colspan="3">
+			<td colspan="7">
 				<div id="barAvordContainer-${item.code}"></div>
 			</td>
 		</tr>
@@ -314,6 +334,7 @@ function StarReturn(element, FBId, itemFbShomareh) {
     });
 }
 
+
 function renderTable(data, Stars, Code) {
     debugger;
     const container = $(`#barAvordContainer-${Code}`);
@@ -496,7 +517,7 @@ function renderTable(data, Stars, Code) {
 
         const detailRow = $(`
 			<tr id="${rizId}" class="riz-row" style="display: none;">
-				<td colspan="7">
+				<td colspan="8">
 					<table class="table table-sm table-bordered mb-0">
 						<thead>
 							<tr style="background-color: #c1b9e7;">
@@ -527,22 +548,47 @@ function renderTable(data, Stars, Code) {
         index++;
     });
 
-    debugger;
 
     Stars.forEach((item) => {
 
+
+        debugger;
         const rizId = `riz-${Code}-${index}`;
 
+        currentId = item.id;
+
+        KharidTajhizat = item.blnKharidTajhizat == null ? false : item.blnKharidTajhizat;
+        strKharidTajhizat = KharidTajhizat == true ? "ت" : "";
+        checked = KharidTajhizat == true ? "checked" : "";
         const mainRowStar = $(`
         <tr id="rowFasl-${rizId}" class="main-row clickable-row" data-riz-id="${rizId}" style="cursor: pointer;">
-        <td style="text-align:center">*</td>
+        <td style="text-align:center;">
+        <span>
+            ${strKharidTajhizat}
+        </span>
+        <span style="font-size:20px">
+            * 
+        </span>
+        </td>
         <td style="text-align:center">${item.shomareh}</td>
-        <td style="word-break: break-word; white-space: normal;text-align:right">${item.sharh}</td>
+        <td style="word-break: break-word; white-space: normal;text-align:right">
+            <div class="row">
+             <div class="col-10">
+                ${item.sharh}
+             </div>
+             <div class="col-2" style="border-right:1px solid #ccc;background-color:#f3e0ff;">
+                <input id="KharidTajhizat_${currentId}" type="checkbox" ${checked} />
+                <lable>خرید تجهیزات</label>
+             </div>
+            </div>
+        </td>
         <td style="text-align:center">${item.vahedName}</td>
-        <td style="text-align:center">${item.bahayeVahed}</td>
-        <td style="text-align:center"</td>
-        <td style="text-align:center"></td>
-        <td></td>
+        <td style="text-align:center" id="bahayeVahedFaslStar_${item.shomareh}">${item.bahayeVahed}</td>
+        <td style="text-align:center" id="meghdarFaslStar_${item.shomareh}">${formatNumber(item.meghdar)}</td>
+        <td style="text-align:center" id="bahayeKolFaslStar_${item.shomareh}">${formatNumber(item.bahayeKol)}</td>
+        <td>
+        <i id="iDelete_${currentId}_${item.shomareh}" class="fa fa-trash DelRMUStyle" ></i>
+        </td>
         </tr>
         `);
 
@@ -561,10 +607,10 @@ function renderTable(data, Stars, Code) {
 		<td style="text-align:center"><span>${riz.arz == null ? '' : riz.arz}</span></td>
 		<td style="text-align:center"><span>${riz.ertefa == null ? '' : riz.ertefa}</span></td>
 		<td style="text-align:center"><span>${riz.vazn == null ? '' : riz.vazn}</span></td>
-		<td style="text-align:center"></td>
+		<td style="text-align:center"><span id="spanMeghdarJozStar">${riz.meghdarJoz == null ? '' : riz.meghdarJoz}</span></td>
 		<td><span>${riz.des ?? ''}</span></td>
 		<td style="text-align:center">
-			<i class="fa fa-trash DelRMUStyle" onclick="event.stopPropagation();DeleteRizMetreStar('${riz.id}','${item.shomareh}','${rizId}','${Code}')"></i>
+			<i class="fa fa-trash DelRMUStyle" onclick="event.stopPropagation();DeleteRizMetreStar($(this),'${riz.id}','${item.shomareh}','${rizId}','${Code}')"></i>
 		</td>
 		</tr>
 		`).join('');
@@ -616,7 +662,7 @@ function renderTable(data, Stars, Code) {
         debugger;
         const detailRowStar = $(`
 			<tr id="${rizId}" class="riz-row" style="display:none">
-				<td colspan="7">
+				<td colspan="8">
 					<table class="table table-sm table-bordered mb-0">
 						<thead>
 							<tr style="background-color: #c1b9e7;">
@@ -649,10 +695,15 @@ function renderTable(data, Stars, Code) {
 
 
     const RowNew = $(`
-        <tr id="rowFaslNew-${Code}" class="main-row" data-riz-code="${Code}" style="cursor: pointer;">
+        <tr id="rowFaslNew-${Code}" class="main-row" data-riz-code="${Code}" style="cursor: pointer;background-color: #cbedcb;">
         <td style="text-align:center"><div class=\"col-md-1\"><i class=\"fa fa-plus SaveRMUStyle\"></i></div></td>
         <td style="text-align:center"><input id="inputFBShomareh-${Code}" type="text" class="form-control"/></td>
-        <td style="text-align:center"><input id="inputSharh-${Code}" type="text" class="form-control"/></td>
+        <td style="text-align:center">
+           <div class="row">
+            <div class="col-10"><input id="inputSharh-${Code}" type="text" class="form-control"/></div>
+            <div class="col-2"><input id="ckKharidTajhizat-${Code}" type="checkbox" /><label>خرید تجهیزات</label></div>
+           </div>
+        </td>
         <td style="text-align:center"><select style="width: 100%;" id="selectVahed-${Code}"></select></td>
         <td style="text-align:center"><input id="inputBahayeVahed-${Code}" type="text" class="form-control"/></td>
         <td style="text-align:center" id="meghdarFasl-${Code}"></td>
@@ -774,6 +825,63 @@ function renderTable(data, Stars, Code) {
             }
         });
     });
+    //function KharidTajhizatChange(Id, blnKharidTajhizat, code)
+
+
+    $('[id^="KharidTajhizat_"]').off('change').on('change', function () {
+        debugger;
+            thisId = this.id.split('_');
+            var vardata = new Object();
+            vardata.Id = thisId[1];
+            vardata.KharidTajhizat = this.checked;
+            $.ajax({
+                type: "POST",
+                url: '/ItemFBStar/UpdateItemFBStar',
+                dataType: "json",
+                data: JSON.stringify(vardata),
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data.split('_')[0] == "OK") {
+                        GetBarAvord(Code, "")
+                        toastr.success('اطلاعات با موفقیت ویرایش شد.', 'موفق');
+                    }
+                },
+                error: function (msg) {
+                    toastr.error('مشکل در درج اطلاعات', 'خطا');
+                }
+            });
+    });
+
+    $('[id^="iDelete_"]').off('click').on('click', function () {
+        debugger;
+            thisId = this.id.split('_');
+            var vardata = new Object();
+            vardata.Id = thisId[1];
+            $.ajax({
+                type: "POST",
+                url: '/ItemFBStar/DeleteItemFBStar',
+                dataType: "json",
+                data: JSON.stringify(vardata),
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data.split('_')[0] == "OK") {
+
+                        Shomareh = thisId[2];
+                        var bahayeVahedFasl = $('#bahayeVahedFaslStar_' + Shomareh);
+                        let txtBahayeVahed1 = parseFloat(convertPersianToEnglish(bahayeVahedFasl.text().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
+                        bahayeKolFasl.html(formatNumber(txtBahayeVahed1 * info[1]));
+
+
+                        GetBarAvord(Code, "");
+                        toastr.success('اطلاعات با موفقیت حذف شد.', 'موفق');
+                    }
+                },
+                error: function (msg) {
+                    toastr.error('مشکل در درج اطلاعات', 'خطا');
+                }
+            });
+        });
+
 
     initRowEvents(RowNew);
 }
@@ -1025,6 +1133,7 @@ function SaveNewRMUClick($btn) {
     var $sharh = $row.find('input[id^="inputSharh-"]');
     var $vahed = $row.find('select[id^="selectVahed-"]');
     var $bahayeVahed = $row.find('input[id^="inputBahayeVahed-"]');
+    var $kharidTajhizat = $row.find('input[id^="ckKharidTajhizat-"]');
 
     // پاک کردن خطاهای قبلی
     $row.find('.blinking').removeClass('blinking');
@@ -1046,6 +1155,8 @@ function SaveNewRMUClick($btn) {
     var sharhVal = ($sharh.val() || '').trim();
     var vahedVal = ($vahed.val() || '').trim();
     var bahayeVal = ($bahayeVahed.val() || '').trim();
+    debugger;
+    var kharidTajhizat = $kharidTajhizat.prop("checked");
 
     // 1) خالی نبودن فیلدها
     if (!fbVal) markInvalid($fbShomareh, 'شماره فهرست‌بها را وارد کنید.');
@@ -1098,6 +1209,7 @@ function SaveNewRMUClick($btn) {
     vardata.Sharh = sharhVal;
     vardata.VahedId = parseInt(vahedVal);
     vardata.BahayeVahed = parseFloat(bahayeVal);
+    vardata.kharidTajhizat = kharidTajhizat;
 
     debugger;
 
