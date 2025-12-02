@@ -50,14 +50,52 @@ public class ItemFBStarController(ApplicationDbContext context) : Controller
                 blnKharidTajhizat = request.KharidTajhizat,
             });
             _context.SaveChanges();
-            return new JsonResult("OK");
+
+            decimal SumMeghdarJoz = context.RizMetreStars.Include(x => x.ItemFBStar)
+                .Where(x => x.ItemFBStar.Shomareh.Trim() == itemFBStar.Shomareh && x.ItemFBStar.BaravordId == itemFBStar.BaravordId)
+                .Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
+
+            clsBaravordZaribBalaSari? baravordZaribBalaSari = _context.BaravordZaribBalaSaris.FirstOrDefault(x => x.BaravordId == itemFBStar.BaravordId);
+            clsBaravordZaribManteghe? baravordZaribManteghe = _context.BaravordZaribManteghes.FirstOrDefault(x => x.BaravordId == itemFBStar.BaravordId);
+
+            decimal zaribManteghe = baravordZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe.Value : 1 : 1;
+            decimal zaribBalaSari = baravordZaribBalaSari != null ? baravordZaribBalaSari.ZaribBalasari != null ? baravordZaribBalaSari.ZaribBalasari.Value : 1 : 1;
+
+            decimal BahayeVahedCurrent = 0;
+            decimal JameFaslInBahayeVahed = 0;
+
+            decimal JameFaslBaZaribInBahayeVahed = 0;
+            List<clsItemFBStar> lstItemFBStarCurrent = _context.ItemFBStars.Where(x => x.BaravordId == itemFBStar.BaravordId && x.Shomareh.Substring(0, 2) == itemFBStar.Shomareh.Substring(0, 2)).ToList();
+            if (lstItemFBStarCurrent.Count != 0)
+            {
+                foreach (var itemFBStarCurrent in lstItemFBStarCurrent)
+                {
+                    decimal JameFasl = context.RizMetreStars
+                        .Where(x => x.ItemFBStarId == itemFBStarCurrent.ID)
+                        .Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
+
+                    BahayeVahedCurrent = itemFBStarCurrent.BahayeVahed;
+
+                    bool blnKharidTajhizat = itemFBStarCurrent.blnKharidTajhizat == null ? false : itemFBStarCurrent.blnKharidTajhizat.Value;
+
+                    decimal ZaribStar2 = zaribBalaSari;
+                    if (blnKharidTajhizat)
+                    {
+                        ZaribStar2 = 1.14m;
+                    }
+                    JameFaslBaZaribInBahayeVahed += JameFasl * BahayeVahedCurrent * zaribManteghe * ZaribStar2;
+                    JameFaslInBahayeVahed += JameFasl * BahayeVahedCurrent;
+                }
+            }
+
+            return new JsonResult("OK_" + SumMeghdarJoz + "_" + JameFaslInBahayeVahed + "_" + JameFaslBaZaribInBahayeVahed);
         }
         else
             return new JsonResult("NOK");
     }
 
 
-     [HttpPost]
+    [HttpPost]
     public JsonResult DeleteItemFBStar([FromBody] DeleteItemFBStarDto request)
     {
         clsItemFBStar? itemFBStar = _context.ItemFBStars.FirstOrDefault(x => x.ID == request.Id);
@@ -70,7 +108,48 @@ public class ItemFBStarController(ApplicationDbContext context) : Controller
                 .Where(x => x.ItemFBStar.Shomareh.Trim() == itemFBStar.Shomareh && x.ItemFBStar.BaravordId == itemFBStar.BaravordId)
                 .Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
 
-            return new JsonResult("OK_"+ SumMeghdarJoz);
+            //decimal JameFasl = context.RizMetreStars.Include(x => x.ItemFBStar)
+            //.Where(x => x.ItemFBStar.BaravordId == itemFBStar.BaravordId)
+            //.Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
+
+
+            clsBaravordZaribBalaSari? baravordZaribBalaSari = _context.BaravordZaribBalaSaris.FirstOrDefault(x => x.BaravordId == itemFBStar.BaravordId);
+            clsBaravordZaribManteghe? baravordZaribManteghe = _context.BaravordZaribManteghes.FirstOrDefault(x => x.BaravordId == itemFBStar.BaravordId);
+
+            decimal zaribManteghe = baravordZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe.Value : 1 : 1;
+            decimal zaribBalaSari = baravordZaribBalaSari != null ? baravordZaribBalaSari.ZaribBalasari != null ? baravordZaribBalaSari.ZaribBalasari.Value : 1 : 1;
+
+            decimal BahayeVahedCurrent = 0;
+            decimal JameFaslInBahayeVahed = 0;
+
+            decimal JameFaslBaZaribInBahayeVahed = 0;
+            List<clsItemFBStar> lstItemFBStarCurrent = _context.ItemFBStars.Where(x => x.BaravordId == itemFBStar.BaravordId && x.Shomareh.Substring(0, 2) == itemFBStar.Shomareh.Substring(0, 2)).ToList();
+            if (lstItemFBStarCurrent.Count != 0)
+            {
+                foreach (var itemFBStarCurrent in lstItemFBStarCurrent)
+                {
+                    decimal JameFasl = context.RizMetreStars
+                        .Where(x => x.ItemFBStarId == itemFBStarCurrent.ID)
+                        .Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
+
+                    BahayeVahedCurrent = itemFBStarCurrent.BahayeVahed;
+
+                    bool blnKharidTajhizat = itemFBStarCurrent.blnKharidTajhizat == null ? false : itemFBStarCurrent.blnKharidTajhizat.Value;
+
+                    decimal ZaribStar2 = zaribBalaSari;
+                    if (blnKharidTajhizat)
+                    {
+                        ZaribStar2 = 1.14m;
+                    }
+                    JameFaslBaZaribInBahayeVahed += JameFasl * BahayeVahedCurrent * zaribManteghe * ZaribStar2;
+                    JameFaslInBahayeVahed += JameFasl * BahayeVahedCurrent;
+                }
+            }
+
+            return new JsonResult("OK_" + SumMeghdarJoz + "_" + JameFaslInBahayeVahed + "_" + JameFaslBaZaribInBahayeVahed);
+
+
+            //return new JsonResult("OK_" + SumMeghdarJoz);
         }
         else
             return new JsonResult("NOK");
@@ -149,20 +228,42 @@ public class ItemFBStarController(ApplicationDbContext context) : Controller
                 .Where(x => x.ItemFBStar.Shomareh.Trim() == FBShomareh && x.ItemFBStar.BaravordId == BarAvordUserId)
                 .Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
 
-            decimal JameFasl = context.RizMetreStars.Include(x => x.ItemFBStar)
-                .Where(x => x.ItemFBStar.BaravordId == BarAvordUserId)
-                .Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
+
+
+            clsBaravordZaribBalaSari? baravordZaribBalaSari = _context.BaravordZaribBalaSaris.FirstOrDefault(x => x.BaravordId == request.BarAvordUserId);
+            clsBaravordZaribManteghe? baravordZaribManteghe = _context.BaravordZaribManteghes.FirstOrDefault(x => x.BaravordId == request.BarAvordUserId);
+
+            decimal zaribManteghe = baravordZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe.Value : 1 : 1;
+            decimal zaribBalaSari = baravordZaribBalaSari != null ? baravordZaribBalaSari.ZaribBalasari != null ? baravordZaribBalaSari.ZaribBalasari.Value : 1 : 1;
 
             decimal BahayeVahedCurrent = 0;
-            clsItemFBStar? itemFBStarCurrent = _context.ItemFBStars.FirstOrDefault(x => x.BaravordId == BarAvordUserId);
-            if (itemFBStarCurrent != null)
+            decimal JameFaslBaZaribInBahayeVahed = 0;
+            decimal JameFaslInBahayeVahed = 0;
+            List<clsItemFBStar> lstItemFBStarCurrent = _context.ItemFBStars.Where(x => x.BaravordId == BarAvordUserId && x.Shomareh.Substring(0, 2) == FBShomareh.Substring(0, 2)).ToList();
+            if (lstItemFBStarCurrent.Count != 0)
             {
-                BahayeVahedCurrent = itemFBStarCurrent.BahayeVahed;
+                foreach (var itemFBStarCurrent in lstItemFBStarCurrent)
+                {
+                    decimal JameFasl = context.RizMetreStars
+                        .Where(x => x.ItemFBStarId == itemFBStarCurrent.ID)
+                        .Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
+
+                    BahayeVahedCurrent = itemFBStarCurrent.BahayeVahed;
+
+                    bool blnKharidTajhizat = itemFBStarCurrent.blnKharidTajhizat == null ? false : itemFBStarCurrent.blnKharidTajhizat.Value;
+
+                    decimal ZaribStar2 = zaribBalaSari;
+                    if (blnKharidTajhizat)
+                    {
+                        ZaribStar2 = 1.14m;
+                    }
+                    JameFaslBaZaribInBahayeVahed += JameFasl * BahayeVahedCurrent * zaribManteghe * ZaribStar2;
+                    JameFaslInBahayeVahed += JameFasl * BahayeVahedCurrent;
+                }
             }
 
-            decimal JameFaslInBahayeVahed = JameFasl * BahayeVahedCurrent;
 
-            return new JsonResult("OK_" + dMeghdarJoz + "_" + SumMeghdarJoz + "_" + JameFaslInBahayeVahed);
+            return new JsonResult("OK_" + dMeghdarJoz + "_" + SumMeghdarJoz + "_" + JameFaslInBahayeVahed + "_" + JameFaslBaZaribInBahayeVahed);
         }
         else
             return new JsonResult("NOK_");
@@ -200,10 +301,53 @@ public class ItemFBStarController(ApplicationDbContext context) : Controller
             dMeghdarJoz += (Tedad == null ? 1 : Tedad.Value) * (Tool == null ? 1 : Tool.Value) *
             (Arz == null ? 1 : Arz.Value) * (Ertefa == null ? 1 : Ertefa.Value) * (Vazn == null ? 1 : Vazn.Value);
         entity.MeghdarJoz = dMeghdarJoz;
-
         _context.SaveChanges();
 
-        return new JsonResult("OK_");
+
+        clsItemFBStar? itemFBStar = _context.ItemFBStars.FirstOrDefault(x => x.ID == entity.ItemFBStarId);
+
+        if (itemFBStar != null)
+        {
+            decimal SumMeghdarJoz = context.RizMetreStars.Include(x => x.ItemFBStar)
+                .Where(x => x.ItemFBStar.Shomareh.Trim() == itemFBStar.Shomareh && x.ItemFBStar.BaravordId == itemFBStar.BaravordId)
+                .Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
+
+            clsBaravordZaribBalaSari? baravordZaribBalaSari = _context.BaravordZaribBalaSaris.FirstOrDefault(x => x.BaravordId == itemFBStar.BaravordId);
+            clsBaravordZaribManteghe? baravordZaribManteghe = _context.BaravordZaribManteghes.FirstOrDefault(x => x.BaravordId == itemFBStar.BaravordId);
+
+            decimal zaribManteghe = baravordZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe.Value : 1 : 1;
+            decimal zaribBalaSari = baravordZaribBalaSari != null ? baravordZaribBalaSari.ZaribBalasari != null ? baravordZaribBalaSari.ZaribBalasari.Value : 1 : 1;
+
+            decimal BahayeVahedCurrent = 0;
+            decimal JameFaslInBahayeVahed = 0;
+
+            decimal JameFaslBaZaribInBahayeVahed = 0;
+            List<clsItemFBStar> lstItemFBStarCurrent = _context.ItemFBStars.Where(x => x.BaravordId == itemFBStar.BaravordId && x.Shomareh.Substring(0, 2) == itemFBStar.Shomareh.Substring(0, 2)).ToList();
+            if (lstItemFBStarCurrent.Count != 0)
+            {
+                foreach (var itemFBStarCurrent in lstItemFBStarCurrent)
+                {
+                    decimal JameFasl = context.RizMetreStars
+                        .Where(x => x.ItemFBStarId == itemFBStarCurrent.ID)
+                        .Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
+
+                    BahayeVahedCurrent = itemFBStarCurrent.BahayeVahed;
+
+                    bool blnKharidTajhizat = itemFBStarCurrent.blnKharidTajhizat == null ? false : itemFBStarCurrent.blnKharidTajhizat.Value;
+
+                    decimal ZaribStar2 = zaribBalaSari;
+                    if (blnKharidTajhizat)
+                    {
+                        ZaribStar2 = 1.14m;
+                    }
+                    JameFaslBaZaribInBahayeVahed += JameFasl * BahayeVahedCurrent * zaribManteghe * ZaribStar2;
+                    JameFaslInBahayeVahed += JameFasl * BahayeVahedCurrent;
+                }
+            }
+            return new JsonResult("OK_" + SumMeghdarJoz + "_" + JameFaslInBahayeVahed + "_" + JameFaslBaZaribInBahayeVahed);
+        }
+        else
+            return new JsonResult("NOK_");
     }
 
     [HttpPost]
@@ -225,21 +369,44 @@ public class ItemFBStarController(ApplicationDbContext context) : Controller
                 .Where(x => x.ItemFBStar.Shomareh.Trim() == FBShomareh && x.ItemFBStar.BaravordId == BarAvordUserId)
                 .Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
 
-            decimal JameFasl = context.RizMetreStars.Include(x => x.ItemFBStar)
-                .Where(x => x.ItemFBStar.BaravordId == BarAvordUserId)
-                .Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
+            //decimal JameFasl = context.RizMetreStars.Include(x => x.ItemFBStar)
+            //    .Where(x => x.ItemFBStar.BaravordId == BarAvordUserId)
+            //    .Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
+
+
+            clsBaravordZaribBalaSari? baravordZaribBalaSari = _context.BaravordZaribBalaSaris.FirstOrDefault(x => x.BaravordId == BarAvordUserId);
+            clsBaravordZaribManteghe? baravordZaribManteghe = _context.BaravordZaribManteghes.FirstOrDefault(x => x.BaravordId == BarAvordUserId);
+
+            decimal zaribManteghe = baravordZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe.Value : 1 : 1;
+            decimal zaribBalaSari = baravordZaribBalaSari != null ? baravordZaribBalaSari.ZaribBalasari != null ? baravordZaribBalaSari.ZaribBalasari.Value : 1 : 1;
 
             decimal BahayeVahedCurrent = 0;
-            clsItemFBStar? itemFBStarCurrent = _context.ItemFBStars.FirstOrDefault(x => x.BaravordId == BarAvordUserId);
-            if (itemFBStarCurrent != null)
+            decimal JameFaslInBahayeVahed = 0;
+
+            decimal JameFaslBaZaribInBahayeVahed = 0;
+            List<clsItemFBStar> lstItemFBStarCurrent = _context.ItemFBStars.Where(x => x.BaravordId == BarAvordUserId && x.Shomareh.Substring(0, 2) == FBShomareh.Substring(0, 2)).ToList();
+            if (lstItemFBStarCurrent.Count != 0)
             {
-                BahayeVahedCurrent = itemFBStarCurrent.BahayeVahed;
+                foreach (var itemFBStarCurrent in lstItemFBStarCurrent)
+                {
+                    decimal JameFasl = context.RizMetreStars
+                        .Where(x => x.ItemFBStarId == itemFBStarCurrent.ID)
+                        .Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
+
+                    BahayeVahedCurrent = itemFBStarCurrent.BahayeVahed;
+
+                    bool blnKharidTajhizat = itemFBStarCurrent.blnKharidTajhizat == null ? false : itemFBStarCurrent.blnKharidTajhizat.Value;
+
+                    decimal ZaribStar2 = zaribBalaSari;
+                    if (blnKharidTajhizat)
+                    {
+                        ZaribStar2 = 1.14m;
+                    }
+                    JameFaslBaZaribInBahayeVahed += JameFasl * BahayeVahedCurrent * zaribManteghe * ZaribStar2;
+                    JameFaslInBahayeVahed += JameFasl * BahayeVahedCurrent;
+                }
             }
-
-            decimal JameFaslInBahayeVahed = JameFasl * BahayeVahedCurrent;
-
-            return new JsonResult("OK_" + SumMeghdarJoz + "_" + JameFaslInBahayeVahed);
-
+            return new JsonResult("OK_" + SumMeghdarJoz + "_" + JameFaslInBahayeVahed + "_" + JameFaslBaZaribInBahayeVahed);
 
             //return new JsonResult("OK");
 

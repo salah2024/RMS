@@ -87,13 +87,6 @@ function UpdateRizMetreFromRowStar(el, rizMetreId, Shomareh, rizId1, Code) {
     }
     else {
 
-        var meghdarFasl = $('#rowFaslStar-' + rizId1 + ' #meghdarFaslStar');
-        var bahayeKolFasl = $('#rowFaslStar-' + rizId1 + ' #bahayeKolFaslStar');
-        var bahayeVahedFasl = $('#rowFaslStar-' + rizId1 + ' #bahayeVahedFaslStar');
-
-        const tdJameFasl = $('#td-' + Code + '-jameFaslStar');
-        const tdJameFaslBaZarib = $('#td-' + Code + '-jameFaslStarBaZarib');
-
         var vardata = new Object();
         vardata.Id = rizId;
         vardata.Sharh = values[0];
@@ -111,19 +104,53 @@ function UpdateRizMetreFromRowStar(el, rizMetreId, Shomareh, rizId1, Code) {
             data: JSON.stringify(vardata),
             contentType: "application/json; charset=utf-8",
             success: function (data) {
+                    debugger;
                 var info = data.split('_');
                 if (info[0] == "OK") {
                     row.removeClass('editing');
 
+                    var bahayeVahedFasl = $('#bahayeVahedFaslStar_' + Shomareh);
+
                     let num = parseFloat(info[1]);
                     let bahayeVahedFasl1 = parseFloat(convertPersianToEnglish(bahayeVahedFasl.text()));
 
-                    meghdarFasl.html(formatNumber(info[2]));
-                    bahayeKolFasl.html(formatNumber((bahayeVahedFasl1 * info[2]).toFixed(0)));
-                    MeghdarJoz.html(parseFloat(num.toFixed(2)));
+                    let txtBahayeVahed1 = parseFloat(convertPersianToEnglish(bahayeVahedFasl.text().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
 
-                    tdJameFasl.html(formatNumber(parseFloat(info[3]).toFixed(0)));
-                    tdJameFaslBaZarib.html(formatNumber(parseFloat(info[3]).toFixed(0)));
+                    //////////////////
+                    ///////////////////
+                    ///////////////////
+
+                    const tdJameFaslStar = $('#tdjameFaslStar-' + Code);
+                    const tdJameFasl = $('#tdjameFasl-' + Code);
+                    const tdJameFaslAll = $('#tdjameFaslAll-' + Code);
+                    const tdJameFaslAllBaZarib = $('#tdjameFaslAllBaZarib-' + Code);
+                    const tdJameFaslStarBaZarib = $('#tdjameFaslStarBaZarib-' + Code);
+                    const tdJameFaslBaZarib = $('#tdjameFaslBaZarib-' + Code);
+
+                    const MeghdarJoz = row.find('#spanMeghdarJozStar');
+
+                    var meghdarFasl = $('#meghdarFaslStar_' + Shomareh);
+                    var bahayeKolFasl = $('#bahayeKolFaslStar_' + Shomareh);
+                    var bahayeVahedFasl = $('#bahayeVahedFaslStar_' + Shomareh);
+
+                    meghdarFasl.html(formatNumber(info[1]));
+                    bahayeKolFasl.html(formatNumber(txtBahayeVahed1 * info[1]));
+                    MeghdarJoz.html(num);
+                    tdJameFaslStar.html(formatNumber(parseFloat(info[2]).toFixed(0)));
+                    tdJameFaslStarBaZarib.html(formatNumber(parseFloat(info[3]).toFixed(0)));
+
+
+                    JameFasl = parseFloat(convertPersianToEnglish(tdJameFasl.html().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
+                    dJameFaslAll = parseFloat(info[2]) + JameFasl;
+                    tdJameFaslAll.html(formatNumber(dJameFaslAll.toFixed(0)));
+
+                    JameFaslBaZarib = parseFloat(convertPersianToEnglish(tdJameFaslBaZarib.html().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
+                    dJameFaslAllBaZarib = parseFloat(info[3]) + JameFaslBaZarib;
+                    tdJameFaslAllBaZarib.html(formatNumber(dJameFaslAllBaZarib.toFixed(0)));
+                    ///////////////////
+                    ///////////////////
+                    ///////////////////
+
                     //GetRizMetreUsers();
                     toastr.success('ریزه متره انتخابی بدرستی ویرایش گردید', 'موفقیت');
                     cancelEditRowStar(row, rizMetreId, Shomareh, rizId1);
@@ -148,7 +175,11 @@ function SaveRMUStarClick(object, Shomareh, rizId, Code) {
 
     const row = $(object).closest('tr');
     const tdJameFaslStar = $('#tdjameFaslStar-' + Code);
+    const tdJameFasl = $('#tdjameFasl-' + Code);
+    const tdJameFaslAll = $('#tdjameFaslAll-' + Code);
+    const tdJameFaslAllBaZarib = $('#tdjameFaslAllBaZarib-' + Code);
     const tdJameFaslStarBaZarib = $('#tdjameFaslStarBaZarib-' + Code);
+    const tdJameFaslBaZarib = $('#tdjameFaslBaZarib-' + Code);
 
     const MeghdarJoz = row.find('#spanMeghdarJozStar');
 
@@ -278,7 +309,16 @@ function SaveRMUStarClick(object, Shomareh, rizId, Code) {
                     bahayeKolFasl.html(formatNumber(txtBahayeVahed1 * info[2]));
                     MeghdarJoz.html(num);
                     tdJameFaslStar.html(formatNumber(parseFloat(info[3]).toFixed(0)));
-                    tdJameFaslStarBaZarib.html(formatNumber(parseFloat(info[3]).toFixed(0)));
+                    tdJameFaslStarBaZarib.html(formatNumber(parseFloat(info[4]).toFixed(0)));
+
+
+                    JameFasl = parseFloat(convertPersianToEnglish(tdJameFasl.html().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
+                    dJameFaslAll = parseFloat(info[3]) + JameFasl;
+                    tdJameFaslAll.html(formatNumber(dJameFaslAll.toFixed(0)));
+
+                    JameFaslBaZarib = parseFloat(convertPersianToEnglish(tdJameFaslBaZarib.html().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
+                    dJameFaslAllBaZarib = parseFloat(info[4]) + JameFaslBaZarib;
+                    tdJameFaslAllBaZarib.html(formatNumber(dJameFaslAllBaZarib.toFixed(0)));
 
                     //inputBahayeVahed = $('#txtBahayeVahed-' + rizId);
                     //const val = parseFloat(inputBahayeVahed.val().replace(/,/g, '')); // حذف کاما و تبدیل به عدد
@@ -453,15 +493,17 @@ function DeleteRizMetreStar(object, RizMetreId, Shomareh, rizId, Code) {
 
                 const row = $(object).closest('tr');
                 const tdJameFaslStar = $('#tdjameFaslStar-' + Code);
+                const tdJameFasl = $('#tdjameFasl-' + Code);
+                const tdJameFaslAll = $('#tdjameFaslAll-' + Code);
                 const tdJameFaslStarBaZarib = $('#tdjameFaslStarBaZarib-' + Code);
+                const tdJameFaslBaZarib = $('#tdjameFaslBaZarib-' + Code);
+                const tdJameFaslAllBaZarib = $('#tdjameFaslAllBaZarib-' + Code);
 
                 const MeghdarJoz = row.find('#spanMeghdarJozStar');
 
                 var meghdarFasl = $('#meghdarFaslStar_'+Shomareh);
                 var bahayeKolFasl = $('#bahayeKolFaslStar_' + Shomareh);
                 var bahayeVahedFasl = $('#bahayeVahedFaslStar_' + Shomareh);
-
-
 
                 let num = parseFloat(info[1]);
                 let bahayeVahedFasl1 = parseFloat(convertPersianToEnglish(bahayeVahedFasl.text() == "" ? "0" : bahayeVahedFasl.text()));
@@ -470,10 +512,17 @@ function DeleteRizMetreStar(object, RizMetreId, Shomareh, rizId, Code) {
 
                 meghdarFasl.html(formatNumber(info[1]));
                 bahayeKolFasl.html(formatNumber(txtBahayeVahed1 * info[1]));
-                MeghdarJoz.html(num);
+                //MeghdarJoz.html(num);
                 tdJameFaslStar.html(formatNumber(parseFloat(info[2]).toFixed(0)));
-                tdJameFaslStarBaZarib.html(formatNumber(parseFloat(info[2]).toFixed(0)));
+                tdJameFaslStarBaZarib.html(formatNumber(parseFloat(info[3]).toFixed(0)));
 
+                JameFasl = parseFloat(convertPersianToEnglish(tdJameFasl.html().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
+                dJameFaslAll = parseFloat(info[2]) + JameFasl;
+                tdJameFaslAll.html(formatNumber(dJameFaslAll.toFixed(0)));
+
+                JameFaslBaZarib = parseFloat(convertPersianToEnglish(tdJameFaslBaZarib.html().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
+                dJameFaslAllBaZarib = parseFloat(info[3]) + JameFaslBaZarib;
+                tdJameFaslAllBaZarib.html(formatNumber(dJameFaslAllBaZarib.toFixed(0)));
 
                 GetCurrentRizMetreItemFBStar(Shomareh, rizId, Code);
                 toastr.success('ریز متره بدرستی حذف گردید', 'موفقیت');
