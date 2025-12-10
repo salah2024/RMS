@@ -9,7 +9,7 @@ public class clsBaravordUser:clsBaseEntity
     public Guid UserId { get; set; }
     public long Num { get; set; }
     public NoeBarAvord Type { get; set; }
-    public NoeFehrestBaha NoeFB { get; set; }
+    public string NoeFBs { get; set; }
     public string Name { get; set; }
     public int Year { get; set; }
     [Column(TypeName = "decimal(18,4)")]

@@ -46,7 +46,7 @@ namespace RMS.Models.Common
                 decimal? Ertefa = request.Ertefa;
                 decimal? Vazn = request.Vazn;
                 string Des = request.Des;
-                NoeFehrestBaha NoeFB = request.NoeFB;
+                NoeFehrestBaha NoeFB = request.NoeFBId;
                 int Year = request.Year;
                 int LevelNumber = request.LevelNumber == 0 ? 1 : request.LevelNumber;
                 DastyarCommon DastyarCommon = new DastyarCommon(context);
@@ -360,7 +360,7 @@ namespace RMS.Models.Common
                     var lstItemsAddingToFB = (from ItemsAddingToFB in _context.ItemsAddingToFBs
                                               join FehrestBaha in _context.FehrestBahas on ItemsAddingToFB.AddedItems.Trim() equals FehrestBaha.Shomareh.Trim()
                                               where strItemsHasCondition_ConditionContext.Contains(ItemsAddingToFB.ItemsHasCondition_ConditionContextId)
-                                              && FehrestBaha.Sal == Year
+                                              && FehrestBaha.Sal == Year && FehrestBaha.NoeFB==NoeFB
                                               select new
                                               {
                                                   ItemsAddingToFB.Id,

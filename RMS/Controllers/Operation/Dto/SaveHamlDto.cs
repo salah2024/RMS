@@ -1,8 +1,11 @@
-﻿namespace RMS.Controllers.Operation.Dto;
+﻿using static RMS.Models.Common.EnumForEntity;
+
+namespace RMS.Controllers.Operation.Dto;
 
 public class SaveHamlDto
 {
     public Guid BarAvordUserId { get; set; }
+    public NoeFehrestBaha NoeFBId { get; set; }
     public long Year { get;set; }
     public string ItemFBShomareh { get; set; }
     //public Guid BarAvordHamlId { get;set; }

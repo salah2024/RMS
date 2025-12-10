@@ -444,7 +444,8 @@ function SaveKhakRiziInfo(barAvordUserId) {
         HajmKhakRiziValues: hajmValues,  // ← لیست {Id, Value}
 
         BarAvordUserId: barAvordUserId,
-        Year: Year = parseInt($('#HDFYear').val())
+        Year: Year = parseInt($('#HDFYear').val()),
+        NoeFBId: NoeFBId= parseInt($('#HDFNoeFB').val())
     };
 
     $.ajax({

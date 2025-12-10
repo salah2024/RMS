@@ -26,6 +26,8 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
     {
 
         Guid BarAvordUserId = request.BarAvordUserId;
+        NoeFehrestBaha NoeFBId = request.NoeFBId;
+
         int Type = request.Type;
         long FromKM = request.FromKM;
         long ToKM = request.ToKM;
@@ -160,7 +162,8 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
                         {
                             BarAvordId = BarAvordUserId,
                             InsertDateTime = Now,
-                            Shomareh = strCurrentShomareh
+                            Shomareh = strCurrentShomareh,
+                            NoeFBId = NoeFBId
                         };
                         _context.FBs.Add(newFB);
                         gFBId = newFB.ID;
@@ -219,6 +222,7 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
         try
         {
             Guid BarAvordUserId = request.BarAvordUserId;
+            NoeFehrestBaha NoeFBId = request.NoeFBId;
             long FromKM = request.FromKM;
             long ToKM = request.ToKM;
             string HKB = request.HKB;
@@ -375,7 +379,8 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
                             {
                                 BarAvordId = BarAvordUserId,
                                 InsertDateTime = Now,
-                                Shomareh = strCurrentShomareh
+                                Shomareh = strCurrentShomareh,
+                                NoeFBId=NoeFBId
                             };
                             _context.FBs.Add(newFB);
                             gFBId = newFB.ID;
@@ -461,7 +466,7 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
     public JsonResult GetExistingKMPayKaniInfoWithBarAvordId([FromBody] RequestExistingKMPayKaniInfoWithBarAvord request)
     {
 
-        List<clsPayKaniInfoForBarAvord> GetExistingKMPayKaniInfoWithBarAvord = 
+        List<clsPayKaniInfoForBarAvord> GetExistingKMPayKaniInfoWithBarAvord =
             _context.PayKaniInfoForBarAvords.Where(x => x.BaravordUserId == request.BaravordId && x.Type == request.Type).ToList();
         //string strParam1 = "BarAvordUserId='" + request.BaravordId + "' and Type=" + request.Type;
         //var Param = new SqlParameter("@Parameter", strParam1);

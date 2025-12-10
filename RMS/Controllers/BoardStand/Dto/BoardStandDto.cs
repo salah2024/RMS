@@ -1,8 +1,11 @@
-﻿namespace RMS.Controllers.BoardStand.Dto
+﻿using static RMS.Models.Common.EnumForEntity;
+
+namespace RMS.Controllers.BoardStand.Dto
 {
     public class BoardStandDto
     {
         public Guid BaravordId { get; set; }
+        public NoeFehrestBaha NoeFBId { get; set; }
         public int Tedad { get; set; }
         /// <summary>
         /// 1-پایه تابلو اطلاعاتی

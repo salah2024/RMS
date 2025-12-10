@@ -139,6 +139,7 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
         try
         {
             Guid BaravordId = request.BaravordId;
+            NoeFehrestBaha NoeFBId = request.NoeFBId;
 
             //clsOperation? operation = _context.Operations.FirstOrDefault(x => x.Id == request.OperationId);
             //int Shape = 1;
@@ -287,6 +288,7 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
                 {
                     clsFB FBSave = new clsFB();
                     FBSave.BarAvordId = BaravordId;
+                    FBSave.NoeFBId = NoeFBId;
                     FBSave.Shomareh = strMainAddedItem;
                     FBSave.BahayeVahedZarib = 0;
                     _context.FBs.Add(FBSave);
@@ -476,6 +478,7 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
                             FBSave.BarAvordId = BaravordId;
                             FBSave.Shomareh = strAddedItem;
                             FBSave.BahayeVahedZarib = 0;
+                            FBSave.NoeFBId = NoeFBId;
                             _context.FBs.Add(FBSave);
                             _context.SaveChanges();
                             FBId = FBSave.ID;
@@ -568,6 +571,8 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
                             FBSave.BarAvordId = BaravordId;
                             FBSave.Shomareh = strAddedItem;
                             FBSave.BahayeVahedZarib = 0;
+                            FBSave.NoeFBId = NoeFBId;
+
                             _context.FBs.Add(FBSave);
                             _context.SaveChanges();
                             FBId = FBSave.ID;
@@ -757,6 +762,7 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
                         FBSave.BarAvordId = BaravordId;
                         FBSave.Shomareh = strAddedItem;
                         FBSave.BahayeVahedZarib = 0;
+                        FBSave.NoeFBId = NoeFBId;
                         _context.FBs.Add(FBSave);
                         _context.SaveChanges();
                         FBId = FBSave.ID;
@@ -836,6 +842,7 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
         try
         {
             Guid BaravordId = request.BaravordId;
+            NoeFehrestBaha NoeFBId = request.NoeFBId;
             Guid barAvordAddedBoardId = request.barAvordAddedBoardId;
 
             string strMainSharh = "";
@@ -989,6 +996,7 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
                     FBSave.BarAvordId = BaravordId;
                     FBSave.Shomareh = strMainAddedItem;
                     FBSave.BahayeVahedZarib = 0;
+                    FBSave.NoeFBId = NoeFBId;
                     _context.FBs.Add(FBSave);
                     _context.SaveChanges();
                     FBId = FBSave.ID;
@@ -1079,6 +1087,7 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
                             FBSave.BarAvordId = BaravordId;
                             FBSave.Shomareh = strAddedItem;
                             FBSave.BahayeVahedZarib = 0;
+                            FBSave.NoeFBId = NoeFBId;
                             _context.FBs.Add(FBSave);
                             _context.SaveChanges();
                             FBId = FBSave.ID;
@@ -1171,6 +1180,7 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
                             FBSave.BarAvordId = BaravordId;
                             FBSave.Shomareh = strAddedItem;
                             FBSave.BahayeVahedZarib = 0;
+                            FBSave.NoeFBId = NoeFBId;
                             _context.FBs.Add(FBSave);
                             _context.SaveChanges();
                             FBId = FBSave.ID;
@@ -1263,6 +1273,7 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
                         FBSave.BarAvordId = BaravordId;
                         FBSave.Shomareh = strAddedItem;
                         FBSave.BahayeVahedZarib = 0;
+                        FBSave.NoeFBId = NoeFBId;
                         _context.FBs.Add(FBSave);
                         _context.SaveChanges();
                         FBId = FBSave.ID;
@@ -1530,7 +1541,7 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
         try
         {
             Guid BaravordId = request.BaravordId;
-
+            NoeFehrestBaha NoeFBId = request.NoeFBId;
             string strMainSharh = "";
             int Shape = request.Shape;
 
@@ -1581,7 +1592,7 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
             //Area = (Arz * Ertefa) / 1000000;
 
             long Shomareh = 0;
-            clsRizMetreUsers? RM = _context.RizMetreUserses.Include(x => x.FB).OrderByDescending(x => x.Shomareh).FirstOrDefault(x => x.FB.BarAvordId == BaravordId);
+            clsRizMetreUsers? RM = _context.RizMetreUserses.Include(x => x.FB).OrderByDescending(x => x.Shomareh).FirstOrDefault(x => x.FB.BarAvordId == BaravordId && x.FB.NoeFBId==NoeFBId);
             if (RM != null)
             {
                 Shomareh = RM.Shomareh;
@@ -1610,6 +1621,7 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
                     FBSave.BarAvordId = BaravordId;
                     FBSave.Shomareh = strMainAddedItem;
                     FBSave.BahayeVahedZarib = 0;
+                    FBSave.NoeFBId = NoeFBId;
                     _context.FBs.Add(FBSave);
                     _context.SaveChanges();
                     FBId = FBSave.ID;
@@ -1694,6 +1706,7 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
                     FBSave.BarAvordId = BaravordId;
                     FBSave.Shomareh = strMainAddedItem;
                     FBSave.BahayeVahedZarib = 0;
+                    FBSave.NoeFBId = NoeFBId;
                     _context.FBs.Add(FBSave);
                     _context.SaveChanges();
                     FBId = FBSave.ID;
@@ -1764,7 +1777,7 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
                     string strAddedItem = "";
                     strAddedItem = boardItems1.AddedItem;
 
-                    clsFB? FBUsers = _context.FBs.FirstOrDefault(x => x.BarAvordId == BaravordId && x.Shomareh == strAddedItem);
+                    clsFB? FBUsers = _context.FBs.FirstOrDefault(x => x.BarAvordId == BaravordId && x.NoeFBId==NoeFBId && x.Shomareh == strAddedItem);
                     Guid FBId = new Guid();
                     if (FBUsers == null)
                     {
@@ -1772,6 +1785,7 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
                         FBSave.BarAvordId = BaravordId;
                         FBSave.Shomareh = strAddedItem;
                         FBSave.BahayeVahedZarib = 0;
+                        FBSave.NoeFBId = NoeFBId;
                         _context.FBs.Add(FBSave);
                         _context.SaveChanges();
                         FBId = FBSave.ID;
@@ -1844,6 +1858,7 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
         {
             Guid BaravordId = request.BaravordId;
             Guid barAvordAddedBoardId = request.barAvordAddedBoardId;
+            NoeFehrestBaha NoeFBId = request.NoeFBId;
 
             string strMainSharh = "";
 
@@ -1938,6 +1953,7 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
                     FBSave.BarAvordId = BaravordId;
                     FBSave.Shomareh = strMainAddedItem;
                     FBSave.BahayeVahedZarib = 0;
+                    FBSave.NoeFBId=NoeFBId;
                     _context.FBs.Add(FBSave);
                     _context.SaveChanges();
                     FBId = FBSave.ID;
@@ -2017,6 +2033,7 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
                     FBSave.BarAvordId = BaravordId;
                     FBSave.Shomareh = strMainAddedItem;
                     FBSave.BahayeVahedZarib = 0;
+                    FBSave.NoeFBId = NoeFBId;
                     _context.FBs.Add(FBSave);
                     _context.SaveChanges();
                     FBId = FBSave.ID;
@@ -2095,6 +2112,7 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
                         FBSave.BarAvordId = BaravordId;
                         FBSave.Shomareh = strAddedItem;
                         FBSave.BahayeVahedZarib = 0;
+                        FBSave.NoeFBId = NoeFBId;
                         _context.FBs.Add(FBSave);
                         _context.SaveChanges();
                         FBId = FBSave.ID;

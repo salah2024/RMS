@@ -1,4 +1,6 @@
 ﻿
+using static RMS.Models.Common.EnumForEntity;
+
 namespace RMS.Controllers.ItemFBStar.Dto;
 public class SaveItemFBStarDto
 {
@@ -8,4 +10,6 @@ public class SaveItemFBStarDto
     public int VahedId { get; set; }
     public string Sharh { get; set; }
     public bool? KharidTajhizat { get; set; }
+    public int Year { get; set; }
+    public NoeFehrestBaha NoeFBId { get; set; }
 }

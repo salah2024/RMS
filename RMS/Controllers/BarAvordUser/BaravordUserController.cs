@@ -20,8 +20,9 @@ public class BaravordUserController(ApplicationDbContext context) : Controller
     [HttpPost]
     public JsonResult List()
     {
+
         var barAvord = (from BU in _context.BaravordUsers
-                        where (BU.IsDeleted == false || BU.IsDeleted==null)
+                        where (BU.IsDeleted == false || BU.IsDeleted == null)
                         select new BaravordUserToShowDto
                         {
                             BUId = BU.ID,
@@ -29,15 +30,43 @@ public class BaravordUserController(ApplicationDbContext context) : Controller
                             BUName = BU.Name,
                             BUInsertDate = BU.InsertDateTime,
                             BUYear = BU.Year,
-                            BUNoeFB = BU.NoeFB,
-                            NoeFBName = BU.NoeFB == NoeFehrestBaha.RahoBand ? "راه و باند"
-                                      : BU.NoeFB == NoeFehrestBaha.RahDari ? "راهداری"
-                                      : BU.NoeFB == NoeFehrestBaha.Abnie ? "ابنیه" : "",
+                            BUNoeFBs = BU.NoeFBs,
+                            //NoeFBName = BU.NoeFB == NoeFehrestBaha.RahoBand ? "راه و باند"
+                            //          : BU.NoeFB == NoeFehrestBaha.RahDari ? "راهداری"
+                            //          : BU.NoeFB == NoeFehrestBaha.Abnie ? "ابنیه" : "",
 
                         }).OrderBy(x => x.BUNum).ToList();
 
         foreach (var item in barAvord)
         {
+            string[] NoeFBs = item.BUNoeFBs.Split(",");
+
+            string strNoeFB = "";
+            foreach (string noeFB in NoeFBs)
+            {
+                switch (noeFB)
+                {
+                    case "232":
+                        {
+                            strNoeFB += "راهداری - ";
+                            break;
+                        }
+                    case "233":
+                        {
+                            strNoeFB += "ابنیه - ";
+                            break;
+                        }
+                    case "234":
+                        {
+                            strNoeFB += "راه، باند، فرودگاه - ";
+                            break;
+                        }
+                    default:
+                        break;
+                }
+            }
+
+            item.NoeFBName = strNoeFB;
             if (item.BUInsertDate != null)
             {
                 item.BUInsertDateSolar = SolarDate.ConvertMiladiToPersion(item.BUInsertDate.Value);
@@ -77,35 +106,44 @@ public class BaravordUserController(ApplicationDbContext context) : Controller
     [HttpPost]
     public ActionResult ConfirmBahayeVahedNew([FromBody] BahayeVahedNewInputDto request)
     {
-        long BahayeVahedNew = long.Parse(request.BahayeVahedNew);
-        Guid tempId = new Guid();
-        Guid FBId = request.FBId;
-        if (FBId == tempId)
+        try
         {
-            FBId = Guid.NewGuid();
-            clsFB fb = new clsFB
+
+            long BahayeVahedNew = long.Parse(request.BahayeVahedNew);
+            Guid tempId = new Guid();
+            Guid FBId = request.FBId;
+            NoeFehrestBaha NoeFBId = request.NoeFBId;
+            if (FBId == tempId)
             {
-                BarAvordId = request.BarAvordUserId,
-                BahayeVahedNew = BahayeVahedNew,
-                ID = FBId,
-                InsertDateTime = DateTime.Now,
-                Shomareh = request.itemFbShomareh
-            };
-            _context.FBs.Add(fb);
+                FBId = Guid.NewGuid();
+                clsFB fb = new clsFB
+                {
+                    BarAvordId = request.BarAvordUserId,
+                    BahayeVahedNew = BahayeVahedNew,
+                    ID = FBId,
+                    NoeFBId = NoeFBId,
+                    InsertDateTime = DateTime.Now,
+                    Shomareh = request.itemFbShomareh,
+                };
+                _context.FBs.Add(fb);
+            }
+            else
+            {
+                clsFB? currentFB = _context.FBs.FirstOrDefault(x => x.ID == request.FBId);
+                if (currentFB != null)
+                {
+                    currentFB.BahayeVahedNew = BahayeVahedNew;
+                }
+            }
+
             _context.SaveChanges();
             return new JsonResult("OK");
+
         }
-        else
+        catch (Exception)
         {
-            clsFB? currentFB = _context.FBs.FirstOrDefault(x => x.ID == request.FBId);
-            if (currentFB != null)
-            {
-                currentFB.BahayeVahedNew = BahayeVahedNew;
-                _context.SaveChanges();
-                return new JsonResult("OK");
-            }
+            return new JsonResult("NOK");
         }
-        return new JsonResult("NOK");
     }
 
     // GET: BaravordUser/Details/5
@@ -121,7 +159,7 @@ public class BaravordUserController(ApplicationDbContext context) : Controller
     {
         NoeBarAvord Type = request.Type;
         string Title = request.Title;
-        NoeFehrestBaha NoeFB = request.NoeFB;
+        string NoeFBs = request.NoeFBs;
         int Year = request.Year;
         string UserName = request.UserName;
 
@@ -131,14 +169,14 @@ public class BaravordUserController(ApplicationDbContext context) : Controller
         {
             Guid guidUserId = Guid.Parse("b3500674-db49-44de-a006-45abad9fb1ed");
             clsBaravordUser? baravordUserItem = _context.BaravordUsers.Where(f => f.UserId == guidUserId
-            && f.Type == NoeBarAvord.WithoutProject && f.NoeFB == NoeFB).OrderByDescending(f => f.Num).FirstOrDefault();
+            && f.Type == NoeBarAvord.WithoutProject && f.Year == Year).OrderByDescending(f => f.Num).FirstOrDefault();
             if (baravordUserItem != null)
                 baravordUser.Num = baravordUserItem.Num + 1;
             else
                 baravordUser.Num = 1;
             baravordUser.Name = Title;
             baravordUser.Year = Year;
-            baravordUser.NoeFB = NoeFB;
+            baravordUser.NoeFBs = NoeFBs;
             baravordUser.UserId = guidUserId;
             baravordUser.Type = Type;
             baravordUser.InsertDateTime = DateTime.Now;
@@ -177,7 +215,7 @@ public class BaravordUserController(ApplicationDbContext context) : Controller
     {
         Guid guidUserId = Guid.Parse("b3500674-db49-44de-a006-45abad9fb1ed");
         clsBaravordUser? baravordUserItem = _context.BaravordUsers.Where(f => f.UserId == guidUserId
-        && f.Type == NoeBarAvord.WithProject && f.NoeFB == request.NoeFB).OrderByDescending(f => f.Num).FirstOrDefault();
+        && f.Type == NoeBarAvord.WithProject && f.Year == request.Year).OrderByDescending(f => f.Num).FirstOrDefault();
         long intNum = 0;
         if (baravordUserItem == null)
             intNum = 1;

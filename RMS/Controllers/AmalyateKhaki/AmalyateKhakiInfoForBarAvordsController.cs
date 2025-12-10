@@ -24,6 +24,7 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
     {
 
         Guid BarAvordUserId = request.BarAvordUserId;
+        NoeFehrestBaha NoeFBId = request.NoeFBId;
         NoeAmalyatKhaki Type = request.Type;
         long FromKM = request.FromKM;
         long ToKM = request.ToKM;
@@ -158,7 +159,8 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
                         {
                             BarAvordId = BarAvordUserId,
                             InsertDateTime = Now,
-                            Shomareh = strCurrentShomareh
+                            Shomareh = strCurrentShomareh,
+                            NoeFBId = NoeFBId
                         };
                         _context.FBs.Add(newFB);
                         gFBId = newFB.ID;
@@ -217,6 +219,7 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
         try
         {
             Guid BarAvordUserId = request.BarAvordUserId;
+            NoeFehrestBaha NoeFBId =request.NoeFBId;
             long FromKM = request.FromKM;
             long ToKM = request.ToKM;
             string HKB = request.HKB;
@@ -297,7 +300,7 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
                             //_context.SaveChanges();
                         }
 
-                        decimal? dDetailValueOfReCycle = item.DetailValueOfReCycle==""?null: decimal.Parse(item.DetailValueOfReCycle);
+                        decimal? dDetailValueOfReCycle = item.DetailValueOfReCycle == "" ? null : decimal.Parse(item.DetailValueOfReCycle);
                         if (dDetailValueOfReCycle != 0)
                         {
                             clsAmalyateKhakiInfoForBarAvordDetailsMore AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
@@ -370,7 +373,8 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
                             {
                                 BarAvordId = BarAvordUserId,
                                 InsertDateTime = Now,
-                                Shomareh = strCurrentShomareh
+                                Shomareh = strCurrentShomareh,
+                                NoeFBId = NoeFBId
                             };
                             _context.FBs.Add(newFB);
                             gFBId = newFB.ID;

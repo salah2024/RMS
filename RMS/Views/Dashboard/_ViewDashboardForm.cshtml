@@ -136,7 +136,7 @@
 				 debugger;
 				 row.fadeOut(500, function () {
 					$(this).remove();
-				 });	
+				 });
 				}
 			},
 			error: function (response) {
@@ -219,10 +219,18 @@
 		// پیدا کردن ردیف والد
 		var $row = $(btn).closest("tr");
 
+			var selectedFB = [];
+			$row.find("#new_noeFB input[type='checkbox']:checked").each(function () {
+				selectedFB.push($(this).val());
+			});
+
+			var selectedFBString = selectedFB.join(',');
+
+
 		// ساخت آبجکت ورودی ها از روی همان ردیف
 		var inputs = {
 			name: $row.find("input#new_name").val().trim(),
-			noeFB: $row.find("select#new_noeFB").val(),
+			noeFB:selectedFBString, //$row.find("select#new_noeFB").val(),
 			//date: $row.find("input#new_date").val().trim(),
 			year: $row.find("select#new_year").val()
 		};
@@ -233,9 +241,15 @@
 			return;
 		}
 
-		if (!inputs.noeFB) {
-			toastr.warning("فهرست بها انتخاب نشده است");
-			return;
+		// if (!inputs.noeFB) {
+		// 	toastr.warning("فهرست بها انتخاب نشده است");
+		// 	return;
+		// }
+
+	 if (selectedFB.length === 0) {
+		toastr.warning("حداقل یک آیتم فهرست بها انتخاب شود");
+		$(btn).removeAttr('disabled');
+		return;
 		}
 
 		// if (inputs.date === "") {
@@ -251,7 +265,7 @@
 		// --- ساخت آبجکت نهایی برای ارسال به سرور ---
 		var vardata = {
 			Title: inputs.name,
-			NoeFB: parseInt(inputs.noeFB),
+			NoeFBs: inputs.noeFB,
 			Year: parseInt(inputs.year),
 			Type: 1,
 			UserName: "salah"
@@ -400,12 +414,12 @@
 
 	function goToBarAvord(){
 		var BAId = $('#HDFID').val();
-		var NoeFB = $('#HDFNoeFB').val();
+		//var NoeFB = $('#HDFNoeFB').val();
 		var Year = $('#HDFYear').val();
 		var vardata = new Object();
 		vardata.BAId = BAId;
 		vardata.Year = parseInt(Year);
-		vardata.NoeFB = parseInt(NoeFB);
+		//vardata.NoeFB = parseInt(NoeFB);
 		$.ajax({
 			type: "POST",
 			url: "/BaseInfo/SetViewBag",
@@ -415,11 +429,10 @@
 			success: function (response) {
 				if (response == "OK")
 				   {
-					   $('#content-body').html('<div class="text-center p-5">در حال بارگذاری...</div>'); // پیام موقت
-						$('#content-body').load('/Operation/ShowTree');
-						$('.modal-backdrop.fade.show').remove();
-
-					   }
+					 $('#content-body').html('<div class="text-center p-5">در حال بارگذاری...</div>'); // پیام موقت
+					 $('#content-body').load('/Operation/ShowTree');
+					 $('.modal-backdrop.fade.show').remove();
+				   }
 			},
 			error: function (response) {
 				toastr.error('خطا', 'خطا');
@@ -496,11 +509,16 @@
 					<td width="10%"><i class="fa fa-plus SaveRMUStyle"></i></td>
 					<td width="30%"><input id="new_name" class="form-control input" /></td>
 					<td width="20%">
-						<select id="new_noeFB" style="width:100%">
+						@* <select id="new_noeFB" style="width:100%">
 							<option id="234" value="234">راه و باند</option>
 							<option id="232" value="232">راهداری</option>
 							<option id="233" value="233">ابنیه</option>
-						</select>
+						</select> *@
+						<div id="new_noeFB" class="checkbox-group">
+							<label><input type="checkbox" value="234"> راه و باند</label>
+							<label><input type="checkbox" value="232"> راهداری</label>
+							<label><input type="checkbox" value="233"> ابنیه</label>
+						</div>
 					</td>
 					<td width="20%"></td>
 					<td width="10%">

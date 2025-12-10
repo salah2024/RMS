@@ -12,7 +12,7 @@ namespace RMS.Models.Common
     public class CheckOperationConditions
     {
         public void fnCheckOperationCondition(ApplicationDbContext _context, ItemsAddingToFBForCheckOperationDto itemsAddingToFBForCheckOperation,
-            List<ItemsFieldsDto> ItemsFields, ItemsHasConditionConditionContextForCheckOperationDto ItemHasCon, Guid FBId, clsRizMetreUsers RM, int LevelNumber, int Year, NoeFehrestBaha NoeFB)
+            List<ItemsFieldsDto> ItemsFields, ItemsHasConditionConditionContextForCheckOperationDto ItemHasCon, Guid FBId, clsRizMetreUsers RM, int LevelNumber, int Year, NoeFehrestBaha NoeFBId)
         {
             List<clsItemsRelatedToItemHaml> lstRelatedToItemHaml = _context.ItemsRelatedToItemHamls.Where(x => x.Year == Year).ToList();
 
@@ -68,6 +68,7 @@ namespace RMS.Models.Common
                                 FBSave.BarAvordId = guBAId; //Guid.Parse(DtBA.Rows[0]["ID"].ToString());
                                 FBSave.Shomareh = AddedItems + strCharacterPlus;//"A";
                                 FBSave.BahayeVahedZarib = dPercent;
+                                FBSave.NoeFBId = NoeFBId;
                                 _context.FBs.Add(FBSave);
                                 _context.SaveChanges();
                                 intFBId = FBSave.ID;
@@ -199,6 +200,7 @@ namespace RMS.Models.Common
                             Fb.BarAvordId = ItemHasCon.BarAvordId; //Guid.Parse(DtBA.Rows[0]["ID"].ToString());
                             Fb.Shomareh = AddedItems;// Dr[0]["AddedItems"].ToString().Trim();
                             Fb.BahayeVahedZarib = 0;
+                            Fb.NoeFBId = NoeFBId;
                             _context.FBs.Add(Fb);
                             _context.SaveChanges();
                             intFBId = Fb.ID;
@@ -385,7 +387,8 @@ namespace RMS.Models.Common
                                         {
                                             BarAvordId = guBAId,
                                             InsertDateTime = Now,
-                                            Shomareh = strItemHamlFB
+                                            Shomareh = strItemHamlFB,
+                                            NoeFBId = NoeFBId
                                         };
                                         _context.FBs.Add(newFBHaml);
                                         gFBIdHaml = newFBHaml.ID;
@@ -455,6 +458,7 @@ namespace RMS.Models.Common
                             Fb.BarAvordId = ItemHasCon.BarAvordId; //Guid.Parse(DtBA.Rows[0]["ID"].ToString());
                             Fb.Shomareh = AddedItems + strStatus;// Dr[0]["AddedItems"].ToString().Trim() + strStatus;
                             Fb.BahayeVahedZarib = dPercent;
+                            Fb.NoeFBId = NoeFBId;
                             _context.FBs.Add(Fb);
                             _context.SaveChanges();
                             intFBId = Fb.ID;
@@ -568,6 +572,7 @@ namespace RMS.Models.Common
                                 Fb.BarAvordId = ItemHasCon.BarAvordId; //Guid.Parse(DtBA.Rows[0]["ID"].ToString());
                                 Fb.Shomareh = AddedItems;// Dr[0]["AddedItems"].ToString().Trim();
                                 Fb.BahayeVahedZarib = 0;
+                                Fb.NoeFBId = NoeFBId;
                                 _context.FBs.Add(Fb);
                                 _context.SaveChanges();
                                 intFBId = Fb.ID;
@@ -747,6 +752,7 @@ namespace RMS.Models.Common
                                 FB.BarAvordId = ItemHasCon.BarAvordId; //Guid.Parse(DtBA.Rows[0]["ID"].ToString());
                                 FB.Shomareh = AddedItems;// Dr[0]["AddedItems"].ToString().Trim();
                                 FB.BahayeVahedZarib = 0;
+                                FB.NoeFBId = NoeFBId;
                                 _context.FBs.Add(FB);
                                 _context.SaveChanges();
                                 intFBId = FB.ID;
@@ -846,6 +852,7 @@ namespace RMS.Models.Common
                             FB.BarAvordId = ItemHasCon.BarAvordId; //Guid.Parse(DtBA.Rows[0]["ID"].ToString());
                             FB.Shomareh = AddedItems;// Dr[0]["AddedItems"].ToString().Trim();
                             FB.BahayeVahedZarib = 0;
+                            FB.NoeFBId = NoeFBId;
                             _context.FBs.Add(FB);
                             _context.SaveChanges();
                             intFBId = FB.ID;
@@ -947,7 +954,7 @@ namespace RMS.Models.Common
                                         Zarib1 = itemsRelatedToItemHaml.Zarib1;
                                         Zarib2 = itemsRelatedToItemHaml.Zarib2;
                                         Zarib3 = itemsRelatedToItemHaml.Zarib3;
-                                      
+
                                         clsFB? FBHaml = _context.FBs.FirstOrDefault(x => x.BarAvordId == guBAId && x.Shomareh == strItemHamlFB);
                                         Guid gFBIdHaml = new Guid();
                                         if (FBHaml != null)
@@ -960,7 +967,8 @@ namespace RMS.Models.Common
                                             {
                                                 BarAvordId = guBAId,
                                                 InsertDateTime = Now,
-                                                Shomareh = strItemHamlFB
+                                                Shomareh = strItemHamlFB,
+                                                NoeFBId = NoeFBId
                                             };
                                             _context.FBs.Add(newFBHaml);
                                             gFBIdHaml = newFBHaml.ID;
@@ -1028,6 +1036,7 @@ namespace RMS.Models.Common
                             FB.BarAvordId = ItemHasCon.BarAvordId; //Guid.Parse(DtBA.Rows[0]["ID"].ToString());
                             FB.Shomareh = AddedItems;// Dr[idr]["AddedItems"].ToString().Trim();
                             FB.BahayeVahedZarib = 0;
+                            FB.NoeFBId = NoeFBId;
                             _context.FBs.Add(FB);
                             _context.SaveChanges();
                             intFBId = FB.ID;
@@ -1149,6 +1158,7 @@ namespace RMS.Models.Common
                                 FBSave.BarAvordId = ItemHasCon.BarAvordId;
                                 FBSave.Shomareh = strAddedItems.Trim();
                                 FBSave.BahayeVahedZarib = 0;
+                                FBSave.NoeFBId = NoeFBId;
                                 _context.FBs.Add(FBSave);
                                 _context.SaveChanges();
                                 intFBId = FBSave.ID;
@@ -1351,6 +1361,7 @@ namespace RMS.Models.Common
                                         FB.BarAvordId = ItemHasCon.BarAvordId;//  Guid.Parse(DtBA.Rows[0]["ID"].ToString());
                                         FB.Shomareh = AddedItems;// Dr[idr]["AddedItems"].ToString().Trim();
                                         FB.BahayeVahedZarib = dZarib;
+                                        FB.NoeFBId = NoeFBId;
                                         _context.FBs.Add(FB);
                                         _context.SaveChanges();
                                         intFBId = FB.ID;
@@ -1497,6 +1508,7 @@ namespace RMS.Models.Common
                             FB.Shomareh = strItemShomareh;
                             FB.BahayeVahedZarib = dPercent;
                             FB.BahayeVahedSharh = strDesOfAddingItems;
+                            FB.NoeFBId = NoeFBId;
                             _context.FBs.Add(FB);
                             _context.SaveChanges();
                             intFBId = FB.ID;
@@ -1658,6 +1670,7 @@ namespace RMS.Models.Common
                                         FBSave.BarAvordId = ItemHasCon.BarAvordId;
                                         FBSave.Shomareh = strAddedItems.Trim();
                                         FBSave.BahayeVahedZarib = 0;
+                                        FBSave.NoeFBId = NoeFBId;
                                         _context.FBs.Add(FBSave);
                                         _context.SaveChanges();
                                         intFBId = FBSave.ID;
@@ -1835,6 +1848,7 @@ namespace RMS.Models.Common
                                     FBSave.BarAvordId = ItemHasCon.BarAvordId;
                                     FBSave.Shomareh = AddedItems.Trim();
                                     FBSave.BahayeVahedZarib = 0;
+                                    FBSave.NoeFBId = NoeFBId;
                                     _context.FBs.Add(FBSave);
                                     _context.SaveChanges();
                                     intFBId = FBSave.ID;
@@ -1987,6 +2001,7 @@ namespace RMS.Models.Common
                                 FB.BarAvordId = ItemHasCon.BarAvordId; //Guid.Parse(DtBA.Rows[0]["ID"].ToString());
                                 FB.Shomareh = AddedItems;// Dr[0]["AddedItems"].ToString().Trim();
                                 FB.BahayeVahedZarib = 0;
+                                FB.NoeFBId = NoeFBId;
                                 _context.FBs.Add(FB);
                                 _context.SaveChanges();
                                 intFBId = FB.ID;
@@ -2087,7 +2102,7 @@ namespace RMS.Models.Common
                         {
                             ShomarehFB = ItemHasCon.FBShomareh,
                             BarAvordUserId = BarAvordId,
-                            NoeFB = NoeFB,
+                            NoeFB = NoeFBId,
                             Year = Year,
                             LevelNumber = LevelNumber,
                             ConditionGroupId = lngConditionGroupId
@@ -2144,6 +2159,7 @@ namespace RMS.Models.Common
                                     FB.Shomareh = AddedItems;
                                     FB.BahayeVahedZarib = 0;
                                     FB.BahayeVahedSharh = "";
+                                    FB.NoeFBId = NoeFBId;
                                     _context.FBs.Add(FB);
                                     _context.SaveChanges();
                                     intFBId = FB.ID;
@@ -2355,6 +2371,7 @@ namespace RMS.Models.Common
                                         FB.BarAvordId = BarAvordId; //Guid.Parse(DtBA.Rows[0]["ID"].ToString());
                                         FB.Shomareh = strAddedItems;
                                         FB.BahayeVahedZarib = 0;
+                                        FB.NoeFBId = NoeFBId;
                                         _context.FBs.Add(FB);
                                         _context.SaveChanges();
                                         intFBId = FB.ID;
@@ -2497,6 +2514,7 @@ namespace RMS.Models.Common
                                     FB.BarAvordId = BarAvordId; //Guid.Parse(DtBA.Rows[0]["ID"].ToString());
                                     FB.Shomareh = strAddedItems;// Dr[idr]["AddedItems"].ToString().Trim();
                                     FB.BahayeVahedZarib = 0;
+                                    FB.NoeFBId = NoeFBId;
                                     _context.FBs.Add(FB);
                                     _context.SaveChanges();
                                     intFBId = FB.ID;
@@ -3395,7 +3413,7 @@ namespace RMS.Models.Common
         }
         public void fnCheckOperationConditionForUpdate(ApplicationDbContext _context, ItemsAddingToFBForCheckOperationDto itemsAddingToFBForCheckOperation,
             List<ItemsFieldsDto> ItemsFields, ItemsHasConditionConditionContextForCheckOperationDto ItemHasCon, Guid FBId, clsRizMetreUsers RizMetre, RizMetreInputDto OldRizMetre
-            , int LevelNumber, int Year, NoeFehrestBaha NoeFB)
+            , int LevelNumber, int Year, NoeFehrestBaha NoeFBId)
         {
             bool blnCheckAgain = true;
             string Condition = itemsAddingToFBForCheckOperation.Condition != null ? itemsAddingToFBForCheckOperation.Condition.Trim() : "";
@@ -3987,7 +4005,8 @@ namespace RMS.Models.Common
                                             {
                                                 BarAvordId = guBAId,
                                                 InsertDateTime = Now,
-                                                Shomareh = strItemHamlFB
+                                                Shomareh = strItemHamlFB,
+                                                NoeFBId = NoeFBId
                                             };
                                             _context.FBs.Add(newFBHaml);
                                             gFBIdHaml = newFBHaml.ID;
@@ -4664,7 +4683,7 @@ namespace RMS.Models.Common
                         {
                             ShomarehFB = ItemHasCon.FBShomareh,
                             BarAvordUserId = BarAvordId,
-                            NoeFB = NoeFB,
+                            NoeFB = NoeFBId,
                             Year = Year,
                             LevelNumber = LevelNumber,
                             ConditionGroupId = lngConditionGroupId
@@ -4720,6 +4739,7 @@ namespace RMS.Models.Common
                                     FB.Shomareh = AddedItems;
                                     FB.BahayeVahedZarib = 0;
                                     FB.BahayeVahedSharh = "";
+                                    FB.NoeFBId = NoeFBId;
                                     _context.FBs.Add(FB);
                                     _context.SaveChanges();
                                     intFBId = FB.ID;
@@ -5111,6 +5131,7 @@ namespace RMS.Models.Common
                                     FB.BarAvordId = BarAvordId;
                                     FB.Shomareh = strAddedItems;
                                     FB.BahayeVahedZarib = 0;
+                                    FB.NoeFBId = NoeFBId;
                                     _context.FBs.Add(FB);
                                     _context.SaveChanges();
                                     intFBId = FB.ID;

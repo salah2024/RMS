@@ -1,10 +1,13 @@
-﻿namespace RMS.Controllers.AbnieFani.Dto
+﻿using static RMS.Models.Common.EnumForEntity;
+
+namespace RMS.Controllers.AbnieFani.Dto
 {
     public class ConfirmRizMetreUsersForAbnieFaniInputDto
     {
         public Guid PolVaAbroId { get; set; }
         public int PolNum { get; set; }
         public Guid BarAvordId { get; set; }
+        public NoeFehrestBaha NoeFBId { get; set; }
         public string LAbro { get; set; }
         public string w1 { get; set; }
         public string w2 { get; set; }

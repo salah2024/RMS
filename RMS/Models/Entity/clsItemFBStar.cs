@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using static RMS.Models.Common.EnumForEntity;
 
 namespace RMS.Models.Entity;
 
@@ -6,6 +7,7 @@ namespace RMS.Models.Entity;
 public class clsItemFBStar:clsBaseEntity
 {
     public Guid BaravordId { get; set; }
+    public NoeFehrestBaha NoeFBId { get; set; }
     public string Shomareh { get; set; }
     public decimal BahayeVahed { get; set; }
     [ForeignKey("Vahed")]

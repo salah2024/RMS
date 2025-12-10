@@ -824,6 +824,8 @@ function UpdatePayKaniInfo(KMPayKaniId, BarAvordUserId, KMNum) {
         //KMPayKaniId = $('#HDFKMAmalyateKhakiIdForEdit').val();
         //KMKhakBardariNum = $('#HDFKMAmalyateKhakiNum').val();
         Year = $('#HDFYear').val();
+        NoeFBId = parseInt($('#HDFNoeFB').val());
+
         var vardata = new Object();
         vardata.BarAvordUserId = BarAvordUserId;
         vardata.KMPayKaniId = KMPayKaniId;
@@ -833,6 +835,7 @@ function UpdatePayKaniInfo(KMPayKaniId, BarAvordUserId, KMNum) {
         vardata.HKB = HKB;
         vardata.lstItems = dataList;
         vardata.Year = Year;
+        vardata.NoeFBId = NoeFBId;
         debugger;
         $.ajax({
             type: "POST",

@@ -955,8 +955,14 @@ namespace RMS.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("NoeFBId")
+                        .HasColumnType("int");
+
                     b.Property<long>("ShahrId")
                         .HasColumnType("bigint");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("ZaribAbKhizDari")
                         .HasColumnType("decimal(18,4)");
@@ -1142,6 +1148,9 @@ namespace RMS.Migrations
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<int>("NoeFBId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("RemoveDateTime")
                         .HasColumnType("datetime2");
 
@@ -1178,6 +1187,9 @@ namespace RMS.Migrations
 
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<int>("NoeFBId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("RemoveDateTime")
                         .HasColumnType("datetime2");
@@ -1247,8 +1259,9 @@ namespace RMS.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("NoeFB")
-                        .HasColumnType("int");
+                    b.Property<string>("NoeFBs")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("Num")
                         .HasColumnType("bigint");
@@ -1708,6 +1721,9 @@ namespace RMS.Migrations
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<int>("NoeFBId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("RemoveDateTime")
                         .HasColumnType("datetime2");
 
@@ -1786,8 +1802,8 @@ namespace RMS.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("NoeFosoulId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("NoeFB")
+                        .HasColumnType("int");
 
                     b.Property<int>("Year")
                         .HasColumnType("int");
@@ -1799,8 +1815,6 @@ namespace RMS.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("NoeFosoulId");
 
                     b.ToTable("tblFosoul");
                 });
@@ -1909,6 +1923,9 @@ namespace RMS.Migrations
 
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<int>("NoeFBId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("RemoveDateTime")
                         .HasColumnType("datetime2");
@@ -2623,29 +2640,6 @@ namespace RMS.Migrations
                     b.HasIndex("OperationId");
 
                     b.ToTable("tblNiroZaribKarKard");
-                });
-
-            modelBuilder.Entity("RMS.Models.Entity.clsNoeFosoul", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("NoeFaslName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Year")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("tblNoeFosoul");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsNoeKhakBardari", b =>
@@ -4017,6 +4011,9 @@ namespace RMS.Migrations
                     b.Property<int?>("Noe3")
                         .HasColumnType("int");
 
+                    b.Property<int>("NoeFBId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Year")
                         .HasColumnType("int");
 
@@ -4490,17 +4487,6 @@ namespace RMS.Migrations
                         .IsRequired();
 
                     b.Navigation("BaravordUser");
-                });
-
-            modelBuilder.Entity("RMS.Models.Entity.clsFosoul", b =>
-                {
-                    b.HasOne("RMS.Models.Entity.clsNoeFosoul", "NoeFosoul")
-                        .WithMany()
-                        .HasForeignKey("NoeFosoulId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("NoeFosoul");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsFosoulItem", b =>

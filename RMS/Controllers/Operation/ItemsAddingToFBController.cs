@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -30,7 +31,7 @@ namespace RMS.Controllers.Operation
             Guid BarAvordId = request.BarAvordUserId;
             long ConditionGroupId = request.ConditionGroupId;
             int LevelNumber = request.LevelNumber;
-            NoeFehrestBaha NoeFB = request.NoeFB;
+            NoeFehrestBaha NoeFBId = request.NoeFBId;
 
             clsBaravordUser? BaraAvordUser = _context.BaravordUsers.Where(x => x.ID == BarAvordId).FirstOrDefault();
             if (BaraAvordUser == null)
@@ -667,9 +668,11 @@ namespace RMS.Controllers.Operation
                                             {
                                                 clsFB FB = new clsFB();
                                                 FB.BarAvordId = Guid.Parse(DtBA.Rows[0]["ID"].ToString());
+                                                FB.NoeFBId = NoeFBId;
                                                 FB.Shomareh = Dr[idr]["AddedItems"].ToString().Trim() + strCharacterPlus; //"A";
                                                 FB.BahayeVahedZarib = dPercent;
                                                 FB.BahayeVahedSharh = strDesOfAddingItems;
+                                                FB.NoeFBId = NoeFBId;
                                                 _context.FBs.Add(FB);
                                                 _context.SaveChanges();
                                                 FBId = FB.ID;
@@ -854,6 +857,7 @@ namespace RMS.Controllers.Operation
                                             FB.Shomareh = Dr[idr]["AddedItems"].ToString().Trim();
                                             FB.BahayeVahedZarib = 0;
                                             FB.BahayeVahedSharh = "";
+                                            FB.NoeFBId = NoeFBId;
                                             _context.FBs.Add(FB);
                                             _context.SaveChanges();
                                             FBId = FB.ID;
@@ -1067,7 +1071,8 @@ namespace RMS.Controllers.Operation
                                                             {
                                                                 BarAvordId = guBAId,
                                                                 InsertDateTime = Now,
-                                                                Shomareh = strItemHamlFB
+                                                                Shomareh = strItemHamlFB,
+                                                                NoeFBId = NoeFBId
                                                             };
                                                             _context.FBs.Add(newFBHaml);
                                                             gFBIdHaml = newFBHaml.ID;
@@ -1178,6 +1183,7 @@ namespace RMS.Controllers.Operation
                                             FB.BarAvordId = Guid.Parse(DtBA.Rows[0]["ID"].ToString());
                                             FB.Shomareh = strItemShomareh;// Dr[idr]["AddedItems"].ToString().Trim(); //+ strStatus;
                                             FB.BahayeVahedZarib = NewBahayeVahed;
+                                            FB.NoeFBId = NoeFBId;
                                             _context.FBs.Add(FB);
                                             _context.SaveChanges();
                                             FBId = FB.ID;
@@ -1425,6 +1431,7 @@ namespace RMS.Controllers.Operation
                                                 FB.BarAvordId = Guid.Parse(DtBA.Rows[0]["ID"].ToString());
                                                 FB.Shomareh = Dr[idr]["AddedItems"].ToString().Trim();
                                                 FB.BahayeVahedZarib = dMultiple;
+                                                FB.NoeFBId = NoeFBId;
                                                 _context.FBs.Add(FB);
                                                 _context.SaveChanges();
                                                 FBId = FB.ID;
@@ -1609,6 +1616,7 @@ namespace RMS.Controllers.Operation
                                                 FB.BarAvordId = Guid.Parse(DtBA.Rows[0]["ID"].ToString());
                                                 FB.Shomareh = Dr[idr]["AddedItems"].ToString().Trim();
                                                 FB.BahayeVahedZarib = 0;// dMultiple;
+                                                FB.NoeFBId = NoeFBId;
                                                 _context.FBs.Add(FB);
                                                 _context.SaveChanges();
                                                 FBId = FB.ID;
@@ -1822,6 +1830,7 @@ namespace RMS.Controllers.Operation
                                         FB.BarAvordId = Guid.Parse(DtBA.Rows[0]["ID"].ToString());
                                         FB.Shomareh = strItemShomareh;
                                         FB.BahayeVahedZarib = 0;
+                                        FB.NoeFBId = NoeFBId;
                                         _context.FBs.Add(FB);
                                         _context.SaveChanges();
                                         FBId = FB.ID;
@@ -1964,7 +1973,8 @@ namespace RMS.Controllers.Operation
                                                             {
                                                                 BarAvordId = guBAId,
                                                                 InsertDateTime = Now,
-                                                                Shomareh = strItemHamlFB
+                                                                Shomareh = strItemHamlFB,
+                                                                NoeFBId = NoeFBId
                                                             };
                                                             _context.FBs.Add(newFBHaml);
                                                             gFBIdHaml = newFBHaml.ID;
@@ -2057,6 +2067,7 @@ namespace RMS.Controllers.Operation
                                         FB.BarAvordId = Guid.Parse(DtBA.Rows[0]["ID"].ToString());
                                         FB.Shomareh = Dr[idr]["AddedItems"].ToString().Trim();
                                         FB.BahayeVahedZarib = 0;
+                                        FB.NoeFBId = NoeFBId;
                                         _context.FBs.Add(FB);
                                         _context.SaveChanges();
                                         intFBId = FB.ID;
@@ -2263,6 +2274,7 @@ namespace RMS.Controllers.Operation
                                                         FB.BarAvordId = Guid.Parse(DtBA.Rows[0]["ID"].ToString());
                                                         FB.Shomareh = Dr[idr]["AddedItems"].ToString().Trim();
                                                         FB.BahayeVahedZarib = 0;// dZarib;
+                                                        FB.NoeFBId = NoeFBId;
                                                         _context.FBs.Add(FB);
                                                         _context.SaveChanges();
                                                         FBId = FB.ID;
@@ -2439,6 +2451,7 @@ namespace RMS.Controllers.Operation
                                                 FB.Shomareh = strItemShomareh;
                                                 FB.BahayeVahedZarib = dPercent;
                                                 FB.BahayeVahedSharh = strDesOfAddingItems;
+                                                FB.NoeFBId = NoeFBId;
                                                 _context.FBs.Add(FB);
                                                 _context.SaveChanges();
                                                 FBId = FB.ID;
@@ -2655,6 +2668,7 @@ namespace RMS.Controllers.Operation
                                                         FB.BarAvordId = BarAvordId; //Guid.Parse(DtBA.Rows[0]["ID"].ToString());
                                                         FB.Shomareh = Dr[idr]["AddedItems"].ToString().Trim();
                                                         FB.BahayeVahedZarib = 0;
+                                                        FB.NoeFBId = NoeFBId;
                                                         _context.FBs.Add(FB);
                                                         _context.SaveChanges();
                                                         FBId = FB.ID;
@@ -2777,6 +2791,7 @@ namespace RMS.Controllers.Operation
                                                     FB.Shomareh = Dr[idr]["AddedItems"].ToString().Trim();
                                                     FB.BahayeVahedZarib = 0;
                                                     FB.BahayeVahedSharh = "";
+                                                    FB.NoeFBId = NoeFBId;
                                                     _context.FBs.Add(FB);
                                                     _context.SaveChanges();
                                                     FBId = FB.ID;
@@ -2957,6 +2972,7 @@ namespace RMS.Controllers.Operation
                                                 FB.BarAvordId = Guid.Parse(DtBA.Rows[0]["ID"].ToString());
                                                 FB.Shomareh = Dr[idr]["AddedItems"].ToString().Trim();
                                                 FB.BahayeVahedZarib = 0;// dMultiple;
+                                                FB.NoeFBId = NoeFBId;
                                                 _context.FBs.Add(FB);
                                                 _context.SaveChanges();
                                                 FBId = FB.ID;
@@ -3116,7 +3132,7 @@ namespace RMS.Controllers.Operation
                                     {
                                         ShomarehFB = strFBShomareh,
                                         BarAvordUserId = BarAvordId,
-                                        NoeFB = NoeFB,
+                                        NoeFB = NoeFBId,
                                         Year = Year,
                                         LevelNumber = LevelNumber,
                                         ConditionGroupId = lngConditionGroupId
@@ -3210,6 +3226,7 @@ namespace RMS.Controllers.Operation
                                             FB.Shomareh = strItemShomareh;
                                             FB.BahayeVahedZarib = 0;
                                             FB.BahayeVahedSharh = strDesOfAddingItems;
+                                            FB.NoeFBId = NoeFBId;
                                             _context.FBs.Add(FB);
                                             _context.SaveChanges();
                                             FBId = FB.ID;
@@ -3312,7 +3329,7 @@ namespace RMS.Controllers.Operation
                                                         Ertefa = RM.Ertefa,
                                                         Vazn = RM.Vazn,
                                                         Des = RM.Des,
-                                                        NoeFB = NoeFB,
+                                                        NoeFBId = NoeFBId,
                                                         Year = Year,
                                                         BarAvordUserId = BarAvordId,
                                                         LevelNumber = LevelNumber,
@@ -3342,7 +3359,7 @@ namespace RMS.Controllers.Operation
                                     {
                                         ShomarehFB = strFBShomareh,
                                         BarAvordUserId = BarAvordId,
-                                        NoeFB = NoeFB,
+                                        NoeFB = NoeFBId,
                                         Year = Year,
                                         LevelNumber = LevelNumber,
                                         ConditionGroupId = lngConditionGroupId
@@ -3406,6 +3423,7 @@ namespace RMS.Controllers.Operation
                                                 FB.Shomareh = Dr[idr]["AddedItems"].ToString().Trim();
                                                 FB.BahayeVahedZarib = 0;
                                                 FB.BahayeVahedSharh = "";
+                                                FB.NoeFBId = NoeFBId;
                                                 _context.FBs.Add(FB);
                                                 _context.SaveChanges();
                                                 FBId = FB.ID;
@@ -3665,6 +3683,7 @@ namespace RMS.Controllers.Operation
                                                         FB.BarAvordId = BarAvordId; //Guid.Parse(DtBA.Rows[0]["ID"].ToString());
                                                         FB.Shomareh = Dr[idr]["AddedItems"].ToString().Trim();
                                                         FB.BahayeVahedZarib = 0;
+                                                        FB.NoeFBId = NoeFBId;
                                                         _context.FBs.Add(FB);
                                                         _context.SaveChanges();
                                                         FBId = FB.ID;
@@ -3866,6 +3885,7 @@ namespace RMS.Controllers.Operation
                                                         FB.BarAvordId = BarAvordId; //Guid.Parse(DtBA.Rows[0]["ID"].ToString());
                                                         FB.Shomareh = Dr[idr]["AddedItems"].ToString().Trim();
                                                         FB.BahayeVahedZarib = 0;
+                                                        FB.NoeFBId = NoeFBId;
                                                         _context.FBs.Add(FB);
                                                         _context.SaveChanges();
                                                         FBId = FB.ID;
@@ -4036,7 +4056,7 @@ namespace RMS.Controllers.Operation
             var varDt = _context.Operation_ItemsFBs.Where(x => x.OperationId == OperationId).ToList();
             DataTable Dt = clsConvert.ToDataTable(varDt);
             string strItemsFBShomareh = Dt.Rows[0]["ItemsFBShomareh"].ToString().Trim();
-            var varFB = _context.FBs.Where(x => x.BarAvordId == BarAvordId && x.Shomareh == strItemsFBShomareh).ToList();
+            var varFB = _context.FBs.Where(x => x.BarAvordId == BarAvordId && x.NoeFBId==NoeFB && x.Shomareh == strItemsFBShomareh).ToList();
             DataTable DtFB = clsConvert.ToDataTable(varFB);
             string strFBShomareh = Dt.Rows[0]["ItemsFBShomareh"].ToString().Trim();
             DataTable DtItemsAddingToFB = new DataTable();
@@ -4081,7 +4101,7 @@ namespace RMS.Controllers.Operation
                 var lstItemsAddingToFB = (from ItemsAddingToFB in _context.ItemsAddingToFBs
                                           join FehrestBaha in _context.FehrestBahas on ItemsAddingToFB.AddedItems.Trim() equals FehrestBaha.Shomareh.Trim()
                                           where strItemsHasCondition_ConditionContext.Contains(ItemsAddingToFB.ItemsHasCondition_ConditionContextId)
-                                          && FehrestBaha.Sal == Year
+                                          && FehrestBaha.Sal == Year && FehrestBaha.NoeFB==NoeFB
                                           select new
                                           {
                                               ItemsAddingToFB.Id,
@@ -4141,16 +4161,16 @@ namespace RMS.Controllers.Operation
                                 case "1":
                                 case "15":
                                     {
-                                        var varFBUsersAdded = _context.FBs.Where(x => x.BarAvordId == BarAvordId && x.Shomareh == strFBShomarehAdded + strCharacterPlus).ToList();
-                                        DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
-                                        if (DtFBUsersAdded.Rows.Count != 0)
+                                        clsFB? varFBUsersAdded = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.NoeFBId == NoeFB && x.Shomareh == strFBShomarehAdded + strCharacterPlus);
+                                        //DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
+                                        if (varFBUsersAdded != null)
                                         {
                                             lstItemFBShomarehForGet.Clear();
 
                                             ItemFBShomarehForGet = new ItemFBShomarehForGetAndShowAddItemsDto
                                             {
-                                                ItemFBShomareh = DtFBUsersAdded.Rows[0]["Shomareh"].ToString(),
-                                                Des = DtFBUsersAdded.Rows[0]["BahayeVahedSharh"].ToString(),
+                                                ItemFBShomareh = varFBUsersAdded.Shomareh,// DtFBUsersAdded.Rows[0]["Shomareh"].ToString(),
+                                                Des = varFBUsersAdded.BahayeVahedSharh,// DtFBUsersAdded.Rows[0]["BahayeVahedSharh"].ToString(),
                                                 ItemFields = ItemFields
                                             };
                                             lstItemFBShomarehForGet.Add(ItemFBShomarehForGet);
@@ -4159,10 +4179,12 @@ namespace RMS.Controllers.Operation
                                             strFinalWorking = strFinalWorking.Replace("x", Meghdar.ToString().Trim());
                                             StringToFormula StringToFormula = new StringToFormula();
                                             decimal dPercent = decimal.Parse(StringToFormula.Eval(strFinalWorking).ToString());
-                                            Guid guFBUsersAddedId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
-                                            clsFB? Fb = _context.FBs.Where(x => x.ID == guFBUsersAddedId).FirstOrDefault();
+                                            Guid guFBUsersAddedId = varFBUsersAdded.ID; //Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
+                                            //clsFB? Fb = _context.FBs.Where(x => x.ID == guFBUsersAddedId).FirstOrDefault();
 
-                                            List<RizMetreForGetAndShowAddItemsDto> RizMetre = _context.RizMetreUserses.Where(x => x.FBId == Fb.ID && x.ForItem == strFBShomareh.Trim()).OrderBy(x => x.Shomareh).OrderBy(x => x.Shomareh)
+                                            List<RizMetreForGetAndShowAddItemsDto> RizMetre =
+                                                _context.RizMetreUserses.Include(x => x.FB)
+                                                .Where(x => x.FBId == guFBUsersAddedId && x.ForItem == strFBShomareh.Trim()).OrderBy(x => x.Shomareh).OrderBy(x => x.Shomareh)
                                                 .Select(x => new RizMetreForGetAndShowAddItemsDto
                                                 {
                                                     Id = x.ID,
@@ -4175,7 +4197,7 @@ namespace RMS.Controllers.Operation
                                                     Des = x.Des,
                                                     MeghdarJoz = x.MeghdarJoz,
                                                     Shomareh = x.Shomareh,
-                                                    ShomarehNew = x.ShomarehNew,
+                                                    ShomarehNew = x.ShomarehNew == null ? x.Shomareh.ToString() : x.ShomarehNew,
                                                     ItemFBShomareh = strFBShomarehAdded,
                                                     HasDelButton = blnEnableDeleting,
                                                     HasEditButton = blnEnableEditing
@@ -4197,7 +4219,7 @@ namespace RMS.Controllers.Operation
                                 case "17":
                                 case "18":
                                     {
-                                        var varFBUsersAdded = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == strFBShomarehAdded);
+                                        var varFBUsersAdded = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.NoeFBId == NoeFB && x.Shomareh == strFBShomarehAdded);
                                         //DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
 
                                         lstItemFBShomarehForGet.Clear();
@@ -4213,7 +4235,8 @@ namespace RMS.Controllers.Operation
                                         if (varFBUsersAdded != null)
                                         {
                                             Guid guFBUsersAddedId = varFBUsersAdded.ID; //Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
-                                            var RizMetre = _context.RizMetreUserses.Where(x => x.FBId == guFBUsersAddedId && x.ForItem == strFBShomareh.Trim()
+                                            var RizMetre = _context.RizMetreUserses.Include(x => x.FB)
+                                                .Where(x => x.FBId == guFBUsersAddedId && x.ForItem == strFBShomareh.Trim()
                                                 && x.LevelNumber == LevelNumber).OrderBy(x => x.Shomareh).Select(x => new RizMetreForGetAndShowAddItemsDto
                                                 {
                                                     Id = x.ID,
@@ -4226,7 +4249,7 @@ namespace RMS.Controllers.Operation
                                                     Des = x.Des,
                                                     MeghdarJoz = x.MeghdarJoz,
                                                     Shomareh = x.Shomareh,
-                                                    ShomarehNew = x.ShomarehNew,
+                                                    ShomarehNew = x.ShomarehNew == null ? x.Shomareh.ToString() : x.ShomarehNew,
                                                     ItemFBShomareh = strFBShomarehAdded,
                                                     HasDelButton = blnEnableDeleting,
                                                     HasEditButton = blnEnableEditing
@@ -4246,41 +4269,41 @@ namespace RMS.Controllers.Operation
                                     {
                                         //decimal dPercent = decimal.Parse(Dr[0]["FinalWorking"].ToString());
                                         //string strStatus = dPercent > 0 ? "B" : "e";
-                                        var varFBUsersAdded = _context.FBs.Where(x => x.BarAvordId == BarAvordId && x.Shomareh == strFBShomarehAdded).ToList();
-                                        DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
+                                        clsFB? varFBUsersAdded = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.NoeFBId == NoeFB && x.Shomareh == strFBShomarehAdded);
+                                        //DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
 
-                                        if (DtFBUsersAdded.Rows.Count != 0)
+                                        if (varFBUsersAdded != null)
                                         {
-                                            Guid guFBUsersAddedId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
-                                            clsFB? Fb = _context.FBs.Where(x => x.ID == guFBUsersAddedId).FirstOrDefault();
-                                            if (Fb != null)
+                                            Guid guFBUsersAddedId = varFBUsersAdded.ID; //Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
+                                                                                        //clsFB? Fb = _context.FBs.Where(x => x.ID == guFBUsersAddedId).FirstOrDefault();
+                                                                                        //if (Fb != null)
+                                                                                        //{
+                                            List<RizMetreForGetAndShowAddItemsDto> RizMetre = _context.RizMetreUserses.Where(x => x.FBId == guFBUsersAddedId && x.ForItem == strFBShomareh.Trim()).OrderBy(x => x.Shomareh).Select(x => new RizMetreForGetAndShowAddItemsDto
                                             {
-                                                List<RizMetreForGetAndShowAddItemsDto> RizMetre = _context.RizMetreUserses.Where(x => x.FBId == Fb.ID && x.ForItem == strFBShomareh.Trim()).OrderBy(x => x.Shomareh).Select(x => new RizMetreForGetAndShowAddItemsDto
-                                                {
-                                                    Id = x.ID,
-                                                    Tedad = x.Tedad,
-                                                    Tool = x.Tool,
-                                                    Arz = x.Arz,
-                                                    Ertefa = x.Ertefa,
-                                                    Vazn = x.Vazn,
-                                                    Sharh = x.Sharh,
-                                                    Des = x.Des,
-                                                    MeghdarJoz = x.MeghdarJoz,
-                                                    Shomareh = x.Shomareh,
-                                                    ShomarehNew = x.ShomarehNew,
-                                                    ItemFBShomareh = strFBShomarehAdded,
-                                                    HasDelButton = blnEnableDeleting,
-                                                    HasEditButton = blnEnableEditing
-                                                }).ToList();
+                                                Id = x.ID,
+                                                Tedad = x.Tedad,
+                                                Tool = x.Tool,
+                                                Arz = x.Arz,
+                                                Ertefa = x.Ertefa,
+                                                Vazn = x.Vazn,
+                                                Sharh = x.Sharh,
+                                                Des = x.Des,
+                                                MeghdarJoz = x.MeghdarJoz,
+                                                Shomareh = x.Shomareh,
+                                                ShomarehNew = x.ShomarehNew == null ? x.Shomareh.ToString() : x.ShomarehNew,
+                                                ItemFBShomareh = strFBShomarehAdded,
+                                                HasDelButton = blnEnableDeleting,
+                                                HasEditButton = blnEnableEditing
+                                            }).ToList();
 
-                                                if (RizMetre != null)
+                                            if (RizMetre != null)
+                                            {
+                                                if (RizMetre.Count != 0)
                                                 {
-                                                    if (RizMetre.Count != 0)
-                                                    {
-                                                        lstFbs = RizMetre;
-                                                    }
+                                                    lstFbs = RizMetre;
                                                 }
                                             }
+                                            //}
                                         }
                                         break;
                                     }
@@ -4301,12 +4324,12 @@ namespace RMS.Controllers.Operation
 
                                         if (blnCheck)
                                         {
-                                            var varFBUsersAdded = _context.FBs.Where(x => x.BarAvordId == BarAvordId && x.Shomareh == strFBShomarehAdded + strCharacterPlus).ToList();
-                                            DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
+                                            clsFB? varFBUsersAdded = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.NoeFBId == NoeFB && x.Shomareh == strFBShomarehAdded + strCharacterPlus);
+                                            //DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
 
-                                            if (DtFBUsersAdded.Rows.Count != 0)
+                                            if (varFBUsersAdded != null)
                                             {
-                                                Guid guFBUsersAddedId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
+                                                Guid guFBUsersAddedId = varFBUsersAdded.ID;// Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
                                                 List<RizMetreForGetAndShowAddItemsDto> RizMetre = _context.RizMetreUserses.Where(x => x.FBId == guFBUsersAddedId && x.ForItem == strFBShomareh.Trim() && x.LevelNumber == LevelNumber)
                                                     .OrderBy(x => x.Shomareh).Select(x => new RizMetreForGetAndShowAddItemsDto
                                                     {
@@ -4320,7 +4343,7 @@ namespace RMS.Controllers.Operation
                                                         Des = x.Des,
                                                         MeghdarJoz = x.MeghdarJoz,
                                                         Shomareh = x.Shomareh,
-                                                        ShomarehNew = x.ShomarehNew,
+                                                        ShomarehNew = x.ShomarehNew == null ? x.Shomareh.ToString() : x.ShomarehNew,
                                                         ItemFBShomareh = strFBShomarehAdded,
                                                         HasDelButton = blnEnableDeleting,
                                                         HasEditButton = blnEnableEditing
@@ -4338,12 +4361,12 @@ namespace RMS.Controllers.Operation
                                     }
                                 case "6":
                                     {
-                                        var varFBUsersAdded = _context.FBs.Where(x => x.BarAvordId == BarAvordId && x.Shomareh == strFBShomarehAdded).ToList();
-                                        DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
+                                        clsFB? varFBUsersAdded = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.NoeFBId == NoeFB && x.Shomareh == strFBShomarehAdded);
+                                        //DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
 
-                                        if (DtFBUsersAdded.Rows.Count != 0)
+                                        if (varFBUsersAdded != null)
                                         {
-                                            Guid guFBUsersAddedId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
+                                            Guid guFBUsersAddedId = varFBUsersAdded.ID;//Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
                                             List<RizMetreForGetAndShowAddItemsDto> RizMetre = _context.RizMetreUserses.Where(x => x.FBId == guFBUsersAddedId && x.ForItem == strFBShomareh.Trim() && x.LevelNumber == LevelNumber)
                                                 .OrderBy(x => x.Shomareh).Select(x => new RizMetreForGetAndShowAddItemsDto
                                                 {
@@ -4357,7 +4380,7 @@ namespace RMS.Controllers.Operation
                                                     Des = x.Des,
                                                     MeghdarJoz = x.MeghdarJoz,
                                                     Shomareh = x.Shomareh,
-                                                    ShomarehNew = x.ShomarehNew,
+                                                    ShomarehNew = x.ShomarehNew == null ? x.Shomareh.ToString() : x.ShomarehNew,
                                                     ItemFBShomareh = strFBShomarehAdded,
                                                     HasDelButton = blnEnableDeleting,
                                                     HasEditButton = blnEnableEditing
@@ -4374,13 +4397,14 @@ namespace RMS.Controllers.Operation
                                     }
                                 case "8":
                                     {
-                                        var varFBUsersAdded = _context.FBs.Where(x => x.BarAvordId == BarAvordId && x.Shomareh == strFBShomarehAdded).ToList();
-                                        DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
+                                        clsFB? varFBUsersAdded = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.NoeFBId == NoeFB && x.Shomareh == strFBShomarehAdded);
+                                        //DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
 
-                                        if (DtFBUsersAdded.Rows.Count != 0)
+                                        if (varFBUsersAdded != null)
                                         {
-                                            Guid guFBUsersAddedId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
-                                            List<RizMetreForGetAndShowAddItemsDto> RizMetre = _context.RizMetreUserses.Where(x => x.FBId == guFBUsersAddedId && x.ForItem == strFBShomareh.Trim() && x.LevelNumber == LevelNumber)
+                                            Guid guFBUsersAddedId = varFBUsersAdded.ID; //Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
+                                            List<RizMetreForGetAndShowAddItemsDto> RizMetre =
+                                                _context.RizMetreUserses.Where(x => x.FBId == guFBUsersAddedId && x.ForItem == strFBShomareh.Trim() && x.LevelNumber == LevelNumber)
                                                 .OrderBy(x => x.Shomareh).Select(x => new RizMetreForGetAndShowAddItemsDto
                                                 {
                                                     Id = x.ID,
@@ -4393,7 +4417,7 @@ namespace RMS.Controllers.Operation
                                                     Des = x.Des,
                                                     MeghdarJoz = x.MeghdarJoz,
                                                     Shomareh = x.Shomareh,
-                                                    ShomarehNew = x.ShomarehNew,
+                                                    ShomarehNew = x.ShomarehNew == null ? x.Shomareh.ToString() : x.ShomarehNew,
                                                     ItemFBShomareh = strFBShomarehAdded,
                                                     HasDelButton = blnEnableDeleting,
                                                     HasEditButton = blnEnableEditing
@@ -4410,10 +4434,11 @@ namespace RMS.Controllers.Operation
                                     }
                                 case "9":
                                     {
-                                        var varFBUsersAdded = _context.FBs.Where(x => x.BarAvordId == BarAvordId && x.Shomareh == strFBShomarehAdded).ToList();
-                                        DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
+                                        clsFB? varFBUsersAdded = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.NoeFBId == NoeFB && x.Shomareh == strFBShomarehAdded);
+                                        //DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
 
-                                        if (DtFBUsersAdded.Rows.Count != 0)
+                                        //if (DtFBUsersAdded.Rows.Count != 0)
+                                        if (varFBUsersAdded != null)
                                         {
                                             //string strCondition = Dr[idr]["Condition"].ToString().Trim();
                                             //string strFinalWorking = Dr[idr]["FinalWorking"].ToString();
@@ -4432,7 +4457,7 @@ namespace RMS.Controllers.Operation
                                                 strUseItem = DtFB.Rows[0]["Shomareh"].ToString().Trim();
                                             }
 
-                                            Guid guFBUsersAddedId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
+                                            Guid guFBUsersAddedId = varFBUsersAdded.ID;// Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
                                             List<RizMetreForGetAndShowAddItemsDto> RizMetre = _context.RizMetreUserses.Where(x => x.FBId == guFBUsersAddedId && x.ForItem == strForItem
                                                         && x.UseItem == strUseItem && x.LevelNumber == LevelNumber).OrderBy(x => x.Shomareh)
                                                         .Select(x => new RizMetreForGetAndShowAddItemsDto
@@ -4447,7 +4472,7 @@ namespace RMS.Controllers.Operation
                                                             Des = x.Des,
                                                             MeghdarJoz = x.MeghdarJoz,
                                                             Shomareh = x.Shomareh,
-                                                            ShomarehNew = x.ShomarehNew,
+                                                            ShomarehNew = x.ShomarehNew == null ? x.Shomareh.ToString() : x.ShomarehNew,
                                                             ItemFBShomareh = strFBShomarehAdded,
                                                             HasDelButton = blnEnableDeleting,
                                                             HasEditButton = blnEnableEditing
@@ -4465,14 +4490,15 @@ namespace RMS.Controllers.Operation
                                     }
                                 case "10":
                                     {
-                                        var varFBUsersAdded = _context.FBs.Where(x => x.BarAvordId == BarAvordId && x.Shomareh == strFBShomarehAdded).ToList();
-                                        DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
-                                        if (DtFBUsersAdded.Rows.Count != 0)
+                                        clsFB? varFBUsersAdded = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.NoeFBId == NoeFB && x.Shomareh == strFBShomarehAdded);
+                                        //DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
+                                        //if (DtFBUsersAdded.Rows.Count != 0)
+                                        if (varFBUsersAdded != null)
                                         {
 
-                                            Guid guFBUsersAddedId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
-                                            clsFB? Fb = _context.FBs.Where(x => x.ID == guFBUsersAddedId).FirstOrDefault();
-                                            List<RizMetreForGetAndShowAddItemsDto> RizMetre = _context.RizMetreUserses.Where(x => x.FBId == Fb.ID && x.ForItem == strFBShomareh.Trim()).OrderBy(x => x.Shomareh).OrderBy(x => x.Shomareh).Select(x => new RizMetreForGetAndShowAddItemsDto
+                                            Guid guFBUsersAddedId = varFBUsersAdded.ID; //Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
+                                            //clsFB? Fb = _context.FBs.Where(x => x.ID == guFBUsersAddedId).FirstOrDefault();
+                                            List<RizMetreForGetAndShowAddItemsDto> RizMetre = _context.RizMetreUserses.Where(x => x.FBId == guFBUsersAddedId && x.ForItem == strFBShomareh.Trim()).OrderBy(x => x.Shomareh).OrderBy(x => x.Shomareh).Select(x => new RizMetreForGetAndShowAddItemsDto
                                             {
                                                 Id = x.ID,
                                                 Tedad = x.Tedad,
@@ -4484,7 +4510,7 @@ namespace RMS.Controllers.Operation
                                                 Des = x.Des,
                                                 MeghdarJoz = x.MeghdarJoz,
                                                 Shomareh = x.Shomareh,
-                                                ShomarehNew = x.ShomarehNew,
+                                                ShomarehNew = x.ShomarehNew == null ? x.Shomareh.ToString() : x.ShomarehNew,
                                                 ItemFBShomareh = strFBShomarehAdded,
                                                 HasDelButton = blnEnableDeleting,
                                                 HasEditButton = blnEnableEditing
@@ -4501,39 +4527,41 @@ namespace RMS.Controllers.Operation
                                     }
                                 case "11":
                                     {
-                                        var varFBUsersAdded = _context.FBs.Where(x => x.BarAvordId == BarAvordId && x.Shomareh == strItemsFBShomareh + Dr[idr]["CharacterPlus"].ToString()).ToList();
-                                        DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
-                                        if (DtFBUsersAdded.Rows.Count != 0)
+                                        clsFB? varFBUsersAdded = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.NoeFBId == NoeFB && x.Shomareh == strItemsFBShomareh + Dr[idr]["CharacterPlus"].ToString());
+                                        //DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
+                                        //if (DtFBUsersAdded.Rows.Count != 0)
+                                        if (varFBUsersAdded != null)
                                         {
                                             lstItemFBShomarehForGet.Clear();
 
                                             ItemFBShomarehForGet = new ItemFBShomarehForGetAndShowAddItemsDto
                                             {
-                                                ItemFBShomareh = DtFBUsersAdded.Rows[0]["Shomareh"].ToString(),
-                                                Des = DtFBUsersAdded.Rows[0]["BahayeVahedSharh"].ToString(),
+                                                ItemFBShomareh = varFBUsersAdded.Shomareh,// DtFBUsersAdded.Rows[0]["Shomareh"].ToString(),
+                                                Des = varFBUsersAdded.BahayeVahedSharh,// DtFBUsersAdded.Rows[0]["BahayeVahedSharh"].ToString(),
                                                 ItemFields = ItemFields
                                             };
                                             lstItemFBShomarehForGet.Add(ItemFBShomarehForGet);
 
-                                            Guid guFBUsersAddedId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
-                                            clsFB? Fb = _context.FBs.Where(x => x.ID == guFBUsersAddedId).FirstOrDefault();
-                                            List<RizMetreForGetAndShowAddItemsDto> RizMetre = _context.RizMetreUserses.Where(x => x.FBId == Fb.ID && x.ForItem == strFBShomareh.Trim()).OrderBy(x => x.Shomareh).OrderBy(x => x.Shomareh).Select(x => new RizMetreForGetAndShowAddItemsDto
-                                            {
-                                                Id = x.ID,
-                                                Tedad = x.Tedad,
-                                                Tool = x.Tool,
-                                                Arz = x.Arz,
-                                                Ertefa = x.Ertefa,
-                                                Vazn = x.Vazn,
-                                                Sharh = x.Sharh,
-                                                Des = x.Des,
-                                                MeghdarJoz = x.MeghdarJoz,
-                                                Shomareh = x.Shomareh,
-                                                ShomarehNew = x.ShomarehNew,
-                                                ItemFBShomareh = strFBShomarehAdded,
-                                                HasDelButton = blnEnableDeleting,
-                                                HasEditButton = blnEnableEditing
-                                            }).ToList();
+                                            Guid guFBUsersAddedId = varFBUsersAdded.ID;// Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
+                                            //clsFB? Fb = _context.FBs.Where(x => x.ID == guFBUsersAddedId).FirstOrDefault();
+                                            List<RizMetreForGetAndShowAddItemsDto> RizMetre = _context.RizMetreUserses
+                                                .Where(x => x.FBId == guFBUsersAddedId && x.ForItem == strFBShomareh.Trim()).OrderBy(x => x.Shomareh).OrderBy(x => x.Shomareh).Select(x => new RizMetreForGetAndShowAddItemsDto
+                                                {
+                                                    Id = x.ID,
+                                                    Tedad = x.Tedad,
+                                                    Tool = x.Tool,
+                                                    Arz = x.Arz,
+                                                    Ertefa = x.Ertefa,
+                                                    Vazn = x.Vazn,
+                                                    Sharh = x.Sharh,
+                                                    Des = x.Des,
+                                                    MeghdarJoz = x.MeghdarJoz,
+                                                    Shomareh = x.Shomareh,
+                                                    ShomarehNew = x.ShomarehNew == null ? x.Shomareh.ToString() : x.ShomarehNew,
+                                                    ItemFBShomareh = strFBShomarehAdded,
+                                                    HasDelButton = blnEnableDeleting,
+                                                    HasEditButton = blnEnableEditing
+                                                }).ToList();
                                             if (RizMetre != null)
                                             {
                                                 if (RizMetre.Count != 0)
@@ -4546,7 +4574,7 @@ namespace RMS.Controllers.Operation
                                     }
                                 case "12":
                                     {
-                                        clsFB? varFBUsersAdded = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == strFBShomarehAdded);
+                                        clsFB? varFBUsersAdded = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.NoeFBId == NoeFB && x.Shomareh == strFBShomarehAdded);
                                         if (varFBUsersAdded != null)
                                         {
                                             //lstItemFBShomarehForGet.Clear();
@@ -4572,7 +4600,7 @@ namespace RMS.Controllers.Operation
                                                             Des = x.Des,
                                                             MeghdarJoz = x.MeghdarJoz,
                                                             Shomareh = x.Shomareh,
-                                                            ShomarehNew = x.ShomarehNew,
+                                                            ShomarehNew = x.ShomarehNew == null ? x.Shomareh.ToString() : x.ShomarehNew,
                                                             ItemFBShomareh = strFBShomarehAdded,
                                                             HasDelButton = blnEnableDeleting,
                                                             HasEditButton = blnEnableEditing
@@ -4589,12 +4617,13 @@ namespace RMS.Controllers.Operation
                                     }
                                 case "13":
                                     {
-                                        var varFBUsersAdded = _context.FBs.Where(x => x.BarAvordId == BarAvordId && x.Shomareh == strFBShomarehAdded).ToList();
-                                        DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
+                                        clsFB? varFBUsersAdded = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.NoeFBId == NoeFB && x.Shomareh == strFBShomarehAdded);
+                                        //DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
 
-                                        if (DtFBUsersAdded.Rows.Count != 0)
+                                        //if (DtFBUsersAdded.Rows.Count != 0)
+                                        if (varFBUsersAdded != null)
                                         {
-                                            Guid guFBUsersAddedId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
+                                            Guid guFBUsersAddedId = varFBUsersAdded.ID;// Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
                                             var RizMetre = _context.RizMetreUserses.Where(x => x.FBId == guFBUsersAddedId && x.ForItem == strFBShomareh.Trim()
                                                 && x.LevelNumber == LevelNumber).OrderBy(x => x.Shomareh).Select(x => new RizMetreForGetAndShowAddItemsDto
                                                 {
@@ -4608,7 +4637,7 @@ namespace RMS.Controllers.Operation
                                                     Des = x.Des,
                                                     MeghdarJoz = x.MeghdarJoz,
                                                     Shomareh = x.Shomareh,
-                                                    ShomarehNew = x.ShomarehNew,
+                                                    ShomarehNew = x.ShomarehNew == null ? x.Shomareh.ToString() : x.ShomarehNew,
                                                     ItemFBShomareh = strFBShomarehAdded,
                                                     HasDelButton = blnEnableDeleting,
                                                     HasEditButton = blnEnableEditing

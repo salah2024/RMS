@@ -70,11 +70,11 @@ public class BaseInfoController(ApplicationDbContext context) : Controller
     {
         Guid BAId = request.BAId;
         int Year = request.Year;
-        NoeFehrestBaha NoeFB = request.NoeFB;
+        //NoeFehrestBaha NoeFB = request.NoeFB;
 
         TempData["BAId"] = BAId;
         TempData["Year"] = Year;
-        TempData["NoeFB"] = NoeFB;
+        //TempData["NoeFB"] = NoeFB;
         return new JsonResult("OK");
     }
 
@@ -99,28 +99,102 @@ public class BaseInfoController(ApplicationDbContext context) : Controller
                 {
                     string BAId = TempData["BAId"].ToString();
                     string Year = TempData["Year"].ToString();
-                    string NoeFB = TempData["NoeFB"].ToString();
+                    //string NoeFB = TempData["NoeFB"].ToString();
                     TempData["BAId"] = BAId;
                     TempData["Year"] = Year;
-                    TempData["NoeFB"] = NoeFB;
-                    DataTable Dt = new DataTable();
-                    Dt.Columns.Add("BAId");
-                    Dt.Columns.Add("Year");
-                    Dt.Columns.Add("NoeFB");
+                    //TempData["NoeFB"] = NoeFB;
+                    //DataTable Dt = new DataTable();
+                    //Dt.Columns.Add("BAId");
+                    //Dt.Columns.Add("Year");
+                    //Dt.Columns.Add("NoeFB");
 
-                    DataRow Dr = Dt.NewRow();
-                    Dr["BAId"] = BAId;
-                    Dr["Year"] = Year;
-                    Dr["NoeFB"] = NoeFB;
-                    Dt.Rows.Add(Dr);
-                    DataSet Ds = new DataSet();
-                    Ds.Tables.Add(Dt);
-                    return new JsonResult(Ds.GetXml());
+                    //DataRow Dr = Dt.NewRow();
+                    //Dr["BAId"] = BAId;
+                    //Dr["Year"] = Year;
+                    //Dr["NoeFB"] = NoeFB;
+                    //Dt.Rows.Add(Dr);
+                    //DataSet Ds = new DataSet();
+                    //Ds.Tables.Add(Dt);
+
+                    ViewBagDataDto viewBag = new ViewBagDataDto
+                    {
+                        BAId = BAId == null ? "" : BAId,
+                        Year = Year == null ? "" : Year,
+                    };
+
+                    if (BAId != null)
+                    {
+                        Guid BaravordId = Guid.Parse(BAId);
+                        clsBaravordUser? baravordUser = _context.BaravordUsers.FirstOrDefault(x => x.ID == BaravordId);
+
+                        if (baravordUser != null)
+                        {
+                            viewBag.BarAvordName = baravordUser.Name;
+                            string NoeFBs = baravordUser.NoeFBs;
+                            if (NoeFBs != "")
+                            {
+
+                                List<NoeFBDto> lstNoeFBs = new List<NoeFBDto>();
+                                string[] strNoeFBs = NoeFBs.Split(",");
+                                foreach (var item in strNoeFBs)
+                                {
+                                    NoeFBDto noeFB = new NoeFBDto();
+                                    switch (item)
+                                    {
+                                        case "232":
+                                            {
+                                                noeFB.Id = 232;
+                                                noeFB.Name = "راهداری";
+                                                break;
+                                            }
+                                        case "233":
+                                            {
+                                                noeFB.Id = 233;
+                                                noeFB.Name = "ابنیه";
+                                                break;
+                                            }
+                                        case "234":
+                                            {
+                                                noeFB.Id = 234;
+                                                noeFB.Name = "راه، باند و فرودگاه";
+                                                break;
+                                            }
+                                        case "235":
+                                            {
+                                                noeFB.Id = 235;
+                                                noeFB.Name = "تاسیسات برقی";
+                                                break;
+                                            }
+                                        case "236":
+                                            {
+                                                noeFB.Id = 236;
+                                                noeFB.Name = "تاسیسات مکانیکی";
+                                                break;
+                                            }
+                                        default:
+                                            break;
+                                    }
+                                    lstNoeFBs.Add(noeFB);
+                                }
+
+                                var result = new
+                                {
+                                    viewBag,
+                                    lstNoeFBs
+                                };
+                                return new JsonResult(result);
+                            }
+                            else
+                                return new JsonResult("NOK");
+                        }
+                        else
+                            return new JsonResult("NOK");
+                    }
+                    else
+                        return new JsonResult("NOK");
                 }
                 else
-                {
                     return new JsonResult("NOK");
-                }
             }
             else
                 return new JsonResult("NOK");
@@ -137,8 +211,9 @@ public class BaseInfoController(ApplicationDbContext context) : Controller
     public JsonResult GetFosoul([FromBody] GetFosoulInputDto request)
     {
         Guid BarAvordUserId = request.BarAvordUserId;
+        NoeFehrestBaha NoeFBId = request.NoeFBId;
 
-        List<GetFosoulOutputDto> Fosoul = _context.Fosouls.Include(x => x.NoeFosoul).Where(x => x.NoeFosoul.Id == request.NoeFaslId)
+        List<GetFosoulOutputDto> Fosoul = _context.Fosouls.Where(x => x.NoeFB == NoeFBId)
             .OrderBy(x => x.order)
             .Select(x => new GetFosoulOutputDto
             {
@@ -149,7 +224,7 @@ public class BaseInfoController(ApplicationDbContext context) : Controller
             }).ToList();
 
 
-        var RizMetre = _context.RizMetreUserses.Include(x => x.FB).Where(x => x.FB.BarAvordId == BarAvordUserId)
+        var RizMetre = _context.RizMetreUserses.Include(x => x.FB).Where(x => x.FB.BarAvordId == BarAvordUserId && x.FB.NoeFBId == NoeFBId)
             .Select(riz => new ViewUserBarAvordOutPutRizMetreDto
             {
                 Id = riz.ID,
@@ -179,14 +254,14 @@ public class BaseInfoController(ApplicationDbContext context) : Controller
         {
             // اول FBs رو فیلتر و گروه‌بندی کن (در حافظه)
             var fbItems = _context.FBs
-                .Where(f => f.BarAvordId == BarAvordUserId)
+                .Where(f => f.BarAvordId == BarAvordUserId && f.NoeFBId == NoeFBId)
                 .GroupBy(f => f.Shomareh)
                 .Select(g => g.FirstOrDefault())
                 .ToList(); // انتقال به حافظه، جلوگیری از خطای EF
 
             // سپس FehrestBahas رو از دیتابیس بگیر و join کن در حافظه
             var userBarAvordOutPut = _context.FehrestBahas
-                .Where(fehrest => fehrest.Sal == request.Year && fehrest.Shomareh.StartsWith(fasl.Code))
+                .Where(fehrest => fehrest.Sal == request.Year && fehrest.NoeFB == NoeFBId && fehrest.Shomareh.StartsWith(fasl.Code))
                 .ToList() // انتقال به حافظه
                 .GroupJoin(fbItems,
                     fehrest => fehrest.Shomareh,
@@ -226,13 +301,13 @@ public class BaseInfoController(ApplicationDbContext context) : Controller
             decimal dJameFaslWithZarib = AllZarib * JameFasl;
             fasl.JameFaslWithZarib = dJameFaslWithZarib;
 
-            List<clsItemFBStar> lstItemFBStars = _context.ItemFBStars.Where(x => x.BaravordId == BarAvordUserId && x.Shomareh.Substring(0, 2) == fasl.Code).ToList();
+            List<clsItemFBStar> lstItemFBStars = _context.ItemFBStars.Where(x => x.BaravordId == BarAvordUserId && x.NoeFBId == NoeFBId && x.Shomareh.Substring(0, 2) == fasl.Code).ToList();
             decimal AllJameFaslStar = 0;
             decimal AllJameFaslStarWithZarib = 0;
             foreach (var itemFBStarCurrent in lstItemFBStars)
             {
                 decimal JameItemFBStar = 0;
-                clsItemFBStar? itemFBStar = _context.ItemFBStars.FirstOrDefault(x => x.BaravordId == BarAvordUserId && x.Shomareh.Trim() == itemFBStarCurrent.Shomareh);
+                clsItemFBStar? itemFBStar = _context.ItemFBStars.FirstOrDefault(x => x.BaravordId == BarAvordUserId && x.NoeFBId == NoeFBId && x.Shomareh.Trim() == itemFBStarCurrent.Shomareh);
 
                 decimal BahayeVahedStar = 0;
                 if (itemFBStar != null)
@@ -240,7 +315,7 @@ public class BaseInfoController(ApplicationDbContext context) : Controller
                     BahayeVahedStar = itemFBStar.BahayeVahed;
                 }
                 JameItemFBStar = context.RizMetreStars.Include(x => x.ItemFBStar)
-                     .Where(x => x.ItemFBStar.BaravordId == BarAvordUserId && x.ItemFBStar.Shomareh.Trim() == itemFBStarCurrent.Shomareh)
+                     .Where(x => x.ItemFBStar.BaravordId == BarAvordUserId && x.ItemFBStar.NoeFBId == NoeFBId && x.ItemFBStar.Shomareh.Trim() == itemFBStarCurrent.Shomareh)
                      .Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
 
                 AllJameFaslStar += JameItemFBStar * BahayeVahedStar;

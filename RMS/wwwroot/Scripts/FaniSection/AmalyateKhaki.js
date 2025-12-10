@@ -1903,6 +1903,7 @@ function SaveKhakBardariInfo(BarAvordUserId) {
 
 
         debugger;
+        NoeFBId = parseInt($('#HDFNoeFB').val());
 
         var vardata = new Object();
         vardata.BarAvordUserId = BarAvordUserId;
@@ -1911,6 +1912,7 @@ function SaveKhakBardariInfo(BarAvordUserId) {
         vardata.ToKM = KME;
         vardata.HKB = HKB;
         vardata.lstItems = dataList;
+        vardata.NoeFBId = NoeFBId;
         $.ajax({
             type: "POST",
             url: "/AmalyateKhakiInfoForBarAvords/SaveKhakBardariInfoForBarAvord",
@@ -2050,6 +2052,7 @@ function UpdateKhakBardariInfo(KMKhakBardariId, BarAvordUserId, KMNum) {
         //KMKhakBardariId = $('#HDFKMAmalyateKhakiIdForEdit').val();
         //KMKhakBardariNum = $('#HDFKMAmalyateKhakiNum').val();
         Year = $('#HDFYear').val();
+        NoeFBId = parseInt($('#HDFNoeFB').val());
         var vardata = new Object();
         vardata.BarAvordUserId = BarAvordUserId;
         vardata.KMKhakBardariId = KMKhakBardariId;
@@ -2059,6 +2062,7 @@ function UpdateKhakBardariInfo(KMKhakBardariId, BarAvordUserId, KMNum) {
         vardata.HKB = HKB;
         vardata.lstItems = dataList;
         vardata.Year = Year;
+        vardata.NoeFBId = NoeFBId;
         debugger;
         $.ajax({
             type: "POST",

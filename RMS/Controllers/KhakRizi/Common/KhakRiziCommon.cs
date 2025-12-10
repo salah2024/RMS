@@ -4,6 +4,7 @@ using RMS.Controllers.KhakRizi.EnumKhakRizi;
 using RMS.Models.Common;
 using RMS.Models.Entity;
 using System.Data;
+using static RMS.Models.Common.EnumForEntity;
 
 namespace RMS.Controllers.KhakRizi.Common;
 
@@ -11,7 +12,7 @@ public class KhakRiziCommon
 {
     public static string SaveEzafeBahaKhakRizi(requestSaveEBKhakRiziDto request, ApplicationDbContext _context)
     {
-        clsKhakRiziBarAvord? currentKhakRiziBar = _context.KhakRiziBarAvords.FirstOrDefault(x => x.BarAvordId == request.BarAvordUserId && x.KMNum==request.Num);
+        clsKhakRiziBarAvord? currentKhakRiziBar = _context.KhakRiziBarAvords.FirstOrDefault(x => x.BarAvordId == request.BarAvordUserId && x.KMNum == request.Num);
         if (currentKhakRiziBar == null)
         {
             return "NOK";
@@ -25,6 +26,7 @@ public class KhakRiziCommon
 
             DateTime Now = DateTime.Now;
             Guid BarAvordUserId = currentKhakRiziBar.BarAvordId;
+            NoeFehrestBaha NoeFBId = request.NoeFBId;
             string FromKM = currentKhakRiziBar.FromKM;
             string ToKM = currentKhakRiziBar.ToKM;
             EnumRoadType RoadTypeId = currentKhakRiziBar.NoeRah;
@@ -46,13 +48,13 @@ public class KhakRiziCommon
 
             //if (lstIds.Count > 1)
             //{
-                List<clsEzafeBahaKhakRizi> lstEzafeBahaKhakRizi = _context.EzafeBahaKhakRizis.Where(x => lstIds.Contains(x.ConditionContextId)).ToList();
-                List<clsKhakRiziEzafeBaha> lstKhakRiziEzafeBaha =
-                    _context.KhakRiziEzafeBahas.Include(x => x.KhakRiziEzafeBahaRizMetres)
-                     .Where(x => x.KhakRiziBarAvordId == KhakRiziBarAvordId && lstEzafeBahaKhakRizi.Select(x => x.Id).ToList().Contains(x.EzafeBahaKhakRiziId))
-                .ToList();
+            List<clsEzafeBahaKhakRizi> lstEzafeBahaKhakRizi = _context.EzafeBahaKhakRizis.Where(x => lstIds.Contains(x.ConditionContextId)).ToList();
+            List<clsKhakRiziEzafeBaha> lstKhakRiziEzafeBaha =
+                _context.KhakRiziEzafeBahas.Include(x => x.KhakRiziEzafeBahaRizMetres)
+                 .Where(x => x.KhakRiziBarAvordId == KhakRiziBarAvordId && lstEzafeBahaKhakRizi.Select(x => x.Id).ToList().Contains(x.EzafeBahaKhakRiziId))
+            .ToList();
 
-                _context.KhakRiziEzafeBahas.RemoveRange(lstKhakRiziEzafeBaha);
+            _context.KhakRiziEzafeBahas.RemoveRange(lstKhakRiziEzafeBaha);
 
 
             //}
@@ -168,7 +170,8 @@ public class KhakRiziCommon
                     {
                         BarAvordId = BarAvordUserId,
                         InsertDateTime = Now,
-                        Shomareh = ItemFBShomareh + CharacterPlus
+                        Shomareh = ItemFBShomareh + CharacterPlus,
+                        NoeFBId=NoeFBId
                     };
                     _context.FBs.Add(newFB);
                     gFBId = newFB.ID;

@@ -4,7 +4,7 @@ namespace RMS.Controllers.BarAvordUser.Dto
 {
     public class GetLastNumInputDto
     {
-       public NoeFehrestBaha NoeFB { get; set; }
+       public int Year { get; set; }
        public NoeBarAvord Type { get; set; }
     }
 }

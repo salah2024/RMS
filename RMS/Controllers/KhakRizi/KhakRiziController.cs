@@ -96,6 +96,7 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
 
         DateTime Now = DateTime.Now;
         Guid BarAvordUserId = request.BarAvordUserId;
+        NoeFehrestBaha NoeFBId = request.NoeFBId;
         string FromKM = request.FromKM.ToString("D6");
         string ToKM = request.ToKM.ToString("D6");
         EnumRoadType RoadTypeId = request.RoadTypeId;
@@ -215,7 +216,8 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
                 {
                     BarAvordId = BarAvordUserId,
                     InsertDateTime = Now,
-                    Shomareh = ItemFBShomareh
+                    Shomareh = ItemFBShomareh,
+                    NoeFBId = NoeFBId
                 };
                 _context.FBs.Add(newFB);
                 gFBId = newFB.ID;
@@ -261,6 +263,7 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
 
         int Num = request.Num;
         Guid BarAvordUserId = request.BarAvordUserId;
+        NoeFehrestBaha NoeFBId = request.NoeFBId;
         string FromKM = request.FromKM.ToString("D6");
         string ToKM = request.ToKM.ToString("D6");
         EnumRoadType RoadTypeId = request.RoadTypeId;
@@ -401,7 +404,8 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
                     {
                         BarAvordId = BarAvordUserId,
                         InsertDateTime = Now,
-                        Shomareh = ItemFBShomareh
+                        Shomareh = ItemFBShomareh,
+                        NoeFBId = NoeFBId
                     };
                     _context.FBs.Add(newFB);
                     gFBId = newFB.ID;

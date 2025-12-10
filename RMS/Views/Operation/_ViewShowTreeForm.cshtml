@@ -41,10 +41,10 @@
 				border-right: 1px solid rgb(100,100,100);
 			}
 	/*.NewStyle {
-																										background-image: url() !important;
-																										width: 0px !important;
-																										height: 0px !important;
-																									}*/
+																												background-image: url() !important;
+																												width: 0px !important;
+																												height: 0px !important;
+																											}*/
 
 	.col-md-1 {
 		padding-left: 2px;
@@ -173,15 +173,46 @@
 			   success: function (response) {
 				   if(response!="NOK")
 				   {
-				   var xmlDoc = $.parseXML(response);
-				   var xml = $(xmlDoc);
-				   Table1 = xml.find("Table1");
-				   $.each(Table1, function () {
-					   $('#HDFBarAvordUserID').val($(this).find("BAId").text());
-					   $('#HDFYear').val($(this).find("Year").text());
-					   $('#HDFNoeFB').val($(this).find("NoeFB").text());
-				   });
-				   ShowTree();
+				   // var xmlDoc = $.parseXML(response);
+				   // var xml = $(xmlDoc);
+				   // Table1 = xml.find("Table1");
+				   // $.each(Table1, function () {
+					  //  $('#HDFBarAvordUserID').val($(this).find("BAId").text());
+					  //  $('#HDFYear').val($(this).find("Year").text());
+					  //  $('#HDFNoeFB').val($(this).find("NoeFB").text());
+				   // });
+
+				   viewBag=response.viewBag;
+				   lstNoeFBs=  response.lstNoeFBs;
+
+						 $('#HDFBarAvordUserID').val(viewBag.baId);
+						 $('#HDFYear').val(viewBag.year);
+						 $('#spanBarAvordName').html(viewBag.barAvordName);
+							let str = "";
+							let selectedId = null;
+
+							$.each(lstNoeFBs, function (index, item) {
+
+							// اولین رادیو انتخاب شود
+							let checked = index === 0 ? "checked" : "";
+
+							// اگر اولین آیتم است مقدارش را در متغیر ذخیره کن
+							if (index === 0) {
+							selectedId = item.id;
+							}
+
+						str += `
+							<label style="margin-right:10px;">
+							<input type="radio" name="radType" onchange="FBChange(${item.id})" value="${item.id}" ${checked}/>
+							${item.name}
+							</label>
+							`;
+							});
+
+							$('#HDFNoeFB').val(selectedId);
+							$('#divFB').html(str);
+
+							ShowTree();
 				   }
 				   else
 					  toastr.info('هیچ پروژه ای انتخاب نشده است', 'اطلاع');
@@ -192,16 +223,22 @@
 			   }
 		   });
 	   }
+	   /////////
+		function FBChange(selectedId)
+		{
+			$('#HDFNoeFB').val(selectedId);
+			ShowTree();
+		}
 	   //////////////
 	   function ShowTree() {
 		   plugin = ['wholerow'];
 		   var vardata = new Object();
 		   Year = $('#HDFYear').val();
-		   NoeFB = $('#HDFNoeFB').val();
+		   NoeFBId = $('#HDFNoeFB').val();
 		   BarAvordUserId = $('#HDFBarAvordUserID').val();
 
 		   vardata.Year =parseInt(Year);
-		   vardata.NoeFB = parseInt(NoeFB);
+		   vardata.NoeFBId = parseInt(NoeFBId);
 		   vardata.BarAvordUserId = BarAvordUserId;
 		   vardata.OpName = '';
 		   $.ajax({
@@ -360,47 +397,90 @@
 			   // 	}
 
 
-			   var html= createTree(data,0);
+		var html= createTree(data,0);
 
-				   $('#jstree').html(html);
+		$('#jstree').html(html);
+
+
 	$('#jstree li a').each(function () {
-		var $a = $(this);
 
+		var $a = $(this);
 		$a.addClass('OpMenuStyle');
 
-		$a.off('click.MenuAccordion').on('click.MenuAccordion', function () {
+		$a.off('click.MenuAccordion').on('click.MenuAccordion', function (e) {
 
-			var $this      = $(this);
-			var currentId  = $this.attr('id');          // مثلا a1404218
-			var $target    = $('#ul' + currentId);      // مثلا #ula1404218 (می‌تونه UL یا DIV باشه)
+			e.preventDefault(); // جلوگیری از رفتار پیش‌فرض
 
-			// اگر چیزی برای باز/بسته کردن وجود ندارد، کاری نکن
+			var $this = $(this);
+			var currentId = $this.attr('id');
+			var $target = $('#ul' + currentId);
+
+			// 🔹 اجرای تابع onclick قبل از بازکردن نود
+			var inlineClick = $this.attr("onclick");
+			if (inlineClick) {
+				try {
+					eval(inlineClick);   // اجرای کد موجود در onclick
+				} catch (ex) {
+					console.error("Error in onclick:", ex);
+				}
+			}
+
 			if (!$target.length) return;
 
-			// همه‌ی نودهایی که باید کنترل شوند (هم UL هم DIV‌هایی که با ula شروع می‌شوند)
-			var $allNodes   = $('#jstree [id^="ula"]');
-			// مسیر والدها از ریشه تا این نود
-			var $ancestors  = $this.parents('[id^="ula"]');
+			var $allNodes = $('#jstree [id^="ula"]');
+			var $ancestors = $this.parents('[id^="ula"]');
 
-			// اگر همین الان باز است ⇒ فقط ببند (والدها باز می‌مانند)
 			if ($target.is(':visible')) {
-
-				// فقط خود نود و زیرشاخه‌هایش بسته شوند
 				$target.find('[id^="ula"]').addBack().slideUp(500);
-
 			} else {
-
-				// نودهایی که باید باز بمانند = والدها + خود این نود
 				var $keepOpen = $ancestors.add($target);
-
-				// بستن همه شاخه‌های دیگر (که در مسیر فعلی نیستند)
 				$allNodes.not($keepOpen).slideUp(500);
-
-				// باز کردن مسیر فعلی
 				$keepOpen.slideDown(500);
 			}
 		});
+
 	});
+
+
+
+	// $('#jstree li a').each(function () {
+	// 	var $a = $(this);
+
+	// 	$a.addClass('OpMenuStyle');
+
+	// 	$a.off('click.MenuAccordion').on('click.MenuAccordion', function () {
+
+	// 		var $this      = $(this);
+	// 		var currentId  = $this.attr('id');          // مثلا a1404218
+	// 		var $target    = $('#ul' + currentId);      // مثلا #ula1404218 (می‌تونه UL یا DIV باشه)
+
+	// 		// اگر چیزی برای باز/بسته کردن وجود ندارد، کاری نکن
+	// 		if (!$target.length) return;
+
+	// 		// همه‌ی نودهایی که باید کنترل شوند (هم UL هم DIV‌هایی که با ula شروع می‌شوند)
+	// 		var $allNodes   = $('#jstree [id^="ula"]');
+	// 		// مسیر والدها از ریشه تا این نود
+	// 		var $ancestors  = $this.parents('[id^="ula"]');
+
+	// 		// اگر همین الان باز است ⇒ فقط ببند (والدها باز می‌مانند)
+	// 		if ($target.is(':visible')) {
+
+	// 			// فقط خود نود و زیرشاخه‌هایش بسته شوند
+	// 			$target.find('[id^="ula"]').addBack().slideUp(500);
+
+	// 		} else {
+
+	// 			// نودهایی که باید باز بمانند = والدها + خود این نود
+	// 			var $keepOpen = $ancestors.add($target);
+
+	// 			// بستن همه شاخه‌های دیگر (که در مسیر فعلی نیستند)
+	// 			$allNodes.not($keepOpen).slideUp(500);
+
+	// 			// باز کردن مسیر فعلی
+	// 			$keepOpen.slideDown(500);
+	// 		}
+	// 	});
+	// });
 
 
 
@@ -438,11 +518,11 @@
 		   plugin = ['wholerow'];
 		   var vardata = new Object();
 		   Year = $('#HDFYear').val();
-		   NoeFB = $('#HDFNoeFB').val();
+		   NoeFBId = $('#HDFNoeFB').val();
 		   BarAvordUserId = $('#HDFBarAvordUserID').val();
 
 		   vardata.Year = parseInt(Year);
-		   vardata.NoeFB = parseInt(NoeFB);
+		   vardata.NoeFBId = parseInt(NoeFBId);
 		   vardata.BarAvordUserId = BarAvordUserId;
 		   vardata.OpName = 'transport';
 		   $.ajax({
@@ -480,7 +560,12 @@
 		   });
 	   }
 
-
+	   function SetNoeFB(OpId,NoeFB)
+	   {
+		   $('#HDFNoeFB').val(NoeFB);
+		   debugger;
+			return true;
+	   }
 
 </script>
 
@@ -532,6 +617,26 @@
 	}
 </style>
 
+<div class="col-12" style="border-bottom: 1px solid #d2a8ff;padding-bottom: 10px;">
+	<div class="row">
+		<div class="col-1">
+			برآورد:
+		</div>
+		<div class="col-9" style="text-align:right;">
+			<span id="spanBarAvordName"></span>
+		</div>
+	</div>
+</div>
+
+@* <div class="row">
+	<div class="col-12">
+		<div class="col-3">
+			شرح فهرست بها:
+		</div>
+		<div class="col-9" style="text-align:right;" id="divFB">
+		</div>
+	</div>
+</div> *@
 
 <div id="jstree" style="margin:20px">
 </div>

@@ -76,6 +76,7 @@ function createTree(data, parentId) {
             var id = item.id;
             var parentId = item.parentId;
             var operationName = item.operationName;
+            var LatinName = item.latinName;
             var funcCall = item.functionCall.trim();
             var fbShomareh = item.itemsFBShomareh.trim();
             var sharh = item.sharh;
@@ -88,15 +89,38 @@ function createTree(data, parentId) {
 
             if (fbShomareh === "") {
                 if (funcCall !== "") {
-                html += `
-                <li>
-                    <a onclick="${funcCall}('${id}')" id="a${id}">
-                     ${operationName}
-                    <span id="span${id}"></span>
-                    </a>
-                    <span id="spanOpShomareh${id}"></span>
-                    <ul style="margin-top:5px" id="ula${id}"></ul>
-                </li>`;
+                    debugger;
+                    fn = funcCall.split('_');
+                    if (fn[1] == "1") {
+                        NoeFB = 0;
+                        if (LatinName == 'RAH') {
+                            NoeFB=234
+                        }
+                        else if (LatinName == 'RAHDARI') {
+                            NoeFB=232
+                        }
+                        html += `
+                        <li>
+                        <a onclick="${fn[0]}('${id}',${NoeFB})" id="a${id}">
+                            ${operationName}
+                        <span id="span${id}"></span>
+                        </a>
+                        <span id="spanOpShomareh${id}"></span>
+                        <ul style="margin-top:5px" id="ula${id}">`;
+                        html += createTree(data, id);
+                        html += `</ul></li>`;
+                    }
+                    else {
+                        html += `
+                        <li>
+                        <a onclick="${funcCall}('${id}')" id="a${id}">
+                            ${operationName}
+                        <span id="span${id}"></span>
+                        </a>
+                        <span id="spanOpShomareh${id}"></span>
+                        <ul style="margin-top:5px" id="ula${id}">`;
+                        html += `</ul></li>`;
+                    }
                 } else {
                     var strCheckNecessary = CheckNecessary == true ? "checked" : "";
                     html += `<li>
@@ -107,8 +131,8 @@ function createTree(data, parentId) {
                                     style="width:15px;margin-right:250px" onchange="onCheckBoxChange(this)" /><span>عدم الزام محدودیت فاصله حمل</span><span class="LegalOpStyle">براساس تبصره 2 بند 1 فصل 20</span>` : ''}
                                     <span id="spanOpShomareh${id}"></span>
                                     </div>
-                           <ul id="ula${id}">`;
-                    html += createTree(data, id); // Recursive call
+                      <ul id="ula${id}">`;
+                         html += createTree(data, id); // Recursive call
                     html += `</ul></li>`;
                 }
             } else {
@@ -148,10 +172,13 @@ function onCheckBoxChange(obj) {
     debugger;
     value = obj.checked;
     BarAvordUserId = $('#HDFBarAvordUserID').val();
+    NoeFBId = parseInt($('#HDFNoeFB').val());
+
 
     var vardata = new Object();
     vardata.blnChecked = value;
     vardata.BarAvordId = BarAvordUserId;
+    vardata.NoeFBId = NoeFBId;
 
     $.ajax({
         type: "POST",
@@ -193,11 +220,13 @@ function onInputChange(id, obj, maxValue, currentValue) {
     }
 
     BarAvordUserId = $('#HDFBarAvordUserID').val();
+    NoeFBId = parseInt($('#HDFNoeFB').val());
 
     var vardata = new Object();
     vardata.OperationId = id;
     vardata.Value = value;
     vardata.BarAvordId = BarAvordUserId;
+    vardata.NoeFBId = NoeFBId;
 
     $.ajax({
         type: "POST",

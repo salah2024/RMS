@@ -3,5 +3,6 @@
 public class GetZaribMantagheDto
 {
     public long BakhshId { get; set; }
+
     public Guid BaravordId { get; set; }    
 }

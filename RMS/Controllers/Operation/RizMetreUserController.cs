@@ -50,7 +50,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
         //try
         //{
         long LastShomareh = 0;
-        clsRizMetreUsers? RizMetreUserAllBarAvord = context.RizMetreUserses.Include(x => x.FB).Where(x => x.FB.BarAvordId == BarAvordId).OrderByDescending(x => x.Shomareh).FirstOrDefault();
+        clsRizMetreUsers? RizMetreUserAllBarAvord = context.RizMetreUserses.Include(x => x.FB).Where(x => x.FB.BarAvordId == BarAvordId && x.FB.NoeFBId == NoeFB).OrderByDescending(x => x.Shomareh).FirstOrDefault();
         if (RizMetreUserAllBarAvord != null)
             LastShomareh = RizMetreUserAllBarAvord.Shomareh + 1;
         else
@@ -67,6 +67,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
         clsRizMetreUsers RizMetre = new clsRizMetreUsers();
         RizMetre.ID = Guid.NewGuid();
         RizMetre.Shomareh = LastShomareh;
+        RizMetre.ShomarehNew = LastShomareh.ToString();
         RizMetre.Sharh = Sharh.Trim();
         RizMetre.Tedad = Tedad;
         RizMetre.Tool = Tool;
@@ -1553,7 +1554,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
             decimal? Ertefa = request.Ertefa;
             decimal? Vazn = request.Vazn;
             string Des = request.Des;
-            NoeFehrestBaha NoeFB = request.NoeFB;
+            NoeFehrestBaha NoeFBId = request.NoeFBId;
             int Year = request.Year;
             int LevelNumber = request.LevelNumber == 0 ? 1 : request.LevelNumber;
             DastyarCommon DastyarCommon = new DastyarCommon(context);
@@ -1649,7 +1650,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                       Vahed = ItemF.Vahed,
                                       FieldType = ItemF.FieldType,
                                       OperationId = OpItemFB.OperationId
-                                  }).Where(x => x.ItemShomareh == strFBShomareh && x.NoeFB == NoeFB).OrderBy(x => x.FieldType).ToList();
+                                  }).Where(x => x.ItemShomareh == strFBShomareh && x.NoeFB == NoeFBId).OrderBy(x => x.FieldType).ToList();
             DataTable DtItemsFields = clsConvert.ToDataTable(varItemsFields);
             //DataTable DtItemsFields = clsItemsFields.ItemsFieldsListWithParameter("ItemShomareh='" + strFBShomareh + "' and NoeFB=234");
 
@@ -1719,7 +1720,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                     if (currentFb != null)
                     {
                         string currentShomareh = currentFb.Shomareh;
-                        clsBarAvordHaml? barAvordHaml = context.BarAvordHamls.FirstOrDefault(x => x.BarAvordId == request.BarAvordUserId && x.FBShomareh == currentShomareh);
+                        clsBarAvordHaml? barAvordHaml = context.BarAvordHamls.FirstOrDefault(x => x.BarAvordId == request.BarAvordUserId && x.NoeFBId == NoeFBId && x.FBShomareh == currentShomareh);
                         if (barAvordHaml != null)
                         {
                             List<clsBarAvordHamlRizMetre> lstBAHRM =
@@ -1785,7 +1786,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                                        Vahed = ItemF.Vahed,
                                                        FieldType = ItemF.FieldType,
                                                        OperationId = OpItemFB.OperationId
-                                                   }).Where(x => x.OperationId == OperationId && x.NoeFB == NoeFB).OrderBy(x => x.FieldType).ToList();
+                                                   }).Where(x => x.OperationId == OperationId && x.NoeFB == NoeFBId).OrderBy(x => x.FieldType).ToList();
 
                 List<ItemsHasConditionConditionContextForCheckOperationDto> lstItemsHasCondition = _context.ItemsHasCondition_ConditionContexts
                     .Where(cc => cc.Year == Year)
@@ -1855,7 +1856,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                     foreach (var itemsAddingToFBForCheckOperation in lstItemsAddingToFBForCheckOperation)
                     {
                         checkOperationConditions.fnCheckOperationConditionForUpdate(_context, itemsAddingToFBForCheckOperation,
-                            ItemsField, ItemHasCon, FBId, RizMetre, OldRizMetre, LevelNumber, Year, NoeFB);
+                            ItemsField, ItemHasCon, FBId, RizMetre, OldRizMetre, LevelNumber, Year, NoeFBId);
                     }
                 }
 
@@ -3066,7 +3067,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
             decimal? Ertefa = request.Ertefa;
             decimal? Vazn = request.Vazn;
             string? Des = request.Des;
-            NoeFehrestBaha NoeFB = request.NoeFB;
+            NoeFehrestBaha NoeFB = request.NoeFBId;
             int Year = request.Year;
             int LevelNumber = request.LevelNumber == 0 ? 1 : request.LevelNumber;
             DastyarCommon DastyarCommon = new DastyarCommon(context);
@@ -3236,7 +3237,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
         decimal? Ertefa = request.Ertefa;
         decimal? Vazn = request.Vazn;
         string Des = request.Des;
-        NoeFehrestBaha NoeFB = request.NoeFB;
+        NoeFehrestBaha NoeFB = request.NoeFBId;
         int Year = request.Year;
         int LevelNumber = request.LevelNumber == 0 ? 1 : request.LevelNumber;
 
@@ -4905,6 +4906,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
         Guid PolVaAbroId = request.PolVaAbroId;
         int PolNum = request.PolNum;
         Guid BarAvordId = request.BarAvordId;
+        NoeFehrestBaha NoeFBId = request.NoeFBId;
         string LAbro = request.LAbro;
         string w1 = request.w1;
         string w2 = request.w2;
@@ -4970,25 +4972,25 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
         AbnieFaniCommon AbnieFani = new AbnieFaniCommon(_context);
         if (NoeBanaii.Trim() == "1")
         {
-            AbnieFani.GhalebBandi(BarAvordId, PolVaAbroId, PolNum, LAbro, w1, w2, w3, w4, f, m, n, k, h, D, TedadDahaneh, LPayeMoarab, LKooleMoarab);
-            AbnieFani.GhalebBandiChenaj(BarAvordId, PolVaAbroId, PolNum, LAbro, w1, w2, w3, w4, f, m, n, k, h, t, b2, c2, p2, D, TedadDahaneh);
+            AbnieFani.GhalebBandi(BarAvordId, NoeFBId, PolVaAbroId, PolNum, LAbro, w1, w2, w3, w4, f, m, n, k, h, D, TedadDahaneh, LPayeMoarab, LKooleMoarab);
+            AbnieFani.GhalebBandiChenaj(BarAvordId, NoeFBId, PolVaAbroId, PolNum, LAbro, w1, w2, w3, w4, f, m, n, k, h, t, b2, c2, p2, D, TedadDahaneh);
             if (NahveEjraDal.Trim() == "1")
-                AbnieFani.GhalebBandiDalDarja(BarAvordId, PolVaAbroId, PolNum, LAbro, w1, w2, w3, w4, t, j, c1, D, TedadDahaneh);
+                AbnieFani.GhalebBandiDalDarja(BarAvordId, NoeFBId, PolVaAbroId, PolNum, LAbro, w1, w2, w3, w4, t, j, c1, D, TedadDahaneh);
             else if (NahveEjraDal.Trim() == "2")
-                AbnieFani.GhalebBandiDalPishSakhteh(BarAvordId, PolVaAbroId, PolNum, LAbro, w1, w2, w3, w4, t, j, c1, D, TedadDahaneh);
+                AbnieFani.GhalebBandiDalPishSakhteh(BarAvordId, PolVaAbroId, NoeFBId, PolNum, LAbro, w1, w2, w3, w4, t, j, c1, D, TedadDahaneh);
             _context.SaveChanges();
 
-            AbnieFani.Boton(PolVaAbroId, PolNum, BarAvordId, LAbro, w1, w2, w3, w4, f, m, n, k, h, t, b1, b2, j, c1, c2, p1, p2, D, TedadDahaneh, NahveEjraDal);
+            AbnieFani.Boton(PolVaAbroId, PolNum, BarAvordId, NoeFBId, LAbro, w1, w2, w3, w4, f, m, n, k, h, t, b1, b2, j, c1, c2, p1, p2, D, TedadDahaneh, NahveEjraDal);
 
-            AbnieFani.GhalebBandiFendasionDastak(PolVaAbroId, PolNum, D, TedadDahaneh, BarAvordId,
+            AbnieFani.GhalebBandiFendasionDastak(PolVaAbroId, NoeFBId, PolNum, D, TedadDahaneh, BarAvordId,
                 LW1j, LW1p, LB1W1, LB2W1, LW2j, LW2p, LB1W2, LB2W2, LW3j, LW3p, LB1W3, LB2W3, LW4j, LW4p, LB1W4, LB2W4, h);
 
-            AbnieFani.GhalebBandiDivarVaSotoonDastak(PolVaAbroId, PolNum, D, TedadDahaneh, BarAvordId, h, t, hMinw1, hMinw2, hMinw3, hMinw4, w1, w2, w3, w4);
-            AbnieFani.GhalebBandiSarKalaDastak(PolVaAbroId, PolNum, D, TedadDahaneh, BarAvordId, t, hMinw1, hMinw2, hMinw3, hMinw4, w1, w2, w3, w4);
+            AbnieFani.GhalebBandiDivarVaSotoonDastak(PolVaAbroId, NoeFBId, PolNum, D, TedadDahaneh, BarAvordId, h, t, hMinw1, hMinw2, hMinw3, hMinw4, w1, w2, w3, w4);
+            AbnieFani.GhalebBandiSarKalaDastak(PolVaAbroId, NoeFBId, PolNum, D, TedadDahaneh, BarAvordId, t, hMinw1, hMinw2, hMinw3, hMinw4, w1, w2, w3, w4);
 
-            AbnieFani.BotonFendasionDastak(PolVaAbroId, PolNum, D, TedadDahaneh, BarAvordId, h, t, hMinw1, hMinw2, hMinw3, hMinw4, w1, w2, w3, w4);
+            AbnieFani.BotonFendasionDastak(PolVaAbroId, NoeFBId, PolNum, D, TedadDahaneh, BarAvordId, h, t, hMinw1, hMinw2, hMinw3, hMinw4, w1, w2, w3, w4);
 
-            AbnieFani.Armator(PolVaAbroId, PolNum, D, TedadDahaneh, BarAvordId, LAbro, Hs);
+            AbnieFani.Armator(PolVaAbroId, PolNum, D, TedadDahaneh, BarAvordId, NoeFBId, LAbro, Hs);
 
         }
         return new JsonResult("OK");
@@ -5005,6 +5007,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
         Guid PolVaAbroId = request.PolVaAbroId;
         int PolNum = request.PolNum;
         Guid BarAvordId = request.BarAvordId;
+        NoeFehrestBaha NoeFBId = request.NoeFBId;
         long QuestionForAbnieFaniId = request.QuestionForAbnieFaniId;
         string ItemsForAdd = request.ItemsForAdd;
         string ItemFBForAdd = request.ItemFBForAdd.Trim();
@@ -5060,6 +5063,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
             FBSave.BarAvordId = BarAvordId;
             FBSave.Shomareh = ItemFBForAdd;
             FBSave.BahayeVahedZarib = 0;
+            FBSave.NoeFBId = NoeFBId;
             context.FBs.Add(FBSave);
             context.SaveChanges();
             FBId = FBSave.ID;
@@ -5253,6 +5257,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
         //string Param = request.Param;
         string ItemShomareh = request.ItemShomareh.Trim();
         Guid BarAvordId = request.BarAvordId;
+        NoeFehrestBaha NoeFBId = request.NoeFBId;
         int LevelNumber = request.LevelNumber;
         int Year = request.Year;
         int ConditionGroupId = request.ConditionGroupId;
@@ -5379,7 +5384,8 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
         //}
 
         long ShomareNew = 1;
-        clsRizMetreUsers? RizMetreUser = context.RizMetreUserses.Include(x => x.FB).OrderByDescending(x => x.InsertDateTime).ThenByDescending(x => x.Shomareh).FirstOrDefault(x => x.FB.BarAvordId == BarAvordId);
+        clsRizMetreUsers? RizMetreUser = context.RizMetreUserses.Include(x => x.FB).OrderByDescending(x => x.InsertDateTime).ThenByDescending(x => x.Shomareh)
+            .FirstOrDefault(x => x.FB.BarAvordId == BarAvordId && x.FB.NoeFBId == NoeFBId);
         if (RizMetreUser != null)
         {
             long currentShomareNew = RizMetreUser.ShomarehNew == null || RizMetreUser.ShomarehNew.Trim() == "" ? 1 : long.Parse(RizMetreUser.ShomarehNew);
@@ -5454,6 +5460,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                     FBSave.BarAvordId = BarAvordId;
                                     FBSave.Shomareh = strAddedItems.Trim();
                                     FBSave.BahayeVahedZarib = 0;
+                                    FBSave.NoeFBId = NoeFBId;
                                     context.FBs.Add(FBSave);
                                     context.SaveChanges();
                                     FBId = FBSave.ID;
@@ -5598,7 +5605,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                 //    }
                                 //    //clsRizMetreUserss.Delete("clsRizMetreUserss.Id=" + DtRizMetreUsers.Rows[0]["Id"].ToString());
                                 //}
-                                string strResult = SubItemsAddingToFB(AddingToFB.ID, Ertefa, RizMetreId, BarAvordId, strAddedItems, ShomareNew);
+                                string strResult = SubItemsAddingToFB(AddingToFB.ID, Ertefa, RizMetreId, BarAvordId, NoeFBId, strAddedItems, ShomareNew);
                             }
                             //else
                             //{
@@ -5735,6 +5742,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                     FB.BarAvordId = BarAvordId;
                                     FB.Shomareh = strAddedItems.Trim();
                                     FB.BahayeVahedZarib = 0;
+                                    FB.NoeFBId = NoeFBId;
                                     context.FBs.Add(FB);
                                     context.SaveChanges();
                                     FBId = FB.ID;
@@ -5860,6 +5868,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                     FB.BarAvordId = BarAvordId;
                                     FB.Shomareh = strAddedItems.Trim();
                                     FB.BahayeVahedZarib = 0;
+                                    FB.NoeFBId = NoeFBId;
                                     context.FBs.Add(FB);
                                     context.SaveChanges();
                                     FBId = FB.ID;
@@ -5919,7 +5928,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
 
                                 //clsOperationItemsFB OperationItemsFB = new clsOperationItemsFB();
                                 strAddedItems = strAddedItems.Trim();
-                                var varFBUsersAdded = context.FBs.Where(x => x.BarAvordId == BarAvordId && x.Shomareh == strAddedItems).ToList();
+                                var varFBUsersAdded = context.FBs.Where(x => x.BarAvordId == BarAvordId && x.NoeFBId == NoeFBId && x.Shomareh == strAddedItems).ToList();
                                 DataTable DtFBUser = clsConvert.ToDataTable(varFBUsersAdded);
 
                                 //DataTable DtFBUser = clsOperationItemsFB.FBListWithParameter("BarAvordId=" + BarAvordId + " and Shomareh='" + strAddedItems.Trim() + "'");
@@ -5936,6 +5945,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                     FBSave.BarAvordId = BarAvordId;
                                     FBSave.Shomareh = strAddedItems.Trim();
                                     FBSave.BahayeVahedZarib = 0;
+                                    FBSave.NoeFBId = NoeFBId;
                                     context.FBs.Add(FBSave);
                                     context.SaveChanges();
                                     FBId = FBSave.ID;
@@ -6080,7 +6090,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                 //    }
                                 //    //clsRizMetreUserss.Delete("clsRizMetreUserss.Id=" + DtRizMetreUsers.Rows[0]["Id"].ToString());
                                 //}
-                                string strResult = SubItemsAddingToFB(AddingToFB.ID, Ertefa, RizMetreId, BarAvordId, strAddedItems, ShomareNew);
+                                string strResult = SubItemsAddingToFB(AddingToFB.ID, Ertefa, RizMetreId, BarAvordId, NoeFBId, strAddedItems, ShomareNew);
                             }
                             break;
                         }
@@ -6144,7 +6154,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                         strFinalWorking = strFinalWorking.Replace("z", RM.Ertefa != null ? RM.Ertefa.Value.ToString().Trim() : "");
                                         string strItemShomareh = AddingToFB.AddedItems != null ? AddingToFB.AddedItems : "";
                                         strAddedItems = strAddedItems.Trim();
-                                        var varFBUsersAdded = context.FBs.Where(x => x.BarAvordId == BarAvordId && x.Shomareh == strAddedItems).ToList();
+                                        var varFBUsersAdded = context.FBs.Where(x => x.BarAvordId == BarAvordId && x.NoeFBId == NoeFBId && x.Shomareh == strAddedItems).ToList();
                                         DataTable DtFBUser = clsConvert.ToDataTable(varFBUsersAdded);
 
                                         Guid FBId = new Guid();
@@ -6152,6 +6162,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                         {
                                             clsFB FBSave = new clsFB();
                                             FBSave.BarAvordId = BarAvordId;
+                                            FBSave.NoeFBId = NoeFBId;
                                             FBSave.Shomareh = strAddedItems.Trim();
                                             FBSave.BahayeVahedZarib = 0;
                                             context.FBs.Add(FBSave);
@@ -6300,6 +6311,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
             Guid BarAvordId = request.BarAvordId;
             int LevelNumber = request.LevelNumber;
             DateTime Now = DateTime.Now;
+            NoeFehrestBaha NoeFBId = request.NoeFBId;
 
             //string strItemsHasConditionConditionContext = "";
             string strShomareh = ItemShomareh.Trim();
@@ -6412,6 +6424,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                     FB.BarAvordId = BarAvordId;
                                     FB.Shomareh = strAddedItems.Trim();
                                     FB.BahayeVahedZarib = 0;
+                                    FB.NoeFBId = NoeFBId;
                                     context.FBs.Add(FB);
                                     context.SaveChanges();
                                     FBId = FB.ID;
@@ -6516,7 +6529,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                     //clsRizMetreUserss.Delete("clsRizMetreUserss.Id=" + DtRizMetreUsers.Rows[0]["Id"].ToString());
                                     strTypeOp = "Del";
                                 }
-                                string strResult = SubItemsAddingToFB(long.Parse(DtItemsAddingToFB.Rows[i]["ID"].ToString()), Ertefa, RizMetreId, BarAvordId, strAddedItems, ShomareNew);
+                                string strResult = SubItemsAddingToFB(long.Parse(DtItemsAddingToFB.Rows[i]["ID"].ToString()), Ertefa, RizMetreId, BarAvordId, NoeFBId, strAddedItems, ShomareNew);
                             }
                             else
                             {
@@ -6539,6 +6552,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                     FB.BarAvordId = BarAvordId;
                                     FB.Shomareh = strAddedItems.Trim();
                                     FB.BahayeVahedZarib = 0;
+                                    FB.NoeFBId = NoeFBId;
                                     context.FBs.Add(FB);
                                     context.SaveChanges();
                                     FBId = FB.ID;
@@ -6565,7 +6579,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                         context.SaveChanges();
                                     }
                                     //clsRizMetreUserss.Delete("clsRizMetreUserss.Id=" + DtRizMetreUsers.Rows[0]["Id"].ToString());
-                                    string strResult = SubItemsAddingToFB(long.Parse(DtItemsAddingToFB.Rows[i]["ID"].ToString()), Ertefa, RizMetreId, BarAvordId, strAddedItems, ShomareNew);
+                                    string strResult = SubItemsAddingToFB(long.Parse(DtItemsAddingToFB.Rows[i]["ID"].ToString()), Ertefa, RizMetreId, BarAvordId, NoeFBId, strAddedItems, ShomareNew);
                                 }
                             }
                             break;
@@ -6604,6 +6618,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                     FB.BarAvordId = BarAvordId;
                                     FB.Shomareh = strAddedItems.Trim();
                                     FB.BahayeVahedZarib = 0;
+                                    FB.NoeFBId = NoeFBId;
                                     context.FBs.Add(FB);
                                     context.SaveChanges();
                                     FBId = FB.ID;
@@ -6735,6 +6750,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                     FB.BarAvordId = BarAvordId;
                                     FB.Shomareh = strAddedItems.Trim();
                                     FB.BahayeVahedZarib = 0;
+                                    FB.NoeFBId = NoeFBId;
                                     context.FBs.Add(FB);
                                     context.SaveChanges();
                                     FBId = FB.ID;
@@ -6780,7 +6796,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
         }
     }
 
-    public string SubItemsAddingToFB(long Id, string Ertefa, Guid RizMetreId, Guid BarAvordId, string ItemShomareh, long ShomareNew)
+    public string SubItemsAddingToFB(long Id, string Ertefa, Guid RizMetreId, Guid BarAvordId, NoeFehrestBaha NoeFBId, string ItemShomareh, long ShomareNew)
     {
         var varItemsAddingToFB = context.SubItemsAddingToFBs.Where(x => x.ItemsAddingToFBId == Id).ToList();
         DataTable DtItemsAddingToFB = clsConvert.ToDataTable(varItemsAddingToFB);
@@ -6845,6 +6861,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                     FB.BarAvordId = BarAvordId;
                     FB.Shomareh = strAddedItems.Trim();
                     FB.BahayeVahedZarib = 0;
+                    FB.NoeFBId = NoeFBId;
                     context.FBs.Add(FB);
                     context.SaveChanges();
                     FBId = FB.ID;
@@ -6996,6 +7013,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
 
             string ItemShomareh = request.ItemShomareh.Trim();
             Guid BarAvordId = request.BarAvordId;
+            NoeFehrestBaha NoeFBId = request.NoeFBId;
             int LevelNumber = request.LevelNumber;
             int Year = request.Year;
             int ConditionGroupId = request.ConditionGroupId;
@@ -7131,6 +7149,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                         Fb.BarAvordId = BarAvordId;
                                         Fb.Shomareh = strAddedItems.Trim();
                                         Fb.BahayeVahedZarib = 0;
+                                        Fb.NoeFBId = NoeFBId;
                                         context.FBs.Add(Fb);
                                         context.SaveChanges();
                                         FBId = Fb.ID;
@@ -7194,7 +7213,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                     }
 
                                     //clsRizMetreUserss.Delete("clsRizMetreUserss.Id=" + DtRizMetreUsers.Rows[0]["Id"].ToString());
-                                    string strResult = DeleteSubItemsAddingToFB(long.Parse(DtItemsAddingToFB.Rows[i]["ID"].ToString()), Ertefa, RizMetreId, BarAvordId, strAddedItems);
+                                    string strResult = DeleteSubItemsAddingToFB(long.Parse(DtItemsAddingToFB.Rows[i]["ID"].ToString()), Ertefa, RizMetreId, BarAvordId, NoeFBId, strAddedItems);
                                 }
                                 break;
                             }
@@ -7222,6 +7241,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                         FBSave.BarAvordId = BarAvordId;
                                         FBSave.Shomareh = strAddedItems.Trim();
                                         FBSave.BahayeVahedZarib = 0;
+                                        FBSave.NoeFBId = NoeFBId;
                                         context.FBs.Add(FBSave);
                                         context.SaveChanges();
                                         FBId = FBSave.ID;
@@ -7273,6 +7293,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                         FBSave.BarAvordId = BarAvordId;
                                         FBSave.Shomareh = strAddedItems.Trim();
                                         FBSave.BahayeVahedZarib = 0;
+                                        FBSave.NoeFBId = NoeFBId;
                                         context.FBs.Add(FBSave);
                                         context.SaveChanges();
                                         FBId = FBSave.ID;
@@ -7375,7 +7396,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
         }
     }
 
-    public string DeleteSubItemsAddingToFB(long Id, string Ertefa, Guid RizMetreId, Guid BarAvordId, string ItemShomareh)
+    public string DeleteSubItemsAddingToFB(long Id, string Ertefa, Guid RizMetreId, Guid BarAvordId, NoeFehrestBaha NoeFBId, string ItemShomareh)
     {
         int LevelNumber = 1;
         var varItemsAddingToFB = context.SubItemsAddingToFBs.Where(x => x.ItemsAddingToFBId == Id).ToList();
@@ -7438,6 +7459,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                     FBSave.BarAvordId = BarAvordId;
                     FBSave.Shomareh = strAddedItems.Trim();
                     FBSave.BahayeVahedZarib = 0;
+                    FBSave.NoeFBId = NoeFBId;
                     context.FBs.Add(FBSave);
                     context.SaveChanges();
                     FBId = FBSave.ID;

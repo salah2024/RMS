@@ -32,6 +32,7 @@ public class OperationController(ApplicationDbContext context) : Controller
 
     public JsonResult GetTree([FromBody] GetTreeInputDto request)
     {
+        NoeFehrestBaha NoeFBId = request.NoeFBId;
         var ShomarehItems = (from op_Item in _context.Operation_ItemsFBs
                              join FB in _context.FehrestBahas
                              on op_Item.ItemsFBShomareh.Substring(0, 6) equals FB.Shomareh.Trim()
@@ -44,7 +45,7 @@ public class OperationController(ApplicationDbContext context) : Controller
                                  NoeFB = FB.NoeFB,
                                  Vahed = FB.Vahed,
                                  BahayeVahed = FB.BahayeVahed,
-                             }).Where(x => x.Year == request.Year && x.NoeFB == request.NoeFB);
+                             }).Where(x => x.Year == request.Year && x.NoeFB == NoeFBId);
 
         //List<AllOperationDto> operation = (from op in _context.Operations
         //                                   join OperationDetail in _context.OperationDetails
@@ -123,7 +124,7 @@ public class OperationController(ApplicationDbContext context) : Controller
             {
                 if (item.LatinName.Trim().ToLower() == "transport")
                 {
-                    clsBarAvordHamlNecessaryLimit? barAvordHamlNecessaryLimit = _context.BarAvordHamlNecessaryLimits.FirstOrDefault(x => x.BarAvordId == request.BarAvordUserId);
+                    clsBarAvordHamlNecessaryLimit? barAvordHamlNecessaryLimit = _context.BarAvordHamlNecessaryLimits.FirstOrDefault(x => x.BarAvordId == request.BarAvordUserId && x.NoeFBId == NoeFBId);
                     if (barAvordHamlNecessaryLimit != null)
                     {
                         item.CheckNecessary = true;
@@ -136,7 +137,7 @@ public class OperationController(ApplicationDbContext context) : Controller
             {
                 if (item.CheckData.Value)
                 {
-                    clsBarAvordHaml? barAvordHaml = _context.BarAvordHamls.FirstOrDefault(x => x.BarAvordId == request.BarAvordUserId && x.FBShomarehHaml == item.ItemsFBShomareh.Trim());
+                    clsBarAvordHaml? barAvordHaml = _context.BarAvordHamls.FirstOrDefault(x => x.BarAvordId == request.BarAvordUserId && x.NoeFBId == NoeFBId && x.FBShomarehHaml == item.ItemsFBShomareh.Trim());
 
                     if (barAvordHaml != null)
                     {
@@ -162,6 +163,7 @@ public class OperationController(ApplicationDbContext context) : Controller
 
     public JsonResult GetTreeForOneOperation([FromBody] GetTreeInputDto request)
     {
+        NoeFehrestBaha NoeFBId = request.NoeFBId;
 
         clsOperation? Operation = _context.Operations.FirstOrDefault(x => x.LatinName == request.OpName);
         if (Operation != null)
@@ -179,7 +181,7 @@ public class OperationController(ApplicationDbContext context) : Controller
                                      NoeFB = FB.NoeFB,
                                      Vahed = FB.Vahed,
                                      BahayeVahed = FB.BahayeVahed,
-                                 }).Where(x => x.Year == request.Year && x.NoeFB == request.NoeFB);
+                                 }).Where(x => x.Year == request.Year && x.NoeFB == NoeFBId);
             // پیدا کردن parentId
             var parentId = _context.Operations
                 .Where(x => x.Year == request.Year && x.LatinName == "transport")
@@ -259,7 +261,7 @@ public class OperationController(ApplicationDbContext context) : Controller
                 {
                     if (item.CheckData.Value)
                     {
-                        clsBarAvordHaml? barAvordHaml = _context.BarAvordHamls.FirstOrDefault(x => x.BarAvordId == request.BarAvordUserId && x.FBShomarehHaml == item.ItemsFBShomareh.Trim());
+                        clsBarAvordHaml? barAvordHaml = _context.BarAvordHamls.FirstOrDefault(x => x.BarAvordId == request.BarAvordUserId && x.NoeFBId == NoeFBId && x.FBShomarehHaml == item.ItemsFBShomareh.Trim());
 
                         if (barAvordHaml != null)
                         {
@@ -302,6 +304,8 @@ public class OperationController(ApplicationDbContext context) : Controller
         List<clsOperationDetail> lstOperationDetails = _context.OperationDetails.Where(x => lstOperationDetailIds.Contains(x.OperationId)).ToList();
         List<clsBarAvordHamlRizMetre> lstBarAvordHamlRizMetre = _context.BarAvordHamlRizMetres.Where(x => lstBarAvordHamlIds.Contains(x.BarAvordHamlId)).ToList();
 
+        NoeFehrestBaha NoeFBId = request.NoeFBId;
+
         bool Checked = request.blnChecked;
         Guid BarAvordId = request.BarAvordId;
         if (Checked)
@@ -309,6 +313,7 @@ public class OperationController(ApplicationDbContext context) : Controller
             _context.BarAvordHamlNecessaryLimits.Add(new clsBarAvordHamlNecessaryLimit
             {
                 BarAvordId = BarAvordId,
+                NoeFBId = NoeFBId
             });
 
             //در این صورت بایستی کیلومتراژ ها بدون محدودیت باشند
@@ -337,7 +342,7 @@ public class OperationController(ApplicationDbContext context) : Controller
                             _context.Entry(RizMetreUser).CurrentValues.SetValues(new
                             {
                                 Tedad = dFinaValue,
-                                MeghdarJoz= dFinaValue* RizMetreUser.Vazn
+                                MeghdarJoz = dFinaValue * RizMetreUser.Vazn
                             });
                         }
                     }
@@ -346,7 +351,7 @@ public class OperationController(ApplicationDbContext context) : Controller
         }
         else
         {
-            clsBarAvordHamlNecessaryLimit? barAvordHamlNecessaryLimit = _context.BarAvordHamlNecessaryLimits.FirstOrDefault(x => x.BarAvordId == BarAvordId);
+            clsBarAvordHamlNecessaryLimit? barAvordHamlNecessaryLimit = _context.BarAvordHamlNecessaryLimits.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.NoeFBId == NoeFBId);
             if (barAvordHamlNecessaryLimit != null)
             {
 
@@ -399,12 +404,13 @@ public class OperationController(ApplicationDbContext context) : Controller
     }
     public ActionResult SaveHamlValue([FromBody] SaveHamlValueDto request)
     {
+        NoeFehrestBaha NoeFBId = request.NoeFBId;
         clsOperation_ItemsFB? operation_ItemsFB = _context.Operation_ItemsFBs.FirstOrDefault(x => x.OperationId == request.OperationId);
         if (operation_ItemsFB != null)
         {
             string ItemsFBShomareh = operation_ItemsFB.ItemsFBShomareh;
             Guid BarAvordId = request.BarAvordId;
-            List<clsBarAvordHaml> lstBarAvordHaml = _context.BarAvordHamls.Where(x => x.BarAvordId == BarAvordId && x.FBShomarehHaml == ItemsFBShomareh).ToList();
+            List<clsBarAvordHaml> lstBarAvordHaml = _context.BarAvordHamls.Where(x => x.BarAvordId == BarAvordId && x.NoeFBId == NoeFBId && x.FBShomarehHaml == ItemsFBShomareh).ToList();
             if (lstBarAvordHaml.Count != 0)
             {
                 foreach (var barAvordHaml in lstBarAvordHaml)
@@ -435,7 +441,7 @@ public class OperationController(ApplicationDbContext context) : Controller
                             decimal? MaxValue = operationDetail.MaxValue;
                             if (MaxValue != null)
                             {
-                                clsBarAvordHamlNecessaryLimit? barAvordHamlNecessaryLimit = _context.BarAvordHamlNecessaryLimits.FirstOrDefault(x => x.BarAvordId == BarAvordId);
+                                clsBarAvordHamlNecessaryLimit? barAvordHamlNecessaryLimit = _context.BarAvordHamlNecessaryLimits.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.NoeFBId == NoeFBId);
                                 if (barAvordHamlNecessaryLimit == null)
                                 {
                                     if (request.Value > MaxValue.Value)

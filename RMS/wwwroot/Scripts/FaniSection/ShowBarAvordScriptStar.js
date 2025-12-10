@@ -275,6 +275,7 @@ function SaveRMUStarClick(object, Shomareh, rizId, Code) {
     if (Check) {
         BarAvordUserId = $('#HDFBarAvordUserID').val();
         Year = parseInt($('#HDFYear').val());
+        NoeFBId = parseInt($('#HDFNoeFB').val());
 
         debugger;
 
@@ -289,6 +290,7 @@ function SaveRMUStarClick(object, Shomareh, rizId, Code) {
         vardata.BarAvordUserId = BarAvordUserId;
         vardata.Shomareh = Shomareh;
         vardata.Year = Year;
+        vardata.NoeFBId = NoeFBId;
         $.ajax({
             type: "POST",
             url: '/ItemFBStar/ConfirmRizMetreItemFBStar',
@@ -352,8 +354,11 @@ function SaveRMUStarClick(object, Shomareh, rizId, Code) {
 function GetCurrentRizMetreItemFBStar(Shomareh, rizId, Code) {
     debugger;
     BarAvordUserId = $('#HDFBarAvordUserID').val();
+    NoeFBId = parseInt($('#HDFNoeFB').val());
+
     var vardata = new Object();
     vardata.BarAvordUserId = BarAvordUserId;
+    vardata.NoeFBId = NoeFBId;
     vardata.ItemFBShomareh = Shomareh;
     $.ajax({
         url: "/ItemFBStar/GetCurrentRizMetreStarForShowBarAvord",
@@ -476,10 +481,13 @@ function cancelEditRowStar(row, rizMetreId, Shomareh, rizId1) {
 function DeleteRizMetreStar(object, RizMetreId, Shomareh, rizId, Code) {
     debugger;
     BarAvordUserId = $('#HDFBarAvordUserID').val();
+    NoeFBId = parseInt($('#HDFNoeFB').val());
+
     var vardata = new Object();
     vardata.Id = RizMetreId;
     vardata.BarAvordId = BarAvordUserId;
     vardata.FBShomareh = Shomareh;
+    vardata.NoeFBId = NoeFBId;
     $.ajax({
         url: "/ItemFBStar/DeleteRizMetreStar",
         method: "POST",

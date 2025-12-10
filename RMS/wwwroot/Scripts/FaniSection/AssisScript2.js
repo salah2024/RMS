@@ -435,7 +435,7 @@ function GetRizMetreWithFBId(LevelNumber) {
             }
             else {
                 rizMetreUsers.forEach(function (row) {
-
+                    debugger;
                     let id = row.id;
 
                     let strTedad = parseFloat(row.tedad) === 0 ? "0" : isNaN(parseFloat(row.tedad)) ? "" : parseFloat(row.tedad).toString();

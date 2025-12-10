@@ -757,6 +757,7 @@ function SaveBoard() {
     usePOP = $('#ckPrintPOPBoard').prop('checked');
     PercentPOPBoard = $('#txtPercentPOPBoard').val() == "" ? null : $('#txtPercentPOPBoard').val();
     debugger;
+    NoeFBId = parseInt($('#HDFNoeFB').val());
 
     var vardata = new Object();
     vardata.Items = selections;
@@ -769,6 +770,7 @@ function SaveBoard() {
     vardata.Ertefa = MorabaErtefa == "" ? 0 : MorabaErtefa;
     vardata.UsePOP = usePOP;
     vardata.PercentPrintPOP = PercentPOPBoard;
+    vardata.NoeFBId = NoeFBId;
 
     if (BarAvordAddedBoardId == '') {
         $.ajax({
@@ -1221,6 +1223,7 @@ function SaveInfoBoard() {
     MorabaErtefa = $('#MorabaErtefaInfoBoard').val();
     usePOP = $('#ckPrintPOPBoardInfo').prop('checked');
     PercentPOPBoard = $('#txtPercentPOPBoardInfo').val() == "" ? null : $('#txtPercentPOPBoardInfo').val();
+    NoeFBId = parseInt($('#HDFNoeFB').val());
     debugger;
 
     var vardata = new Object();
@@ -1234,6 +1237,7 @@ function SaveInfoBoard() {
     vardata.Ertefa = MorabaErtefa;
     vardata.usePOP = usePOP;
     vardata.PercentPrintPOP = PercentPOPBoard;
+    vardata.NoeFBId = NoeFBId;
 
     if (BarAvordAddedBoardId == '') {
         $.ajax({

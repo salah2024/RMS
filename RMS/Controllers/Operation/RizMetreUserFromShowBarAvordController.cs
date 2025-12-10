@@ -41,6 +41,7 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
         string FBShomareh = Request.Shomareh;
         int Year = Request.Year;
         Guid BarAvordId = Request.BarAvordUserId;
+        NoeFehrestBaha NoeFBId = Request.NoeFBId;
         string Code = Request.Shomareh.Substring(0, 2);
         DateTime Now = DateTime.Now;
 
@@ -56,6 +57,7 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
             newFB.BarAvordId = BarAvordId;
             newFB.Shomareh = FBShomareh;
             newFB.BahayeVahedZarib = 0;
+            newFB.NoeFBId = NoeFBId;
             _context.FBs.Add(newFB);
             _context.SaveChanges();
             FBId = newFB.ID;
@@ -217,7 +219,7 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
 
         int Year = request.Year;
         Guid BarAvordId = request.BarAvordUserId;
-        NoeFehrestBaha NoeFB = request.NoeFB;
+        NoeFehrestBaha NoeFBId = request.NoeFBId;
         string Code = request.Code;
 
         clsRizMetreUsers? entity = context.RizMetreUserses.FirstOrDefault(x => x.ID == Id);
@@ -251,7 +253,7 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
         if (currentFb != null)
         {
             string currentShomareh = currentFb.Shomareh;
-            List<clsBarAvordHaml> lstBarAvordHaml = context.BarAvordHamls.Where(x => x.BarAvordId == BarAvordId && x.FBShomareh == currentShomareh).ToList();
+            List<clsBarAvordHaml> lstBarAvordHaml = context.BarAvordHamls.Where(x => x.BarAvordId == BarAvordId && x.NoeFBId == NoeFBId && x.FBShomareh == currentShomareh).ToList();
             if (lstBarAvordHaml.Count != 0)
             {
                 List<Guid> lstBarAvordHamlIds = lstBarAvordHaml.Select(x => x.ID).ToList();
@@ -440,6 +442,7 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
     {
         try
         {
+            NoeFehrestBaha NoeFBId = request.NoeFBId;
             Guid BarAvordUserId = request.BarAvordUserId;
             clsRizMetreUsers? entity = context.RizMetreUserses.Find(request.Id);
             if (entity != null)
@@ -458,6 +461,7 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
                         BarAvordId = BarAvordUserId,
                         FBShomareh = FB.Shomareh,
                         RMShomareh = entity.Shomareh,
+                        NoeFBId = NoeFBId
                     };
                     HamlCommon.DeleteHaml(deleteHaml, context);
                 }

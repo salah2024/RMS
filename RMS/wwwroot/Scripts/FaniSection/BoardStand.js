@@ -390,11 +390,14 @@ function SaveBoardStand(Tedad, ckVal) {
     var vardata = new Object();
     BarAvordUserId = $('#HDFBarAvordUserID').val();
     Year = $('#HDFYear').val();
+    NoeFBId = parseInt($('#HDFNoeFB').val());
+
 
     vardata.BaravordId = BarAvordUserId;
     vardata.Tedad = Tedad;
     vardata.BoardStandType = ckVal;
     vardata.Year = Year;
+    vardata.NoeFBId = NoeFBId;
 
    return $.ajax({
         type: "POST",

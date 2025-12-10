@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RMS.Controllers.BarAvordUser.Dto;
 using RMS.Models.Entity;
+using static RMS.Models.Common.EnumForEntity;
 
 namespace RMS.Controllers.BarAvordUser;
 
@@ -20,7 +21,8 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
 
     public JsonResult GetUserBarAvord([FromBody] ViewUserBarAvordInputDto request)
     {
-        var RizMetre = _context.RizMetreUserses.Include(x => x.FB).Where(x => x.FB.BarAvordId == request.BarAvordUserId)
+        NoeFehrestBaha NoeFBId = request.NoeFBId;
+        var RizMetre = _context.RizMetreUserses.Include(x => x.FB).Where(x => x.FB.BarAvordId == request.BarAvordUserId && x.FB.NoeFBId == NoeFBId)
             .Select(riz => new ViewUserBarAvordOutPutRizMetreDto
             {
                 Id = riz.ID,
@@ -41,7 +43,7 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
         var fbItems = (from fb in _context.FBs
                        join fehrestbaha in _context.FehrestBahas
                        on fb.Shomareh.Substring(0, 6) equals fehrestbaha.Shomareh.Trim()
-                       where fb.BarAvordId == request.BarAvordUserId && fehrestbaha.Sal == request.Year
+                       where fb.BarAvordId == request.BarAvordUserId && fb.NoeFBId==NoeFBId && fehrestbaha.Sal == request.Year
                        select new FBForGetUserBarAvordDto
                        {
                            ID = fb.ID,
@@ -108,7 +110,7 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
 
 
         var barAvordInFehrest = _context.FehrestBahas
-        .Where(f => f.Sal == request.Year && f.Shomareh.StartsWith(request.ShomarehFasl))
+        .Where(f => f.Sal == request.Year && f.NoeFB==NoeFBId && f.Shomareh.StartsWith(request.ShomarehFasl))
         .ToList()
         .GroupJoin(
             fbItems,
@@ -119,7 +121,8 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
         {
             ItemFbShomareh = x.fehrest.Shomareh,
             Sharh = x.fehrest.Sharh,
-            BahayeVahed = x.fehrest.BahayeVahed != null ? x.fbItem != null ? x.fbItem.BahayeVahedZarib != 0 ? (x.fbItem.BahayeVahedZarib * decimal.Parse(x.fehrest.BahayeVahed)).ToString() : x.fehrest.BahayeVahed : x.fehrest.BahayeVahed : "0",
+            BahayeVahed = x.fehrest.BahayeVahed != null ? x.fbItem != null ? x.fbItem.BahayeVahedZarib != 0 ?
+                         (x.fbItem.BahayeVahedZarib * decimal.Parse(x.fehrest.BahayeVahed)).ToString() : x.fehrest.BahayeVahed : x.fehrest.BahayeVahed : "0",
             BahayeVahedNew = x.fbItem != null ? x.fbItem.BahayeVahedNew : 0,
             Vahed = x.fehrest.Vahed,
             FBId = x.fbItem?.ID,
@@ -147,7 +150,7 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
             .OrderBy(x => x.ItemFbShomareh)
             .ToList();
 
-        List<clsItemsFields> itemsFields = _context.ItemsFieldses.Where(x => x.NoeFB == request.NoeFB).OrderBy(x => x.FieldType).ToList();
+        List<clsItemsFields> itemsFields = _context.ItemsFieldses.Where(x => x.NoeFB == NoeFBId).OrderBy(x => x.FieldType).ToList();
 
         foreach (var item in userBarAvordOutPut)
         {
@@ -180,7 +183,8 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
 
         }
 
-        List<ItemFBStarForShowBaravordDto> lstItemFBStars = _context.ItemFBStars.Include(x => x.Vahed).Where(x => x.BaravordId == request.BarAvordUserId && x.Shomareh.Substring(0,2)== request.ShomarehFasl.Trim())
+        List<ItemFBStarForShowBaravordDto> lstItemFBStars =
+            _context.ItemFBStars.Include(x => x.Vahed).Where(x => x.BaravordId == request.BarAvordUserId && x.NoeFBId == NoeFBId && x.Shomareh.Substring(0, 2) == request.ShomarehFasl.Trim())
             .Select(x => new ItemFBStarForShowBaravordDto
             {
                 Id = x.ID,

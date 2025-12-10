@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using static RMS.Models.Common.EnumForEntity;
 
 namespace RMS.Models.Entity;
 
@@ -21,12 +22,11 @@ public class clsZaribBalaSari
 {
     [Key]
     public long Id { get; set; }
-
     public int? Noe1 { get; set; }
     public int? Noe2 { get; set; }
     public int? Noe3 { get; set; }
     [Column(TypeName = "decimal(18,4)")]
     public decimal? Zarib { get;set; }
     public int Year { get;set; }
-    
+    public NoeFehrestBaha NoeFBId { get; set; }
 }

@@ -1,8 +1,11 @@
-﻿namespace RMS.Controllers.Board.Dto
+﻿using static RMS.Models.Common.EnumForEntity;
+
+namespace RMS.Controllers.Board.Dto
 {
     public class BoardDataDto
     {
         public Guid BaravordId { get; set; }
+        public NoeFehrestBaha NoeFBId { get; set; }
         public Guid barAvordAddedBoardId { get; set; }
         public int Shape { get; set; }
         public long OperationId { get; set; }
@@ -17,6 +20,7 @@
     public class BoardDataForSaveDto
     {
         public Guid BaravordId { get; set; }
+        public NoeFehrestBaha NoeFBId { get; set; }
         public int Shape { get; set; }
         public long OperationId { get; set; }
         public long Tedad { get; set; }

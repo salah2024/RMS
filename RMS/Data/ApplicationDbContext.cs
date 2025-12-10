@@ -73,7 +73,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<clsSubItemsAddingToFB> SubItemsAddingToFBs { get; set; }
     public DbSet<clsZarayebTabdil> ZarayebTabdils { get; set; }
     public DbSet<clsZaribRoadType> ZaribRoadTypes { get; set; }
-    public DbSet<clsNoeFosoul> NoeFosouls { get; set; }
+    //public DbSet<clsNoeFosoul> NoeFosouls { get; set; }
     public DbSet<clsFosoul> Fosouls { get; set; }
     public DbSet<clsOperationHasAddedOperationsLevelNumber> OperationHasAddedOperationsLevelNumbers { get; set; }
     public DbSet<clsBarAvordAddedBoard> BarAvordAddedBoards { get; set; }

@@ -6,6 +6,7 @@ namespace RMS.Controllers.KhakRizi.Dto;
 public class RequestSaveKhakRiziInfoForBarAvordDto
 {
     public Guid BarAvordUserId { get; set; }
+    public NoeFehrestBaha NoeFBId { get; set; }
     public long FromKM { get; set; }
     public long ToKM { get; set; }
     public EnumRoadType RoadTypeId { get; set; }

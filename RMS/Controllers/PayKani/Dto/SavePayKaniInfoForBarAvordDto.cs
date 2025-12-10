@@ -5,6 +5,7 @@ namespace RMS.Controllers.AmalyateKhaki.Dto
     public class SavePayKaniInfoForBarAvordDto
     {
         public Guid BarAvordUserId { get; set; }
+        public NoeFehrestBaha NoeFBId { get; set; }
         /// <summary>
         /// 2-پی کنی
         /// 3- کانال کنی

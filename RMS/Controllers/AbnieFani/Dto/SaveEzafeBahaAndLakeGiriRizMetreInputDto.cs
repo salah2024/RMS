@@ -10,6 +10,7 @@ namespace RMS.Controllers.AbnieFani.Dto
         public string ItemShomareh { get; set; }
         public Guid RizMetreId { get; set; }
         public Guid BarAvordId { get; set; }
+        public NoeFehrestBaha NoeFBId { get; set; }
         public int LevelNumber { get; set; }
         public int Year { get; set; }   
         public NoeFehrestBaha NoeFB { get; set; }

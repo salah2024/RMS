@@ -5,6 +5,7 @@ namespace RMS.Controllers.AmalyateKhaki.Dto
     public class SaveKhakBardariInfoForBarAvordDto
     {
         public Guid BarAvordUserId { get; set; }
+        public NoeFehrestBaha NoeFBId { get;set; }
         public NoeAmalyatKhaki Type { get; set; }
         public long FromKM { get; set; }
         public long ToKM { get; set; }

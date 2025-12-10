@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RMS.Controllers.AmalyateKhaki.Dto;
 using RMS.Models.Entity;
+using static RMS.Models.Common.EnumForEntity;
 
 namespace RMS.Controllers.AmalyateKhaki.Common;
 
@@ -9,6 +10,7 @@ public class AmalyateKhakiCommon
     public bool SaveEzafeBahaAKh(SaveEzafeBahaAKhDto request, ApplicationDbContext _context)
     {
         long Year = request.Year;
+        NoeFehrestBaha NoeFBId = request.NoeFBId;
 
         clsNoeKhakBardariEzafeBaha? NoeKhB_EB = _context.NoeKhakBardariEzafeBahas.FirstOrDefault(x => x.Id == request.NoeKhakBardariEzafeBahaId);
         string strCurrentShomareh = "";
@@ -75,7 +77,8 @@ public class AmalyateKhakiCommon
             {
                 BarAvordId = BarAvordUserId,
                 InsertDateTime = Now,
-                Shomareh = strCurrentShomareh
+                Shomareh = strCurrentShomareh,
+                NoeFBId=NoeFBId
             };
             _context.FBs.Add(newFB);
             gFBId = newFB.ID;
@@ -257,7 +260,8 @@ public class AmalyateKhakiCommon
                     {
                         BarAvordId = BarAvordUserId,
                         InsertDateTime = Now,
-                        Shomareh = strItemHamlFB
+                        Shomareh = strItemHamlFB,
+                        NoeFBId = NoeFBId
                     };
                     _context.FBs.Add(newFBHaml);
                     gFBIdHaml = newFBHaml.ID;

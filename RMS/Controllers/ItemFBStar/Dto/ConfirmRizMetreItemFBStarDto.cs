@@ -1,4 +1,6 @@
-﻿namespace RMS.Controllers.ItemFBStar.Dto;
+﻿using static RMS.Models.Common.EnumForEntity;
+
+namespace RMS.Controllers.ItemFBStar.Dto;
 
 public class ConfirmRizMetreItemFBStarDto
 {
@@ -12,4 +14,5 @@ public class ConfirmRizMetreItemFBStarDto
     public string Shomareh { get; set; }
     public int Year { get; set; }
     public Guid BarAvordUserId { get; set; }
+    public NoeFehrestBaha NoeFBId { get; set; }
 }

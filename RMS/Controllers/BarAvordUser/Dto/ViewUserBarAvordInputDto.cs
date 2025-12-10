@@ -6,7 +6,7 @@ namespace RMS.Controllers.BarAvordUser.Dto
     {
         public Guid BarAvordUserId { get; set; }
         public int Year { get; set; }
-        public NoeFehrestBaha NoeFB { get; set; }
+        public NoeFehrestBaha NoeFBId { get; set; }
         public string ShomarehFasl { get; set; }
     }
 }

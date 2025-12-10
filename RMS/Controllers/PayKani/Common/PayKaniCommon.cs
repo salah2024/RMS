@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RMS.Controllers.AmalyateKhaki.Dto;
 using RMS.Models.Entity;
+using static RMS.Models.Common.EnumForEntity;
 
 namespace RMS.Controllers.AmalyateKhaki.Common;
 
@@ -22,6 +23,7 @@ public class PayKaniCommon
         }
         DateTime Now = DateTime.Now;
         Guid BarAvordUserId = request.BarAvordUserId;
+        NoeFehrestBaha NoeFBId = request.NoeFBId;
 
         long Shomareh = 1;
         clsRizMetreUsers? rizMetreUser = _context.RizMetreUserses.Include(x => x.FB).OrderByDescending(x => x.Shomareh).FirstOrDefault(x => x.FB.BarAvordId == BarAvordUserId);
@@ -72,7 +74,8 @@ public class PayKaniCommon
             {
                 BarAvordId = BarAvordUserId,
                 InsertDateTime = Now,
-                Shomareh = strCurrentShomareh
+                Shomareh = strCurrentShomareh,
+                NoeFBId=NoeFBId
             };
             _context.FBs.Add(newFB);
             gFBId = newFB.ID;

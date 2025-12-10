@@ -6,7 +6,7 @@ namespace RMS.Controllers.BarAvordUser.Dto
     {
         public NoeBarAvord Type { get; set; }
         public string Title { get; set; }
-        public NoeFehrestBaha NoeFB { get; set; }
+        public string NoeFBs { get; set; }
         public int Year { get; set; }
         public string UserName { get; set; }
     }

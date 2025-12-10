@@ -9,7 +9,7 @@ public class BaravordUserToShowDto
     public string BUName { get; set; }
     public DateTime? BUInsertDate { get; set; }
     public int BUYear { get; set; }
-    public NoeFehrestBaha BUNoeFB { get; set; }
+    public string BUNoeFBs { get; set; }
     public string NoeFBName { get; set; }
     public string BUInsertDateSolar { get; set; }
 

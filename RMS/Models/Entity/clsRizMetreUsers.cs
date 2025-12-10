@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using static RMS.Models.Common.EnumForEntity;
 
 namespace RMS.Models.Entity;
 
@@ -29,6 +30,7 @@ public class clsRizMetreUsers : clsBaseEntity
     [ForeignKey("FB")]
     public Guid FBId { get; set; }
     public clsFB FB { get; set; }
+
     [ForeignKey("OperationsOfHaml")]
     public long? OperationsOfHamlId { get; set; }    
     public clsOperationsOfHaml OperationsOfHaml { get; set; }

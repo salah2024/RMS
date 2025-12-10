@@ -12,7 +12,7 @@ namespace RMS.Controllers.AbnieFani.Dto
         public decimal? Ertefa { get; set; }
         public decimal? Vazn { get; set; }
         public string? Des { get; set; }
-        public NoeFehrestBaha NoeFB { get; set; }
+        public NoeFehrestBaha NoeFBId { get; set; }
         public int Year { get; set; }
         public Guid BarAvordUserId { get; set; }
         public int LevelNumber { get; set; }

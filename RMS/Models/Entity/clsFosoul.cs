@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using static RMS.Models.Common.EnumForEntity;
 
 namespace RMS.Models.Entity
 {
@@ -12,12 +13,10 @@ namespace RMS.Models.Entity
         public string Code { get; set; }
         public string Name { get; set; }
         public string LatinName  { get; set; }
-        [ForeignKey("NoeFosoul")]
-        public long NoeFosoulId { get; set; }
-        public clsNoeFosoul NoeFosoul { get;set; }
         public int order { get; set; }
         public string Description { get; set; }
         public int Year { get; set; }
+        public NoeFehrestBaha NoeFB { get; set; }
 
         /// <summary>
         /// در صورتی که این ضریب پر باشد آیتم ها ازین ضریب استفاده میکنند

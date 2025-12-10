@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using static RMS.Models.Common.EnumForEntity;
 
 namespace RMS.Models.Entity;
 /// <summary>
@@ -13,4 +14,5 @@ public class clsBarAvordHamlNecessaryLimit:clsBaseEntity
     [ForeignKey("BarAvord")]
     public Guid BarAvordId { get; set; }
     public clsBaravordUser BarAvord { get; set; }
+    public NoeFehrestBaha NoeFBId { get;set; }
 }

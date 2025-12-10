@@ -1562,6 +1562,7 @@ function SaveChanelKaniInfo1(BarAvordUserId) {
 
 
         debugger;
+        NoeFBId = parseInt($('#HDFNoeFB').val());
 
         var vardata = new Object();
         vardata.BarAvordUserId = BarAvordUserId;
@@ -1570,6 +1571,7 @@ function SaveChanelKaniInfo1(BarAvordUserId) {
         vardata.ToKM = KME;
         vardata.HKB = HKB;
         vardata.lstItems = dataList;
+        vardata.NoeFBId = NoeFBId;
         $.ajax({
             type: "POST",
             url: "/PayKaniInfoForBarAvords/SavePayKaniInfoForBarAvord",

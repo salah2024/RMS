@@ -24,7 +24,9 @@ public class EnumForEntity
     {
         RahDari = 232,
         Abnie = 233,
-        RahoBand = 234
+        RahoBand = 234,
+        Barghi = 235,
+        Mekaniki = 236
     }
 
     public enum NoeBarAvord

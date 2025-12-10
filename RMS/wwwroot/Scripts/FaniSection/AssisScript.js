@@ -215,14 +215,14 @@ function ConfirmItemsCondition(object, Id, ConditionGroupId, LevelNumber) {
     //});
     OperationId = $('#HDFOperationId').val();
     BarAvordUserId = $('#HDFBarAvordUserID').val();
-    NoeFB = parseInt($('#HDFNoeFB').val());
+    NoeFBId = parseInt($('#HDFNoeFB').val());
     var vardata = new Object();
     vardata.strRBCode = RBCode;
     vardata.OperationId = OperationId;
     vardata.BarAvordUserId = BarAvordUserId;
     vardata.ConditionGroupId = ConditionGroupId;
     vardata.LevelNumber = LevelNumber;
-    vardata.NoeFB = NoeFB;
+    vardata.NoeFBId = NoeFBId;
 
     $.ajax({
         type: "POST",
@@ -516,17 +516,18 @@ function OperationClick(Operation, showAddedRecord) {
         $('#HDFOperationId').val(Operation);
         ItemsFBShomareh = $('#HDFItemsFBShomareh').val();
         FBId = $('#HDFFBID').val();
-        NoeFB = parseInt($('#HDFNoeFB').val());
+        NoeFBId = parseInt($('#HDFNoeFB').val());
         BarAvordUserId = $('#HDFBarAvordUserID').val();
         Year = $('#HDFYear').val();
         var vardata = new Object();
         vardata.ItemsFBShomareh = ItemsFBShomareh;
         vardata.Operation = Operation;
         vardata.BarAvordUserId = BarAvordUserId;
-        vardata.NoeFB = parseInt(NoeFB);
+        vardata.NoeFBId = NoeFBId;
         vardata.Year = Year;
         vardata.LevelNumber = 1;
         vardata.FBId = FBId;
+        vardata.NoeFBId = NoeFBId;
 
         if (!$('#a' + Operation).hasClass('OpenMenu')) {
             $.ajax({
@@ -823,6 +824,7 @@ function ShowAndTickAllEzafeBahaAndLakeGiri(object, ItemsFBShomareh, ConditionGr
 
         Year = $('#HDFYear').val();
         FBId = $('#HDFFBID').val();
+        NoeFBId = parseInt($('#HDFNoeFB').val());
 
         BarAvordUserId = $('#HDFBarAvordUserID').val();
         var vardata = new Object();
@@ -834,6 +836,7 @@ function ShowAndTickAllEzafeBahaAndLakeGiri(object, ItemsFBShomareh, ConditionGr
         vardata.FBId = FBId;
         vardata.ConditionGroupId = ConditionGroupId;
         vardata.RBCode = Id;
+        vardata.NoeFBId = NoeFBId;
 
         $.ajax({
             type: "POST",

@@ -21,6 +21,20 @@ public class ItemFBStarController(ApplicationDbContext context) : Controller
         int VahedId = request.VahedId;
         string Sharh = request.Sharh;
         bool? blnKharidTajhizat = request.KharidTajhizat;
+        int Year = request.Year;
+        NoeFehrestBaha NoeFBId = request.NoeFBId;
+
+        clsFehrestBaha? fehrestBaha = _context.FehrestBahas.FirstOrDefault(x => x.Sal == Year && x.NoeFB == NoeFBId && x.Shomareh.Trim() == FBShomareh.Trim());
+        if (fehrestBaha != null)
+        {
+            return new JsonResult("repeat");
+        }
+
+        clsItemFBStar? itemFBStarCurrent = _context.ItemFBStars.FirstOrDefault(x => x.Shomareh.Trim() == FBShomareh.Trim() && x.BaravordId == BaravordId && x.NoeFBId == NoeFBId);
+        if (itemFBStarCurrent != null)
+        {
+            return new JsonResult("repeat");
+        }
 
         clsItemFBStar itemFBStar = new clsItemFBStar
         {
@@ -30,6 +44,7 @@ public class ItemFBStarController(ApplicationDbContext context) : Controller
             VahedId = VahedId,
             Sharh = Sharh,
             blnKharidTajhizat = blnKharidTajhizat,
+            NoeFBId = NoeFBId
         };
 
         _context.ItemFBStars.Add(itemFBStar);
@@ -160,8 +175,9 @@ public class ItemFBStarController(ApplicationDbContext context) : Controller
     {
         Guid BarAvordUserId = request.BarAvordUserId;
         string ItemFBShomareh = request.ItemFBShomareh.Trim();
+        NoeFehrestBaha NoeFBId = request.NoeFBId;
 
-        clsItemFBStar? itemFBStar = _context.ItemFBStars.FirstOrDefault(x => x.BaravordId == BarAvordUserId && x.Shomareh == ItemFBShomareh);
+        clsItemFBStar? itemFBStar = _context.ItemFBStars.FirstOrDefault(x => x.BaravordId == BarAvordUserId && x.NoeFBId == NoeFBId && x.Shomareh == ItemFBShomareh);
         if (itemFBStar != null)
         {
 
@@ -186,8 +202,9 @@ public class ItemFBStarController(ApplicationDbContext context) : Controller
         string FBShomareh = request.Shomareh.Trim();
         int Year = request.Year;
         Guid BarAvordUserId = request.BarAvordUserId;
+        NoeFehrestBaha NoeFBId = request.NoeFBId;
 
-        clsItemFBStar? itemFBStar = _context.ItemFBStars.FirstOrDefault(x => x.BaravordId == BarAvordUserId && x.Shomareh == FBShomareh);
+        clsItemFBStar? itemFBStar = _context.ItemFBStars.FirstOrDefault(x => x.BaravordId == BarAvordUserId && x.NoeFBId == NoeFBId && x.Shomareh == FBShomareh);
 
         if (itemFBStar != null)
         {
@@ -357,6 +374,7 @@ public class ItemFBStarController(ApplicationDbContext context) : Controller
         {
             string FBShomareh = request.FBShomareh;
             Guid BarAvordUserId = request.BarAvordId;
+            NoeFehrestBaha NoeFBId = request.NoeFBId;
 
             clsRizMetreStar? entity = context.RizMetreStars.Find(request.Id);
             if (entity != null)
@@ -384,7 +402,7 @@ public class ItemFBStarController(ApplicationDbContext context) : Controller
             decimal JameFaslInBahayeVahed = 0;
 
             decimal JameFaslBaZaribInBahayeVahed = 0;
-            List<clsItemFBStar> lstItemFBStarCurrent = _context.ItemFBStars.Where(x => x.BaravordId == BarAvordUserId && x.Shomareh.Substring(0, 2) == FBShomareh.Substring(0, 2)).ToList();
+            List<clsItemFBStar> lstItemFBStarCurrent = _context.ItemFBStars.Where(x => x.BaravordId == BarAvordUserId && x.NoeFBId==NoeFBId && x.Shomareh.Substring(0, 2) == FBShomareh.Substring(0, 2)).ToList();
             if (lstItemFBStarCurrent.Count != 0)
             {
                 foreach (var itemFBStarCurrent in lstItemFBStarCurrent)

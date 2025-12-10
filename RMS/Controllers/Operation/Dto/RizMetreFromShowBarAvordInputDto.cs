@@ -1,4 +1,6 @@
-﻿namespace RMS.Controllers.Operation.Dto;
+﻿using static RMS.Models.Common.EnumForEntity;
+
+namespace RMS.Controllers.Operation.Dto;
 
 public class RizMetreFromShowBarAvordInputDto
 {
@@ -12,5 +14,5 @@ public class RizMetreFromShowBarAvordInputDto
     public string Shomareh { get; set; }
     public int Year { get; set; }   
     public Guid BarAvordUserId { get; set; }
-   
+    public NoeFehrestBaha NoeFBId { get; set; }
 }

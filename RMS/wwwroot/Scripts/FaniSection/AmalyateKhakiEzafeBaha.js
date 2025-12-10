@@ -422,12 +422,14 @@ function SaveKhEzafeBaha(EzafeBahaId, KMExistingId) {
 
     BarAvordUserId = $('#HDFBarAvordUserID').val();
     Year = $('#HDFYear').val();
+    NoeFBId = parseInt($('#HDFNoeFB').val());
 
     var vardata = new Object();
     vardata.NoeKhakBardariEzafeBahaId = EzafeBahaId;
     vardata.AmalyateKhakiInfoForBarAvordId = KMExistingId;
     vardata.BarAvordUserId = BarAvordUserId;
     vardata.Year = Year;
+    vardata.NoeFBId = NoeFBId;
 
     $.ajax({
         type: "POST",

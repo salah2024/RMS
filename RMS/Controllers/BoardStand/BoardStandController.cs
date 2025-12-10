@@ -43,6 +43,7 @@ public class BoardStandController(ApplicationDbContext context) : Controller
     public JsonResult SaveBoardStand([FromBody] BoardStandDto request)
     {
         Guid BaravordId = request.BaravordId;
+        NoeFehrestBaha NoeFBId = request.NoeFBId;
         int Tedad = request.Tedad;
         int BoardStandType = request.BoardStandType;
         int Year = request.Year;
@@ -123,6 +124,7 @@ public class BoardStandController(ApplicationDbContext context) : Controller
                         FBSave.BarAvordId = BaravordId;
                         FBSave.Shomareh = strAddedItem;
                         FBSave.BahayeVahedZarib = 0;
+                        FBSave.NoeFBId = NoeFBId;
                         _context.FBs.Add(FBSave);
                         _context.SaveChanges();
                         FBId = FBSave.ID;

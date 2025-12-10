@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RMS.Controllers.Operation.Dto;
 using RMS.Models.Entity;
+using static RMS.Models.Common.EnumForEntity;
 
 namespace RMS.Controllers.Operation.Common;
 
@@ -12,6 +13,7 @@ public static class HamlCommon
         {
             DateTime Now = DateTime.Now;
             Guid BarAvordUserId = request.BarAvordUserId;
+            NoeFehrestBaha NoeFBId = request.NoeFBId;
             long Year = request.Year;
             string ItemFBShomareh = request.ItemFBShomareh.Trim();
             //Guid BarAvordHamlId = request.BarAvordHamlId;
@@ -45,7 +47,7 @@ public static class HamlCommon
                     Zarib2 = itemsRelatedToItemHaml.Zarib2;
                     Zarib3 = itemsRelatedToItemHaml.Zarib3;
 
-                    clsBarAvordHaml? currentBarAvordHaml = _context.BarAvordHamls.FirstOrDefault(x => x.BarAvordId == BarAvordUserId && x.FBShomareh == FBShomareh && x.FBShomarehHaml == strItemHamlFB);
+                    clsBarAvordHaml? currentBarAvordHaml = _context.BarAvordHamls.FirstOrDefault(x => x.BarAvordId == BarAvordUserId && x.NoeFBId == NoeFBId && x.FBShomareh == FBShomareh && x.FBShomarehHaml == strItemHamlFB);
                     if (currentBarAvordHaml == null)
                     {
 
@@ -56,6 +58,7 @@ public static class HamlCommon
                             BarAvordId = BarAvordUserId,
                             FBShomareh = FBShomareh,
                             FBShomarehHaml = strItemHamlFB,
+                            NoeFBId = NoeFBId
                         };
                         _context.BarAvordHamls.Add(barAvordHaml);
                     }
@@ -79,7 +82,8 @@ public static class HamlCommon
                         {
                             BarAvordId = BarAvordUserId,
                             InsertDateTime = Now,
-                            Shomareh = strItemHamlFB
+                            Shomareh = strItemHamlFB,
+                            NoeFBId = NoeFBId
                         };
                         _context.FBs.Add(newFBHaml);
                         gFBIdHaml = newFBHaml.ID;
@@ -146,8 +150,9 @@ public static class HamlCommon
             Guid BarAvordId = request.BarAvordId;
             string FBShomareh = request.FBShomareh;
             long RMShomareh = request.RMShomareh;
+            NoeFehrestBaha NoeFBId = request.NoeFBId;
 
-            List<clsBarAvordHaml> lstBarAvordHaml = _context.BarAvordHamls.Where(x => x.BarAvordId == BarAvordId && x.FBShomareh == FBShomareh).ToList();
+            List<clsBarAvordHaml> lstBarAvordHaml = _context.BarAvordHamls.Where(x => x.BarAvordId == BarAvordId && x.NoeFBId == NoeFBId && x.FBShomareh == FBShomareh).ToList();
             if (lstBarAvordHaml.Count != 0)
             {
                 List<clsBarAvordHamlRizMetre> lstBarAvordHamlRizMetre = _context.BarAvordHamlRizMetres.Where(x => lstBarAvordHaml.Select(x => x.ID).Contains(x.BarAvordHamlId)).ToList();
