@@ -4,6 +4,8 @@ using RMS.Controllers.BaseInfo.Dto;
 using RMS.Controllers.ItemFBStar.Dto;
 using RMS.Controllers.Operation.Common;
 using RMS.Controllers.Operation.Dto;
+using RMS.Models.Common.Dto;
+using RMS.Models.Common;
 using RMS.Models.Entity;
 using static RMS.Models.Common.EnumForEntity;
 namespace RMS.Controllers.ItemFBStar;
@@ -57,6 +59,7 @@ public class ItemFBStarController(ApplicationDbContext context) : Controller
     [HttpPost]
     public JsonResult UpdateItemFBStar([FromBody] UpdateItemFBStarDto request)
     {
+        int Year = request.Year;
         clsItemFBStar? itemFBStar = _context.ItemFBStars.FirstOrDefault(x => x.ID == request.Id);
         if (itemFBStar != null)
         {
@@ -70,12 +73,29 @@ public class ItemFBStarController(ApplicationDbContext context) : Controller
                 .Where(x => x.ItemFBStar.Shomareh.Trim() == itemFBStar.Shomareh && x.ItemFBStar.BaravordId == itemFBStar.BaravordId)
                 .Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
 
-            clsBaravordZaribBalaSari? baravordZaribBalaSari = _context.BaravordZaribBalaSaris.FirstOrDefault(x => x.BaravordId == itemFBStar.BaravordId);
-            clsBaravordZaribManteghe? baravordZaribManteghe = _context.BaravordZaribManteghes.FirstOrDefault(x => x.BaravordId == itemFBStar.BaravordId);
+            //clsBaravordZaribBalaSari? baravordZaribBalaSari = _context.BaravordZaribBalaSaris.FirstOrDefault(x => x.BaravordId == itemFBStar.BaravordId);
+            //clsBaravordZaribManteghe? baravordZaribManteghe = _context.BaravordZaribManteghes.FirstOrDefault(x => x.BaravordId == itemFBStar.BaravordId);
 
-            decimal zaribManteghe = baravordZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe.Value : 1 : 1;
-            decimal zaribBalaSari = baravordZaribBalaSari != null ? baravordZaribBalaSari.ZaribBalasari != null ? baravordZaribBalaSari.ZaribBalasari.Value : 1 : 1;
+            //decimal zaribManteghe = baravordZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe.Value : 1 : 1;
+            //decimal zaribBalaSari = baravordZaribBalaSari != null ? baravordZaribBalaSari.ZaribBalasari != null ? baravordZaribBalaSari.ZaribBalasari.Value : 1 : 1;
 
+
+            ////محاسبه ضرایب
+            RequestGetZarayebDto requestGetZarayeb = new RequestGetZarayebDto
+            {
+                BarAvordId = itemFBStar.BaravordId,
+                NoeFBId = itemFBStar.NoeFBId,
+                Year = Year
+            };
+            ResultGetZarayebDto result = RizMetreCommon.GetZarayeb(requestGetZarayeb, _context);
+            ///
+            ///
+
+            decimal zaribBalaSari = result.zaribBalaSari != null ? result.zaribBalaSari.Value : 1;
+            decimal zaribManteghe = result.zaribManteghe != null ? result.zaribManteghe.Value : 1;
+
+            /////////
+            //////////
             decimal BahayeVahedCurrent = 0;
             decimal JameFaslInBahayeVahed = 0;
 
@@ -113,6 +133,7 @@ public class ItemFBStarController(ApplicationDbContext context) : Controller
     [HttpPost]
     public JsonResult DeleteItemFBStar([FromBody] DeleteItemFBStarDto request)
     {
+        int Year = request.Year;
         clsItemFBStar? itemFBStar = _context.ItemFBStars.FirstOrDefault(x => x.ID == request.Id);
         if (itemFBStar != null)
         {
@@ -128,11 +149,27 @@ public class ItemFBStarController(ApplicationDbContext context) : Controller
             //.Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
 
 
-            clsBaravordZaribBalaSari? baravordZaribBalaSari = _context.BaravordZaribBalaSaris.FirstOrDefault(x => x.BaravordId == itemFBStar.BaravordId);
-            clsBaravordZaribManteghe? baravordZaribManteghe = _context.BaravordZaribManteghes.FirstOrDefault(x => x.BaravordId == itemFBStar.BaravordId);
+            //clsBaravordZaribBalaSari? baravordZaribBalaSari = _context.BaravordZaribBalaSaris.FirstOrDefault(x => x.BaravordId == itemFBStar.BaravordId);
+            //clsBaravordZaribManteghe? baravordZaribManteghe = _context.BaravordZaribManteghes.FirstOrDefault(x => x.BaravordId == itemFBStar.BaravordId);
 
-            decimal zaribManteghe = baravordZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe.Value : 1 : 1;
-            decimal zaribBalaSari = baravordZaribBalaSari != null ? baravordZaribBalaSari.ZaribBalasari != null ? baravordZaribBalaSari.ZaribBalasari.Value : 1 : 1;
+            //decimal zaribManteghe = baravordZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe.Value : 1 : 1;
+            //decimal zaribBalaSari = baravordZaribBalaSari != null ? baravordZaribBalaSari.ZaribBalasari != null ? baravordZaribBalaSari.ZaribBalasari.Value : 1 : 1;
+
+
+
+            ////محاسبه ضرایب
+            RequestGetZarayebDto requestGetZarayeb = new RequestGetZarayebDto
+            {
+                BarAvordId = itemFBStar.BaravordId,
+                NoeFBId = itemFBStar.NoeFBId,
+                Year = Year
+            };
+            ResultGetZarayebDto result = RizMetreCommon.GetZarayeb(requestGetZarayeb, _context);
+            decimal zaribBalaSari = result.zaribBalaSari != null ? result.zaribBalaSari.Value : 1;
+            decimal zaribManteghe = result.zaribManteghe != null ? result.zaribManteghe.Value : 1;
+
+            ///
+            ///
 
             decimal BahayeVahedCurrent = 0;
             decimal JameFaslInBahayeVahed = 0;
@@ -247,11 +284,25 @@ public class ItemFBStarController(ApplicationDbContext context) : Controller
 
 
 
-            clsBaravordZaribBalaSari? baravordZaribBalaSari = _context.BaravordZaribBalaSaris.FirstOrDefault(x => x.BaravordId == request.BarAvordUserId);
-            clsBaravordZaribManteghe? baravordZaribManteghe = _context.BaravordZaribManteghes.FirstOrDefault(x => x.BaravordId == request.BarAvordUserId);
+            //clsBaravordZaribBalaSari? baravordZaribBalaSari = _context.BaravordZaribBalaSaris.FirstOrDefault(x => x.BaravordId == request.BarAvordUserId);
+            //clsBaravordZaribManteghe? baravordZaribManteghe = _context.BaravordZaribManteghes.FirstOrDefault(x => x.BaravordId == request.BarAvordUserId);
 
-            decimal zaribManteghe = baravordZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe.Value : 1 : 1;
-            decimal zaribBalaSari = baravordZaribBalaSari != null ? baravordZaribBalaSari.ZaribBalasari != null ? baravordZaribBalaSari.ZaribBalasari.Value : 1 : 1;
+            //decimal zaribManteghe = baravordZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe.Value : 1 : 1;
+            //decimal zaribBalaSari = baravordZaribBalaSari != null ? baravordZaribBalaSari.ZaribBalasari != null ? baravordZaribBalaSari.ZaribBalasari.Value : 1 : 1;
+
+            ////محاسبه ضرایب
+            RequestGetZarayebDto requestGetZarayeb = new RequestGetZarayebDto
+            {
+                BarAvordId = BarAvordUserId,
+                NoeFBId = NoeFBId,
+                Year = Year
+            };
+            ResultGetZarayebDto result = RizMetreCommon.GetZarayeb(requestGetZarayeb, _context);
+            decimal zaribBalaSari = result.zaribBalaSari != null ? result.zaribBalaSari.Value : 1;
+            decimal zaribManteghe = result.zaribManteghe != null ? result.zaribManteghe.Value : 1;
+
+            ///
+            ///
 
             decimal BahayeVahedCurrent = 0;
             decimal JameFaslBaZaribInBahayeVahed = 0;
@@ -289,6 +340,8 @@ public class ItemFBStarController(ApplicationDbContext context) : Controller
     [HttpPost]
     public JsonResult UpdateRizMetreItemStarFrmShowBarAvord([FromBody] UpdateRizMetreItemStarFrmShowBarAvordDto request)
     {
+        int Year = request.Year;
+
         Guid Id = request.Id;
         string Sharh = request.Sharh;
         decimal? Tedad = request.Tedad;
@@ -329,11 +382,25 @@ public class ItemFBStarController(ApplicationDbContext context) : Controller
                 .Where(x => x.ItemFBStar.Shomareh.Trim() == itemFBStar.Shomareh && x.ItemFBStar.BaravordId == itemFBStar.BaravordId)
                 .Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
 
-            clsBaravordZaribBalaSari? baravordZaribBalaSari = _context.BaravordZaribBalaSaris.FirstOrDefault(x => x.BaravordId == itemFBStar.BaravordId);
-            clsBaravordZaribManteghe? baravordZaribManteghe = _context.BaravordZaribManteghes.FirstOrDefault(x => x.BaravordId == itemFBStar.BaravordId);
+            //clsBaravordZaribBalaSari? baravordZaribBalaSari = _context.BaravordZaribBalaSaris.FirstOrDefault(x => x.BaravordId == itemFBStar.BaravordId);
+            //clsBaravordZaribManteghe? baravordZaribManteghe = _context.BaravordZaribManteghes.FirstOrDefault(x => x.BaravordId == itemFBStar.BaravordId);
 
-            decimal zaribManteghe = baravordZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe.Value : 1 : 1;
-            decimal zaribBalaSari = baravordZaribBalaSari != null ? baravordZaribBalaSari.ZaribBalasari != null ? baravordZaribBalaSari.ZaribBalasari.Value : 1 : 1;
+            //decimal zaribManteghe = baravordZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe.Value : 1 : 1;
+            //decimal zaribBalaSari = baravordZaribBalaSari != null ? baravordZaribBalaSari.ZaribBalasari != null ? baravordZaribBalaSari.ZaribBalasari.Value : 1 : 1;
+
+            ////محاسبه ضرایب
+            RequestGetZarayebDto requestGetZarayeb = new RequestGetZarayebDto
+            {
+                BarAvordId = itemFBStar.BaravordId,
+                NoeFBId = itemFBStar.NoeFBId,
+                Year = Year
+            };
+            ResultGetZarayebDto result = RizMetreCommon.GetZarayeb(requestGetZarayeb, _context);
+            decimal zaribBalaSari = result.zaribBalaSari != null ? result.zaribBalaSari.Value : 1;
+            decimal zaribManteghe = result.zaribManteghe != null ? result.zaribManteghe.Value : 1;
+
+            ///
+            ///
 
             decimal BahayeVahedCurrent = 0;
             decimal JameFaslInBahayeVahed = 0;
@@ -373,6 +440,7 @@ public class ItemFBStarController(ApplicationDbContext context) : Controller
         try
         {
             string FBShomareh = request.FBShomareh;
+            int Year = request.Year;
             Guid BarAvordUserId = request.BarAvordId;
             NoeFehrestBaha NoeFBId = request.NoeFBId;
 
@@ -392,17 +460,31 @@ public class ItemFBStarController(ApplicationDbContext context) : Controller
             //    .Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
 
 
-            clsBaravordZaribBalaSari? baravordZaribBalaSari = _context.BaravordZaribBalaSaris.FirstOrDefault(x => x.BaravordId == BarAvordUserId);
-            clsBaravordZaribManteghe? baravordZaribManteghe = _context.BaravordZaribManteghes.FirstOrDefault(x => x.BaravordId == BarAvordUserId);
+            //clsBaravordZaribBalaSari? baravordZaribBalaSari = _context.BaravordZaribBalaSaris.FirstOrDefault(x => x.BaravordId == BarAvordUserId);
+            //clsBaravordZaribManteghe? baravordZaribManteghe = _context.BaravordZaribManteghes.FirstOrDefault(x => x.BaravordId == BarAvordUserId);
 
-            decimal zaribManteghe = baravordZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe.Value : 1 : 1;
-            decimal zaribBalaSari = baravordZaribBalaSari != null ? baravordZaribBalaSari.ZaribBalasari != null ? baravordZaribBalaSari.ZaribBalasari.Value : 1 : 1;
+            //decimal zaribManteghe = baravordZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe.Value : 1 : 1;
+            //decimal zaribBalaSari = baravordZaribBalaSari != null ? baravordZaribBalaSari.ZaribBalasari != null ? baravordZaribBalaSari.ZaribBalasari.Value : 1 : 1;
+
+            ////محاسبه ضرایب
+            RequestGetZarayebDto requestGetZarayeb = new RequestGetZarayebDto
+            {
+                BarAvordId = BarAvordUserId,
+                NoeFBId = NoeFBId,
+                Year = Year
+            };
+            ResultGetZarayebDto result = RizMetreCommon.GetZarayeb(requestGetZarayeb, _context);
+            decimal zaribBalaSari = result.zaribBalaSari != null ? result.zaribBalaSari.Value : 1;
+            decimal zaribManteghe = result.zaribManteghe != null ? result.zaribManteghe.Value : 1;
+
+            ///
+            ///
 
             decimal BahayeVahedCurrent = 0;
             decimal JameFaslInBahayeVahed = 0;
 
             decimal JameFaslBaZaribInBahayeVahed = 0;
-            List<clsItemFBStar> lstItemFBStarCurrent = _context.ItemFBStars.Where(x => x.BaravordId == BarAvordUserId && x.NoeFBId==NoeFBId && x.Shomareh.Substring(0, 2) == FBShomareh.Substring(0, 2)).ToList();
+            List<clsItemFBStar> lstItemFBStarCurrent = _context.ItemFBStars.Where(x => x.BaravordId == BarAvordUserId && x.NoeFBId == NoeFBId && x.Shomareh.Substring(0, 2) == FBShomareh.Substring(0, 2)).ToList();
             if (lstItemFBStarCurrent.Count != 0)
             {
                 foreach (var itemFBStarCurrent in lstItemFBStarCurrent)

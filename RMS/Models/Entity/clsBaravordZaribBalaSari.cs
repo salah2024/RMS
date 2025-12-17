@@ -11,8 +11,6 @@ public class clsBaravordZaribBalaSari
     [ForeignKey("BaravordUser")]
     public Guid BaravordId { get; set; }
     public clsBaravordUser BaravordUser { get; set; }
-    [Column(TypeName = "decimal(18,4)")]
-    public decimal? ZaribBalasari { get; set; }
     public int Tarh { get; set; }   
     public int Monaghese { get; set; }
 }

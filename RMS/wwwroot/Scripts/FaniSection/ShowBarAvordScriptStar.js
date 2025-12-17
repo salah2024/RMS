@@ -87,7 +87,9 @@ function UpdateRizMetreFromRowStar(el, rizMetreId, Shomareh, rizId1, Code) {
     }
     else {
 
+        Year = parseInt($('#HDFYear').val());
         var vardata = new Object();
+        vardata.Year = Year;
         vardata.Id = rizId;
         vardata.Sharh = values[0];
         vardata.Tedad = values[1] != "" ? values[1] : null;
@@ -104,7 +106,7 @@ function UpdateRizMetreFromRowStar(el, rizMetreId, Shomareh, rizId1, Code) {
             data: JSON.stringify(vardata),
             contentType: "application/json; charset=utf-8",
             success: function (data) {
-                    debugger;
+                debugger;
                 var info = data.split('_');
                 if (info[0] == "OK") {
                     row.removeClass('editing');
@@ -141,15 +143,17 @@ function UpdateRizMetreFromRowStar(el, rizMetreId, Shomareh, rizId1, Code) {
 
 
                     JameFasl = parseFloat(convertPersianToEnglish(tdJameFasl.html().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
-                    dJameFaslAll = parseFloat(info[2]) + JameFasl;
+                    dJameFaslAll = parseFloat(info[2]) + isNaN(JameFasl) ? 0 : JameFasl;
                     tdJameFaslAll.html(formatNumber(dJameFaslAll.toFixed(0)));
 
                     JameFaslBaZarib = parseFloat(convertPersianToEnglish(tdJameFaslBaZarib.html().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
-                    dJameFaslAllBaZarib = parseFloat(info[3]) + JameFaslBaZarib;
+                    dJameFaslAllBaZarib = parseFloat(info[3]) + isNaN(JameFaslBaZarib) ? 0 : JameFaslBaZarib;
                     tdJameFaslAllBaZarib.html(formatNumber(dJameFaslAllBaZarib.toFixed(0)));
                     ///////////////////
                     ///////////////////
                     ///////////////////
+                    GetJamBarAvordAll();
+                    GetJamFosoulAll();
 
                     //GetRizMetreUsers();
                     toastr.success('ریزه متره انتخابی بدرستی ویرایش گردید', 'موفقیت');
@@ -183,7 +187,7 @@ function SaveRMUStarClick(object, Shomareh, rizId, Code) {
 
     const MeghdarJoz = row.find('#spanMeghdarJozStar');
 
-    var meghdarFasl = $('#meghdarFaslStar_'+Shomareh);
+    var meghdarFasl = $('#meghdarFaslStar_' + Shomareh);
     var bahayeKolFasl = $('#bahayeKolFaslStar_' + Shomareh);
     var bahayeVahedFasl = $('#bahayeVahedFaslStar_' + Shomareh);
 
@@ -315,11 +319,11 @@ function SaveRMUStarClick(object, Shomareh, rizId, Code) {
 
 
                     JameFasl = parseFloat(convertPersianToEnglish(tdJameFasl.html().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
-                    dJameFaslAll = parseFloat(info[3]) + JameFasl;
+                    dJameFaslAll = parseFloat(info[3]) + isNaN(JameFasl) ? 0 : JameFasl;
                     tdJameFaslAll.html(formatNumber(dJameFaslAll.toFixed(0)));
 
                     JameFaslBaZarib = parseFloat(convertPersianToEnglish(tdJameFaslBaZarib.html().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
-                    dJameFaslAllBaZarib = parseFloat(info[4]) + JameFaslBaZarib;
+                    dJameFaslAllBaZarib = parseFloat(info[4]) + isNaN(JameFaslBaZarib) ? 0 : JameFaslBaZarib;
                     tdJameFaslAllBaZarib.html(formatNumber(dJameFaslAllBaZarib.toFixed(0)));
 
                     //inputBahayeVahed = $('#txtBahayeVahed-' + rizId);
@@ -331,6 +335,10 @@ function SaveRMUStarClick(object, Shomareh, rizId, Code) {
                     //}
 
                     GetCurrentRizMetreItemFBStar(Shomareh, rizId, Code);
+
+
+                    GetJamBarAvordAll();
+                    GetJamFosoulAll();
 
                     toastr.success('ریزه متره جدید بدرستی درج گردید', 'موفقیت');
                 }
@@ -482,12 +490,14 @@ function DeleteRizMetreStar(object, RizMetreId, Shomareh, rizId, Code) {
     debugger;
     BarAvordUserId = $('#HDFBarAvordUserID').val();
     NoeFBId = parseInt($('#HDFNoeFB').val());
+    Year = parseInt($('#HDFYear').val());
 
     var vardata = new Object();
     vardata.Id = RizMetreId;
     vardata.BarAvordId = BarAvordUserId;
     vardata.FBShomareh = Shomareh;
     vardata.NoeFBId = NoeFBId;
+    vardata.Year = Year;
     $.ajax({
         url: "/ItemFBStar/DeleteRizMetreStar",
         method: "POST",
@@ -509,7 +519,7 @@ function DeleteRizMetreStar(object, RizMetreId, Shomareh, rizId, Code) {
 
                 const MeghdarJoz = row.find('#spanMeghdarJozStar');
 
-                var meghdarFasl = $('#meghdarFaslStar_'+Shomareh);
+                var meghdarFasl = $('#meghdarFaslStar_' + Shomareh);
                 var bahayeKolFasl = $('#bahayeKolFaslStar_' + Shomareh);
                 var bahayeVahedFasl = $('#bahayeVahedFaslStar_' + Shomareh);
 
@@ -525,14 +535,17 @@ function DeleteRizMetreStar(object, RizMetreId, Shomareh, rizId, Code) {
                 tdJameFaslStarBaZarib.html(formatNumber(parseFloat(info[3]).toFixed(0)));
 
                 JameFasl = parseFloat(convertPersianToEnglish(tdJameFasl.html().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
-                dJameFaslAll = parseFloat(info[2]) + JameFasl;
+                dJameFaslAll = parseFloat(info[2]) + isNaN(JameFasl) ? 0 : JameFasl;
                 tdJameFaslAll.html(formatNumber(dJameFaslAll.toFixed(0)));
 
                 JameFaslBaZarib = parseFloat(convertPersianToEnglish(tdJameFaslBaZarib.html().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
-                dJameFaslAllBaZarib = parseFloat(info[3]) + JameFaslBaZarib;
+                dJameFaslAllBaZarib = parseFloat(info[3]) + isNaN(JameFaslBaZarib) ? 0 : JameFaslBaZarib;
                 tdJameFaslAllBaZarib.html(formatNumber(dJameFaslAllBaZarib.toFixed(0)));
 
                 GetCurrentRizMetreItemFBStar(Shomareh, rizId, Code);
+
+                GetJamBarAvordAll();
+                GetJamFosoulAll();
                 toastr.success('ریز متره بدرستی حذف گردید', 'موفقیت');
             }
         },

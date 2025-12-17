@@ -18,6 +18,105 @@ function GetFosoul() {
             Fosoul = response.fosoul;
             lstVaheds = response.lstVaheds;
             renderTableFosoul(Fosoul);
+            GetJamBarAvordAll();
+
+        },
+        error: function (response) {
+            toastr.error('خطا', 'خطا');
+        }
+    });
+}
+
+function GetJamBarAvordAll() {
+    BarAvordId = $('#HDFBarAvordUserID').val();
+    Year = parseInt($('#HDFYear').val());
+
+    var vardata = new Object();
+    vardata.Year = Year;
+    vardata.BarAvordId = BarAvordId;
+    $.ajax({
+        type: "post",
+        url: "/BarAvordUser/CalculateBarAvordAll",
+        data: JSON.stringify(vardata),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (response) {
+            jameFasl = response.jameFasl;
+            jameFaslStar = response.jameFaslStar;
+            jameFaslKol = response.jameFaslKol;
+            jameFaslInZarib = response.jameFaslInZarib;
+            jameFaslStarInZarib = response.jameFaslStarInZarib;
+            jameFaslKolInZarib = response.jameFaslKolInZarib;
+            $('#tdJamBarAvordBase').html(formatNumber(jameFasl.toFixed(0)));
+            $('#tdJamBarAvordStar').html(formatNumber(jameFaslStar.toFixed(0)));
+            $('#tdJamBarAvordKol').html(formatNumber(jameFaslKol.toFixed(0)));
+            $('#tdJamBarAvordBaseWithZarib').html(formatNumber(jameFaslInZarib.toFixed(0)));
+            $('#tdJamBarAvordStarWithZarib').html(formatNumber(jameFaslStarInZarib.toFixed(0)));
+            $('#tdJamBarAvordKolWithZarib').html(formatNumber(jameFaslKolInZarib.toFixed(0)));
+        },
+        error: function (response) {
+            toastr.error('خطا', 'خطا');
+        }
+    });
+}
+
+function GetJamFosoulAll() {
+    debugger;
+    BarAvordId = $('#HDFBarAvordUserID').val();
+    NoeFBId = parseInt($('#HDFNoeFB').val());
+    Year = parseInt($('#HDFYear').val());
+
+    var vardata = new Object();
+    vardata.Year = Year;
+    vardata.NoeFBId = NoeFBId;
+    vardata.BarAvordId = BarAvordId;
+    $.ajax({
+        type: "post",
+        url: "/BarAvordUser/CalculateFosoulAll",
+        data: JSON.stringify(vardata),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (response) {
+            debugger;
+            jameFasl = response.jameFasl;
+            jameFaslWithOutTajhiz = response.jameFaslWithOutTajhiz;
+            jameFaslStar = response.jameFaslStar;
+            jameFaslKol = response.jameFaslKol;
+            jameFaslKolWithOutTajhiz = response.jameFaslKolWithOutTajhiz;
+            jameFaslInZarib = response.jameFaslInZarib;
+            jameFaslWithOutTajhizInZarib = response.jameFaslWithOutTajhizInZarib;
+            jameFaslStarInZarib = response.jameFaslStarInZarib;
+            jameFaslKolInZarib = response.jameFaslKolInZarib;
+            jameFaslKolWithOutTajhizInZarib = response.jameFaslKolWithOutTajhizInZarib;
+            check = response.check;
+
+            $('#tdjameFasl-101').html(formatNumber(jameFaslWithOutTajhiz.toFixed(0)));
+            $('#tdjameFasl-102').html(formatNumber(jameFasl.toFixed(0)));
+            $('#tdjameFaslStar-101').html(formatNumber(jameFaslStar.toFixed(0)));
+            $('#tdjameFaslStar-102').html(formatNumber(jameFaslStar.toFixed(0)));
+            $('#tdjameFaslAll-101').html(formatNumber(jameFaslKolWithOutTajhiz.toFixed(0)));
+            $('#tdjameFaslAll-102').html(formatNumber(jameFaslKol.toFixed(0)));
+            $('#tdjameFaslBaZarib-101').html(formatNumber(jameFaslWithOutTajhizInZarib.toFixed(0)));
+            $('#tdjameFaslBaZarib-102').html(formatNumber(jameFaslInZarib.toFixed(0)));
+            $('#tdjameFaslStarBaZarib-101').html(formatNumber(jameFaslStarInZarib.toFixed(0)));
+            $('#tdjameFaslStarBaZarib-102').html(formatNumber(jameFaslStarInZarib.toFixed(0)));
+            $('#tdjameFaslAllBaZarib-101').html(formatNumber(jameFaslKolWithOutTajhizInZarib.toFixed(0)));
+            $('#tdjameFaslAllBaZarib-102').html(formatNumber(jameFaslKolInZarib.toFixed(0)));
+
+            if (check.check) {
+                let des = check.des;
+                str = `
+                <div>
+                <p>توجه</p>
+                <p>
+                جمع مبلغ برآورد ردیف‌های ستاره‌دار، نسبت به جمع مبلغ برآورد ردیف‌های فهرست‌بها (پایه و غیرپایه) بدون اعمال هزینه تجهیز و برچیدن کارگاه، در این رشته، بیشتر از  حد اقلام ستاره دار (درصد) طبق جدول  الف  و بند 2-6 دستورالعمل کاربرد شده است لذا، لازم است دستگاه اجرایی قبل از انجام مناقصه، شرح و بهای واحد تمامی ردیف‌های ستاره‌دار در آن رشته را، پس از تصویب، همراه با تجزیه قیمت مربوط، به دبیرخانه شورای عالی فنی در سازمان برنامه و بودجه کشور ارسال دارد تا پس از رسیدگی و تصویب توسط شورای عالی فنی، (بر اساس دستورالعمل نحوه تهیه و تصویب ردیف‌های ستاره‌دار) ملاک عمل قرار گیرد.
+                </p>
+                <p>${des}</p>
+                </div>
+                `;
+
+                toastr.info('هشدار', str);
+            }
         },
         error: function (response) {
             toastr.error('خطا', 'خطا');
@@ -31,10 +130,16 @@ function renderTableFosoul(data) {
     tbody.empty();
     data.forEach((item, index) => {
         const rowClass = index % 2 === 0 ? '' : 'table-alt';
+        let style = '';
+        let tagA = `<a href="#" onclick="event.stopPropagation();DescriptionShow(${item.id})">${item.faslName}</a>`;
+        if (item.code == '101' || item.code == '102') {
+            style = 'background-color:#d4d0ff !important;';
+            tagA = `<span style="font-size:15px;padding-right: 30px;">${item.faslName}</span>`;
+        }
         const mainRow = $(`
-		<tr class="${rowClass}">
+		<tr  class="${rowClass}" style="${style}">
 		<td style="display:none">${item.code}</td>
-		<td style=\"text-align:right\"><a href="#" onclick="event.stopPropagation();DescriptionShow(${item.id})">${item.faslName}</a></td>
+		<td style=\"text-align:right\">${tagA}</td>
 		<td style=\"text-align:center\">
             <span id="tdjameFasl-${item.code}">
 			    ${formatNumber(item.jameFasl.toFixed(0))}
@@ -68,17 +173,20 @@ function renderTableFosoul(data) {
         </tr>
 		<tr id="${item.code}" style="display:none">
 			<td colspan="7">
-				<div id="barAvordContainer-${item.code}"></div>
+				<div id="barAvordContainer-${item.code}" style="overflow:auto;max-height:400px;">
+                    
+                </div>
 			</td>
 		</tr>
 		`);
         convertNumbersInPage();
 
         mainRow.on('click', function (e) {
+            debugger;
             if ($(e.target).closest('[id^="barAvordContainer-"]').length > 0) {
                 return;
             }
-            if (item.code == '_') {
+            if (item.code == '_' || item.code == '101') {
                 return 0;
             }
             e.stopPropagation();
@@ -95,6 +203,7 @@ function renderTableFosoul(data) {
 
                 // باز کردن ردیف انتخاب‌شده
                 detailRow.show();
+
                 GetBarAvord(item.code, item.faslName);
             }
         });
@@ -105,15 +214,19 @@ function renderTableFosoul(data) {
             $('#fosoulTable tbody tr').each(function () {
                 debugger;
                 const $row = $(this);
-                const span = $row.find('[id^="tdjameFasl-"]');
+                const tdjameFasl = $row.find('[id^="tdjameFasl-"]');
+                const tdjameFaslStar = $row.find('[id^="tdjameFaslStar-"]');
 
-                if (span.length > 0) {
-                    let meghdarText = span.text().replace(/\s+/g, '').replace(/[٬,]/g, '');
-                    let EnNum = convertPersianToEnglish(meghdarText);
-                    const meghdar = EnNum != "" ? parseFloat(EnNum) : 0;
+                if (tdjameFasl.length > 0 || tdjameFaslStar.length > 0) {
+                    let meghdarTextjameFasl = tdjameFasl.text().replace(/\s+/g, '').replace(/[٬,]/g, '');
+                    let meghdarTextjameFaslStar = tdjameFaslStar.text().replace(/\s+/g, '').replace(/[٬,]/g, '');
+                    let EnNumjameFasl = convertPersianToEnglish(meghdarTextjameFasl);
+                    let EnNumjameFaslStar = convertPersianToEnglish(meghdarTextjameFaslStar);
+                    const meghdarjameFasl = EnNumjameFasl != "" ? parseFloat(EnNumjameFasl) : 0;
+                    const meghdarjameFaslStar = EnNumjameFaslStar != "" ? parseFloat(EnNumjameFaslStar) : 0;
 
                     if (showOnlyNonZero) {
-                        if (meghdar === 0) {
+                        if (meghdarjameFasl === 0 && meghdarjameFaslStar === 0) {
                             $row.hide(); // مخفی‌سازی ردیف اصلی
                             //$row.next('tr').hide(); // مخفی‌سازی ردیف barAvordContainer مربوطه
                         } else {
@@ -129,6 +242,10 @@ function renderTableFosoul(data) {
         });
         tbody.append(mainRow);
     });
+
+
+    GetJamFosoulAll();
+
 }
 
 
@@ -225,7 +342,7 @@ function BahayeVahedNewMeghdarChange($input, FBId, itemFbShomareh) {
     const $row = $($input).closest('tr');
 
     // گرفتن مقدار موجود در ستون مقدار (meghdarFasl)
-    var meghdarText = $row.find('#meghdarFasl_'+itemFbShomareh).text().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.');
+    var meghdarText = $row.find('#meghdarFasl_' + itemFbShomareh).text().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.');
     var MeghdarEn = convertPersianToEnglish(meghdarText);
     var meghdar = parseFloat(MeghdarEn);
 
@@ -245,12 +362,13 @@ function BahayeVahedNewMeghdarChange($input, FBId, itemFbShomareh) {
     strStar1 = `<div class="row"><span style="font-size:25px">*</span><input style="font-size:20px" class="ReturnItemsStar" type="submit" value="🔄" onclick="StarReturn(this,'${FBId}','${itemFbShomareh}')"/></div>`
 
     $('#span' + itemFbShomareh).html(strStar1);
-    BahayeVahedNewSave($input,floatValEn, FBId, itemFbShomareh);
+    BahayeVahedNewSave($input, floatValEn, FBId, itemFbShomareh);
 }
 
-function BahayeVahedNewSave(element,BahayeVahedNew, FBId, itemFbShomareh) {
+function BahayeVahedNewSave(element, BahayeVahedNew, FBId, itemFbShomareh) {
     BarAvordUserId = $('#HDFBarAvordUserID').val();
     NoeFBId = parseInt($('#HDFNoeFB').val());
+    Year = parseInt($('#HDFYear').val());
 
     var vardata = new Object();
     vardata.BarAvordUserId = BarAvordUserId;
@@ -258,6 +376,7 @@ function BahayeVahedNewSave(element,BahayeVahedNew, FBId, itemFbShomareh) {
     vardata.BahayeVahedNew = BahayeVahedNew.toString();
     vardata.itemFbShomareh = itemFbShomareh;
     vardata.NoeFBId = NoeFBId;
+    vardata.Year = Year;
     $.ajax({
         type: "POST",
         url: '/BaravordUser/ConfirmBahayeVahedNew',
@@ -265,8 +384,9 @@ function BahayeVahedNewSave(element,BahayeVahedNew, FBId, itemFbShomareh) {
         data: JSON.stringify(vardata),
         contentType: "application/json; charset=utf-8",
         success: function (data) {
-            var info = data;
-            if (info == "OK") {
+            var info = data.split('_');
+            if (info[0] == "OK") {
+
 
                 debugger;
 
@@ -284,7 +404,19 @@ function BahayeVahedNewSave(element,BahayeVahedNew, FBId, itemFbShomareh) {
                 //    bahayeKol = 0;
                 //}
                 bahayeKolFasl = mainRow.querySelector('#bahayeKolFasl_' + itemFbShomareh);
-                bahayeKolFasl.innerHTML = toPersianDigits(formatNumber(meghdarFasl * BahayeVahedNew1));
+                bahayeKolFasl.innerHTML = toPersianDigits(formatNumber(isNaN(meghdarFasl) ? 0 : meghdarFasl * BahayeVahedNew1));
+
+
+                ///////////////
+                ///////////////
+
+                refreshBaseItemNewBV(element, info[2], info[3], info[1], itemFbShomareh, BahayeVahedNew);
+
+                GetJamBarAvordAll();
+                GetJamFosoulAll();
+                //////////////////
+                //////////////////
+
                 // پیدا کردن input مربوط به مقدار واحد درون همین ردیف
                 //const targetInput = mainRow.querySelector('input[type="text"].form-control');
                 //if (targetInput) {
@@ -332,6 +464,7 @@ function StarReturn(element, FBId, itemFbShomareh) {
                 meghdarFasl = parseFloat(convertPersianToEnglish(txtmeghdarFasl.innerHTML.replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
                 bahayeKol = parseFloat(info[1]);
 
+                debugger;
 
                 if (isNaN(bahayeKol)) {
                     bahayeKol = 0;
@@ -353,6 +486,12 @@ function StarReturn(element, FBId, itemFbShomareh) {
                 if (row) {
                     row.remove();
                 }
+
+                Code = itemFbShomareh.substring(0, 2);
+
+                refreshBaseItemNewBV(element, info[3], info[4], Code, itemFbShomareh, info[1]);
+                GetJamBarAvordAll();
+                GetJamFosoulAll();
 
                 toastr.success('بهای واحد بازنشانی گردید', 'موفقیت');
             }
@@ -851,6 +990,34 @@ function renderTable(data, Stars, Code) {
 
         // باز یا بسته کردن این یکی
         rizRow.slideToggle(200);
+
+        setTimeout(() => {
+            const container = rizRow.closest('[id^="barAvordContainer-"]');
+
+            const containerTop = container.scrollTop();
+            const containerHeight = container.height();
+            const containerBottom = containerTop + containerHeight;
+
+            const rowTop = rizRow.position().top + containerTop;
+            const rowBottom = rowTop + rizRow.outerHeight(true);
+
+            // اگر پایین ردیف دیده نمی‌شود → اسکرول به اندازه لازم
+            if (rowBottom > containerBottom) {
+                container.stop().animate({
+                    scrollTop: containerTop + (rowBottom - containerBottom) + 20
+                }, 300);
+            }
+
+            // اگر بالای ردیف رفته بالا (حالت نادر)
+            else if (rowTop < containerTop) {
+                container.stop().animate({
+                    scrollTop: rowTop - 20
+                }, 300);
+            }
+
+        }, 0);
+
+
     });
     ///
     $('tr[id^="riz-"]').off('click').on('click', function (e) {
@@ -913,9 +1080,13 @@ function renderTable(data, Stars, Code) {
         debugger;
         thisId = this.id.split('_');
         Shomareh = thisId[2];
+        Year = parseInt($('#HDFYear').val());
+
         var vardata = new Object();
         vardata.Id = thisId[1];
         vardata.KharidTajhizat = this.checked;
+        vardata.Year = Year;
+
         $.ajax({
             type: "POST",
             url: '/ItemFBStar/UpdateItemFBStar',
@@ -956,15 +1127,18 @@ function renderTable(data, Stars, Code) {
 
 
                     JameFasl = parseFloat(convertPersianToEnglish(tdJameFasl.html().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
-                    dJameFaslAll = parseFloat(info[2]) + JameFasl;
+                    dJameFaslAll = parseFloat(info[2]) + isNaN(JameFasl) ? 0 : JameFasl;
                     tdJameFaslAll.html(formatNumber(dJameFaslAll.toFixed(0)));
 
                     JameFaslBaZarib = parseFloat(convertPersianToEnglish(tdJameFaslBaZarib.html().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
-                    dJameFaslAllBaZarib = parseFloat(info[3]) + JameFaslBaZarib;
+                    dJameFaslAllBaZarib = parseFloat(info[3]) + isNaN(JameFaslBaZarib) ? 0 : JameFaslBaZarib;
                     tdJameFaslAllBaZarib.html(formatNumber(dJameFaslAllBaZarib.toFixed(0)));
+
 
                     toastr.success('اطلاعات با موفقیت ویرایش شد.', 'موفق');
                     GetBarAvord(Code, "");
+                    GetJamBarAvordAll();
+                    GetJamFosoulAll();
                 }
             },
             error: function (msg) {
@@ -978,10 +1152,12 @@ function renderTable(data, Stars, Code) {
 function DeleteItemFB(obj, Shomareh, Code) {
 
     debugger;
+    Year = pareseInt($('#HDFYear').val());
 
     thisId = obj.id.split('_');
     var vardata = new Object();
     vardata.Id = thisId[1];
+    vardata.Year = Year;
 
     $.ajax({
         type: "POST",
@@ -1255,6 +1431,8 @@ function UpdateRizMetreFromRow(el, rizMetreId, Shomareh, rizId1, FBId, Code) {
                     //GetRizMetreUsers();
                     toastr.success('ریزه متره انتخابی بدرستی ویرایش گردید', 'موفقیت');
                     cancelEditRow(row, rizMetreId, Shomareh, rizId1, FBId);
+                    GetJamBarAvordAll();
+                    GetJamFosoulAll();
                 }
                 else
                     toastr.info('مشکل در ویرایش ریزه متره انتخابی', 'اطلاع');
@@ -1536,6 +1714,8 @@ function SaveRMUClick(object, Shomareh, rizId, Code) {
 
                     GetCurrentRizMetreUsers(Shomareh, rizId, info[5], Code);
 
+                    GetJamBarAvordAll();
+                    GetJamFosoulAll();
                     toastr.success('ریزه متره جدید بدرستی درج گردید', 'موفقیت');
                 }
                 else
@@ -1593,6 +1773,44 @@ function refreshBaseItem(object, dMeghdarJoz, SumMeghdarJoz, JameFasl, JameFaslI
     tdJameFaslAllBaZarib.html(formatNumber(dJameFaslAllBaZarib.toFixed(0)));
 }
 
+
+function refreshBaseItemNewBV(object, JameFasl, JameFaslInZarib, Code, Shomareh, BahayeVahedNew) {
+
+    debugger;
+    const row = $(object).closest('tr');
+    const tdJameFasl = $('#tdjameFasl-' + Code);
+    const tdJameFaslBaZarib = $('#tdjameFaslBaZarib-' + Code);
+
+    const tdJameFaslAll = $('#tdjameFaslAll-' + Code);
+    const tdJameFaslAllBaZarib = $('#tdjameFaslAllBaZarib-' + Code);
+
+    const tdJameFaslStar = $('#tdjameFaslStar-' + Code);
+    const tdJameFaslStarBaZarib = $('#tdjameFaslStarBaZarib-' + Code);
+
+    const MeghdarJoz = row.find('#spanMeghdarJoz');
+
+    var meghdarFasl = $('#meghdarFasl_' + Shomareh);
+    var bahayeKolFasl = $('#bahayeKolFasl_' + Shomareh);
+    var bahayeVahedFasl = $('#bahayeVahedFasl_' + Shomareh);
+
+    let bahayeVahedFasl1 = parseFloat(convertPersianToEnglish(bahayeVahedFasl.text() == "" ? "0" : bahayeVahedFasl.text()));
+
+    //let txtBahayeVahed1 = parseFloat(convertPersianToEnglish(txtBahayeVahed.val().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
+
+    //meghdarFasl.html(formatNumber(SumMeghdarJoz));
+    //bahayeKolFasl.html(formatNumber(BahayeVahedNew * SumMeghdarJoz));
+    //MeghdarJoz.html(num);
+    tdJameFasl.html(formatNumber(parseFloat(JameFasl).toFixed(0)));
+    tdJameFaslBaZarib.html(formatNumber(parseFloat(JameFaslInZarib).toFixed(0)));
+
+    JameFaslStar = parseFloat(convertPersianToEnglish(tdJameFaslStar.html().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
+    dJameFaslAll = parseFloat(JameFasl) + (JameFaslStar === NaN ? JameFaslStar : 0);
+    tdJameFaslAll.html(formatNumber(dJameFaslAll.toFixed(0)));
+
+    JameFaslStarBaZarib = parseFloat(convertPersianToEnglish(tdJameFaslStarBaZarib.html().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
+    dJameFaslAllBaZarib = parseFloat(JameFaslInZarib) + (JameFaslStarBaZarib === NaN ? JameFaslStarBaZarib : 0);
+    tdJameFaslAllBaZarib.html(formatNumber(dJameFaslAllBaZarib.toFixed(0)));
+}
 
 
 //ریزه متره های عادی
@@ -1729,11 +1947,13 @@ function GetCurrentRizMetreUsers(Shomareh, rizId, FBId, Code) {
 function DeleteRizMetre(object, RizMetreId, Shomareh, rizId, FBId, Code) {
     BarAvordUserId = $('#HDFBarAvordUserID').val();
     NoeFBId = parseInt($('#HDFNoeFB').val());
+    Year = parseInt($('#HDFYear').val());
 
     var vardata = new Object();
     vardata.Id = RizMetreId;
     vardata.BarAvordUserId = BarAvordUserId;
     vardata.NoeFBId = NoeFBId;
+    vardata.Year = Year;
 
     $.ajax({
         url: "/RizMetreUserFromShowBarAvord/DeleteRizMetre",
@@ -1746,7 +1966,8 @@ function DeleteRizMetre(object, RizMetreId, Shomareh, rizId, FBId, Code) {
             if (info[0] == "OK") {
                 toastr.success('ریز متره بدرستی حذف گردید', 'موفقیت');
                 GetCurrentRizMetreUsers(Shomareh, rizId, FBId, Code);
-
+                GetJamBarAvordAll();
+                GetJamFosoulAll();
                 refreshBaseItem(object, info[1], info[2], info[3], info[4], Code, Shomareh, rizId);
             }
         },

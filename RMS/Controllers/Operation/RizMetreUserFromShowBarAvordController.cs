@@ -5,6 +5,8 @@ using RMS.Controllers.AbnieFani.Dto;
 using RMS.Controllers.BarAvordUser.Dto;
 using RMS.Controllers.Operation.Common;
 using RMS.Controllers.Operation.Dto;
+using RMS.Models.Common;
+using RMS.Models.Common.Dto;
 using RMS.Models.Entity;
 using static RMS.Models.Common.EnumForEntity;
 
@@ -47,8 +49,8 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
 
         //try
         //{
-        clsFB? FB = _context.FBs.Where(x => x.BarAvordId == BarAvordId && x.Shomareh == FBShomareh).FirstOrDefault();
-        clsBaravordUser? UB = _context.BaravordUsers.Where(x => x.ID == Request.BarAvordUserId).FirstOrDefault();
+        clsFB? FB = _context.FBs.Where(x => x.BarAvordId == BarAvordId && x.NoeFBId==NoeFBId && x.Shomareh == FBShomareh).FirstOrDefault();
+        //clsBaravordUser? UB = _context.BaravordUsers.Where(x => x.ID == Request.BarAvordUserId).FirstOrDefault();
 
         Guid FBId = new Guid();
         if (FB == null)
@@ -130,8 +132,8 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
         //////
         //////محاسبه کل فصل
         ///
-        decimal SumMeghdarFasl = 0;
-        var RizMetreAll = _context.RizMetreUserses.Include(x => x.FB).Where(x => x.FB.BarAvordId == BarAvordId)
+        //decimal SumMeghdarFasl = 0;
+        var RizMetreAll = _context.RizMetreUserses.Include(x => x.FB).Where(x => x.FB.BarAvordId == BarAvordId && x.FB.NoeFBId == NoeFBId)
                 .Select(riz => new ViewUserBarAvordOutPutRizMetreDto
                 {
                     Id = riz.ID,
@@ -150,14 +152,14 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
 
         // اول FBs رو فیلتر و گروه‌بندی کن (در حافظه)
         var fbItems = _context.FBs
-            .Where(f => f.BarAvordId == BarAvordId)
+            .Where(f => f.BarAvordId == BarAvordId && f.NoeFBId == NoeFBId)
             .GroupBy(f => f.Shomareh)
             .Select(g => g.FirstOrDefault())
             .ToList(); // انتقال به حافظه، جلوگیری از خطای EF
 
         // سپس FehrestBahas رو از دیتابیس بگیر و join کن در حافظه
         var userBarAvordOutPut = _context.FehrestBahas
-            .Where(fehrest => fehrest.Sal == UB.Year && fehrest.Shomareh.StartsWith(Code))
+            .Where(fehrest => fehrest.Sal == Year && fehrest.NoeFB == NoeFBId && fehrest.Shomareh.StartsWith(Code))
             .ToList() // انتقال به حافظه
             .GroupJoin(fbItems,
                 fehrest => fehrest.Shomareh,
@@ -175,11 +177,25 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
             }).ToList();
 
 
-        clsBaravordZaribBalaSari? baravordZaribBalaSari = _context.BaravordZaribBalaSaris.FirstOrDefault(x => x.BaravordId == BarAvordId);
-        clsBaravordZaribManteghe? baravordZaribManteghe = _context.BaravordZaribManteghes.FirstOrDefault(x => x.BaravordId == BarAvordId);
+        //clsBaravordZaribBalaSari? baravordZaribBalaSari = _context.BaravordZaribBalaSaris.FirstOrDefault(x => x.BaravordId == BarAvordId);
+        //clsBaravordZaribManteghe? baravordZaribManteghe = _context.BaravordZaribManteghes.FirstOrDefault(x => x.BaravordId == BarAvordId);
 
-        decimal zaribManteghe = baravordZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe.Value : 1 : 1;
-        decimal zaribBalaSari = baravordZaribBalaSari != null ? baravordZaribBalaSari.ZaribBalasari != null ? baravordZaribBalaSari.ZaribBalasari.Value : 1 : 1;
+        //decimal zaribManteghe = baravordZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe.Value : 1 : 1;
+        //decimal zaribBalaSari = baravordZaribBalaSari != null ? baravordZaribBalaSari.ZaribBalasari != null ? baravordZaribBalaSari.ZaribBalasari.Value : 1 : 1;
+
+        ////محاسبه ضرایب
+        RequestGetZarayebDto requestGetZarayeb = new RequestGetZarayebDto
+        {
+            BarAvordId = BarAvordId,
+            NoeFBId = NoeFBId,
+            Year = Year
+        };
+        ResultGetZarayebDto result = RizMetreCommon.GetZarayeb(requestGetZarayeb, _context);
+        decimal zaribBalaSari = result.zaribBalaSari != null ? result.zaribBalaSari.Value : 1;
+        decimal zaribManteghe = result.zaribManteghe != null ? result.zaribManteghe.Value : 1;
+
+        ///
+        ///
 
         decimal JameFaslInZarib = 0;
 
@@ -195,12 +211,28 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
                     Meghdar += RM.MeghdarJoz != null ? RM.MeghdarJoz.Value : 0;
                 }
             }
+            decimal dBVahed = item.BahayeVahedNew != 0 ? item.BahayeVahedNew : item.BahayeVahed == null || item.BahayeVahed == "" ? 0 : decimal.Parse(item.BahayeVahed);
             item.Meghdar = Meghdar;
-            decimal dBahayeKol = Meghdar * (item.BahayeVahed == null || item.BahayeVahed == "" ? 0 : decimal.Parse(item.BahayeVahed));
+            decimal dBahayeKol = Meghdar * dBVahed;
             item.BahayeKol = dBahayeKol;
             JameFasl += dBahayeKol;
             JameFaslInZarib += dBahayeKol * zaribBalaSari * zaribManteghe;
         }
+
+        ////////
+        ////////محاسبه کل فصل
+        /////
+
+        //CalculateFaslDto CalculateFasl = new CalculateFaslDto
+        //{
+
+        //    BarAvordId = BarAvordId,
+        //    Code = Code,
+        //    FBId = FBId,
+        //    NoeFBId = NoeFBId,
+        //    Year = Year
+        //};
+        //ResultCalculateFaslDto result = RizMetreCommon.fnCalculateFasl(CalculateFasl, _context);
 
         return new JsonResult("OK_" + dMeghdarJoz + "_" + SumMeghdarJoz + "_" + JameFasl + "_" + JameFaslInZarib + "_" + FBId);
     }
@@ -214,7 +246,7 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
         decimal? Arz = request.Arz;
         decimal? Ertefa = request.Ertefa;
         decimal? Vazn = request.Vazn;
-        string Des = request.Des;
+        string Des = request.Des == null ? "" : request.Des;
         int LevelNumber = request.LevelNumber;
 
         int Year = request.Year;
@@ -361,81 +393,97 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
 
 
 
-        var RizMetreAll = _context.RizMetreUserses.Include(x => x.FB).Where(x => x.FB.BarAvordId == BarAvordId)
-        .Select(riz => new ViewUserBarAvordOutPutRizMetreDto
+        //var RizMetreAll = _context.RizMetreUserses.Include(x => x.FB).Where(x => x.FB.BarAvordId == BarAvordId)
+        //.Select(riz => new ViewUserBarAvordOutPutRizMetreDto
+        //{
+        //    Id = riz.ID,
+        //    Sharh = riz.Sharh,
+        //    Shomareh = riz.Shomareh,
+        //    Arz = riz.Arz,
+        //    Des = riz.Des,
+        //    Ertefa = riz.Ertefa,
+        //    Tedad = riz.Tedad,
+        //    Tool = riz.Tool,
+        //    Vazn = riz.Vazn,
+        //    FBId = riz.FBId,
+        //    MeghdarJoz = riz.MeghdarJoz
+        //}).OrderBy(x => x.Shomareh).ToList();
+
+        //decimal SumMeghdarJoz = context.RizMetreUserses.Where(x => x.FBId == entity.FBId).Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
+
+        ////clsBaravordUser? UB = _context.BaravordUsers.Where(x => x.ID == BarAvordId).FirstOrDefault();
+
+        //clsBaravordZaribBalaSari? baravordZaribBalaSari = _context.BaravordZaribBalaSaris.FirstOrDefault(x => x.BaravordId == BarAvordId);
+        //clsBaravordZaribManteghe? baravordZaribManteghe = _context.BaravordZaribManteghes.FirstOrDefault(x => x.BaravordId == BarAvordId);
+
+        //decimal zaribManteghe = baravordZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe.Value : 1 : 1;
+        //decimal zaribBalaSari = baravordZaribBalaSari != null ? baravordZaribBalaSari.ZaribBalasari != null ? baravordZaribBalaSari.ZaribBalasari.Value : 1 : 1;
+
+        //decimal JameFaslInZarib = 0;
+
+        //// اول FBs رو فیلتر و گروه‌بندی کن (در حافظه)
+        //var fbItems = _context.FBs
+        //    .Where(f => f.BarAvordId == BarAvordId)
+        //    .GroupBy(f => f.Shomareh)
+        //    .Select(g => g.FirstOrDefault())
+        //    .ToList(); // انتقال به حافظه، جلوگیری از خطای EF
+
+        //// سپس FehrestBahas رو از دیتابیس بگیر و join کن در حافظه
+        //var userBarAvordOutPut = _context.FehrestBahas
+        //    .Where(fehrest => fehrest.Sal == Year && fehrest.NoeFB == NoeFBId && fehrest.Shomareh.StartsWith(Code))
+        //    .ToList() // انتقال به حافظه
+        //    .GroupJoin(fbItems,
+        //        fehrest => fehrest.Shomareh,
+        //        fb => fb.Shomareh,
+        //        (fehrest, fbGroup) => new { fehrest, fbItem = fbGroup.FirstOrDefault() })
+        //    .OrderBy(x => x.fehrest.Shomareh)
+        //    .Select(x => new ViewUserBarAvordOutPutDto
+        //    {
+        //        ItemFbShomareh = x.fehrest.Shomareh,
+        //        Sharh = x.fehrest.Sharh,
+        //        BahayeVahed = x.fehrest.BahayeVahed,
+        //        Vahed = x.fehrest.Vahed,
+        //        FBId = x.fbItem != null ? x.fbItem.ID : null,
+        //        RizMetre = new List<ViewUserBarAvordOutPutRizMetreDto>()
+        //    }).ToList();
+
+
+        //decimal JameFasl = 0;
+        //foreach (var item in userBarAvordOutPut)
+        //{
+        //    decimal Meghdar = 0;
+        //    foreach (var RM in RizMetreAll)
+        //    {
+        //        if (item.FBId == RM.FBId)
+        //        {
+        //            item.RizMetre.Add(RM);
+        //            Meghdar += RM.MeghdarJoz != null ? RM.MeghdarJoz.Value : 0;
+        //        }
+        //    }
+        //    decimal dBVahed = item.BahayeVahedNew != 0 ? item.BahayeVahedNew : item.BahayeVahed == null || item.BahayeVahed == "" ? 0 : decimal.Parse(item.BahayeVahed);
+        //    item.Meghdar = Meghdar;
+        //    decimal dBahayeKol = Meghdar * dBVahed;
+        //    item.BahayeKol = dBahayeKol;
+        //    JameFasl += dBahayeKol;
+        //    JameFaslInZarib += dBahayeKol * zaribBalaSari * zaribManteghe;
+        //}
+
+        ////////
+        ////////محاسبه کل فصل
+        /////
+
+        CalculateFaslDto CalculateFasl = new CalculateFaslDto
         {
-            Id = riz.ID,
-            Sharh = riz.Sharh,
-            Shomareh = riz.Shomareh,
-            Arz = riz.Arz,
-            Des = riz.Des,
-            Ertefa = riz.Ertefa,
-            Tedad = riz.Tedad,
-            Tool = riz.Tool,
-            Vazn = riz.Vazn,
-            FBId = riz.FBId,
-            MeghdarJoz = riz.MeghdarJoz
-        }).OrderBy(x => x.Shomareh).ToList();
 
-        decimal SumMeghdarJoz = context.RizMetreUserses.Where(x => x.FBId == entity.FBId).Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
+            BarAvordId = BarAvordId,
+            Code = Code,
+            FBId = entity.FBId,
+            NoeFBId = NoeFBId,
+            Year = Year
+        };
+        ResultCalculateFaslDto result = RizMetreCommon.fnCalculateFasl(CalculateFasl, _context);
 
-        clsBaravordUser? UB = _context.BaravordUsers.Where(x => x.ID == BarAvordId).FirstOrDefault();
-
-        clsBaravordZaribBalaSari? baravordZaribBalaSari = _context.BaravordZaribBalaSaris.FirstOrDefault(x => x.BaravordId == BarAvordId);
-        clsBaravordZaribManteghe? baravordZaribManteghe = _context.BaravordZaribManteghes.FirstOrDefault(x => x.BaravordId == BarAvordId);
-
-        decimal zaribManteghe = baravordZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe.Value : 1 : 1;
-        decimal zaribBalaSari = baravordZaribBalaSari != null ? baravordZaribBalaSari.ZaribBalasari != null ? baravordZaribBalaSari.ZaribBalasari.Value : 1 : 1;
-
-        decimal JameFaslInZarib = 0;
-
-        // اول FBs رو فیلتر و گروه‌بندی کن (در حافظه)
-        var fbItems = _context.FBs
-            .Where(f => f.BarAvordId == BarAvordId)
-            .GroupBy(f => f.Shomareh)
-            .Select(g => g.FirstOrDefault())
-            .ToList(); // انتقال به حافظه، جلوگیری از خطای EF
-
-        // سپس FehrestBahas رو از دیتابیس بگیر و join کن در حافظه
-        var userBarAvordOutPut = _context.FehrestBahas
-            .Where(fehrest => fehrest.Sal == UB.Year && fehrest.Shomareh.StartsWith(Code))
-            .ToList() // انتقال به حافظه
-            .GroupJoin(fbItems,
-                fehrest => fehrest.Shomareh,
-                fb => fb.Shomareh,
-                (fehrest, fbGroup) => new { fehrest, fbItem = fbGroup.FirstOrDefault() })
-            .OrderBy(x => x.fehrest.Shomareh)
-            .Select(x => new ViewUserBarAvordOutPutDto
-            {
-                ItemFbShomareh = x.fehrest.Shomareh,
-                Sharh = x.fehrest.Sharh,
-                BahayeVahed = x.fehrest.BahayeVahed,
-                Vahed = x.fehrest.Vahed,
-                FBId = x.fbItem != null ? x.fbItem.ID : null,
-                RizMetre = new List<ViewUserBarAvordOutPutRizMetreDto>()
-            }).ToList();
-
-
-        decimal JameFasl = 0;
-        foreach (var item in userBarAvordOutPut)
-        {
-            decimal Meghdar = 0;
-            foreach (var RM in RizMetreAll)
-            {
-                if (item.FBId == RM.FBId)
-                {
-                    item.RizMetre.Add(RM);
-                    Meghdar += RM.MeghdarJoz != null ? RM.MeghdarJoz.Value : 0;
-                }
-            }
-            item.Meghdar = Meghdar;
-            decimal dBahayeKol = Meghdar * (item.BahayeVahed == null || item.BahayeVahed == "" ? 0 : decimal.Parse(item.BahayeVahed));
-            item.BahayeKol = dBahayeKol;
-            JameFasl += dBahayeKol;
-            JameFaslInZarib += dBahayeKol * zaribBalaSari * zaribManteghe;
-        }
-
-        return new JsonResult("OK_" + dMeghdarJoz + "_" + SumMeghdarJoz + "_" + JameFasl + "_" + JameFaslInZarib);
+        return new JsonResult("OK_" + dMeghdarJoz + "_" + result.SumMeghdarJoz + "_" + result.JameFasl + "_" + result.JameFaslInZarib);
     }
 
     public ActionResult DeleteRizMetre([FromBody] DeleteRizMetreInputFromShowBarAvordDto request)
@@ -444,6 +492,7 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
         {
             NoeFehrestBaha NoeFBId = request.NoeFBId;
             Guid BarAvordUserId = request.BarAvordUserId;
+            int Year = request.Year;
             clsRizMetreUsers? entity = context.RizMetreUserses.Find(request.Id);
             if (entity != null)
             {
@@ -464,95 +513,111 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
                         NoeFBId = NoeFBId
                     };
                     HamlCommon.DeleteHaml(deleteHaml, context);
-                }
-                /////////////
-                //////////////
-                //////////////
-                ///
-                context.SaveChanges();
+                    /////////////
+                    //////////////
+                    //////////////
+                    ///
+                    context.SaveChanges();
 
-                var RizMetreAll = _context.RizMetreUserses.Include(x => x.FB).Where(x => x.FB.BarAvordId == BarAvordUserId)
-            .Select(riz => new ViewUserBarAvordOutPutRizMetreDto
-            {
-                Id = riz.ID,
-                Sharh = riz.Sharh,
-                Shomareh = riz.Shomareh,
-                Arz = riz.Arz,
-                Des = riz.Des,
-                Ertefa = riz.Ertefa,
-                Tedad = riz.Tedad,
-                Tool = riz.Tool,
-                Vazn = riz.Vazn,
-                FBId = riz.FBId,
-                MeghdarJoz = riz.MeghdarJoz
-            }).OrderBy(x => x.Shomareh).ToList();
-
-                decimal SumMeghdarJoz = context.RizMetreUserses.Where(x => x.FBId == entity.FBId).Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
-
-                string Code = FB.Shomareh.Substring(0, 2);
-
-                clsBaravordUser? UB = _context.BaravordUsers.Where(x => x.ID == BarAvordUserId).FirstOrDefault();
-
-                clsBaravordZaribBalaSari? baravordZaribBalaSari = _context.BaravordZaribBalaSaris.FirstOrDefault(x => x.BaravordId == BarAvordUserId);
-                clsBaravordZaribManteghe? baravordZaribManteghe = _context.BaravordZaribManteghes.FirstOrDefault(x => x.BaravordId == BarAvordUserId);
-
-                decimal zaribManteghe = baravordZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe.Value : 1 : 1;
-                decimal zaribBalaSari = baravordZaribBalaSari != null ? baravordZaribBalaSari.ZaribBalasari != null ? baravordZaribBalaSari.ZaribBalasari.Value : 1 : 1;
-
-                decimal JameFaslInZarib = 0;
-
-                // اول FBs رو فیلتر و گروه‌بندی کن (در حافظه)
-                var fbItems = _context.FBs
-                    .Where(f => f.BarAvordId == BarAvordUserId)
-                    .GroupBy(f => f.Shomareh)
-                    .Select(g => g.FirstOrDefault())
-                    .ToList(); // انتقال به حافظه، جلوگیری از خطای EF
-
-                // سپس FehrestBahas رو از دیتابیس بگیر و join کن در حافظه
-                var userBarAvordOutPut = _context.FehrestBahas
-                    .Where(fehrest => fehrest.Sal == UB.Year && fehrest.Shomareh.StartsWith(Code))
-                    .ToList() // انتقال به حافظه
-                    .GroupJoin(fbItems,
-                        fehrest => fehrest.Shomareh,
-                        fb => fb.Shomareh,
-                        (fehrest, fbGroup) => new { fehrest, fbItem = fbGroup.FirstOrDefault() })
-                    .OrderBy(x => x.fehrest.Shomareh)
-                    .Select(x => new ViewUserBarAvordOutPutDto
+                    var RizMetreAll = _context.RizMetreUserses.Include(x => x.FB).Where(x => x.FB.BarAvordId == BarAvordUserId)
+                    .Select(riz => new ViewUserBarAvordOutPutRizMetreDto
                     {
-                        ItemFbShomareh = x.fehrest.Shomareh,
-                        Sharh = x.fehrest.Sharh,
-                        BahayeVahed = x.fehrest.BahayeVahed,
-                        Vahed = x.fehrest.Vahed,
-                        FBId = x.fbItem != null ? x.fbItem.ID : null,
-                        RizMetre = new List<ViewUserBarAvordOutPutRizMetreDto>()
-                    }).ToList();
+                        Id = riz.ID,
+                        Sharh = riz.Sharh,
+                        Shomareh = riz.Shomareh,
+                        Arz = riz.Arz,
+                        Des = riz.Des,
+                        Ertefa = riz.Ertefa,
+                        Tedad = riz.Tedad,
+                        Tool = riz.Tool,
+                        Vazn = riz.Vazn,
+                        FBId = riz.FBId,
+                        MeghdarJoz = riz.MeghdarJoz
+                    }).OrderBy(x => x.Shomareh).ToList();
 
+                    decimal SumMeghdarJoz = context.RizMetreUserses.Where(x => x.FBId == entity.FBId).Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
 
-                decimal JameFasl = 0;
-                foreach (var item in userBarAvordOutPut)
-                {
-                    decimal Meghdar = 0;
-                    foreach (var RM in RizMetreAll)
+                    string Code = FB.Shomareh.Substring(0, 2);
+
+                    //clsBaravordUser? UB = _context.BaravordUsers.Where(x => x.ID == BarAvordUserId).FirstOrDefault();
+
+                    //clsBaravordZaribBalaSari? baravordZaribBalaSari = _context.BaravordZaribBalaSaris.FirstOrDefault(x => x.BaravordId == BarAvordUserId);
+                    //clsBaravordZaribManteghe? baravordZaribManteghe = _context.BaravordZaribManteghes.FirstOrDefault(x => x.BaravordId == BarAvordUserId);
+
+                    //decimal zaribManteghe = baravordZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe.Value : 1 : 1;
+                    //decimal zaribBalaSari = baravordZaribBalaSari != null ? baravordZaribBalaSari.ZaribBalasari != null ? baravordZaribBalaSari.ZaribBalasari.Value : 1 : 1;
+
+                    ////محاسبه ضرایب
+                    RequestGetZarayebDto requestGetZarayeb = new RequestGetZarayebDto
                     {
-                        if (item.FBId == RM.FBId)
+                        BarAvordId = BarAvordUserId,
+                        NoeFBId = NoeFBId,
+                        Year = Year
+                    };
+                    ResultGetZarayebDto result = RizMetreCommon.GetZarayeb(requestGetZarayeb, _context);
+                    decimal zaribBalaSari = result.zaribBalaSari != null ? result.zaribBalaSari.Value : 1;
+                    decimal zaribManteghe = result.zaribManteghe != null ? result.zaribManteghe.Value : 1;
+
+                    ///
+                    ///
+
+                    decimal JameFaslInZarib = 0;
+
+                    // اول FBs رو فیلتر و گروه‌بندی کن (در حافظه)
+                    var fbItems = _context.FBs
+                        .Where(f => f.BarAvordId == BarAvordUserId)
+                        .GroupBy(f => f.Shomareh)
+                        .Select(g => g.FirstOrDefault())
+                        .ToList(); // انتقال به حافظه، جلوگیری از خطای EF
+
+                    // سپس FehrestBahas رو از دیتابیس بگیر و join کن در حافظه
+                    var userBarAvordOutPut = _context.FehrestBahas
+                        .Where(fehrest => fehrest.Sal == Year && fehrest.NoeFB == NoeFBId && fehrest.Shomareh.StartsWith(Code))
+                        .ToList() // انتقال به حافظه
+                        .GroupJoin(fbItems,
+                            fehrest => fehrest.Shomareh,
+                            fb => fb.Shomareh,
+                            (fehrest, fbGroup) => new { fehrest, fbItem = fbGroup.FirstOrDefault() })
+                        .OrderBy(x => x.fehrest.Shomareh)
+                        .Select(x => new ViewUserBarAvordOutPutDto
                         {
-                            item.RizMetre.Add(RM);
-                            Meghdar += RM.MeghdarJoz != null ? RM.MeghdarJoz.Value : 0;
+                            ItemFbShomareh = x.fehrest.Shomareh,
+                            Sharh = x.fehrest.Sharh,
+                            BahayeVahed = x.fehrest.BahayeVahed,
+                            Vahed = x.fehrest.Vahed,
+                            FBId = x.fbItem != null ? x.fbItem.ID : null,
+                            RizMetre = new List<ViewUserBarAvordOutPutRizMetreDto>()
+                        }).ToList();
+
+
+                    decimal JameFasl = 0;
+                    foreach (var item in userBarAvordOutPut)
+                    {
+                        decimal Meghdar = 0;
+                        foreach (var RM in RizMetreAll)
+                        {
+                            if (item.FBId == RM.FBId)
+                            {
+                                item.RizMetre.Add(RM);
+                                Meghdar += RM.MeghdarJoz != null ? RM.MeghdarJoz.Value : 0;
+                            }
                         }
+                        decimal dBVahed = item.BahayeVahedNew != 0 ? item.BahayeVahedNew : item.BahayeVahed == null || item.BahayeVahed == "" ? 0 : decimal.Parse(item.BahayeVahed);
+                        item.Meghdar = Meghdar;
+                        decimal dBahayeKol = Meghdar * dBVahed;
+                        item.BahayeKol = dBahayeKol;
+                        JameFasl += dBahayeKol;
+                        JameFaslInZarib += dBahayeKol * zaribBalaSari * zaribManteghe;
                     }
-                    item.Meghdar = Meghdar;
-                    decimal dBahayeKol = Meghdar * (item.BahayeVahed == null || item.BahayeVahed == "" ? 0 : decimal.Parse(item.BahayeVahed));
-                    item.BahayeKol = dBahayeKol;
-                    JameFasl += dBahayeKol;
-                    JameFaslInZarib += dBahayeKol * zaribBalaSari * zaribManteghe;
+
+                    return new JsonResult("OK_" + 0 + "_" + SumMeghdarJoz + "_" + JameFasl + "_" + JameFaslInZarib);
+
                 }
-
-                return new JsonResult("OK_" + 0 + "_" + SumMeghdarJoz + "_" + JameFasl + "_" + JameFaslInZarib);
-
+                else
+                    return new JsonResult("NOK");
             }
             else
                 return new JsonResult("NOK");
-
         }
         catch (Exception)
         {

@@ -19,6 +19,8 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
         return View();
     }
 
+
+
     public JsonResult GetUserBarAvord([FromBody] ViewUserBarAvordInputDto request)
     {
         NoeFehrestBaha NoeFBId = request.NoeFBId;

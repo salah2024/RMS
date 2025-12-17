@@ -3,6 +3,7 @@
 public class GetZaribBalaSariDto
 {
     public Guid BaravordId { get; set; }
+    public int Year { get; set; }
     public int planSelected { get; set; }
     public int tenderSelected { get; set; }
 }

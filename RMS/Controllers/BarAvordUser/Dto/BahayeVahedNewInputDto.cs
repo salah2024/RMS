@@ -9,5 +9,6 @@ namespace RMS.Controllers.BarAvordUser.Dto
         public Guid BarAvordUserId { get; set; }
         public string BahayeVahedNew { get; set; }
         public string itemFbShomareh { get; set; }
+        public int Year { get; set; }
     }
 }

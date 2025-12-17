@@ -26,7 +26,8 @@ public class EnumForEntity
         Abnie = 233,
         RahoBand = 234,
         Barghi = 235,
-        Mekaniki = 236
+        Mekaniki = 236,
+        MareMat = 237
     }
 
     public enum NoeBarAvord

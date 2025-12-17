@@ -1206,6 +1206,7 @@ function SaveRMUClick(object, FBId, IsFromAddedOperation, OperationId, LevelNumb
                 var info = data.split('_');
                 if (info[0] == "OK") {
 
+                    debugger;
                     ClearInput(object);
                     GetRizMetreWithFBId(LevelNumber);
                     $("#divItemsAddedAndRel" + info[1] + " div[id^='divShowRizMetre']").each(function () {

@@ -74,8 +74,8 @@
   </div>
   <!-- ضریب بالاسری -->
   <div class="col-3" style="text-align:right;display:none" id="divZaribBalaSari">
-    <div style="margin-top:50px;">
-        <span style="font-weight:bold; margin-left:4px;">ضریب بالاسری = </span>
+    <div style="margin-top:10px;">
+        <span style="font-weight:bold; margin-left:4px;margin-left: 4px;background-color: lightblue;padding: 0px 10px;border-radius: 5px;">ضریب بالاسری</span>
         <span id="lblZaribBalasari" style="font-weight:bold;"></span>
     </div>
   </div>
@@ -90,9 +90,11 @@
 
 function GetZaribSaved() {
     BarAvordUserId = $('#HDFBarAvordUserID').val();
+    Year = $('#HDFYear').val();
 
     var vardata = new Object();
     vardata.BaravordId = BarAvordUserId;
+    vardata.Year = Year;
     $.ajax({
         type: "POST",
         url: "/ZaribBalaSari/GetBaravordZaribBalasari",
@@ -100,27 +102,48 @@ function GetZaribSaved() {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (data) {
-
             // نمایش ضریب
             if (data.length > 0) {
                 $('#divZaribBalaSari').show();
                 $('#lblZaribBalasari').html(data[0].zaribBalasari);
             }
 
+            BaravordZaribBalaSari = data.baravordZaribBalaSari;
             // انتخاب رادیوها
-            $.each(data, function () {
+            //$.each(BaravordZaribBalaSari, function () {
 
                 // اگر مقدار tarh داشت (1 یا 2)
-                if (this.tarh && this.tarh !== 0) {
-                    $(`input[type=radio][name=planGroup][value=${this.tarh}]`).prop("checked", true);
+            if (BaravordZaribBalaSari.tarh && BaravordZaribBalaSari.tarh !== 0) {
+                $(`input[type=radio][name=planGroup][value=${BaravordZaribBalaSari.tarh}]`).prop("checked", true);
                 }
 
                 // اگر مقدار monaghese داشت (3,4,5)
-                if (this.monaghese && this.monaghese !== 0) {
-                    $(`input[type=radio][name=tenderGroup][value=${this.monaghese}]`).prop("checked", true);
+            if (BaravordZaribBalaSari.monaghese && BaravordZaribBalaSari.monaghese !== 0) {
+                    $(`input[type=radio][name=tenderGroup][value=${BaravordZaribBalaSari.monaghese}]`).prop("checked", true);
                 }
 
+            //});
+            debugger;
+            lstResultZaribBalaSari = data.lstResultZaribBalaSari;
+            let str = '';
+            $.each(lstResultZaribBalaSari, function () {
+                debugger;
+                FBName = this.fbName;
+                ZaribBalaSari = this.zaribBalaSari;
+                str += `
+                        <div class="col-12" style="border:1px solid #fff;margin-top: 10px;">
+                        <div class="row">
+                            <div class="col-6" style="text-align:left">${FBName} =</div>
+                            <div class="col-6">${ZaribBalaSari}</div>
+                        </div>
+                        </div>
+                    `
             });
+
+            debugger;
+            $('#divZaribBalaSari').show();
+            const lbl = $('#lblZaribBalasari');
+            lbl.html(str);
 
         },
         error: function () {
@@ -133,19 +156,20 @@ function GetZaribSaved() {
 function getZarib() {
     const planSelected = document.querySelector('input[name="planGroup"]:checked');
     const tenderSelected = document.querySelector('input[name="tenderGroup"]:checked');
-    const lbl = document.getElementById('lblZaribBalasari');
+    const lbl = $('#lblZaribBalasari');
 
     if (!lbl) return;
 
-    // اگر از هر دو گروه یک مورد انتخاب شده باشد
     if (planSelected && tenderSelected) {
         BarAvordUserId = $('#HDFBarAvordUserID').val();
+        Year = $('#HDFYear').val();
 
         debugger;
         var vardata = new Object();
         vardata.planSelected = planSelected.value;
         vardata.tenderSelected = tenderSelected.value;
         vardata.BaravordId = BarAvordUserId;
+        vardata.Year = Year;
         $.ajax({
             type: "POST",
             url: "/ZaribBalaSari/GetZaribBalaSari",
@@ -153,11 +177,25 @@ function getZarib() {
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (data) {
-                info = data.split('_');
-                if (info[0] == "OK") {
-                    lbl.textContent = info[1];
-                    $('#divZaribBalaSari').slideDown(500);
-                }
+
+                lstResultZaribBalaSari = data;
+                let str = '';
+                $.each(lstResultZaribBalaSari, function () {
+                debugger;
+                    FBName = this.fbName;
+                    ZaribBalaSari = this.zaribBalaSari;
+                    str += `
+                        <div class="col-12" style="border:1px solid #fff;margin-top: 10px;">
+                        <div class="row">
+                            <div class="col-6" style="text-align:left">${FBName} =</div>
+                            <div class="col-6">${ZaribBalaSari}</div>
+                        </div>
+                        </div>
+                    `
+                });
+
+                debugger;
+                lbl.html(str);
             },
             error: function (response) {
                 toastr.error('مشکل در بارگزاری ضریب بالاسری', 'خطا');
@@ -165,6 +203,6 @@ function getZarib() {
         });
     } else {
         // در غیر این صورت لیبل خالی شود
-        lbl.textContent = '';
+        lbl.html('');
     }
 }

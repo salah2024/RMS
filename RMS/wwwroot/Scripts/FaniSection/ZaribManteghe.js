@@ -78,13 +78,35 @@ function FillZaribMantegheControls(OperationId, data) {
         });
     }
 
+    debugger;
     // ۵) ست کردن انتخاب‌ها روی مقدار قبلی
     $ddlOstan.val(bz.ostanId);
     $ddlShahr.val(bz.shahrId);
     $ddlBakhsh.val(bz.bakhshId);
 
+    currentZarib = data.lstZaribManteghe;
+
+    str = '';
+    $.each(currentZarib, function () {
+        debugger;
+        ZaribManteghe = this.zaribManteghe;
+        FBName = this.fbName;
+
+        str += `
+                <div col="col-12">
+                    <div class="row" style="border: 1px solid #fff;">
+                    <div class="col-6" style="text-align:left">
+                        <span>${FBName} = </span>
+                    </div>
+                    <div class="col-6" style="text-align:right">
+                        <span>${ZaribManteghe}</span>
+                    </div>
+                    </div>
+                </div>
+                `
+    })
     // ۶) ست کردن ضریب
-    $spanZarib.html(bz.zaribManteghe);
+    $spanZarib.html(str);
     $('#divZaribRah').show();
 }
 
@@ -115,8 +137,8 @@ function ShowZaribMantaghe(OperationId) {
             <option value="">ابتدا شهرستان را انتخاب کنید</option>
         </select>
     </div>
-    <div class="col-md-2" id="divZaribRah" style="padding-top: 37px;display:none;margin-right:40px">
-    <span style="font-weight:bold;">ضریب منطقه ای راه،باند و فرودگاه = </span>
+    <div class="col-md-3" id="divZaribRah" style="padding-top: 17px;display:none;margin-right:40px">
+    <span style="font-weight:bold;padding: 0px 10px;background-color: #cfcfff;border-radius: 5px;">ضریب منطقه ای </span>
     <span style="font-weight:bold;" id="spanZaribRah"></span>
     </div>
 
@@ -169,6 +191,7 @@ function ShowZaribMantaghe(OperationId) {
 
 function GetZaribManteghe(bakhshId) {
     var baravordId = $('#HDFBarAvordUserID').val(); // همون Guid برآورد
+
     debugger;
     var vardata = {};
     vardata.BaravordId = baravordId;
@@ -182,8 +205,28 @@ function GetZaribManteghe(bakhshId) {
         dataType: "json",
         success: function (data) {
             debugger;
-            ZaribRah = data.zaribRah;
-            $('#spanZaribRah').html(ZaribRah);
+
+            str = '';
+            $.each(data, function () {
+            debugger;
+                ZaribManteghe = this.zaribManteghe;
+                FBName = this.fbName;
+
+                str += `
+                <div col="col-12">
+                    <div class="row" style="border: 1px solid #fff;">
+                    <div class="col-6" style="text-align:left">
+                        <span>${FBName} = </span>
+                    </div>
+                    <div class="col-6" style="text-align:right">
+                        <span>${ZaribManteghe}</span>
+                    </div>
+                    </div>
+                </div>
+                `
+            })
+            debugger;
+            $('#spanZaribRah').html(str);
             $('#divZaribRah').show();
         },
         error: function (response) {
