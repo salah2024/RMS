@@ -41,10 +41,10 @@
 				border-right: 1px solid rgb(100,100,100);
 			}
 	/*.NewStyle {
-																												background-image: url() !important;
-																												width: 0px !important;
-																												height: 0px !important;
-																											}*/
+																													background-image: url() !important;
+																													width: 0px !important;
+																													height: 0px !important;
+																												}*/
 
 	.col-md-1 {
 		padding-left: 2px;
@@ -88,6 +88,12 @@
 			text-decoration: underline;
 			cursor: pointer;
 		}
+
+
+	#jstree li a {
+		cursor: pointer;
+	}
+
 </style>
 
 
@@ -250,261 +256,92 @@
 			   success: function (data) {
 
 
-						   //let arrNotIn = [];
-	   //let a = [];
-
-	   // for (let i = 0; i < data.length; i++) {
-	   // 	let ID = data[i].id;
-	   // 	let ParentId = data[i].parentId;
-	   // 	if (ParentId == 0) ParentId = '#';
-
-	   // 	let OperationName = data[i].operationName;
-	   // 	let FunctionCall = data[i].functionCall;
-	   // 	let Sharh = data[i].sharh;
-	   // 	let ItemsFBShomareh = data[i].itemsFBShomareh;
-
-	   // 	// عنصر root برای متن داخل نود
-	   // 	let $wrapper = $("<span></span>");
-
-	   // 	if (ItemsFBShomareh !== '') {
-	   // 		$wrapper
-	   // 			.append(`${ItemsFBShomareh} - ${Sharh}`)
-	   // 			.append($("<span></span>").attr("id", "span" + ID))
-	   // 			.append($("<span></span>").attr("id", "spanOpShomareh" + ItemsFBShomareh))
-	   // 			.append(
-	   // 				$("<ul></ul>")
-	   // 					.attr("id", "ula" + ID)
-	   // 					.addClass("row")
-	   // 					.css({ display: "none", margin: "10px" })
-	   // 					.append(
-	   // 						$("<li></li>")
-	   // 							.attr("id", "uldiva" + ID)
-	   // 							.addClass("col-md-12")
-	   // 							.css({
-	   // 								border: "1px solid #79c7ea",
-	   // 								paddingLeft: "0px",
-	   // 								paddingRight: "0px",
-	   // 								textAlign: "center",
-	   // 								borderRadius: "5px"
-	   // 							})
-	   // 					)
-	   // 			);
-	   // 	} else {
-	   // 		$wrapper
-	   // 			.append(OperationName)
-	   // 			.append($("<span></span>").attr("id", "span" + ID))
-	   // 			.append($("<span></span>").attr("id", "spanOpShomareh" + ID))
-	   // 			.append(
-	   // 				$("<div></div>")
-	   // 					.attr("id", "ula" + ID)
-	   // 					.css("margin-top", "5px")
-	   // 			);
-	   // 	}
-
-	   // 	if (ParentId != -1) {
-	   // 		if ($.inArray(ParentId, arrNotIn) === -1) {
-	   // 			a.push({ id: ID, parent: ParentId, text: $wrapper.html() });
-	   // 		} else {
-	   // 			arrNotIn.push(ID);
-	   // 		}
-	   // 	} else {
-	   // 		arrNotIn.push(ID);
-	   // 	}
-	   // }
-
-	   // // ساخت درخت
-	   // TreeView(a, plugin);
-
-	   // $(document).on("click", ".jstree-anchor", function (e) {
-	   // 	e.preventDefault(); // جلوگیری از رفتار پیش‌فرض لینک
-
-	   // 	// گرفتن id اصلی (مثلاً از "1404022_anchor" --> "1404022")
-	   // 	const fullId = $(this).attr("id");
-	   // 	const id = fullId.replace("_anchor", "");
-
-	   // 	const item = data.find(d => d.id == id);
-	   // 	if (!item) return;
-
-	   // 	if (item.itemsFBShomareh !== '') {
-	   // 		OperationClick(id);
-	   // 	} else if (item.functionCall && typeof window[item.functionCall] === "function") {
-	   // 		window[item.functionCall](id);
-	   // 	}
-	   // });
-
-
-	   // $(document).on("click", ".jstree-anchor", function (e) {
-	   // 	e.preventDefault();
-
-	   // 	const anchorId = $(this).attr("id"); // مثل: 1404021_anchor
-	   // 	const nodeId = anchorId.replace("_anchor", ""); // مثل: 1404021
-	   // 	const $contentDiv = $("#ula" + nodeId);
-
-	   // 	// اگر محتوا باز باشد، ببند
-	   // 	if ($contentDiv.is(":visible")) {
-	   // 		$contentDiv.slideUp();
-	   // 	}
-	   // 	// اگر محتوا بسته باشد، ابتدا همه محتواهای دیگر را ببند، سپس این را باز کن
-	   // 	else {
-	   // 		$("div[id^='ula']").slideUp(); // بستن همه‌ی بخش‌های دیگر
-	   // 		$contentDiv.slideDown();
-	   // 	}
-	   // });
-
-
-
-
-
-
-			   // for (var i = 0; i < data.length; i++) {
-			   // 		ID = data[i].id;
-			   // 		ParentId = data[i].parentId;
-			   // 		if (ParentId == 0)
-			   // 			ParentId = '#';
-			   // 		OperationName = data[i].operationName;
-			   // 		FunctionCall = data[i].functionCall;
-			   // 		Sharh = data[i].sharh;
-			   // 		ItemsFBShomareh = data[i].itemsFBShomareh;
-
-			   // 		if (ItemsFBShomareh != '') {
-			   // 			text = "<li><a id=\"a" + ID + "\" onclick=\"OperationClick('" + ID + "')\" >" + ItemsFBShomareh
-			   // 			+ " - " + Sharh + "<span id=\"span" + ID + "\"></span> </a><span id=\"spanOpShomareh" + ItemsFBShomareh + "\"></span></li>";
-			   // 			 text += "<div id=\"ula" + ID + "\" class=\"row\" style=\"display: none; margin:10px\">";
-			   // 			 text += "<div id=\"uldiva" + ID + "\" class=\"col-md-12\" style=\"border:1px solid #79c7ea;padding-left:0px;padding-right:0px;text-align:center;border-radius:5px !important;\">";
-			   // 			 text += "</div></div>";
-			   // 		}
-			   // 		else {
-			   // 			if (FunctionCall!='') {
-			   // 				text = "<li><a onclick=\"" + FunctionCall + "('" + ID + "')\" id=\"a" + ID + "\">" + OperationName + "<span id=\"span" + ID + "\"></span> "
-			   // 				+ "</a><span id=\"spanOpShomareh" + ID + "\"></span><ul style=\"margin-top:5px\" id=\"ula" + ID + "\"></ul></li>";
-			   // 			}
-			   // 			else
-			   // 			{
-			   // 				text = "<li><a id=\"a" + ID + "\">" + OperationName + "<span id=\"span" + ID + "\"></span> "
-			   // 				+ "</a><span id=\"spanOpShomareh" + ID + "\"></span><ul id=\"ula" + ID + "\"></ul></li>";
-			   // 			}
-			   // 		}
-
-			   // 		if (ParentId != -1) {
-			   // 			if ($.inArray(ParentId, arrNotIn) == -1)
-			   // 				a.push({ 'id': ID, 'parent': ParentId, 'text': text });
-			   // 			else
-			   // 				arrNotIn.push(ID);
-			   // 		}
-			   // 		else {
-			   // 			arrNotIn.push(ID);
-			   // 		}
-			   // 	}
-
 
 		var html= createTree(data,0);
 
 		$('#jstree').html(html);
 
 
-	$('#jstree li a').each(function () {
+
+			$('#jstree')
+	  .off('click.MenuAccordion')
+	  .on('click.MenuAccordion', 'a', function (e) {
+
+		e.preventDefault();
+		e.stopPropagation();
+		e.stopImmediatePropagation();
+
+		// 👈 این خط کلیدی است
+		// اجازه نده onclick داخل html دوباره اجرا شود
+		this.onclick = null;
 
 		var $a = $(this);
-		$a.addClass('OpMenuStyle');
+		var currentId = $a.attr('id');
+		if (!currentId) return;
 
-		$a.off('click.MenuAccordion').on('click.MenuAccordion', function (e) {
+		// ⛔️ دیگر eval نمی‌کنیم
+		// OperationClick همان onclick اصلی است که فقط یک‌بار اجرا شده
 
-			e.preventDefault(); // جلوگیری از رفتار پیش‌فرض
+		var realId = currentId.replace('a','');
+		var $target = $('#ula' + realId);
+		if (!$target.length) return;
 
-			var $this = $(this);
-			var currentId = $this.attr('id');
-			var $target = $('#ul' + currentId);
+		var $allNodes = $('#jstree [id^="ula"]');
+		var $ancestors = $a.parents('[id^="ula"]');
 
-			// 🔹 اجرای تابع onclick قبل از بازکردن نود
-			var inlineClick = $this.attr("onclick");
-			if (inlineClick) {
-				try {
-					eval(inlineClick);   // اجرای کد موجود در onclick
-				} catch (ex) {
-					console.error("Error in onclick:", ex);
-				}
-			}
-
-			if (!$target.length) return;
-
-			var $allNodes = $('#jstree [id^="ula"]');
-			var $ancestors = $this.parents('[id^="ula"]');
-
-			if ($target.is(':visible')) {
-				$target.find('[id^="ula"]').addBack().slideUp(500);
-			} else {
-				var $keepOpen = $ancestors.add($target);
-				$allNodes.not($keepOpen).slideUp(500);
-				$keepOpen.slideDown(500);
-			}
-		});
-
+		if ($target.is(':visible')) {
+			$target.find('[id^="ula"]').addBack().slideUp(500);
+		} else {
+			var $keepOpen = $ancestors.add($target);
+			$allNodes.not($keepOpen).slideUp(500);
+			$keepOpen.slideDown(500);
+		}
 	});
 
 
-
 	// $('#jstree li a').each(function () {
+
 	// 	var $a = $(this);
 
 	// 	$a.addClass('OpMenuStyle');
 
-	// 	$a.off('click.MenuAccordion').on('click.MenuAccordion', function () {
+	// 	$a.off('click.MenuAccordion').on('click.MenuAccordion', function (e) {
 
-	// 		var $this      = $(this);
-	// 		var currentId  = $this.attr('id');          // مثلا a1404218
-	// 		var $target    = $('#ul' + currentId);      // مثلا #ula1404218 (می‌تونه UL یا DIV باشه)
+	// 		e.preventDefault(); // جلوگیری از رفتار پیش‌فرض
 
-	// 		// اگر چیزی برای باز/بسته کردن وجود ندارد، کاری نکن
+	// 		var $this = $(this);
+	// 		var currentId = $this.attr('id');
+	// 		var $target = $('#ul' + currentId);
+
+	// 		// 🔹 اجرای تابع onclick قبل از بازکردن نود
+	// 		var inlineClick = $this.attr("onclick");
+	// 		if (inlineClick) {
+	// 			try {
+	// 				eval(inlineClick);   // اجرای کد موجود در onclick
+	// 			} catch (ex) {
+	// 				console.error("Error in onclick:", ex);
+	// 			}
+	// 		}
+
 	// 		if (!$target.length) return;
 
-	// 		// همه‌ی نودهایی که باید کنترل شوند (هم UL هم DIV‌هایی که با ula شروع می‌شوند)
-	// 		var $allNodes   = $('#jstree [id^="ula"]');
-	// 		// مسیر والدها از ریشه تا این نود
-	// 		var $ancestors  = $this.parents('[id^="ula"]');
+	// 		var $allNodes = $('#jstree [id^="ula"]');
+	// 		var $ancestors = $this.parents('[id^="ula"]');
 
-	// 		// اگر همین الان باز است ⇒ فقط ببند (والدها باز می‌مانند)
 	// 		if ($target.is(':visible')) {
-
-	// 			// فقط خود نود و زیرشاخه‌هایش بسته شوند
 	// 			$target.find('[id^="ula"]').addBack().slideUp(500);
-
 	// 		} else {
-
-	// 			// نودهایی که باید باز بمانند = والدها + خود این نود
 	// 			var $keepOpen = $ancestors.add($target);
-
-	// 			// بستن همه شاخه‌های دیگر (که در مسیر فعلی نیستند)
 	// 			$allNodes.not($keepOpen).slideUp(500);
-
-	// 			// باز کردن مسیر فعلی
 	// 			$keepOpen.slideDown(500);
 	// 		}
 	// 	});
+
 	// });
 
-
-
-
-
-				   // $('#jstree li a').each(function () {
-					  //  $(this).addClass('OpMenuStyle');
-					  //  $(this).click(function () {
-						 //   debugger;
-						 //   CurrentId = $(this).attr('id');
-						 //   ParentId = $(this).parent().parent();
-						 //   $("#" + ParentId.attr('id') + " [id^='ula']").each(function () {
-							//    if ($(this).attr('id') != ('ul'+CurrentId))
-							// 	   {
-							// 		   $(this).slideUp(1000);
-							// 	   }
-						 //   });
-						 //   $('#ul' + $(this).attr('id')).toggle(1000);
-					  //  });
-				   // });
 				   $('#jstree li ul').each(function () {
 					   $(this).hide();
 				   });
-				   //TreeView(a, plugin);
 				},
 			   error: function (response) {
 				   toastr('danger', 'خطا', 'مشکلی بوجود آمده، مجددا بعدا امتحان نمایید')

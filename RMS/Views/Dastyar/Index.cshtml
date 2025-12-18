@@ -182,55 +182,6 @@
 
 <script type="text/javascript">
 
-	function OperationClick(Operation) {
-		Type = 234;
-		$('#HDFOperationId').val(Operation);
-		ItemsFBShomareh = $('#HDFItemsFBShomareh').val();
-
-		if (!$('#a' + Operation).hasClass('OpenMenu')) {
-			// BarAvordID = $('#<%=HDFBarAvordID.ClientID%>').val();
-			// ProjectId = $('#<%=HDFProjectID.ClientID%>').val();
-
-			var url = '@Url.Action("GetOperation_ItemsFB", "Operation_ItemsFB")';
-
-			$.ajax({
-				type: "POST",
-				url: url,
-				data: JSON.stringify({
-					Operation: Operation,
-					BarAvordUserId: 'b1200123-db11-44de-a006-45abad9fb1ed',
-					NoeFB: 234,
-					Year: 1397
-				}),
-				contentType: "application/json; charset=utf-8",
-				dataType: "json",
-				success: function (response) {
-					info = response.split('_');
-					if (info[0] == "OK") {
-						$('#a' + Operation).addClass('OpenMenu');
-						$('#HDFFBID').val(info[1]);
-
-						$('#uldiva' + Operation).html(info[2]);
-						$('#divShowRizMetre').html($('#uldiva' + Operation).html());
-						$('#aShow').click();
-
-					}
-					else {
-						toastr.error('مشکل در محاسبه جمع کل فصل انتخابی', 'خطا');
-					}
-				},
-				error: function (response) {
-					alert('c');
-
-					toastr.error('مشکل در محاسبه جمع کل فصل انتخابی', 'خطا');
-				}
-			});
-		}
-		else {
-			$('#a' + Operation).removeClass('OpenMenu');
-		}
-	}
-
 
 		function AddRizMetreUsers(OperationId, FBId, Array) {
 		ArraySplit = Array.split(',');

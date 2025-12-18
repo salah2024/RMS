@@ -508,7 +508,7 @@ function OpenConditionDetailsOnly(ConditionGroupId) {
     $('#divConditionGroup' + ConditionGroupId).toggle(1000);
 }
 function OperationClick(Operation, showAddedRecord) {
-
+    alert('ff');
     if ($("#ula" + Operation).is(":visible")) {
     } else {
 

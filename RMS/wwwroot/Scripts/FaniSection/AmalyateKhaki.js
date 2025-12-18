@@ -1,7 +1,6 @@
 ﻿ActivityLength = 0;
 
 function KhakBardariMashinWithBarAvordIdClick(OpId, BarAvordUserId) {
-
     str = "";
     debugger;
     str += `
@@ -55,9 +54,9 @@ function KhakBardariMashinWithBarAvordIdClick(OpId, BarAvordUserId) {
  <div class="row">
  <div class="col-12" style="direction: ltr;">
     <div class="col-md-2 action-col">
-      <a class="btn buttonStyleBoard" style="color:#fff" onclick="SaveKhakBardariInfo('${BarAvordUserId}'` + ',' + `'Add')">
-        ذخیره
-      </a>
+      <input type="button" class="btn buttonStyleBoard" value="ذخیره" style="color:#fff" onclick="SaveKhakBardariInfo('${BarAvordUserId}'` + ',' + `'Add')"/>
+        
+
     </div><!--col-md-2 action-col -->
     </div><!--col-12 -->
     </div>
@@ -209,7 +208,6 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
         dataType: "json",
         success: function (data) {
 
-
             ActivityTitleComplete = data;
 
             ActivityLength = ActivityTitleComplete.length;
@@ -318,13 +316,13 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
 
                 if (khDetail != null || khDetail != 0) {
 
-                    $("#txtVarizi" + i).prop('disabled') ? '' : $("#txtVarizi" + i).addClass('blinking');
-                    $("#txtReUseHajm" + i).prop('disabled') ? '' : $("#txtReUseHajm" + i).addClass('blinking');
-                    $("#txtHaml" + i).prop('disabled') ? '' : $("#txtHaml" + i).addClass('blinking');
+                    $("#txtVarizi" + i).prop('disabled') ? '' : $("#txtVarizi" + i).val() != "" ? $("#txtVarizi" + i).removeClass('blinking') : $("#txtVarizi" + i).addClass('blinking');
+                    $("#txtReUseHajm" + i).prop('disabled') ? '' : $("#txtReUseHajm" + i).val() != "" ? $("#txtReUseHajm" + i).removeClass('blinking') : $("#txtReUseHajm" + i).addClass('blinking');
+                    $("#txtHaml" + i).prop('disabled') ? '' : $("#txtHaml" + i).val() != "" ? $("#txtHaml" + i).removeClass('blinking') : $("#txtHaml" + i).addClass('blinking');
 
-                    $("#txtDarsadVarizi" + i).prop('disabled') ? '' : $("#txtDarsadVarizi" + i).addClass('blinking');
-                    $("#txtReUseDarsad" + i).prop('disabled') ? '' : $("#txtReUseDarsad" + i).addClass('blinking');
-                    $("#txtDarsadHaml" + i).prop('disabled') ? '' : $("#txtDarsadHaml" + i).addClass('blinking');
+                    $("#txtDarsadVarizi" + i).prop('disabled') ? '' : $("#txtDarsadVarizi" + i).val() != "" ? $("#txtDarsadVarizi" + i).removeClass('blinking') : $("#txtDarsadVarizi" + i).addClass('blinking');
+                    $("#txtReUseDarsad" + i).prop('disabled') ? '' : $("#txtReUseDarsad" + i).val() != "" ? $("#txtReUseDarsad" + i).removeClass('blinking') : $("#txtReUseDarsad" + i).addClass('blinking');
+                    $("#txtDarsadHaml" + i).prop('disabled') ? '' : $("#txtDarsadHaml" + i).val() != "" ? $("#txtDarsadHaml" + i).removeClass('blinking') : $("#txtDarsadHaml" + i).addClass('blinking');
                 }
 
                 let varizi = parseFloat($("#txtVarizi" + i).val()) || 0;
@@ -396,12 +394,15 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
                     if (changedId.includes("Varizi") && !changedId.includes("Darsad")) {
                         dVarizi = (khDetail === 0 ? 0 : (varizi / khDetail)) * 100;
                         $("#txtDarsadVarizi" + i).val(dVarizi.toFixed(2));
+                        $("#txtDarsadVarizi" + i).removeClass('blinking');
                     } else if (changedId.includes("ReUseHajm")) {
                         dReuse = (khDetail === 0 ? 0 : (reuseHajm / khDetail)) * 100;
                         $("#txtReUseDarsad" + i).val(dReuse.toFixed(2));
+                        $("#txtReUseDarsad" + i).removeClass('blinking');
                     } else if (changedId.includes("Haml") && !changedId.includes("Darsad")) {
                         dHaml = (khDetail === 0 ? 0 : (haml / khDetail)) * 100;
                         $("#txtDarsadHaml" + i).val(dHaml.toFixed(2));
+                        $("#txtDarsadHaml" + i).removeClass('blinking');
                     }
                 }
 
@@ -416,25 +417,31 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
 
                 // کنترل مجموع درصدها
                 let dSum = dVarizi + dReuse + dHaml;
-                debugger;
                 if (dSum > 100) {
                     let extra = dSum - 100;
                     if (changedId.includes("DarsadVarizi")) {
                         dVarizi -= extra;
                         $("#txtDarsadVarizi" + i).val(dVarizi.toFixed(2));
+                        $("#txtDarsadVarizi" + i).removeClass('blinking');
+
                         $("#txtVarizi" + i).val(((dVarizi / 100) * khDetail).toFixed(2));
+                        $("#txtVarizi" + i).removeClass('blinking');
                     } else if (changedId.includes("ReUseDarsad")) {
                         dReuse -= extra;
                         $("#txtReUseDarsad" + i).val(dReuse.toFixed(2));
+                        $("#txtReUseDarsad" + i).removeClass('blinking');
                         $("#txtReUseHajm" + i).val(((dReuse / 100) * khDetail).toFixed(2));
+                        $("#txtReUseHajm" + i).removeClass('blinking');
                     } else if (changedId.includes("DarsadHaml")) {
                         dHaml -= extra;
                         $("#txtDarsadHaml" + i).val(dHaml.toFixed(2));
+                        $("#txtDarsadHaml" + i).removeClass('blinking');
                         $("#txtHaml" + i).val(((dHaml / 100) * khDetail).toFixed(2));
+                        $("#txtHaml" + i).removeClass('blinking');
                     }
                 }
 
-                // کنترل مجموع حجم‌ها
+                //// کنترل مجموع حجم‌ها
                 let vSum = varizi + reuseHajm + haml;
                 if (vSum > khDetail) {
                     let extra = vSum - khDetail;
@@ -452,6 +459,9 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
                         $("#txtDarsadHaml" + i).val((khDetail === 0 ? 0 : (haml / khDetail) * 100).toFixed(2));
                     }
                 }
+
+
+                AutoFillThirdColumn(i, khDetail, changedId);
             });
 
             $('#txtHajmKhakBardari').on('keydown', function (e) {
@@ -463,7 +473,7 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
                     var KMS = parseFloat($('#txtFromKMForKhakbardari').val());//.replace('+', ''));
                     var KME = parseFloat($('#txtToKMForKhakbardari').val());//.replace('+', ''));
 
-                    if (KMS == 0 || KME == 0) {
+                    if (KMS < 0 || KME == 0) {
                         $('#txtFromKMForKhakbardari').addClass('blinking');
                         $('#txtToKMForKhakbardari').addClass('blinking');
                         return;
@@ -496,7 +506,7 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
                 var KMS = parseFloat($('#txtFromKMForKhakbardari').val());//.replace('+', ''));
                 var KME = parseFloat($('#txtToKMForKhakbardari').val());//.replace('+', ''));
 
-                if (KMS == 0 || KME == 0) {
+                if (KMS < 0 || KME == 0) {
                     $('#txtFromKMForKhakbardari').addClass('blinking');
                     $('#txtToKMForKhakbardari').addClass('blinking');
                     return;
@@ -529,6 +539,7 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
                 let totalAssigned = 0;
                 let lastIndex = -1;
 
+                debugger;
                 for (let i = 1; i <= ActivityLength; i++) {
                     let Darsad = parseFloat($('#txtDarsad' + i).val()) || 0;
 
@@ -756,6 +767,383 @@ function ShowExistingKMKhakBardari(BarAvordUserId) {
         }
     });
 }
+
+function AutoFillThirdColumn(KMNum, khDetail, changedId) {
+    debugger;
+    // برای تشخیص "پر شده" بودن (خالی نبودن)
+    const hasVal = (selector) => $.trim($(selector).val()) !== "";
+
+    // selectors
+    const $v = $("#txtVarizi" + KMNum);
+    const $dv = $("#txtDarsadVarizi" + KMNum);
+
+    const $r = $("#txtReUseHajm" + KMNum);
+    const $dr = $("#txtReUseDarsad" + KMNum);
+
+    const $h = $("#txtHaml" + KMNum);
+    const $dh = $("#txtDarsadHaml" + KMNum);
+
+    // helpers
+    const clamp = (x, min, max) => Math.max(min, Math.min(max, x));
+    const n = (x) => (parseFloat(x) || 0);
+
+    // اگه khDetail معتبر نیست کاری نکن
+    khDetail = n(khDetail);
+    if (khDetail <= 0) return;
+
+    // ردیف های 1 و 2 => ReUse همیشه صفر، و Varizi/Haml مکمل هم تا 100%
+    const isNoReuseRow = (i === "1" || i === "2");
+    if (isNoReuseRow) {
+        $r.val("0.00");
+        $dr.val("0.00");
+
+        // اگر درصد یکی پر باشد، دیگری = 100 - آن
+        const variziPercentFilled = hasVal("#txtDarsadVarizi" + KMNum);
+        const hamlPercentFilled = hasVal("#txtDarsadHaml" + KMNum);
+
+        // اگر حجم یکی پر باشد، درصدش را بساز
+        const variziVolFilled = hasVal("#txtVarizi" + KMNum);
+        const hamlVolFilled = hasVal("#txtHaml" + KMNum);
+
+        // اول سعی کن درصدها را کامل کنی
+        if (variziPercentFilled && !hamlPercentFilled) {
+            let dv = clamp(n($dv.val()), 0, 100);
+            let dh = clamp(100 - dv, 0, 100);
+            $dh.val(dh.toFixed(2));
+            $dh.removeClass('blinking');
+
+            $v.val(((dv / 100) * khDetail).toFixed(2));
+            $v.removeClass('blinking');
+
+            $h.val(((dh / 100) * khDetail).toFixed(2));
+            $h.removeClass('blinking');
+
+            return;
+        }
+        if (hamlPercentFilled && !variziPercentFilled) {
+            let dh = clamp(n($dh.val()), 0, 100);
+            let dv = clamp(100 - dh, 0, 100);
+            $dv.val(dv.toFixed(2));
+            $dv.removeClass('blinking');
+
+            $h.val(((dh / 100) * khDetail).toFixed(2));
+            $h.removeClass('blinking');
+
+            $v.val(((dv / 100) * khDetail).toFixed(2));
+            $v.removeClass('blinking');
+
+            return;
+        }
+
+        // اگر درصدها پر نیستند، با حجم‌ها برو جلو: یکی پر شد -> دیگری = باقی‌مانده تا khDetail
+        if (variziVolFilled && !hamlVolFilled) {
+            let vv = clamp(n($v.val()), 0, khDetail);
+            let vh = clamp(khDetail - vv, 0, khDetail);
+            $h.val(vh.toFixed(2));
+            $h.removeClass('blinking');
+
+            $dv.val((khDetail === 0 ? 0 : (vv / khDetail) * 100).toFixed(2));
+            $dv.removeClass('blinking');
+
+            $dh.val((khDetail === 0 ? 0 : (vh / khDetail) * 100).toFixed(2));
+            $dh.removeClass('blinking');
+
+            return;
+        }
+        if (hamlVolFilled && !variziVolFilled) {
+            let vh = clamp(n($h.val()), 0, khDetail);
+            let vv = clamp(khDetail - vh, 0, khDetail);
+            $v.val(vv.toFixed(2));
+            $v.removeClass('blinking');
+
+            $dh.val((khDetail === 0 ? 0 : (vh / khDetail) * 100).toFixed(2));
+            $dh.removeClass('blinking');
+
+            $dv.val((khDetail === 0 ? 0 : (vv / khDetail) * 100).toFixed(2));
+            $dv.removeClass('blinking');
+
+            return;
+        }
+
+        // اگر هر دو پر هستند، فقط اصلاح clamp
+        let vv = clamp(n($v.val()), 0, khDetail);
+        let vh = clamp(n($h.val()), 0, khDetail);
+        // اگر جمع بیشتر شد، همان چیزی که تغییر کرده را نگه دار و دیگری را کم کن
+        if (vv + vh > khDetail) {
+            if (changedId.includes("Varizi")) vh = clamp(khDetail - vv, 0, khDetail);
+            else vv = clamp(khDetail - vh, 0, khDetail);
+            $v.val(vv.toFixed(2));
+            $v.removeClass('blinking');
+
+            $h.val(vh.toFixed(2));
+            $h.removeClass('blinking');
+
+        }
+        $dv.val((vv / khDetail * 100).toFixed(2));
+        $dv.removeClass('blinking');
+
+        $dh.val((vh / khDetail * 100).toFixed(2));
+        $dh.removeClass('blinking');
+
+        return;
+    }
+
+    // سایر ردیف ها: سه ستون فعال (Varizi / ReUse / Haml)
+
+    // اگر درصدی وارد شده، حجمش را بساز
+    // (فقط برای فیلدی که خودش درصدش پر است)
+    if (hasVal("#txtDarsadVarizi" + KMNum)) $v.val(((clamp(n($dv.val()), 0, 100) / 100) * khDetail).toFixed(2));
+    if (hasVal("#txtReUseDarsad" + KMNum)) $r.val(((clamp(n($dr.val()), 0, 100) / 100) * khDetail).toFixed(2));
+    if (hasVal("#txtDarsadHaml" + KMNum)) $h.val(((clamp(n($dh.val()), 0, 100) / 100) * khDetail).toFixed(2));
+
+    // تشخیص اینکه کدام درصدها "پر شده‌اند"
+    const filledP = {
+        v: hasVal("#txtDarsadVarizi" + KMNum),
+        r: hasVal("#txtReUseDarsad" + KMNum),
+        h: hasVal("#txtDarsadHaml" + KMNum),
+    };
+
+    // تشخیص اینکه کدام حجم‌ها "پر شده‌اند"
+    const filledV = {
+        v: hasVal("#txtVarizi" + KMNum),
+        r: hasVal("#txtReUseHajm" + KMNum),
+        h: hasVal("#txtHaml" + KMNum),
+    };
+
+    // اگر دو تا درصد پر بود => سومی = 100 - جمع
+    const countP = (filledP.v ? 1 : 0) + (filledP.r ? 1 : 0) + (filledP.h ? 1 : 0);
+    if (countP >= 2) {
+        let dv = clamp(n($dv.val()), 0, 100);
+        let dr = clamp(n($dr.val()), 0, 100);
+        let dh = clamp(n($dh.val()), 0, 100);
+
+        if (!filledP.v) dv = clamp(100 - (dr + dh), 0, 100), $dv.val(dv.toFixed(2));
+        if (!filledP.r) dr = clamp(100 - (dv + dh), 0, 100), $dr.val(dr.toFixed(2));
+        if (!filledP.h) dh = clamp(100 - (dv + dr), 0, 100), $dh.val(dh.toFixed(2));
+
+        $v.val(((dv / 100) * khDetail).toFixed(2));
+        $v.removeClass('blinking');
+        $r.val(((dr / 100) * khDetail).toFixed(2));
+        $r.removeClass('blinking');
+        $h.val(((dh / 100) * khDetail).toFixed(2));
+        $h.removeClass('blinking');
+        return;
+    }
+
+    // اگر دو تا حجم پر بود => سومی = khDetail - جمع
+    const countV = (filledV.v ? 1 : 0) + (filledV.r ? 1 : 0) + (filledV.h ? 1 : 0);
+    if (countV >= 2) {
+        let vv = clamp(n($v.val()), 0, khDetail);
+        let vr = clamp(n($r.val()), 0, khDetail);
+        let vh = clamp(n($h.val()), 0, khDetail);
+
+        if (!filledV.v) vv = clamp(khDetail - (vr + vh), 0, khDetail), $v.val(vv.toFixed(2));
+        if (!filledV.r) vr = clamp(khDetail - (vv + vh), 0, khDetail), $r.val(vr.toFixed(2));
+        if (!filledV.h) vh = clamp(khDetail - (vv + vr), 0, khDetail), $h.val(vh.toFixed(2));
+
+        $dv.val((vv / khDetail * 100).toFixed(2));
+        $dv.removeClass('blinking');
+
+        $dr.val((vr / khDetail * 100).toFixed(2));
+        $dr.removeClass('blinking');
+
+        $dh.val((vh / khDetail * 100).toFixed(2));
+        $dh.removeClass('blinking');
+
+        return;
+    }
+
+    // حالت‌های تک‌ورودی: فعلاً کاری نکن (تا وقتی دومی پر بشه)
+}
+
+function AutoFillThirdColumnForEdit(KMNum, i, khDetail, changedId) {
+    debugger;
+    // برای تشخیص "پر شده" بودن (خالی نبودن)
+    const hasVal = (selector) => $.trim($(selector).val()) !== "";
+
+    // selectors
+    const $v = $("#txtVarizi" + KMNum+"_"+i);
+    const $dv = $("#txtDarsadVarizi" + KMNum + "_" + i);
+
+    const $r = $("#txtReUseHajm" + KMNum + "_" + i);
+    const $dr = $("#txtReUseDarsad" + KMNum + "_" + i);
+
+    const $h = $("#txtHaml" + KMNum + "_" + i);
+    const $dh = $("#txtDarsadHaml" + KMNum + "_" + i);
+
+    // helpers
+    const clamp = (x, min, max) => Math.max(min, Math.min(max, x));
+    const n = (x) => (parseFloat(x) || 0);
+
+    // اگه khDetail معتبر نیست کاری نکن
+    khDetail = n(khDetail);
+    if (khDetail <= 0) return;
+
+    // ردیف های 1 و 2 => ReUse همیشه صفر، و Varizi/Haml مکمل هم تا 100%
+    const isNoReuseRow = (i === "1" || i === "2");
+    if (isNoReuseRow) {
+        $r.val("0.00");
+        $dr.val("0.00");
+
+        // اگر درصد یکی پر باشد، دیگری = 100 - آن
+        const variziPercentFilled = hasVal("#txtDarsadVarizi" + KMNum + "_" + i);
+        const hamlPercentFilled = hasVal("#txtDarsadHaml" + KMNum + "_" + i);
+
+        // اگر حجم یکی پر باشد، درصدش را بساز
+        const variziVolFilled = hasVal("#txtVarizi" + KMNum + "_" + i);
+        const hamlVolFilled = hasVal("#txtHaml" + KMNum + "_" + i);
+
+        // اول سعی کن درصدها را کامل کنی
+        if (variziPercentFilled && !hamlPercentFilled) {
+            let dv = clamp(n($dv.val()), 0, 100);
+            let dh = clamp(100 - dv, 0, 100);
+            $dh.val(dh.toFixed(2));
+            $dh.removeClass('blinking');
+
+            $v.val(((dv / 100) * khDetail).toFixed(2));
+            $v.removeClass('blinking');
+
+            $h.val(((dh / 100) * khDetail).toFixed(2));
+            $h.removeClass('blinking');
+
+            return;
+        }
+        if (hamlPercentFilled && !variziPercentFilled) {
+            let dh = clamp(n($dh.val()), 0, 100);
+            let dv = clamp(100 - dh, 0, 100);
+            $dv.val(dv.toFixed(2));
+            $dv.removeClass('blinking');
+
+            $h.val(((dh / 100) * khDetail).toFixed(2));
+            $h.removeClass('blinking');
+
+            $v.val(((dv / 100) * khDetail).toFixed(2));
+            $v.removeClass('blinking');
+
+            return;
+        }
+
+        // اگر درصدها پر نیستند، با حجم‌ها برو جلو: یکی پر شد -> دیگری = باقی‌مانده تا khDetail
+        if (variziVolFilled && !hamlVolFilled) {
+            let vv = clamp(n($v.val()), 0, khDetail);
+            let vh = clamp(khDetail - vv, 0, khDetail);
+            $h.val(vh.toFixed(2));
+            $h.removeClass('blinking');
+
+            $dv.val((khDetail === 0 ? 0 : (vv / khDetail) * 100).toFixed(2));
+            $dv.removeClass('blinking');
+
+            $dh.val((khDetail === 0 ? 0 : (vh / khDetail) * 100).toFixed(2));
+            $dh.removeClass('blinking');
+
+            return;
+        }
+        if (hamlVolFilled && !variziVolFilled) {
+            let vh = clamp(n($h.val()), 0, khDetail);
+            let vv = clamp(khDetail - vh, 0, khDetail);
+            $v.val(vv.toFixed(2));
+            $v.removeClass('blinking');
+
+            $dh.val((khDetail === 0 ? 0 : (vh / khDetail) * 100).toFixed(2));
+            $dh.removeClass('blinking');
+
+            $dv.val((khDetail === 0 ? 0 : (vv / khDetail) * 100).toFixed(2));
+            $dv.removeClass('blinking');
+
+            return;
+        }
+
+        // اگر هر دو پر هستند، فقط اصلاح clamp
+        let vv = clamp(n($v.val()), 0, khDetail);
+        let vh = clamp(n($h.val()), 0, khDetail);
+        // اگر جمع بیشتر شد، همان چیزی که تغییر کرده را نگه دار و دیگری را کم کن
+        if (vv + vh > khDetail) {
+            if (changedId.includes("Varizi")) vh = clamp(khDetail - vv, 0, khDetail);
+            else vv = clamp(khDetail - vh, 0, khDetail);
+            $v.val(vv.toFixed(2));
+            $v.removeClass('blinking');
+
+            $h.val(vh.toFixed(2));
+            $h.removeClass('blinking');
+
+        }
+        $dv.val((vv / khDetail * 100).toFixed(2));
+        $dv.removeClass('blinking');
+
+        $dh.val((vh / khDetail * 100).toFixed(2));
+        $dh.removeClass('blinking');
+
+        return;
+    }
+
+    // سایر ردیف ها: سه ستون فعال (Varizi / ReUse / Haml)
+
+    // اگر درصدی وارد شده، حجمش را بساز
+    // (فقط برای فیلدی که خودش درصدش پر است)
+    if (hasVal("#txtDarsadVarizi" + KMNum + "_" + i)) $v.val(((clamp(n($dv.val()), 0, 100) / 100) * khDetail).toFixed(2));
+    if (hasVal("#txtReUseDarsad" + KMNum + "_" + i)) $r.val(((clamp(n($dr.val()), 0, 100) / 100) * khDetail).toFixed(2));
+    if (hasVal("#txtDarsadHaml" + KMNum + "_" + i)) $h.val(((clamp(n($dh.val()), 0, 100) / 100) * khDetail).toFixed(2));
+
+    // تشخیص اینکه کدام درصدها "پر شده‌اند"
+    const filledP = {
+        v: hasVal("#txtDarsadVarizi" + KMNum + "_" + i),
+        r: hasVal("#txtReUseDarsad" + KMNum + "_" + i),
+        h: hasVal("#txtDarsadHaml" + KMNum + "_" + i),
+    };
+
+    // تشخیص اینکه کدام حجم‌ها "پر شده‌اند"
+    const filledV = {
+        v: hasVal("#txtVarizi" + KMNum + "_" + i),
+        r: hasVal("#txtReUseHajm" + KMNum + "_" + i),
+        h: hasVal("#txtHaml" + KMNum + "_" + i),
+    };
+
+    // اگر دو تا درصد پر بود => سومی = 100 - جمع
+    const countP = (filledP.v ? 1 : 0) + (filledP.r ? 1 : 0) + (filledP.h ? 1 : 0);
+    if (countP >= 2) {
+        let dv = clamp(n($dv.val()), 0, 100);
+        let dr = clamp(n($dr.val()), 0, 100);
+        let dh = clamp(n($dh.val()), 0, 100);
+
+        if (!filledP.v) dv = clamp(100 - (dr + dh), 0, 100), $dv.val(dv.toFixed(2));
+        if (!filledP.r) dr = clamp(100 - (dv + dh), 0, 100), $dr.val(dr.toFixed(2));
+        if (!filledP.h) dh = clamp(100 - (dv + dr), 0, 100), $dh.val(dh.toFixed(2));
+
+        $v.val(((dv / 100) * khDetail).toFixed(2));
+        $v.removeClass('blinking');
+        $r.val(((dr / 100) * khDetail).toFixed(2));
+        $r.removeClass('blinking');
+        $h.val(((dh / 100) * khDetail).toFixed(2));
+        $h.removeClass('blinking');
+        return;
+    }
+
+    // اگر دو تا حجم پر بود => سومی = khDetail - جمع
+    const countV = (filledV.v ? 1 : 0) + (filledV.r ? 1 : 0) + (filledV.h ? 1 : 0);
+    if (countV >= 2) {
+        let vv = clamp(n($v.val()), 0, khDetail);
+        let vr = clamp(n($r.val()), 0, khDetail);
+        let vh = clamp(n($h.val()), 0, khDetail);
+
+        if (!filledV.v) vv = clamp(khDetail - (vr + vh), 0, khDetail), $v.val(vv.toFixed(2));
+        if (!filledV.r) vr = clamp(khDetail - (vv + vh), 0, khDetail), $r.val(vr.toFixed(2));
+        if (!filledV.h) vh = clamp(khDetail - (vv + vr), 0, khDetail), $h.val(vh.toFixed(2));
+
+        $dv.val((vv / khDetail * 100).toFixed(2));
+        $dv.removeClass('blinking');
+
+        $dr.val((vr / khDetail * 100).toFixed(2));
+        $dr.removeClass('blinking');
+
+        $dh.val((vh / khDetail * 100).toFixed(2));
+        $dh.removeClass('blinking');
+
+        return;
+    }
+
+    // حالت‌های تک‌ورودی: فعلاً کاری نکن (تا وقتی دومی پر بشه)
+}
+
 
 function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
     //$('#HDFStateAmalyateKhakiSaveOrEdit').val('Edit');
@@ -993,7 +1381,7 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
               <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtHaml${KMNum}_${i}" value="${Haml == 0 ? '' : Haml}"  />
             </div>
             <div class="col-4" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtDarsadHaml${KMNum}_${i}" value="${DarsadHaml ==0  ?''  : DarsadHaml}"  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtDarsadHaml${KMNum}_${i}" value="${DarsadHaml == 0 ? '' : DarsadHaml}"  />
             </div>
           </div>
         </div>
@@ -1089,6 +1477,7 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
 
 
             $('#ViewKhakBardari' + KMNum + ' input[type="text"]').off('change').change(function () {
+                debugger;
                 let changedId = $(this).attr("id");
                 let i = changedId.split("_")[1];
                 let HajmKhakBardari = parseFloat($.trim($('#txtHajmKhakBardari' + KMNum).val()));
@@ -1113,6 +1502,17 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
                 // مقادیر اصلی ردیف
                 let khDetail = parseFloat($("#txtKhDetail" + KMNum + "_" + i).val()) || 0;
 
+                if (khDetail != null || khDetail != 0) {
+
+                    $("#txtVarizi" + KMNum + "_" + i).prop('disabled') ? '' : $("#txtVarizi" + KMNum + "_" + i).val() != "" ? $("#txtVarizi" + KMNum + "_" + i).removeClass('blinking') : $("#txtVarizi" + KMNum + "_" + i).addClass('blinking');
+                    $("#txtReUseHajm" + KMNum + "_" + i).prop('disabled') ? '' : $("#txtReUseHajm" + KMNum + "_" + i).val() != "" ? $("#txtReUseHajm" + KMNum + "_" + i).removeClass('blinking') : $("#txtReUseHajm" + KMNum + "_" + i).addClass('blinking');
+                    $("#txtHaml" + KMNum + "_" + i).prop('disabled') ? '' : $("#txtHaml" + KMNum + "_" + i).val() != "" ? $("#txtHaml" + KMNum + "_" + i).removeClass('blinking') : $("#txtHaml" + KMNum + "_" + i).addClass('blinking');
+
+                    $("#txtDarsadVarizi" + i).prop('disabled') ? '' : $("#txtDarsadVarizi" + KMNum + "_" + i).val() != "" ? $("#txtDarsadVarizi" + KMNum + "_" + i).removeClass('blinking') : $("#txtDarsadVarizi" + KMNum + "_" + i).addClass('blinking');
+                    $("#txtReUseDarsad" + i).prop('disabled') ? '' : $("#txtReUseDarsad" + KMNum + "_" + i).val() != "" ? $("#txtReUseDarsad" + KMNum + "_" + i).removeClass('blinking') : $("#txtReUseDarsad" + KMNum + "_" + i).addClass('blinking');
+                    $("#txtDarsadHaml" + i).prop('disabled') ? '' : $("#txtDarsadHaml" + KMNum + "_" + i).val() != "" ? $("#txtDarsadHaml" + KMNum + "_" + i).removeClass('blinking') : $("#txtDarsadHaml" + KMNum + "_" + i).addClass('blinking');
+                }
+
                 let varizi = parseFloat($("#txtVarizi" + KMNum + "_" + i).val()) || 0;
                 let reuseHajm = parseFloat($("#txtReUseHajm" + KMNum + "_" + i).val()) || 0;
                 let haml = parseFloat($("#txtHaml" + KMNum + "_" + i).val()) || 0;
@@ -1121,9 +1521,10 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
                 let dReuse = parseFloat($("#txtReUseDarsad" + KMNum + "_" + i).val()) || 0;
                 let dHaml = parseFloat($("#txtDarsadHaml" + KMNum + "_" + i).val()) || 0;
 
+
                 // 🟢 بخش ۱: کنترل حجم کل و درصد
                 if (changedId.includes("KhDetail" + KMNum)) {
-                    let Zarb = khDetail / HajmKhakBardari * 100;
+                    let Zarb = HajmKhakBardari === 0 ? 0 : (khDetail / HajmKhakBardari) * 100;
                     $("#txtDarsad" + KMNum + "_" + i).val(Zarb.toFixed(2));
 
                     let SumAll = ReturnSumAllDetailsKhakBardariForEdit(KMNum);
@@ -1132,7 +1533,7 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
                         $("#txtKhDetail" + KMNum + "_" + i).val(NewVal.toFixed(2));
                         khDetail = NewVal; // ✅ مقدار جدید رو دوباره ست کن
 
-                        let Zarb = khDetail / HajmKhakBardari * 100;
+                        let Zarb = HajmKhakBardari === 0 ? 0 : (khDetail / HajmKhakBardari) * 100;
                         $("#txtDarsad" + KMNum + "_" + i).val(Zarb.toFixed(2));
                     }
 
@@ -1183,12 +1584,15 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
                     if (changedId.includes("Varizi" + KMNum) && !changedId.includes("Darsad" + KMNum)) {
                         dVarizi = khDetail === 0 ? 0 : (varizi / khDetail) * 100;
                         $("#txtDarsadVarizi" + KMNum + "_" + i).val(dVarizi.toFixed(2));
+                        $("#txtDarsadVarizi" + KMNum + "_" + i).removeClass('blinking');
                     } else if (changedId.includes("ReUseHajm" + KMNum)) {
                         dReuse = khDetail === 0 ? 0 : (reuseHajm / khDetail) * 100;
                         $("#txtReUseDarsad" + KMNum + "_" + i).val(dReuse.toFixed(2));
+                        $("#txtReUseDarsad" + KMNum + "_" + i).removeClass('blinking');
                     } else if (changedId.includes("Haml" + KMNum) && !changedId.includes("Darsad" + KMNum)) {
                         dHaml = khDetail === 0 ? 0 : (haml / khDetail) * 100;
                         $("#txtDarsadHaml" + KMNum + "_" + i).val(dHaml.toFixed(2));
+                        $("#txtDarsadHaml" + KMNum + "_" + i).removeClass('blinking');
                     }
                 }
 
@@ -1208,15 +1612,22 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
                     if (changedId.includes("DarsadVarizi" + KMNum)) {
                         dVarizi -= extra;
                         $("#txtDarsadVarizi" + KMNum + "_" + i).val(dVarizi.toFixed(2));
+                        $("#txtDarsadVarizi" + KMNum + "_" + i).removeClass('blinking');
+
                         $("#txtVarizi" + KMNum + "_" + i).val(((dVarizi / 100) * khDetail).toFixed(2));
+                        $("#txtVarizi" + KMNum + "_" + i).removeClass('blinking');
                     } else if (changedId.includes("ReUseDarsad" + KMNum)) {
                         dReuse -= extra;
                         $("#txtReUseDarsad" + KMNum + "_" + i).val(dReuse.toFixed(2));
+                        $("#txtReUseDarsad" + KMNum + "_" + i).removeClass('blinking');
                         $("#txtReUseHajm" + KMNum + "_" + i).val(((dReuse / 100) * khDetail).toFixed(2));
+                        $("#txtReUseHajm" + KMNum + "_" + i).removeClass('blinking');
                     } else if (changedId.includes("DarsadHaml" + KMNum)) {
                         dHaml -= extra;
                         $("#txtDarsadHaml" + KMNum + "_" + i).val(dHaml.toFixed(2));
+                        $("#txtDarsadHaml" + KMNum + "_" + i).removeClass('blinking');
                         $("#txtHaml" + KMNum + "_" + i).val(((dHaml / 100) * khDetail).toFixed(2));
+                        $("#txtHaml" + KMNum + "_" + i).removeClass('blinking');
                     }
                 }
 
@@ -1238,6 +1649,9 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
                         $("#txtDarsadHaml" + KMNum + "_" + i).val((khDetail === 0 ? 0 : (haml / khDetail) * 100).toFixed(2));
                     }
                 }
+
+                AutoFillThirdColumnForEdit(KMNum, i, khDetail, changedId);
+
             });
 
 
@@ -1810,7 +2224,8 @@ function CheckValuesOfKhakBardariDetailsForEdit(KMNum) {
 }
 
 
-function SaveKhakBardariInfo(BarAvordUserId) {
+function SaveKhakBardariInfo(BarAvordUserId, Type) {
+    debugger;
     check = false;
     //////////
     HKB = $('#txtHajmKhakBardari').val();
@@ -1868,9 +2283,10 @@ function SaveKhakBardariInfo(BarAvordUserId) {
 
     check = SumAllDetailsKhakBardari();
 
-    if (check) {
-        //toastr.info('حجم کل خاکبرداری صحیح نمی باشد', 'اطلاع');
-    }
+    //if (check) {
+    //    toastr.info('مجموع احجام وارد شده بایستی با حجم کل برابر باشد', 'اطلاع');
+    //    return 0;
+    //}
 
     check1 = CheckValuesOfKhakBardariDetails();
 
