@@ -163,8 +163,6 @@ function getZarib() {
     if (planSelected && tenderSelected) {
         BarAvordUserId = $('#HDFBarAvordUserID').val();
         Year = $('#HDFYear').val();
-
-        debugger;
         var vardata = new Object();
         vardata.planSelected = planSelected.value;
         vardata.tenderSelected = tenderSelected.value;
@@ -177,11 +175,9 @@ function getZarib() {
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (data) {
-
                 lstResultZaribBalaSari = data;
                 let str = '';
                 $.each(lstResultZaribBalaSari, function () {
-                debugger;
                     FBName = this.fbName;
                     ZaribBalaSari = this.zaribBalaSari;
                     str += `
@@ -194,7 +190,7 @@ function getZarib() {
                     `
                 });
 
-                debugger;
+                $('#divZaribBalaSari').show();
                 lbl.html(str);
             },
             error: function (response) {

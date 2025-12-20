@@ -112,3 +112,14 @@
 input:disabled {
     background-color: #ccc;
 }
+
+.AmalyatKhakiRowStyle {
+    padding: 2px 5px;
+    margin: 2px 0px;
+    border-bottom: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.errorRow {
+    background-color: #fbcccc;
+}

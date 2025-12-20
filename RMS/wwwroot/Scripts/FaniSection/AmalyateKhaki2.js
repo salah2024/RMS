@@ -13,3 +13,8 @@
         }
     });
 }
+
+function toPersianDigits(num) {
+    if (num == null) return '';
+    return num.toString().replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+}
