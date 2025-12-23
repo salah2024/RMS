@@ -97,8 +97,8 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
         DateTime Now = DateTime.Now;
         Guid BarAvordUserId = request.BarAvordUserId;
         NoeFehrestBaha NoeFBId = request.NoeFBId;
-        string FromKM = request.FromKM.ToString("D6");
-        string ToKM = request.ToKM.ToString("D6");
+        string FromKM = request.FromKM.ToString();
+        string ToKM = request.ToKM.ToString();
         EnumRoadType RoadTypeId = request.RoadTypeId;
         EnumNoeDaneBandi NoeDaneBandiId = request.NoeDaneBandiId;
         string? HajmKhakRiziValue = request.HajmKhakRiziValues;
@@ -264,8 +264,8 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
         int Num = request.Num;
         Guid BarAvordUserId = request.BarAvordUserId;
         NoeFehrestBaha NoeFBId = request.NoeFBId;
-        string FromKM = request.FromKM.ToString("D6");
-        string ToKM = request.ToKM.ToString("D6");
+        string FromKM = request.FromKM.ToString();
+        string ToKM = request.ToKM.ToString();
         EnumRoadType RoadTypeId = request.RoadTypeId;
         EnumNoeDaneBandi NoeDaneBandiId = request.NoeDaneBandiId;
         string? HajmKhakRiziValue = request.HajmKhakRiziValues;
@@ -627,11 +627,11 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
             NoeHajmKhakRizi_Value = x.NoeHajmKhakRizi_Value,
         }).ToList();
 
-        foreach (var item in lstKhakRizi)
-        {
-            item.FromKMSplit = Normalize(item.FromKM);
-            item.ToKMSplit = Normalize(item.ToKM);
-        }
+        //foreach (var item in lstKhakRizi)
+        //{
+        //    item.FromKMSplit = Normalize(item.FromKM);
+        //    item.ToKMSplit = Normalize(item.ToKM);
+        //}
 
 
         var result = new

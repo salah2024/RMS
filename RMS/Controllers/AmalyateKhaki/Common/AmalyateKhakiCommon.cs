@@ -207,30 +207,30 @@ public class AmalyateKhakiCommon
                 default:
                     {
 
-                        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh++;
-                        RizMetre.Sharh = item.NoeKhakBardariName;
-                        RizMetre.Tedad = null;
-                        RizMetre.Tool = null;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = null;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "";
-                        RizMetre.FBId = gFBId;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "2";
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-                        RizMetre.MeghdarJoz = null;
-                        _context.RizMetreUserses.Add(RizMetre);
+                        //clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                        //RizMetre.Shomareh = Shomareh++;
+                        //RizMetre.Sharh = item.NoeKhakBardariName;
+                        //RizMetre.Tedad = null;
+                        //RizMetre.Tool = null;
+                        //RizMetre.Arz = null;
+                        //RizMetre.Ertefa = null;
+                        //RizMetre.Vazn = null;
+                        //RizMetre.Des = "";
+                        //RizMetre.FBId = gFBId;
+                        //RizMetre.OperationsOfHamlId = 1;
+                        //RizMetre.Type = "2";
+                        //RizMetre.ForItem = "";
+                        //RizMetre.UseItem = "";
+                        //RizMetre.MeghdarJoz = null;
+                        //_context.RizMetreUserses.Add(RizMetre);
 
-                        clsAmalyateKhakiInfoForBarAvordEzafeBahaRizMetre AmalyateKhakiInfoForBarAvordEzafeBahaRizMetre
-                            = new clsAmalyateKhakiInfoForBarAvordEzafeBahaRizMetre
-                            {
-                                AmalyateKhakiInfoForBarAvordEzafeBahaId = amalyateKhakiInfoForBarAvordEzafeBaha.ID,
-                                RizMetreUserId = RizMetre.ID
-                            };
-                        _context.AmalyateKhakiInfoForBarAvordEzafeBahaRizMetres.Add(AmalyateKhakiInfoForBarAvordEzafeBahaRizMetre);
+                        //clsAmalyateKhakiInfoForBarAvordEzafeBahaRizMetre AmalyateKhakiInfoForBarAvordEzafeBahaRizMetre
+                        //    = new clsAmalyateKhakiInfoForBarAvordEzafeBahaRizMetre
+                        //    {
+                        //        AmalyateKhakiInfoForBarAvordEzafeBahaId = amalyateKhakiInfoForBarAvordEzafeBaha.ID,
+                        //        RizMetreUserId = RizMetre.ID
+                        //    };
+                        //_context.AmalyateKhakiInfoForBarAvordEzafeBahaRizMetres.Add(AmalyateKhakiInfoForBarAvordEzafeBahaRizMetre);
                         break;
                     }
             }

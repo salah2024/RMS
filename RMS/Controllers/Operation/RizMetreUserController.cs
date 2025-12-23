@@ -1524,8 +1524,8 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
     [HttpPost]
     public JsonResult UpdateRizMetreUsers([FromBody] UpdateRizMetreUsersInputDto request)
     {
-        try
-        {
+        //try
+        //{
 
             Guid Id = request.Id;
 
@@ -3042,11 +3042,11 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                 //}
             }
             return new JsonResult("OK_");
-        }
-        catch (Exception)
-        {
-            return new JsonResult("NOK_");
-        }
+        //}
+        //catch (Exception)
+        //{
+        //    return new JsonResult("NOK_");
+        //}
     }
 
     [HttpPost]
@@ -3933,7 +3933,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
         NoeFehrestBaha NoeFB = request.NoeFB;
         int Year = request.Year;
         long Operation = request.OperationId;
-        string ForItem = request.ForItem;
+        //string ForItem = request.ForItem;
         int LevelNumber = request.LevelNumber == 0 ? 1 : request.LevelNumber;
         DastyarCommon DastyarCommon = new DastyarCommon(context);
 

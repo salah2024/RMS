@@ -93,54 +93,109 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
 
                 if (AmalyateKhakiInfoForBarAvordDetailsId != guCheckID)
                 {
-
                     clsAmalyateKhakiInfoForBarAvordDetailsMore AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
-                    AmalyateKhakiInfoForBarAvordDetailsMore.Value = item.DetailValue == "" ? null : decimal.Parse(item.DetailValue);
-                    AmalyateKhakiInfoForBarAvordDetailsMore.Name = "KhDetail";
-                    AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
-                    _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
+                    if (item.DetailValue != "")
+                    {
+                        decimal dDetailValue = decimal.Parse(item.DetailValue);
+                        if (dDetailValue != 0)
+                        {
+                            AmalyateKhakiInfoForBarAvordDetailsMore.Value = item.DetailValue == "" ? null : dDetailValue;
+                            AmalyateKhakiInfoForBarAvordDetailsMore.Name = "KhDetail";
+                            AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
+                            _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
+                        }
+                    }
 
-                    AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
-                    AmalyateKhakiInfoForBarAvordDetailsMore.Value = item.DarsadValue == "" ? null : decimal.Parse(item.DarsadValue);
-                    AmalyateKhakiInfoForBarAvordDetailsMore.Name = "DarsadKhDetail";
-                    AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
-                    _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
+                    if (item.DarsadValue != "")
+                    {
+                        decimal dDarsadValue = decimal.Parse(item.DarsadValue);
+                        if (dDarsadValue != 0)
+                        {
+                            AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
+                            AmalyateKhakiInfoForBarAvordDetailsMore.Value = item.DarsadValue == "" ? null : dDarsadValue;
+                            AmalyateKhakiInfoForBarAvordDetailsMore.Name = "DarsadKhDetail";
+                            AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
+                            _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
+                        }
+                    }
 
-                    AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
-                    AmalyateKhakiInfoForBarAvordDetailsMore.Value = item.DetailValueOfReCycle == "" ? null : decimal.Parse(item.DetailValueOfReCycle);
-                    AmalyateKhakiInfoForBarAvordDetailsMore.Name = "ReUseHajm";
-                    AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
-                    _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
+                    if (item.DetailValueOfReCycle != "")
+                    {
+                        decimal dDetailValueOfReCycle = decimal.Parse(item.DetailValueOfReCycle);
+                        if (dDetailValueOfReCycle != 0)
+                        {
+                            AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
+                            AmalyateKhakiInfoForBarAvordDetailsMore.Value = item.DetailValueOfReCycle == "" ? null : dDetailValueOfReCycle;
+                            AmalyateKhakiInfoForBarAvordDetailsMore.Name = "ReUseHajm";
+                            AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
+                            _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
+                        }
+                    }
 
-                    AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
-                    AmalyateKhakiInfoForBarAvordDetailsMore.Value = item.DarsadValueOfReCycle == "" ? null : decimal.Parse(item.DarsadValueOfReCycle);
-                    AmalyateKhakiInfoForBarAvordDetailsMore.Name = "DarsadReUseHajm";
-                    AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
-                    _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
+                    if (item.DarsadValueOfReCycle != "")
+                    {
+                        decimal dDarsadValueOfReCycle = decimal.Parse(item.DarsadValueOfReCycle);
+                        if (dDarsadValueOfReCycle != 0)
+                        {
+                            AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
+                            AmalyateKhakiInfoForBarAvordDetailsMore.Value = item.DarsadValueOfReCycle == "" ? null : dDarsadValueOfReCycle;
+                            AmalyateKhakiInfoForBarAvordDetailsMore.Name = "DarsadReUseHajm";
+                            AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
+                            _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
+                        }
+                    }
 
-                    AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
-                    AmalyateKhakiInfoForBarAvordDetailsMore.Value = item.DetailValueOfVarize == "" ? null : decimal.Parse(item.DetailValueOfVarize);
-                    AmalyateKhakiInfoForBarAvordDetailsMore.Name = "Varizi";
-                    AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
-                    _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
+                    if (item.DetailValueOfVarize != "")
+                    {
+                        decimal dDetailValueOfVarize = decimal.Parse(item.DetailValueOfVarize);
+                        if (dDetailValueOfVarize != 0)
+                        {
+                            AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
+                            AmalyateKhakiInfoForBarAvordDetailsMore.Value = item.DetailValueOfVarize == "" ? null : dDetailValueOfVarize;
+                            AmalyateKhakiInfoForBarAvordDetailsMore.Name = "Varizi";
+                            AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
+                            _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
+                        }
+                    }
 
-                    AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
-                    AmalyateKhakiInfoForBarAvordDetailsMore.Value = item.DarsadValueOfVarize == "" ? null : decimal.Parse(item.DarsadValueOfVarize);
-                    AmalyateKhakiInfoForBarAvordDetailsMore.Name = "DarsadVarizi";
-                    AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
-                    _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
+                    if (item.DarsadValueOfVarize != "")
+                    {
+                        decimal dDarsadValueOfVarize = decimal.Parse(item.DarsadValueOfVarize);
+                        if (dDarsadValueOfVarize != 0)
+                        {
+                            AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
+                            AmalyateKhakiInfoForBarAvordDetailsMore.Value = item.DarsadValueOfVarize == "" ? null : dDarsadValueOfVarize;
+                            AmalyateKhakiInfoForBarAvordDetailsMore.Name = "DarsadVarizi";
+                            AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
+                            _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
+                        }
+                    }
 
-                    AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
-                    AmalyateKhakiInfoForBarAvordDetailsMore.Value = item.DetailValueOfHaml == "" ? null : decimal.Parse(item.DetailValueOfHaml);
-                    AmalyateKhakiInfoForBarAvordDetailsMore.Name = "Haml";
-                    AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
-                    _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
+                    if (item.DetailValueOfHaml != "")
+                    {
+                        decimal dDetailValueOfHaml = decimal.Parse(item.DetailValueOfHaml);
+                        if (dDetailValueOfHaml != 0)
+                        {
+                            AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
+                            AmalyateKhakiInfoForBarAvordDetailsMore.Value = item.DetailValueOfHaml == "" ? null : dDetailValueOfHaml;
+                            AmalyateKhakiInfoForBarAvordDetailsMore.Name = "Haml";
+                            AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
+                            _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
+                        }
+                    }
 
-                    AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
-                    AmalyateKhakiInfoForBarAvordDetailsMore.Value = item.DarsadValueOfHaml == "" ? null : decimal.Parse(item.DarsadValueOfHaml);
-                    AmalyateKhakiInfoForBarAvordDetailsMore.Name = "DarsadHaml";
-                    AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
-                    _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
+                    if (item.DarsadValueOfHaml != "")
+                    {
+                        decimal dDarsadValueOfHaml = decimal.Parse(item.DarsadValueOfHaml);
+                        if (dDarsadValueOfHaml != 0)
+                        {
+                            AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
+                            AmalyateKhakiInfoForBarAvordDetailsMore.Value = item.DarsadValueOfHaml == "" ? null : dDarsadValueOfHaml;
+                            AmalyateKhakiInfoForBarAvordDetailsMore.Name = "DarsadHaml";
+                            AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
+                            _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
+                        }
+                    }
                 }
 
                 clsNoeKhakBardari? noeKhakBardari = lstNoeKB.FirstOrDefault(x => x.Id == item.NoeKhakBardari);
@@ -219,7 +274,7 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
         try
         {
             Guid BarAvordUserId = request.BarAvordUserId;
-            NoeFehrestBaha NoeFBId =request.NoeFBId;
+            NoeFehrestBaha NoeFBId = request.NoeFBId;
             long FromKM = request.FromKM;
             long ToKM = request.ToKM;
             string HKB = request.HKB;
@@ -282,76 +337,88 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
 
                     if (AmalyateKhakiInfoForBarAvordDetailsId != guCheck)
                     {
-                        decimal? dDetailValue = item.DetailValue == "" ? null : decimal.Parse(item.DetailValue);
-                        if (dDetailValue != 0)
+                        if (item.DetailValue != "")
                         {
-                            clsAmalyateKhakiInfoForBarAvordDetailsMore AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
-                            AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
-                            AmalyateKhakiInfoForBarAvordDetailsMore.Value = dDetailValue;
-                            AmalyateKhakiInfoForBarAvordDetailsMore.Name = "KhDetail";
-                            _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
+                            decimal? dDetailValue = item.DetailValue == "" ? null : decimal.Parse(item.DetailValue);
+                            if (dDetailValue != 0)
+                            {
+                                clsAmalyateKhakiInfoForBarAvordDetailsMore AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
+                                AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
+                                AmalyateKhakiInfoForBarAvordDetailsMore.Value = dDetailValue;
+                                AmalyateKhakiInfoForBarAvordDetailsMore.Name = "KhDetail";
+                                _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
 
-                            decimal? dDarsadValue = item.DarsadValue == "" ? null : decimal.Parse(item.DarsadValue);
-                            AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
-                            AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
-                            AmalyateKhakiInfoForBarAvordDetailsMore.Value = dDarsadValue;
-                            AmalyateKhakiInfoForBarAvordDetailsMore.Name = "DarsadKhDetail";
-                            _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
-                            //_context.SaveChanges();
+                                decimal? dDarsadValue = item.DarsadValue == "" ? null : decimal.Parse(item.DarsadValue);
+                                AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
+                                AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
+                                AmalyateKhakiInfoForBarAvordDetailsMore.Value = dDarsadValue;
+                                AmalyateKhakiInfoForBarAvordDetailsMore.Name = "DarsadKhDetail";
+                                _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
+                                //_context.SaveChanges();
+                            }
                         }
 
-                        decimal? dDetailValueOfReCycle = item.DetailValueOfReCycle == "" ? null : decimal.Parse(item.DetailValueOfReCycle);
-                        if (dDetailValueOfReCycle != 0)
+                        if (item.DetailValueOfReCycle != "")
                         {
-                            clsAmalyateKhakiInfoForBarAvordDetailsMore AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
-                            AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
-                            AmalyateKhakiInfoForBarAvordDetailsMore.Value = dDetailValueOfReCycle;
-                            AmalyateKhakiInfoForBarAvordDetailsMore.Name = "ReUseHajm";
-                            _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
+                            decimal? dDetailValueOfReCycle = item.DetailValueOfReCycle == "" ? null : decimal.Parse(item.DetailValueOfReCycle);
+                            if (dDetailValueOfReCycle != 0)
+                            {
+                                clsAmalyateKhakiInfoForBarAvordDetailsMore AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
+                                AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
+                                AmalyateKhakiInfoForBarAvordDetailsMore.Value = dDetailValueOfReCycle;
+                                AmalyateKhakiInfoForBarAvordDetailsMore.Name = "ReUseHajm";
+                                _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
 
-                            decimal? dDarsadValueOfReCycle = item.DarsadValueOfReCycle == "" ? null : decimal.Parse(item.DarsadValueOfReCycle);
-                            AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
-                            AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
-                            AmalyateKhakiInfoForBarAvordDetailsMore.Value = dDarsadValueOfReCycle;
-                            AmalyateKhakiInfoForBarAvordDetailsMore.Name = "DarsadReUseHajm";
-                            _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
+                                decimal? dDarsadValueOfReCycle = item.DarsadValueOfReCycle == "" ? null : decimal.Parse(item.DarsadValueOfReCycle);
+                                AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
+                                AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
+                                AmalyateKhakiInfoForBarAvordDetailsMore.Value = dDarsadValueOfReCycle;
+                                AmalyateKhakiInfoForBarAvordDetailsMore.Name = "DarsadReUseHajm";
+                                _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
 
-                            //AmalyateKhakiInfoForBarAvordDetails.SaveMore(AmalyateKhakiInfoForBarAvordDetailsId);
+                                //AmalyateKhakiInfoForBarAvordDetails.SaveMore(AmalyateKhakiInfoForBarAvordDetailsId);
+                            }
                         }
 
-                        decimal? dDetailValueOfVarize = item.DetailValueOfVarize == "" ? null : decimal.Parse(item.DetailValueOfVarize);
-                        if (dDetailValueOfVarize != 0)
+                        if (item.DetailValueOfVarize != "")
                         {
-                            clsAmalyateKhakiInfoForBarAvordDetailsMore AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
-                            AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
-                            AmalyateKhakiInfoForBarAvordDetailsMore.Value = dDetailValueOfVarize;
-                            AmalyateKhakiInfoForBarAvordDetailsMore.Name = "Varizi";
-                            _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
+                            decimal? dDetailValueOfVarize = item.DetailValueOfVarize == "" ? null : decimal.Parse(item.DetailValueOfVarize);
+                            if (dDetailValueOfVarize != 0)
+                            {
+                                clsAmalyateKhakiInfoForBarAvordDetailsMore AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
+                                AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
+                                AmalyateKhakiInfoForBarAvordDetailsMore.Value = dDetailValueOfVarize;
+                                AmalyateKhakiInfoForBarAvordDetailsMore.Name = "Varizi";
+                                _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
 
-                            decimal? dDarsadValueOfVarize = item.DarsadValueOfVarize == "" ? null : decimal.Parse(item.DarsadValueOfVarize);
-                            AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
-                            AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
-                            AmalyateKhakiInfoForBarAvordDetailsMore.Value = dDarsadValueOfVarize;
-                            AmalyateKhakiInfoForBarAvordDetailsMore.Name = "DarsadVarizi";
-                            _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
-                            //_context.SaveChanges();
+                                decimal? dDarsadValueOfVarize = item.DarsadValueOfVarize == "" ? null : decimal.Parse(item.DarsadValueOfVarize);
+                                AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
+                                AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
+                                AmalyateKhakiInfoForBarAvordDetailsMore.Value = dDarsadValueOfVarize;
+                                AmalyateKhakiInfoForBarAvordDetailsMore.Name = "DarsadVarizi";
+                                _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
+                                //_context.SaveChanges();
+                            }
                         }
 
-                        decimal? dDetailValueOfHaml = item.DetailValueOfHaml == "" ? null : decimal.Parse(item.DetailValueOfHaml);
-                        if (dDetailValueOfHaml != 0)
+                        if (item.DetailValueOfHaml != "")
                         {
-                            clsAmalyateKhakiInfoForBarAvordDetailsMore AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
-                            AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
-                            AmalyateKhakiInfoForBarAvordDetailsMore.Value = dDetailValueOfHaml;
-                            AmalyateKhakiInfoForBarAvordDetailsMore.Name = "Haml";
-                            _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
+                            decimal? dDetailValueOfHaml = item.DetailValueOfHaml == "" ? null : decimal.Parse(item.DetailValueOfHaml);
+                            if (dDetailValueOfHaml != 0)
+                            {
+                                clsAmalyateKhakiInfoForBarAvordDetailsMore AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
+                                AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
+                                AmalyateKhakiInfoForBarAvordDetailsMore.Value = dDetailValueOfHaml;
+                                AmalyateKhakiInfoForBarAvordDetailsMore.Name = "Haml";
+                                _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
 
-                            decimal? dDarsadValueOfHaml = item.DarsadValueOfHaml == "" ? null : decimal.Parse(item.DarsadValueOfHaml);
-                            AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
-                            AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
-                            AmalyateKhakiInfoForBarAvordDetailsMore.Value = dDarsadValueOfHaml;
-                            AmalyateKhakiInfoForBarAvordDetailsMore.Name = "DarsadHaml";
-                            _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
+                                decimal? dDarsadValueOfHaml = item.DarsadValueOfHaml == "" ? null : decimal.Parse(item.DarsadValueOfHaml);
+                                AmalyateKhakiInfoForBarAvordDetailsMore = new clsAmalyateKhakiInfoForBarAvordDetailsMore();
+                                AmalyateKhakiInfoForBarAvordDetailsMore.AmalyateKhakiInfoForBarAvordDetailsId = AmalyateKhakiInfoForBarAvordDetailsId;
+                                AmalyateKhakiInfoForBarAvordDetailsMore.Value = dDarsadValueOfHaml;
+                                AmalyateKhakiInfoForBarAvordDetailsMore.Name = "DarsadHaml";
+                                _context.AmalyateKhakiInfoForBarAvordDetailsMores.Add(AmalyateKhakiInfoForBarAvordDetailsMore);
+                            }
                         }
                     }
                     /////////////
@@ -381,7 +448,7 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
                         }
 
                         decimal? Hajm = item.DetailValue == "" ? null : decimal.Parse(item.DetailValue);
-                        if (Hajm != 0)
+                        if (Hajm != 0 && Hajm != null)
                         {
                             clsRizMetreUsers RizMetre = new clsRizMetreUsers();
                             RizMetre.Shomareh = Shomareh++;

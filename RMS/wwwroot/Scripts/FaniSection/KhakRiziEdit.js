@@ -24,6 +24,7 @@
         if (groupName == 'roadType'+num) {
             $input = $('<input/>', {
                 class: 'form-check-input',
+                style: 'margin-right: -10px;',
                 type: 'radio',
                 id,
                 name: groupName,
@@ -45,6 +46,7 @@
 
         const $label = $('<label/>', {
             class: 'form-check-label',
+            style: 'padding: 0px;',
             for: id,
             text: lbl
         });
@@ -71,8 +73,6 @@ function renderHajmInputsForEdit($container, items, KhakRizi, num) {
     noeHajmKhakRizi_ValueSplit = noeHajmKhakRizi_Value.split(',');
 
     items.forEach((item, idx) => {
-        debugger;
-
         const idVal = item.id ?? item.Id ?? idx;
         const text = (item.description ?? item.Description ?? '').toString();
         const tid = `txtHajmKhRiziExist_${num}`;
@@ -83,7 +83,6 @@ function renderHajmInputsForEdit($container, items, KhakRizi, num) {
 
         currentValue = 0;
         noeHajmKhakRizi_ValueSplit.forEach(item1 => {
-            debugger;
             itemSplit = item1.split('_');
             currentid = itemSplit[0];
             currentHajm = itemSplit[1];

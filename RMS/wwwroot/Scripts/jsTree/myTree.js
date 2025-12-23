@@ -48,7 +48,7 @@ function createTree(data, parentId) {
                     else {
                         html += `
                         <li>
-                        <a onclick="${funcCall}('${id}')" id="a${id}">
+                        <a onclick="${funcCall}('${id}',e)" id="a${id}">
                             ${operationName}
                         <span id="span${id}"></span>
                         </a>
@@ -75,7 +75,7 @@ function createTree(data, parentId) {
                 showAddedRecord = !HasEnteringValue;
                 html += `
                 <li style="display: flex; align-items: center; gap: 5px;">
-                <a id="a${id}" onclick="OperationClick('${id}',${showAddedRecord})">
+                <a id="a${id}" onclick="OperationClick('${id}',${showAddedRecord},e)">
 
 
                     ${fbShomareh}-${sharh} <span id="span${id}"></span><span style="color:red">${Description}</span></a>

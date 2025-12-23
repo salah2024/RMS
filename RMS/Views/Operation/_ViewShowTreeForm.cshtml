@@ -123,6 +123,10 @@
 <script src="~/Scripts/FaniSection/AmalyateKhakiGharzeh.js"></script>
 <script src="~/Scripts/FaniSection/AssisScript.js"></script>
 <script src="~/Scripts/FaniSection/AssisScript2.js"></script>
+<script src="~/Scripts/FaniSection/KhakRizi.js"></script>
+<script src="~/Scripts/FaniSection/KhakRiziEdit.js"></script>
+<script src="~/Scripts/FaniSection/ChanelKani.js"></script>
+<script src="~/Scripts/FaniSection/PayKani.js"></script>
 <script src="~/Scripts/FaniSection/Board.js"></script>
 <script src="~/Scripts/FaniSection/BoardStand.js"></script>
 <script src="~/Scripts/FaniSection/ZaribBalaSari.js"></script>
@@ -264,81 +268,81 @@
 
 
 
-			$('#jstree')
-	  .off('click.MenuAccordion')
-	  .on('click.MenuAccordion', 'a', function (e) {
+	// $('#jstree')
+	//   .off('click.MenuAccordion')
+	//   .on('click.MenuAccordion', 'a', function (e) {
 
-		e.preventDefault();
-		e.stopPropagation();
-		e.stopImmediatePropagation();
+	// 	e.preventDefault();
+	// 	e.stopPropagation();
+	// 	e.stopImmediatePropagation();
 
-		// 👈 این خط کلیدی است
-		// اجازه نده onclick داخل html دوباره اجرا شود
-		this.onclick = null;
-
-		var $a = $(this);
-		var currentId = $a.attr('id');
-		if (!currentId) return;
-
-		// ⛔️ دیگر eval نمی‌کنیم
-		// OperationClick همان onclick اصلی است که فقط یک‌بار اجرا شده
-
-		var realId = currentId.replace('a','');
-		var $target = $('#ula' + realId);
-		if (!$target.length) return;
-
-		var $allNodes = $('#jstree [id^="ula"]');
-		var $ancestors = $a.parents('[id^="ula"]');
-
-		if ($target.is(':visible')) {
-			$target.find('[id^="ula"]').addBack().slideUp(500);
-		} else {
-			var $keepOpen = $ancestors.add($target);
-			$allNodes.not($keepOpen).slideUp(500);
-			$keepOpen.slideDown(500);
-		}
-	});
-
-
-	// $('#jstree li a').each(function () {
+	// 	// 👈 این خط کلیدی است
+	// 	// اجازه نده onclick داخل html دوباره اجرا شود
+	// 	this.onclick = null;
 
 	// 	var $a = $(this);
+	// 	var currentId = $a.attr('id');
+	// 	if (!currentId) return;
 
-	// 	$a.addClass('OpMenuStyle');
+	// 	// ⛔️ دیگر eval نمی‌کنیم
+	// 	// OperationClick همان onclick اصلی است که فقط یک‌بار اجرا شده
 
-	// 	$a.off('click.MenuAccordion').on('click.MenuAccordion', function (e) {
+	// 	var realId = currentId.replace('a','');
+	// 	var $target = $('#ula' + realId);
+	// 	if (!$target.length) return;
 
-	// 		e.preventDefault(); // جلوگیری از رفتار پیش‌فرض
+	// 	var $allNodes = $('#jstree [id^="ula"]');
+	// 	var $ancestors = $a.parents('[id^="ula"]');
 
-	// 		var $this = $(this);
-	// 		var currentId = $this.attr('id');
-	// 		var $target = $('#ul' + currentId);
-
-	// 		// 🔹 اجرای تابع onclick قبل از بازکردن نود
-	// 		var inlineClick = $this.attr("onclick");
-	// 		if (inlineClick) {
-	// 			try {
-	// 				eval(inlineClick);   // اجرای کد موجود در onclick
-	// 			} catch (ex) {
-	// 				console.error("Error in onclick:", ex);
-	// 			}
-	// 		}
-
-	// 		if (!$target.length) return;
-
-	// 		var $allNodes = $('#jstree [id^="ula"]');
-	// 		var $ancestors = $this.parents('[id^="ula"]');
-
-	// 		if ($target.is(':visible')) {
-	// 			$target.find('[id^="ula"]').addBack().slideUp(500);
-	// 		} else {
-	// 			var $keepOpen = $ancestors.add($target);
-	// 			$allNodes.not($keepOpen).slideUp(500);
-	// 			$keepOpen.slideDown(500);
-	// 		}
-	// 	});
-
+	// 	if ($target.is(':visible')) {
+	// 		$target.find('[id^="ula"]').addBack().slideUp(500);
+	// 	} else {
+	// 		var $keepOpen = $ancestors.add($target);
+	// 		$allNodes.not($keepOpen).slideUp(500);
+	// 		$keepOpen.slideDown(500);
+	// 	}
 	// });
+
+
+	$('#jstree li a').each(function () {
+
+		var $a = $(this);
+
+		$a.addClass('OpMenuStyle');
+
+		$a.off('click.MenuAccordion').on('click.MenuAccordion', function (e) {
+
+			e.preventDefault(); // جلوگیری از رفتار پیش‌فرض
+
+			var $this = $(this);
+			var currentId = $this.attr('id');
+			var $target = $('#ul' + currentId);
+
+			// 🔹 اجرای تابع onclick قبل از بازکردن نود
+			var inlineClick = $this.attr("onclick");
+			if (inlineClick) {
+				try {
+					eval(inlineClick);   // اجرای کد موجود در onclick
+				} catch (ex) {
+					console.error("Error in onclick:", ex);
+				}
+			}
+
+			if (!$target.length) return;
+
+			var $allNodes = $('#jstree [id^="ula"]');
+			var $ancestors = $this.parents('[id^="ula"]');
+
+			if ($target.is(':visible')) {
+				$target.find('[id^="ula"]').addBack().slideUp(500);
+			} else {
+				var $keepOpen = $ancestors.add($target);
+				$allNodes.not($keepOpen).slideUp(500);
+				$keepOpen.slideDown(500);
+			}
+		});
+
+	});
 
 				   $('#jstree li ul').each(function () {
 					   $(this).hide();
@@ -398,10 +402,15 @@
 		   });
 	   }
 
-	   function SetNoeFB(OpId,NoeFB)
+	   function SetNoeFB(OpId,NoeFB,event)
 	   {
-		   $('#HDFNoeFB').val(NoeFB);
-		   debugger;
+		   if (event) {
+				event.stopPropagation();
+				event.preventDefault();
+			}
+
+			$('#HDFNoeFB').val(NoeFB);
+			debugger;
 			return true;
 	   }
 

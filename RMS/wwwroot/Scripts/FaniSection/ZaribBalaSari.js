@@ -1,4 +1,9 @@
-﻿function ShowZaribBalaSari(OperationId) {
+﻿function ShowZaribBalaSari(OperationId, event) {
+    if (event) {
+        event.stopPropagation();
+        event.preventDefault();
+    }
+
     debugger;
     $('#HDFOperationId').val(OperationId);
 

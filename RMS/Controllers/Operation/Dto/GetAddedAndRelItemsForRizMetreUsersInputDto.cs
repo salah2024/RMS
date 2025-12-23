@@ -10,7 +10,7 @@ namespace RMS.Controllers.Operation.Dto
         public NoeFehrestBaha NoeFB { get; set; }
         public int Year { get; set; }
         public long OperationId { get; set; }
-        public string ForItem { get; set; }
+        //public string ForItem { get; set; }
         public int LevelNumber { get; set; }
     }
 }

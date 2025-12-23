@@ -115,7 +115,63 @@ public class AccountController : Controller
     //}
 
 
+    //[HttpPost]
+    //public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
+    //{
+    //    if (!ModelState.IsValid)
+    //        return View(model);
+
+    //    var user = await _userManager.FindByNameAsync(model.UserName);
+    //    if (user == null)
+    //    {
+    //        ModelState.AddModelError(string.Empty, "نام کاربری یا رمز اشتباه است");
+    //        return View(model);
+    //    }
+
+    //    //var signInResult = await _signInManager.PasswordSignInAsync(
+    //    //    user, model.Password, model.RememberMe, lockoutOnFailure: false);
+
+    //    //if (!signInResult.Succeeded)
+    //    //{
+    //    //    ModelState.AddModelError(string.Empty, "نام کاربری یا رمز اشتباه است");
+    //    //    return View(model);
+    //    //}
+
+    //    var result = await _signInManager.PasswordSignInAsync(
+    //    user,
+    //    model.Password,
+    //    model.RememberMe,
+    //    lockoutOnFailure: false);
+
+    //    if (!result.Succeeded)
+    //    {
+    //        ModelState.AddModelError(string.Empty, "نام کاربری یا رمز عبور اشتباه است");
+    //        return View(model);
+    //    }
+
+    //    // ساخت JWT
+    //    //var jwtToken = await _tokenService.CreateTokenAsync(user);
+
+    //    // ذخیره توکن در کوکی (HttpOnly برای امنیت)
+    //    //Response.Cookies.Append("access_token", jwtToken, new CookieOptions
+    //    //{
+    //    //    HttpOnly = true,
+    //    //    Secure = true,          // اگر روی HTTPS هستید حتما true بماند
+    //    //    SameSite = SameSiteMode.Strict,
+    //    //    Expires = DateTimeOffset.UtcNow.AddHours(1)
+    //    //});
+
+    //    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+    //        return Redirect(returnUrl);
+
+    //    // ریدایرکت به داشبورد
+    //    return RedirectToAction("Index", "Dashboard");
+    //}
+
+
+
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
     {
         if (!ModelState.IsValid)
@@ -124,24 +180,16 @@ public class AccountController : Controller
         var user = await _userManager.FindByNameAsync(model.UserName);
         if (user == null)
         {
-            ModelState.AddModelError(string.Empty, "نام کاربری یا رمز اشتباه است");
+            ModelState.AddModelError(string.Empty, "نام کاربری یا رمز عبور اشتباه است");
             return View(model);
         }
 
-        //var signInResult = await _signInManager.PasswordSignInAsync(
-        //    user, model.Password, model.RememberMe, lockoutOnFailure: false);
-
-        //if (!signInResult.Succeeded)
-        //{
-        //    ModelState.AddModelError(string.Empty, "نام کاربری یا رمز اشتباه است");
-        //    return View(model);
-        //}
-
         var result = await _signInManager.PasswordSignInAsync(
-        user,
-        model.Password,
-        model.RememberMe,
-        lockoutOnFailure: false);
+            user.UserName,       // بهتر از خود user
+            model.Password,
+            model.RememberMe,
+            lockoutOnFailure: true
+        );
 
         if (!result.Succeeded)
         {
@@ -149,24 +197,23 @@ public class AccountController : Controller
             return View(model);
         }
 
-        // ساخت JWT
-        //var jwtToken = await _tokenService.CreateTokenAsync(user);
-
-        // ذخیره توکن در کوکی (HttpOnly برای امنیت)
-        //Response.Cookies.Append("access_token", jwtToken, new CookieOptions
-        //{
-        //    HttpOnly = true,
-        //    Secure = true,          // اگر روی HTTPS هستید حتما true بماند
-        //    SameSite = SameSiteMode.Strict,
-        //    Expires = DateTimeOffset.UtcNow.AddHours(1)
-        //});
-
-        if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+        // اگر آدرس برگشتی معتبر بود
+        if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
             return Redirect(returnUrl);
 
-        // ریدایرکت به داشبورد
+        // ریدایرکت پیش‌فرض
         return RedirectToAction("Index", "Dashboard");
     }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Logout()
+    {
+        await _signInManager.SignOutAsync();
+        return RedirectToAction("Login", "Account");
+    }
+
+
 
     //private string GenerateToken(ApplicationUser user)
     //{
@@ -206,14 +253,5 @@ public class AccountController : Controller
     //    _httpContextAccessor.HttpContext.Response.Cookies.Append("jwt", token, cookieOptions);
     //}
 
-    [HttpPost]
-    public async Task<IActionResult> Logout()
-    {
-        await _signInManager.SignOutAsync();
-        // حذف کوکی JWT هنگام خروج از سیستم
-        //_httpContextAccessor.HttpContext.Response.Cookies.Delete("jwt");
-
-        // خروج از سیستم و برگشت به صفحه اصلی
-        return RedirectToAction("Login", "Account");
-    }
+  
 }

@@ -105,13 +105,12 @@
 		{
 		$.ajax({
 		type: "POST",
-		url: "/BaseInfo/SetViewBagEmpty",
+		url: "/Account/Logout",
 		data: JSON.stringify(''),
 		contentType: "application/json; charset=utf-8",
 		dataType: "json",
 		success: function (response) {
-		if (response == "OK")
-		window.location.href = '../User/LoginPage';
+		
 		},
 		error: function (response) {
 		toastr.error('خطا', 'خطا');
@@ -132,7 +131,7 @@
 			<div class="app-sidebar__overlay" data-toggle="sidebar"></div>
 			<aside class="app-sidebar ">
 				<div class="sidebar-img">
-					<a class="navbar-brand" href="index-ldf-2.html">
+					<a class="navbar-brand" href="#">
 						<img alt="..." class="navbar-brand-img main-logo" src="~/assets/img/brand/logolight1.png" />
 						<img alt="..." class="navbar-brand-img logo" src="~/assets/img/brand/logo.png" />
 					</a>
@@ -319,8 +318,19 @@
 												<i class="ni ni-settings-gear-65"></i>
 												<span>تنظیمات</span>
 											</a>
-											<div class="dropdown-divider"></div><a class="dropdown-item"
-																		href="#" onclick="Exit()"><i class="ni ni-user-run"></i><span>خروج</span></a>
+											<div class="dropdown-divider"></div>
+											@* <a class="dropdown-item"
+																		href="#" onclick="Exit()">
+																		<i class="ni ni-user-run"></i><span>خروج</span></a> *@
+
+											<form asp-controller="Account" asp-action="Logout" method="post">
+												@Html.AntiForgeryToken()
+												<button class="dropdown-item" type="submit">
+													<i class="ni ni-user-run"></i>
+													<span>خروج</span>
+												</button>
+											</form>
+
 										</div>
 									</li>
 								</ul>

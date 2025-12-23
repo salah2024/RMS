@@ -1,6 +1,12 @@
 ﻿ActivityLength = 0;
 
-function ChanelKaniClick(OpId) {
+function ChanelKaniClick(OpId, event) {
+
+    if (event) {
+        event.stopPropagation();
+        event.preventDefault();
+    }
+
     BarAvordUserId = $('#HDFBarAvordUserID').val();
     str = "";
     debugger;

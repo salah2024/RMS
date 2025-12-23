@@ -111,7 +111,12 @@ function FillZaribMantegheControls(OperationId, data) {
 }
 
 
-function ShowZaribMantaghe(OperationId) {
+function ShowZaribMantaghe(OperationId, event) {
+    if (event) {
+        event.stopPropagation();
+        event.preventDefault();
+    }
+
     let ostanId = 'ddlOstan_' + OperationId;
     let shahrId = 'ddlShahr_' + OperationId;
     let bakhshId = 'ddlBakhsh_' + OperationId;

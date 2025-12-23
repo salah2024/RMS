@@ -2,10 +2,11 @@
 ////////////////////
 ///////////////////
 function KhakRiziWithBarAvordClick(OpId, BarAvordUserId) {
+    debugger;
 
     str = `
                 <div id="ExistKhakRizi"></div>
-            <div id="divViewKhakRizi" class="khak-section">
+            <div id="divViewKhakRizi" class="khak-section" style="margin-top: 30px;background-color: #edb585;padding: 10px;border-radius: 5px;">
             </div>
     `
     $('#ula' + OpId).html(str);
@@ -42,6 +43,7 @@ function renderRadios($container, groupName, items) {
 
         const $input = $('<input/>', {
             class: 'form-check-input',
+            style:'margin-right: -10px;',
             type: 'radio',
             id,
             name: groupName,
@@ -50,6 +52,7 @@ function renderRadios($container, groupName, items) {
 
         const $label = $('<label/>', {
             class: 'form-check-label',
+            style:'padding: 0px;',
             for: id,
             text: lbl
         });
@@ -109,38 +112,36 @@ function ShowSelctionKhakRizi(IsNew, KMExistingId, KMNum, BarAvordUserId, FromKM
         success: function (data) {
             const str = `
   <!-- هدر کیلومتراژ -->
-  <div id="headerNew" class="row mb-3 khak-header" onclick="toggleKhakRiziNew()">
-      <div class="col-auto d-flex align-items-center">
+  <div id="headerNew" class="row">
+   <div class="col-1">
         <i class="fa fa-plus" style="font-size: 20px;color: green;"></i>
     </div>
-    <div class="col-auto d-flex align-items-center">
+    <div class="col-1">
       <span>از کیلومتراژ:</span>
     </div>
-    <div class="col-auto">
-      <input type="text" class="form-control_1 input-sm khak-input"
-             id="txtFromKMForKhakRizi" value="000+000"  onclick="event.stopPropagation();"/>
+    <div class="col-1">
+          <input type="text" class="form-control_1 khakbardariTextStyle  input-sm text-center" onchange="" id="txtFromKMForKhakRizi" value="0"/>
     </div>
 
-    <div class="col-auto d-flex align-items-center">
+    <div class="col-1">
       <span>تا کیلومتراژ:</span>
     </div>
-    <div class="col-auto">
-      <input type="text" class="form-control_1 input-sm khak-input"
-             id="txtToKMForKhakRizi" value="000+000"  onclick="event.stopPropagation();"/>
+    <div class="col-1">
+          <input type="text" class="form-control_1 khakbardariTextStyle input-sm text-center" id="txtToKMForKhakRizi" value="0"/>
     </div>
   </div>
 
   <!-- محتوای اصلی (رادیوها با jQuery ساخته می‌شوند) -->
   <div id="divulaSomeOpId" style="display:none">
-  <div id="ulaSomeOpId"></div>
+  <div id="ulaSomeOpId" class="col-12"></div>
 
   <!-- دکمه ذخیره پایین چپ -->
   <div class="row khak-save-row">
   <div class="col-10">
   </div>
     <div class="col-2 force-left">
-      <a class="NewPolStyle btn buttonStyleBoard"
-         onclick="SaveKhakRiziInfo('${BarAvordUserId}')">ذخیره</a>
+      <input type="button" class="NewPolStyle btn buttonStyleBoard"
+         onclick="SaveKhakRiziInfo('${BarAvordUserId}')"/>ذخیره
     </div>
   </div>
   </div>
@@ -148,11 +149,32 @@ function ShowSelctionKhakRizi(IsNew, KMExistingId, KMNum, BarAvordUserId, FromKM
 
             $('#divViewKhakRizi').html(str);
 
-            $('#ula' + OpId).on('input change', '#txtFromKMForKhakRizi, #txtToKMForKhakRizi', function () {
+            $('#headerNew').on('input keydown', '#txtFromKMForKhakRizi, #txtToKMForKhakRizi', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault(); // جلوگیری از submit فرم
+
+                    const inputs = $('.khakbardariTextStyle');
+                    let idx = inputs.index(this);
+
+                    // تا وقتی input بعدی وجود دارد، بررسی کن disabled نباشد
+                    while (idx < inputs.length - 1) {
+                        idx++;
+                        if (!inputs.eq(idx).prop('disabled')) {
+                            inputs.eq(idx).focus().select();
+                            return; // خروج از تابع بعد از فوکوس موفق
+                        }
+                    }
+                }
+            });
+
+            $('#ula' + OpId).on('input keydown', '#txtFromKMForKhakRizi, #txtToKMForKhakRizi', function () {
                 // اختیاری: حذف فوریِ ظاهر blinking هنگام تایپ
                 $(this).removeClass('blinking');
                 // و سپس اعتبارسنجی کل جفت
-                validateKmFields();
+                ok = validateKmFields();
+                if (ok) {
+                    $('#divulaSomeOpId').show(500);
+                }
             });
 
             $('#ula' + OpId).on('input change', '.hajm-input', function () {
@@ -180,7 +202,8 @@ function ShowSelctionKhakRizi(IsNew, KMExistingId, KMNum, BarAvordUserId, FromKM
 
             // ردیف عنوان‌ها
             const $headerRow =
-                $('<div/>', { class: 'row' }).append(
+                $('<div/>', {
+                    class: 'row', style: 'padding:10px 0px;border-radius:5px 5px 0px 0px;background-color:#92adff;' }).append(
                     $('<div/>', { class: 'col-12 khak-card' }).append(
                         $('<div/>', { class: 'row' })
                             .append($('<div/>', { class: 'col-md-3' }).append($('<span/>', { text: 'نوع راه' })))
@@ -359,7 +382,8 @@ function validateHajmGroup() {
 function wireValidationEvents() {
     // کیلومتراژها
     $('#txtFromKMForKhakRizi, #txtToKMForKhakRizi').on('input change', function () {
-        validateKmFields();
+       validateKmFields();
+
     });
 
     // وقتی یکی از رادیوهای هر گروه انتخاب شد، استایل خطا از همان گروه برداشته شود
@@ -431,8 +455,6 @@ function SaveKhakRiziInfo(barAvordUserId) {
         }
     });
 
-
-
     var vardata = {
         FromKm: parseFloat($('#txtFromKMForKhakRizi').val().replace('+', '')),
         ToKm: parseFloat($('#txtToKMForKhakRizi').val().replace('+', '')),
@@ -474,8 +496,8 @@ function SaveKhakRiziInfo(barAvordUserId) {
 }
 
 function ClearContextNew() {
-    $('#txtFromKMForKhakRizi').val('000+000');
-    $('#txtToKMForKhakRizi').val('000+000');
+    $('#txtFromKMForKhakRizi').val('0');
+    $('#txtToKMForKhakRizi').val('0');
 
     $('input[name="roadType"]').prop('checked', false);
     $('input[name="noeDaneBandi"]').prop('checked', false);
@@ -500,37 +522,38 @@ function GetExistKhakRizi(BarAvordUserId, num) {
         dataType: "json",
         success: function (data) {
             lstKhakRizi = data.lstKhakRizi;
-            var str = '';
+            var str = `
+            <div class="row col-12 ExistKhBHeaderStyle">
+                        <div class="col-1"><span>ردیف</span></div>
+                        <div class="col-2"><span>از کیلومتراژ</span></div>
+                        <div class="col-2"><span>تا کیلومتراژ</span></div>
+                        <div class="col-2"></div>
+                </div>
+            `;
 
 
             $.each(lstKhakRizi, function () {
                 str += `
-<div id="divExistKhakRizi${this.kmNum}">
-  <!-- هدر کیلومتراژ -->
-  <div id="header${this.kmNum}" onclick="toggleKhakRiziDetails(${this.kmNum},'${BarAvordUserId}')">
-  <div class="row mb-3 khak-header">
-    <div class="col-auto d-flex align-items-center">
-      <span>از کیلومتراژ:</span>
-    </div>
-    <div class="col-auto">
+<div class="col-12 ExistKhBStyle" id="divExistKhakRizi${this.kmNum}"  style="border:1px solid #a99dbd;background-color:#ffe9ff;padding-top: 5px;padding-bottom: 5px;">
+  <div class="row" id="header${this.kmNum}" onclick="toggleKhakRiziDetails(${this.kmNum},'${BarAvordUserId}')">
+     <div class="col-1">
+     </div>
+     <div class="col-2">
       <input type="text" class="form-control_1 input-sm khak-input"
-             id="txtFromKMForKhakRizi${this.kmNum}" value="${this.fromKMSplit}"  onclick="event.stopPropagation();"/>
-    </div>
-
-    <div class="col-auto d-flex align-items-center">
-      <span>تا کیلومتراژ:</span>
-    </div>
-    <div class="col-auto">
+             id="txtFromKMForKhakRizi${this.kmNum}" value="${this.fromKM}"  onclick="event.stopPropagation();"/>
+     </div>
+    <div class="col-2">
       <input type="text" class="form-control_1 input-sm khak-input"
-             id="txtToKMForKhakRizi${this.kmNum}" value="${this.toKMSplit}"  onclick="event.stopPropagation();"/>
+             id="txtToKMForKhakRizi${this.kmNum}" value="${this.toKM}"  onclick="event.stopPropagation();"/>
+    </div>
+    <div class="col-4">
+    <span>جهت مشاهده جزییات کلیک نمایید</span>
     </div>
   </div>
-  </div>
 
-
-  <div id="divExistKhakRiziD${this.kmNum}" style="display:none;border-bottom: 1px solid #d5bfff;margin-bottom: 10px;padding-bottom: 10px;">
-  <div id="ulaSomeOpId${this.kmNum}">
-    <div class="row">
+  <div class="col-12" id="divExistKhakRiziD${this.kmNum}" style="display:none;border-bottom: 1px solid #d5bfff;margin-bottom: 10px;padding-bottom: 10px;">
+  <div class="col-12" style="margin-top:20px" id="ulaSomeOpId${this.kmNum}">
+    <div class="row" style="padding:10px 0px;border-radius: 5px 5px 0px 0px;background-color: #92adff;">
         <div class="col-12 khak-card">
             <div class="row">
                 <div class="col-md-4">
@@ -575,8 +598,8 @@ function GetExistKhakRizi(BarAvordUserId, num) {
   <div class="col-10">
   </div>
     <div class="col-2 force-left">
-      <a class="NewPolStyle btn buttonStyleBoard"
-         onclick="UpdateKhakRiziInfo('${BarAvordUserId}',${this.kmNum})">ذخیره</a>
+      <input type="button" class="NewPolStyle btn buttonStyleBoard"
+         onclick="UpdateKhakRiziInfo('${BarAvordUserId}',${this.kmNum})"/>ذخیره
     </div>
   </div>
   <div id="divKhakRiziEzafeBaha${this.kmNum}">

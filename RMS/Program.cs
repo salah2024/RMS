@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -30,7 +31,21 @@ builder.Services
     })
     .AddErrorDescriber<CustomIdentityErrorDescriber>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
-    //.AddDefaultTokenProviders();
+
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";          // صفحه لاگین
+        options.AccessDeniedPath = "/Account/Login";   // عدم دسترسی
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+        options.SlidingExpiration = true;
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    });
+builder.Services.AddAuthorization();
+
+//.AddDefaultTokenProviders();
 
 // خواندن تنظیمات JWT
 //var jwtSettings = builder.Configuration.GetSection("Jwt");
@@ -100,8 +115,8 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-//app.UseAuthentication();
-//app.UseAuthorization();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
@@ -144,10 +159,11 @@ app.Run();
 //    .AddDefaultTokenProviders();
 
 //// ---------- کوکی احراز هویت ----------
-//builder.Services.ConfigureApplicationCookie(options =>
-//{
-//    options.LoginPath = "/Account/Login";
-//    options.AccessDeniedPath = "/Account/AccessDenied";
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+    options.AccessDeniedPath = "/Account/AccessDenied";
+});
 
 //    options.Cookie.Name = ".RMS.Auth";
 //    options.Cookie.HttpOnly = true;

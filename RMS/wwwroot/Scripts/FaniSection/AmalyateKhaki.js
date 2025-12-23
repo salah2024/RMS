@@ -22,7 +22,7 @@ function KhakBardariMashinWithBarAvordIdClick(OpId, BarAvordUserId) {
       <span>از کیلومتراژ:</span>
     </div>
     <div class="col-md-1">
-      <input type="text" class="form-control_1 khakbardariTextStyle  input-sm text-center" id="txtFromKMForKhakbardari" value="0"/>
+      <input type="text" class="form-control_1 khakbardariTextStyle input-sm text-center" id="txtFromKMForKhakbardari" value="0"/>
     </div>
 
     <!-- تا کیلومتراژ -->

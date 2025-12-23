@@ -472,7 +472,12 @@ function AddRizMetre() {
 //    });
 //}
 
-function KhakRiziClick(OpId) {
+function KhakRiziClick(OpId,event) {
+    debugger;
+    if (event) {
+        event.stopPropagation();
+        event.preventDefault();
+    }
     BarAvordUserID = $('#HDFBarAvordUserID').val();
     KhakRiziWithBarAvordClick(OpId, BarAvordUserID);
 }
@@ -482,7 +487,12 @@ function GharzehClick(OpId) {
     GharzehWithBarAvordClick(OpId, BarAvordUserID);
 }
 
-function PayKaniClick(OpId) {
+function PayKaniClick(OpId, event) {
+    if (event) {
+        event.stopPropagation();
+        event.preventDefault();
+    }
+
     BarAvordUserID = $('#HDFBarAvordUserID').val();
     PayKaniWithBarAvordClick(OpId, BarAvordUserID);
 }
@@ -503,15 +513,19 @@ function spanOnClick(Id, ConditionGroupId) {
     }
 
 }
+
 ////////
 function OpenConditionDetailsOnly(ConditionGroupId) {
     $('#divConditionGroup' + ConditionGroupId).toggle(1000);
 }
-function OperationClick(Operation, showAddedRecord) {
-    alert('ff');
+function OperationClick(Operation, showAddedRecord, event) {
+    if (event) {
+        event.stopPropagation();
+        event.preventDefault();
+    }
+
     if ($("#ula" + Operation).is(":visible")) {
     } else {
-
         Type = 0;
         $('#HDFOperationId').val(Operation);
         ItemsFBShomareh = $('#HDFItemsFBShomareh').val();
@@ -703,7 +717,11 @@ function spanAddedItemsClickSecondLevel(Id) {
     $('#PopupViewNextRutinSecondLevel').find('#na' + Id).click();
 }
 ///////////
-function KhakBardariMashinClick(OpId) {
+function KhakBardariMashinClick(OpId, event) {
+    if (event) {
+        event.stopPropagation();
+        event.preventDefault();
+    }
     //clearTimeout(timerAddPol);
     BarAvordUserID = $('#HDFBarAvordUserID').val();
     KhakBardariMashinWithBarAvordIdClick(OpId, BarAvordUserID);
@@ -1696,7 +1714,7 @@ function UpdateRMUClick(Id) {
     vardata.Ertefa = Ertefa === undefined ? null : Ertefa;
     vardata.Vazn = Vazn === undefined ? null : Vazn;
     vardata.Des = Des;
-    vardata.NoeFB = NoeFB;
+    vardata.NoeFBId = NoeFB;
     vardata.Year = Year;
     vardata.FBId = FBId;
     vardata.OperationId = OperationId;

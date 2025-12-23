@@ -1,4 +1,9 @@
-﻿function ShowBoardStand(OperationId) {
+﻿function ShowBoardStand(OperationId,event) {
+
+    if (event) {
+        event.stopPropagation();
+        event.preventDefault();
+    }
 
     $('#HDFOperationId').val(OperationId);
     BarAvordUserId = $('#HDFBarAvordUserID').val();

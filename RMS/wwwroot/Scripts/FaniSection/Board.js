@@ -49,8 +49,13 @@ function createRadioGroupInfoBoard(name, items) {
     }).join("\n");
 }
 
-function ShowBoard(OperationId) {
+function ShowBoard(OperationId,event) {
     debugger;
+
+    if (event) {
+        event.stopPropagation();
+        event.preventDefault();
+    }
 
     $('#HDFOperationId').val(OperationId);
 
@@ -934,7 +939,13 @@ function ViewRMUDetailsClick(BarAvordAddedBoardId) {
         }
     });
 }
-function ShowBoardInfo(OperationId) {
+function ShowBoardInfo(OperationId, event) {
+
+    if (event) {
+        event.stopPropagation();
+        event.preventDefault();
+    }
+
     $('#HDFOperationId').val(OperationId);
 
     var vardata = new Object();
