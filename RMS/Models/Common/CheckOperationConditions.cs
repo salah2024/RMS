@@ -2305,12 +2305,17 @@ namespace RMS.Models.Common
                     {
                         Guid BarAvordId = ItemHasCon.BarAvordId;
 
+                        string strCharacterPlus = itemsAddingToFBForCheckOperation.CharacterPlus != null ? itemsAddingToFBForCheckOperation.CharacterPlus.Trim() : "";
+
+                        string strItemFBShomareh = ItemHasCon.FBShomareh.Trim();
+                        string strUseItem = UseItemForAdd;
+                        string strForItem = strItemFBShomareh;
+
                         string strCurrentFBShomareh = ItemHasCon.FBShomareh; //Dt.Rows[0]["ItemsFBShomareh"].ToString().Trim();
                         long lngItemsHasCondition_ConditionContextId = ItemHasCon.Id;
                         clsItemsHasConditionAddedToFB? currentItemsHasConditionAddedToFBs = _context.ItemsHasConditionAddedToFBs
                                          .FirstOrDefault(x => x.BarAvordId == BarAvordId && x.FBShomareh == strCurrentFBShomareh &&
                                              x.ItemsHasCondition_ConditionContextId == lngItemsHasCondition_ConditionContextId);
-
 
                         bool blnCheckSave = false;
                         if (currentItemsHasConditionAddedToFBs == null)
@@ -2336,36 +2341,45 @@ namespace RMS.Models.Common
                         else
                             blnCheckSave = true;
 
-                        //if (ItemsHasConditionAddedToFB.Save())
+
                         if (blnCheckSave)
                         {
-                            string strItemFBShomareh = ItemHasCon.FBShomareh.Trim();
-
-                            string strCondition = Condition;
-                            string strFinalWorking = FinalWorking;
-                            string strAddedItems = AddedItems;
-                            Guid guFBId = FBId;
-                            string strUseItem = UseItemForAdd;
-                            string strForItem = strItemFBShomareh;
+                            string[] strFinalWorkingBahayeVahedZarib = FinalWorking.Split(',');
+                            string[] strFinalWorkingSplit1 = FinalWorking.Split(',')[0].Split('_');
+                            int intDivided = int.Parse(strFinalWorkingSplit1[1]);
+                            string[] strFinalWorkingSplit = strFinalWorkingSplit1[0].Split('-');
 
                             List<clsFB> lstFBUser = _context.FBs.Where(x => x.BarAvordId == BarAvordId).ToList();
-                            string strConditionOp = strCondition.Replace("z", RizMetre.Ertefa.ToString().Trim());
-                            StringToFormula StringToFormula = new StringToFormula();
-                            bool blnCheck = StringToFormula.RelationalExpression2(strConditionOp);
+                            string strItemShomareh = AddedItems.Trim() + strCharacterPlus.Trim();
+
+
+                            string CharForReplace = "";
+                            string strTAEForReoplace = "";
+
+                            decimal? dErtefa = null;
+                            decimal? dTool = null;
+
+                            if (strFinalWorkingSplit[0] == "z")
+                            {
+                                CharForReplace = "z";
+                                strTAEForReoplace = RM.Ertefa != null ? RM.Ertefa.Value.ToString().Trim() : "";
+                                dErtefa = intDivided;
+                                dTool = RM.Tool;
+                            }
+                            else if (strFinalWorkingSplit[0] == "x")
+                            {
+                                CharForReplace = "x";
+                                strTAEForReoplace = RM.Tool != null ? RM.Tool.Value.ToString().Trim() : "";
+                                dErtefa = RM.Ertefa;
+                                dTool = intDivided;
+                            }
+                            string strConditionOp = Condition.Replace(CharForReplace, strTAEForReoplace);
+                            StringToFormula stringToFormula = new StringToFormula();
+                            bool blnCheck = stringToFormula.RelationalExpression2(strConditionOp);
                             if (blnCheck)
                             {
-
-                                if (strFinalWorking != "")
+                                if (FinalWorking != "")
                                 {
-                                    string[] strFinalWorkingSplit1 = strFinalWorking.Split('_');
-                                    int intDivided = int.Parse(strFinalWorkingSplit1[1]);
-                                    string[] strFinalWorkingSplit = strFinalWorkingSplit1[0].Split('-');
-                                    string strFinalWorking11 = strFinalWorkingSplit1[0].Replace("z", RM.Ertefa != null ? RM.Ertefa.Value.ToString().Trim() : "");
-
-                                    int intReapetCount = (int.Parse(Math.Floor(StringToFormula.Eval(strFinalWorking11)).ToString("n0")) / intDivided);
-
-                                    //int intReapetCount = (int.Parse(strFinalWorkingSplit[1]) / intDivided) - 1;
-                                    string strItemShomareh = strAddedItems;
                                     clsFB? varFBUser = lstFBUser.FirstOrDefault(x => x.Shomareh == strItemShomareh);
 
                                     Guid intFBId = new Guid();
@@ -2373,8 +2387,9 @@ namespace RMS.Models.Common
                                     {
                                         clsFB FB = new clsFB();
                                         FB.BarAvordId = BarAvordId; //Guid.Parse(DtBA.Rows[0]["ID"].ToString());
-                                        FB.Shomareh = strAddedItems;
-                                        FB.BahayeVahedZarib = 0;
+                                        FB.Shomareh = AddedItems.Trim() + strCharacterPlus.Trim();
+                                        FB.BahayeVahedZarib = strFinalWorkingBahayeVahedZarib.Length > 1 ? decimal.Parse(strFinalWorkingBahayeVahedZarib[1]) : 0;
+                                        FB.BahayeVahedSharh = DesOfAddingItems;
                                         FB.NoeFBId = NoeFBId;
                                         _context.FBs.Add(FB);
                                         _context.SaveChanges();
@@ -2383,28 +2398,31 @@ namespace RMS.Models.Common
                                     else
                                         intFBId = varFBUser.ID;
 
+                                    string strFinalWorking11 = strFinalWorkingSplit1[0].Replace(CharForReplace, strTAEForReoplace);
+
+                                    int intReapetCount = (int.Parse(Math.Floor(stringToFormula.Eval(strFinalWorking11)).ToString("n0")) / intDivided);
 
                                     //به تعداد intReapetCount
-                                    //رکورد با ارتفاع 2 درج می گردد
-                                    decimal? Tedad = RizMetre.Tedad == 0 ? 1 : RizMetre.Tedad;
-                                    decimal? Tool = RizMetre.Tool;
-                                    decimal? Arz = RizMetre.Arz;
+                                    //رکورد با ارتفاع intDivided درج می گردد
+                                    decimal? Tedad = RM.Tedad == 0 ? 1 : RM.Tedad;
+                                    //decimal? Tool = RM.Tool;
+                                    decimal? Arz = RM.Arz;
                                     decimal? Vazn = 1;
                                     for (int i = 0; i < intReapetCount; i++)
                                     {
-                                        decimal dErtefa = intDivided;
+                                        //decimal dErtefa = intDivided;
                                         clsRizMetreUsers RizMetreUserses1 = new clsRizMetreUsers();
-                                        RizMetreUserses1.Shomareh = RizMetre.Shomareh;
+                                        RizMetreUserses1.Shomareh = RM.Shomareh;
                                         ShomareNew++;
                                         RizMetreUserses1.ShomarehNew = ShomareNew.ToString();
 
-                                        RizMetreUserses1.Sharh = RizMetre.Sharh;
+                                        RizMetreUserses1.Sharh = RM.Sharh;
                                         RizMetreUserses1.Tedad = Tedad;
-                                        RizMetreUserses1.Tool = Tool;
+                                        RizMetreUserses1.Tool = dTool;
                                         RizMetreUserses1.Arz = Arz;
                                         RizMetreUserses1.Ertefa = dErtefa;
                                         RizMetreUserses1.Vazn = Vazn++;
-                                        RizMetreUserses1.Des = RizMetre.Des;
+                                        RizMetreUserses1.Des = RM.Des;
 
                                         RizMetreUserses1.FBId = intFBId;
                                         RizMetreUserses1.OperationsOfHamlId = 1;
@@ -2419,64 +2437,107 @@ namespace RMS.Models.Common
 
                                         ///محاسبه مقدار جزء
                                         decimal? dMeghdarJoz1 = null;
-                                        if (Tedad == null && Tool == null && Arz == null && Vazn == null)
+                                        if (Tedad == null && dTool == null && Arz == null && Vazn == null)
                                             dMeghdarJoz1 = null;
                                         else
-                                            dMeghdarJoz1 = (Tedad == null ? 1 : Tedad.Value) * (Tool == null ? 1 : Tool.Value) *
+                                            dMeghdarJoz1 = (Tedad == null ? 1 : Tedad.Value) * (dTool == null ? 1 : dTool.Value) *
                                             (Arz == null ? 1 : Arz.Value) * dErtefa * (Vazn == null ? 1 : Vazn.Value);
                                         RizMetreUserses1.MeghdarJoz = dMeghdarJoz1;
 
                                         _context.RizMetreUserses.Add(RizMetreUserses1);
                                     }
-
-                                    strFinalWorking = strFinalWorkingSplit1[0].Replace("z", RizMetre.Ertefa != null ? RizMetre.Ertefa.Value.ToString().Trim() : "");
                                     int intRemain = intReapetCount * intDivided;
 
-                                    string strFinalWorking1 = strFinalWorkingSplit1[0].Replace("z", RM.Ertefa != null ? RM.Ertefa.Value.ToString().Trim() : "");
+                                    string strFinalWorking1 = strFinalWorkingSplit1[0].Replace(CharForReplace, strTAEForReoplace);
 
-                                    //رکورد آخری هم بنا به شرط فاینل ارتفاع درج میگردد
-                                    decimal Ertefa = decimal.Parse(StringToFormula.Eval(strFinalWorking).ToString("0.##"));
-                                    Ertefa -= intRemain;
-
-                                    //DataRow[] DrRizMetreUsersesCurrent = DtRizMetreUsersesCurrent.Select("shomareh=" + RM.Shomareh + " and FBId=" + FBId);
-                                    //if (DrRizMetreUsersesCurrent.Length == 0)
-                                    //{
-                                    if (Ertefa > 0)
+                                    decimal? dLastErtefa = RM.Ertefa;
+                                    decimal? dLastTool = RM.Tool;
+                                    //رکورد آخری هم بنا به شرط فاینل ارتفاع یا طول درج میگردد
+                                    if (strFinalWorkingSplit[0] == "z")
                                     {
-                                        clsRizMetreUsers RizMetreUserses = new clsRizMetreUsers();
-                                        RizMetreUserses.Shomareh = RizMetre.Shomareh;
-                                        ShomareNew++;
-                                        RizMetreUserses.ShomarehNew = ShomareNew.ToString();
+                                        dLastErtefa = decimal.Parse(stringToFormula.Eval(strFinalWorking1).ToString("0.##"));
+                                        dLastErtefa -= intRemain;
+                                        if (dLastErtefa > 0)
+                                        {
 
-                                        RizMetreUserses.Sharh = RizMetre.Sharh;
-                                        RizMetreUserses.Tedad = Tedad;
-                                        RizMetreUserses.Tool = Tool;
-                                        RizMetreUserses.Arz = Arz;
-                                        RizMetreUserses.Ertefa = Ertefa;
-                                        RizMetreUserses.Vazn = Vazn;
-                                        RizMetreUserses.Des = RizMetre.Des;
+                                            clsRizMetreUsers RizMetreUserses = new clsRizMetreUsers();
+                                            RizMetreUserses.Shomareh = RM.Shomareh;
+                                            ShomareNew++;
+                                            RizMetreUserses.ShomarehNew = ShomareNew.ToString();
 
-                                        RizMetreUserses.FBId = intFBId;
-                                        RizMetreUserses.OperationsOfHamlId = 1;
-                                        RizMetreUserses.Type = "2";
-                                        RizMetreUserses.ForItem = strForItem;
-                                        RizMetreUserses.UseItem = strUseItem;
-                                        RizMetreUserses.LevelNumber = LevelNumber;
-                                        RizMetreUserses.InsertDateTime = Now;
+                                            RizMetreUserses.Sharh = RM.Sharh;
+                                            RizMetreUserses.Tedad = Tedad;
+                                            RizMetreUserses.Tool = dLastTool;
+                                            RizMetreUserses.Arz = Arz;
+                                            RizMetreUserses.Ertefa = dLastErtefa;
+                                            RizMetreUserses.Vazn = Vazn;
+                                            RizMetreUserses.Des = RM.Des;
 
-                                        //RizMetreUserses.ConditionContextRel = ConditionContextRel;
-                                        //RizMetreUserses.ConditionContextId = ConditionContextId;
+                                            RizMetreUserses.FBId = intFBId;
+                                            RizMetreUserses.OperationsOfHamlId = 1;
+                                            RizMetreUserses.Type = "2";
+                                            RizMetreUserses.ForItem = strForItem;
+                                            RizMetreUserses.UseItem = strUseItem;
+                                            RizMetreUserses.LevelNumber = LevelNumber;
+                                            RizMetreUserses.InsertDateTime = Now;
 
-                                        ///محاسبه مقدار جزء
-                                        decimal? dMeghdarJoz = null;
-                                        if (Tedad == null && Tool == null && Arz == null && Vazn == null)
-                                            dMeghdarJoz = null;
-                                        else
-                                            dMeghdarJoz = (Tedad == null ? 1 : Tedad.Value) * (Tool == null ? 1 : Tool.Value) *
-                                            (Arz == null ? 1 : Arz.Value) * Ertefa * (Vazn == null ? 1 : Vazn.Value);
-                                        RizMetreUserses.MeghdarJoz = dMeghdarJoz;
+                                            //RizMetreUserses.ConditionContextRel = ConditionContextRel;
+                                            //RizMetreUserses.ConditionContextId = ConditionContextId;
 
-                                        _context.RizMetreUserses.Add(RizMetreUserses);
+                                            ///محاسبه مقدار جزء
+                                            decimal? dMeghdarJoz = null;
+                                            if (Tedad == null && dLastTool == null && dLastErtefa == null && Arz == null && Vazn == null)
+                                                dMeghdarJoz = null;
+                                            else
+                                                dMeghdarJoz = (Tedad == null ? 1 : Tedad.Value) * (dLastTool == null ? 1 : dLastTool.Value) *
+                                                (Arz == null ? 1 : Arz.Value) * (dLastErtefa == null ? 1 : dLastErtefa.Value) * (Vazn == null ? 1 : Vazn.Value);
+                                            RizMetreUserses.MeghdarJoz = dMeghdarJoz;
+
+                                            _context.RizMetreUserses.Add(RizMetreUserses);
+                                        }
+                                    }
+                                    else if (strFinalWorkingSplit[0] == "x")
+                                    {
+                                        dLastTool = decimal.Parse(stringToFormula.Eval(strFinalWorking1).ToString("0.##"));
+                                        dLastTool -= intRemain;
+                                        if (dLastTool > 0)
+                                        {
+
+                                            clsRizMetreUsers RizMetreUserses = new clsRizMetreUsers();
+                                            RizMetreUserses.Shomareh = RM.Shomareh;
+                                            ShomareNew++;
+                                            RizMetreUserses.ShomarehNew = ShomareNew.ToString();
+
+                                            RizMetreUserses.Sharh = RM.Sharh;
+                                            RizMetreUserses.Tedad = Tedad;
+                                            RizMetreUserses.Tool = dLastTool;
+                                            RizMetreUserses.Arz = Arz;
+                                            RizMetreUserses.Ertefa = dLastErtefa;
+                                            RizMetreUserses.Vazn = Vazn;
+                                            RizMetreUserses.Des = RM.Des;
+
+                                            RizMetreUserses.FBId = intFBId;
+                                            RizMetreUserses.OperationsOfHamlId = 1;
+                                            RizMetreUserses.Type = "2";
+                                            RizMetreUserses.ForItem = strForItem;
+                                            RizMetreUserses.UseItem = strUseItem;
+                                            RizMetreUserses.LevelNumber = LevelNumber;
+                                            RizMetreUserses.InsertDateTime = Now;
+
+                                            //RizMetreUserses.ConditionContextRel = ConditionContextRel;
+                                            //RizMetreUserses.ConditionContextId = ConditionContextId;
+
+                                            ///محاسبه مقدار جزء
+                                            decimal? dMeghdarJoz = null;
+                                            if (Tedad == null && dLastTool == null && dLastErtefa == null && Arz == null && Vazn == null)
+                                                dMeghdarJoz = null;
+                                            else
+                                                dMeghdarJoz = (Tedad == null ? 1 : Tedad.Value) * (dLastTool == null ? 1 : dLastTool.Value) *
+                                                (Arz == null ? 1 : Arz.Value) * (dLastErtefa == null ? 1 : dLastErtefa.Value) * (Vazn == null ? 1 : Vazn.Value);
+                                            RizMetreUserses.MeghdarJoz = dMeghdarJoz;
+
+                                            _context.RizMetreUserses.Add(RizMetreUserses);
+                                        }
                                     }
                                     _context.SaveChanges();
                                     //RizMetreUserses.Save();
@@ -2484,6 +2545,157 @@ namespace RMS.Models.Common
                                 }
                             }
                         }
+
+
+
+                        //if (ItemsHasConditionAddedToFB.Save())
+                        //if (blnCheckSave)
+                        //{
+                        //    string strItemFBShomareh = ItemHasCon.FBShomareh.Trim();
+
+                        //    string strCondition = Condition;
+                        //    string strFinalWorking = FinalWorking;
+                        //    string strAddedItems = AddedItems;
+                        //    Guid guFBId = FBId;
+                        //    string strUseItem = UseItemForAdd;
+                        //    string strForItem = strItemFBShomareh;
+
+                        //    List<clsFB> lstFBUser = _context.FBs.Where(x => x.BarAvordId == BarAvordId).ToList();
+                        //    string strConditionOp = strCondition.Replace("z", RizMetre.Ertefa.ToString().Trim());
+                        //    StringToFormula StringToFormula = new StringToFormula();
+                        //    bool blnCheck = StringToFormula.RelationalExpression2(strConditionOp);
+                        //    if (blnCheck)
+                        //    {
+
+                        //        if (strFinalWorking != "")
+                        //        {
+                        //            string[] strFinalWorkingSplit1 = strFinalWorking.Split('_');
+                        //            int intDivided = int.Parse(strFinalWorkingSplit1[1]);
+                        //            string[] strFinalWorkingSplit = strFinalWorkingSplit1[0].Split('-');
+                        //            string strFinalWorking11 = strFinalWorkingSplit1[0].Replace("z", RM.Ertefa != null ? RM.Ertefa.Value.ToString().Trim() : "");
+
+                        //            int intReapetCount = (int.Parse(Math.Floor(StringToFormula.Eval(strFinalWorking11)).ToString("n0")) / intDivided);
+
+                        //            //int intReapetCount = (int.Parse(strFinalWorkingSplit[1]) / intDivided) - 1;
+                        //            string strItemShomareh = strAddedItems;
+                        //            clsFB? varFBUser = lstFBUser.FirstOrDefault(x => x.Shomareh == strItemShomareh);
+
+                        //            Guid intFBId = new Guid();
+                        //            if (varFBUser == null)
+                        //            {
+                        //                clsFB FB = new clsFB();
+                        //                FB.BarAvordId = BarAvordId; //Guid.Parse(DtBA.Rows[0]["ID"].ToString());
+                        //                FB.Shomareh = strAddedItems;
+                        //                FB.BahayeVahedZarib = 0;
+                        //                FB.NoeFBId = NoeFBId;
+                        //                _context.FBs.Add(FB);
+                        //                _context.SaveChanges();
+                        //                intFBId = FB.ID;
+                        //            }
+                        //            else
+                        //                intFBId = varFBUser.ID;
+
+
+                        //            //به تعداد intReapetCount
+                        //            //رکورد با ارتفاع 2 درج می گردد
+                        //            decimal? Tedad = RizMetre.Tedad == 0 ? 1 : RizMetre.Tedad;
+                        //            decimal? Tool = RizMetre.Tool;
+                        //            decimal? Arz = RizMetre.Arz;
+                        //            decimal? Vazn = 1;
+                        //            for (int i = 0; i < intReapetCount; i++)
+                        //            {
+                        //                decimal dErtefa = intDivided;
+                        //                clsRizMetreUsers RizMetreUserses1 = new clsRizMetreUsers();
+                        //                RizMetreUserses1.Shomareh = RizMetre.Shomareh;
+                        //                ShomareNew++;
+                        //                RizMetreUserses1.ShomarehNew = ShomareNew.ToString();
+
+                        //                RizMetreUserses1.Sharh = RizMetre.Sharh;
+                        //                RizMetreUserses1.Tedad = Tedad;
+                        //                RizMetreUserses1.Tool = Tool;
+                        //                RizMetreUserses1.Arz = Arz;
+                        //                RizMetreUserses1.Ertefa = dErtefa;
+                        //                RizMetreUserses1.Vazn = Vazn++;
+                        //                RizMetreUserses1.Des = RizMetre.Des;
+
+                        //                RizMetreUserses1.FBId = intFBId;
+                        //                RizMetreUserses1.OperationsOfHamlId = 1;
+                        //                RizMetreUserses1.Type = "2";
+                        //                RizMetreUserses1.ForItem = strForItem;
+                        //                RizMetreUserses1.UseItem = strUseItem;
+                        //                RizMetreUserses1.LevelNumber = LevelNumber;
+                        //                RizMetreUserses1.InsertDateTime = Now;
+
+                        //                //RizMetreUserses1.ConditionContextRel = ConditionContextRel;
+                        //                //RizMetreUserses1.ConditionContextId = ConditionContextId;
+
+                        //                ///محاسبه مقدار جزء
+                        //                decimal? dMeghdarJoz1 = null;
+                        //                if (Tedad == null && Tool == null && Arz == null && Vazn == null)
+                        //                    dMeghdarJoz1 = null;
+                        //                else
+                        //                    dMeghdarJoz1 = (Tedad == null ? 1 : Tedad.Value) * (Tool == null ? 1 : Tool.Value) *
+                        //                    (Arz == null ? 1 : Arz.Value) * dErtefa * (Vazn == null ? 1 : Vazn.Value);
+                        //                RizMetreUserses1.MeghdarJoz = dMeghdarJoz1;
+
+                        //                _context.RizMetreUserses.Add(RizMetreUserses1);
+                        //            }
+
+                        //            strFinalWorking = strFinalWorkingSplit1[0].Replace("z", RizMetre.Ertefa != null ? RizMetre.Ertefa.Value.ToString().Trim() : "");
+                        //            int intRemain = intReapetCount * intDivided;
+
+                        //            string strFinalWorking1 = strFinalWorkingSplit1[0].Replace("z", RM.Ertefa != null ? RM.Ertefa.Value.ToString().Trim() : "");
+
+                        //            //رکورد آخری هم بنا به شرط فاینل ارتفاع درج میگردد
+                        //            decimal Ertefa = decimal.Parse(StringToFormula.Eval(strFinalWorking1).ToString("0.##"));
+                        //            Ertefa -= intRemain;
+
+                        //            //DataRow[] DrRizMetreUsersesCurrent = DtRizMetreUsersesCurrent.Select("shomareh=" + RM.Shomareh + " and FBId=" + FBId);
+                        //            //if (DrRizMetreUsersesCurrent.Length == 0)
+                        //            //{
+                        //            if (Ertefa > 0)
+                        //            {
+                        //                clsRizMetreUsers RizMetreUserses = new clsRizMetreUsers();
+                        //                RizMetreUserses.Shomareh = RizMetre.Shomareh;
+                        //                ShomareNew++;
+                        //                RizMetreUserses.ShomarehNew = ShomareNew.ToString();
+
+                        //                RizMetreUserses.Sharh = RizMetre.Sharh;
+                        //                RizMetreUserses.Tedad = Tedad;
+                        //                RizMetreUserses.Tool = Tool;
+                        //                RizMetreUserses.Arz = Arz;
+                        //                RizMetreUserses.Ertefa = Ertefa;
+                        //                RizMetreUserses.Vazn = Vazn;
+                        //                RizMetreUserses.Des = RizMetre.Des;
+
+                        //                RizMetreUserses.FBId = intFBId;
+                        //                RizMetreUserses.OperationsOfHamlId = 1;
+                        //                RizMetreUserses.Type = "2";
+                        //                RizMetreUserses.ForItem = strForItem;
+                        //                RizMetreUserses.UseItem = strUseItem;
+                        //                RizMetreUserses.LevelNumber = LevelNumber;
+                        //                RizMetreUserses.InsertDateTime = Now;
+
+                        //                //RizMetreUserses.ConditionContextRel = ConditionContextRel;
+                        //                //RizMetreUserses.ConditionContextId = ConditionContextId;
+
+                        //                ///محاسبه مقدار جزء
+                        //                decimal? dMeghdarJoz = null;
+                        //                if (Tedad == null && Tool == null && Arz == null && Vazn == null)
+                        //                    dMeghdarJoz = null;
+                        //                else
+                        //                    dMeghdarJoz = (Tedad == null ? 1 : Tedad.Value) * (Tool == null ? 1 : Tool.Value) *
+                        //                    (Arz == null ? 1 : Arz.Value) * Ertefa * (Vazn == null ? 1 : Vazn.Value);
+                        //                RizMetreUserses.MeghdarJoz = dMeghdarJoz;
+
+                        //                _context.RizMetreUserses.Add(RizMetreUserses);
+                        //            }
+                        //            _context.SaveChanges();
+                        //            //RizMetreUserses.Save();
+                        //            //}
+                        //        }
+                        //    }
+                        //}
                         break;
                     }
                 case 18:
@@ -3359,20 +3571,80 @@ namespace RMS.Models.Common
                     }
                 case 17:
                     {
-                        string strItemShomareh = AddedItems;
+                        string strCharacterPlus = itemsAddingToFBForCheckOperation.CharacterPlus != null ? itemsAddingToFBForCheckOperation.CharacterPlus.Trim() : "";
 
-                        clsFB? FBUser = _context.FBs.Where(x => x.BarAvordId == ItemHasCon.BarAvordId && x.Shomareh == strItemShomareh).FirstOrDefault();
+                        string strErtefa = RizMetre.Ertefa != null ? RizMetre.Ertefa.ToString() : "0";
 
-                        Guid intFBId = new Guid();
-                        if (FBUser != null)
-                            intFBId = FBUser.ID;
+                        string[] strFinalWorkingBahayeVahedZarib = FinalWorking.Split(',');
+                        string[] strFinalWorkingSplit1 = FinalWorking.Split(',')[0].Split('_');
 
-                        string strShomareh1 = ItemHasCon.FBShomareh.Substring(0, 6);
+                        int intDivided = int.Parse(strFinalWorkingSplit1[1]);
+                        string[] strFinalWorkingSplit = strFinalWorkingSplit1[0].Split('-');
 
-                        List<clsRizMetreUsers> lstRizMetreUsersCurrent =
-                                        _context.RizMetreUserses.Where(x => x.FBId == intFBId && x.ForItem == strShomareh1 && x.Type == "2" && x.Shomareh == RizMetre.Shomareh).ToList();
+                        string CharForReplace = "";
+                        string strTAEForReoplace = "";
 
-                        _context.RizMetreUserses.RemoveRange(lstRizMetreUsersCurrent);
+                        decimal? dErtefa = null;
+                        decimal? dTool = null;
+
+                        if (strFinalWorkingSplit[0] == "z")
+                        {
+                            CharForReplace = "z";
+                            strTAEForReoplace = RizMetre.Ertefa != null ? RizMetre.Ertefa.Value.ToString().Trim() : "";
+                            dErtefa = intDivided;
+                            dTool = RizMetre.Tool;
+                        }
+                        else if (strFinalWorkingSplit[0] == "x")
+                        {
+                            CharForReplace = "x";
+                            strTAEForReoplace = RizMetre.Tool != null ? RizMetre.Tool.Value.ToString().Trim() : "";
+                            dErtefa = RizMetre.Ertefa;
+                            dTool = intDivided;
+                        }
+
+
+                        //string strFinalWorking1 = FinalWorking.Replace("z", strErtefa);
+                        StringToFormula StringToFormula1 = new StringToFormula();
+                        string strCondition1 = itemsAddingToFBForCheckOperation.Condition != null ? itemsAddingToFBForCheckOperation.Condition : "";
+                        string strConditionOp1 = strCondition1.Replace(CharForReplace, strTAEForReoplace);
+                        bool blnCheck1 = StringToFormula1.RelationalExpression(strConditionOp1);
+                        if (blnCheck1)
+                        {
+                            string strItemShomareh1 = AddedItems + strCharacterPlus;
+
+                            clsFB? FBUser = _context.FBs.Where(x => x.BarAvordId == ItemHasCon.BarAvordId && x.Shomareh == strItemShomareh1).FirstOrDefault();
+
+                            Guid intFBId1 = new Guid();
+                            if (FBUser != null)
+                                intFBId1 = FBUser.ID;
+
+                            string strShomareh1 = ItemHasCon.FBShomareh.Substring(0, 6);
+
+                            List<clsRizMetreUsers> lstRizMetreUsersCurrent =
+                                            _context.RizMetreUserses.Where(x => x.FBId == intFBId1 && x.ForItem == strShomareh1 && x.Type == "2" && x.Shomareh == RizMetre.Shomareh).ToList();
+
+                            _context.RizMetreUserses.RemoveRange(lstRizMetreUsersCurrent);
+
+                        }
+
+
+
+                        //string strCharacterPlus = itemsAddingToFBForCheckOperation.CharacterPlus != null ? itemsAddingToFBForCheckOperation.CharacterPlus.Trim() : "";
+
+                        //string strItemShomareh = AddedItems;
+
+                        //clsFB? FBUser = _context.FBs.Where(x => x.BarAvordId == ItemHasCon.BarAvordId && x.Shomareh == strItemShomareh + strCharacterPlus).FirstOrDefault();
+
+                        //Guid intFBId = new Guid();
+                        //if (FBUser != null)
+                        //    intFBId = FBUser.ID;
+
+                        //string strShomareh1 = ItemHasCon.FBShomareh.Substring(0, 6);
+
+                        //List<clsRizMetreUsers> lstRizMetreUsersCurrent =
+                        //                _context.RizMetreUserses.Where(x => x.FBId == intFBId && x.ForItem == strShomareh1 && x.Type == "2" && x.Shomareh == RizMetre.Shomareh).ToList();
+
+                        //_context.RizMetreUserses.RemoveRange(lstRizMetreUsersCurrent);
 
 
                         break;
@@ -4888,16 +5160,46 @@ namespace RMS.Models.Common
                         /////////////////
                         ///
 
+                         string strCharacterPlus = itemsAddingToFBForCheckOperation.CharacterPlus != null ? itemsAddingToFBForCheckOperation.CharacterPlus.Trim() : "";
+
                         string strErtefa = OldRizMetre.Ertefa != null ? OldRizMetre.Ertefa.ToString() : "0";
 
-                        string strFinalWorking1 = FinalWorking.Replace("z", strErtefa);
+                        string[] strFinalWorkingBahayeVahedZarib = FinalWorking.Split(',');
+                        string[] strFinalWorkingSplit1 = FinalWorking.Split(',')[0].Split('_');
+
+                        int intDivided = int.Parse(strFinalWorkingSplit1[1]);
+                        string[] strFinalWorkingSplit = strFinalWorkingSplit1[0].Split('-');
+
+                        string CharForReplace = "";
+                        string strTAEForReoplace = "";
+
+                        decimal? dErtefa = null;
+                        decimal? dTool = null;
+
+                        if (strFinalWorkingSplit[0] == "z")
+                        {
+                            CharForReplace = "z";
+                            strTAEForReoplace = OldRizMetre.Ertefa != null ? OldRizMetre.Ertefa.Value.ToString().Trim() : "";
+                            dErtefa = intDivided;
+                            dTool = OldRizMetre.Tool;
+                        }
+                        else if (strFinalWorkingSplit[0] == "x")
+                        {
+                            CharForReplace = "x";
+                            strTAEForReoplace = OldRizMetre.Tool != null ? OldRizMetre.Tool.Value.ToString().Trim() : "";
+                            dErtefa = OldRizMetre.Ertefa;
+                            dTool = intDivided;
+                        }
+
+
+                        //string strFinalWorking1 = FinalWorking.Replace("z", strErtefa);
                         StringToFormula StringToFormula1 = new StringToFormula();
                         string strCondition1 = itemsAddingToFBForCheckOperation.Condition != null ? itemsAddingToFBForCheckOperation.Condition : "";
-                        string strConditionOp1 = strCondition1.Replace("z", strErtefa);
+                        string strConditionOp1 = strCondition1.Replace(CharForReplace, strTAEForReoplace);
                         bool blnCheck1 = StringToFormula1.RelationalExpression(strConditionOp1);
                         if (blnCheck1)
                         {
-                            string strItemShomareh1 = AddedItems;
+                            string strItemShomareh1 = AddedItems+ strCharacterPlus;
 
                             clsFB? FBUser = _context.FBs.Where(x => x.BarAvordId == ItemHasCon.BarAvordId && x.Shomareh == strItemShomareh1).FirstOrDefault();
 
@@ -4908,17 +5210,38 @@ namespace RMS.Models.Common
                             string strShomareh1 = ItemHasCon.FBShomareh.Substring(0, 6);
 
                             List<clsRizMetreUsers> lstRizMetreUsersCurrent =
-                                            _context.RizMetreUserses.Where(x => x.FBId == intFBId1 && x.ForItem == strShomareh1 && x.Type == "2" && x.Shomareh == RizMetre.Shomareh).ToList();
+                                            _context.RizMetreUserses.Where(x => x.FBId == intFBId1 && x.ForItem == strShomareh1 && x.Type == "2" && x.Shomareh == OldRizMetre.Shomareh).ToList();
 
                             _context.RizMetreUserses.RemoveRange(lstRizMetreUsersCurrent);
 
                         }
+
+
+
+                        //string strItemShomareh = AddedItems;
+
+                        //clsFB? FBUser = _context.FBs.Where(x => x.BarAvordId == ItemHasCon.BarAvordId && x.Shomareh == AddedItems + strCharacterPlus).FirstOrDefault();
+
+                        //Guid intFBId = new Guid();
+                        //if (FBUser != null)
+                        //    intFBId = FBUser.ID;
+
+                        //string strShomareh1 = ItemHasCon.FBShomareh.Substring(0, 6);
+
+                        //List<clsRizMetreUsers> lstRizMetreUsersCurrent =
+                        //                _context.RizMetreUserses.Where(x => x.FBId == intFBId && x.ForItem == strShomareh1 && x.Type == "2" && x.Shomareh == RizMetre.Shomareh).ToList();
+
+                        //_context.RizMetreUserses.RemoveRange(lstRizMetreUsersCurrent);
+
                         //////////////
                         ///درج جدید///
                         //////////////
+                        ///
+                        string strCurrentFBShomareh = ItemHasCon.FBShomareh.Trim(); //Dt.Rows[0]["ItemsFBShomareh"].ToString().Trim();
                         Guid BarAvordId = ItemHasCon.BarAvordId;
+                        string strUseItem = UseItemForAdd;
+                        string strForItem = strCurrentFBShomareh;
 
-                        string strCurrentFBShomareh = ItemHasCon.FBShomareh; //Dt.Rows[0]["ItemsFBShomareh"].ToString().Trim();
                         long lngItemsHasCondition_ConditionContextId = ItemHasCon.Id;
                         clsItemsHasConditionAddedToFB? currentItemsHasConditionAddedToFBs = _context.ItemsHasConditionAddedToFBs
                                          .FirstOrDefault(x => x.BarAvordId == BarAvordId && x.FBShomareh == strCurrentFBShomareh &&
@@ -4951,48 +5274,61 @@ namespace RMS.Models.Common
 
                         if (blnCheckSave)
                         {
-                            string strItemFBShomareh = ItemHasCon.FBShomareh.Trim();
-
-                            string strCondition = Condition;
-                            string strFinalWorking = FinalWorking;
-                            string strAddedItems = AddedItems;
-                            Guid guFBId = FBId;
-                            string strUseItem = UseItemForAdd;
-                            string strForItem = strItemFBShomareh;
+                            string[] strFinalWorkingBahayeVahedZaribUp = FinalWorking.Split(',');
+                            string[] strFinalWorkingSplitUp1 = FinalWorking.Split(',')[0].Split('_');
+                            int intDividedUp = int.Parse(strFinalWorkingSplitUp1[1]);
+                            string[] strFinalWorkingSplitUp = strFinalWorkingSplitUp1[0].Split('-');
 
                             List<clsFB> lstFBUser = _context.FBs.Where(x => x.BarAvordId == BarAvordId).ToList();
-                            string strConditionOp = strCondition.Replace("z", RizMetre.Ertefa.ToString().Trim());
-                            StringToFormula StringToFormula = new StringToFormula();
-                            bool blnCheck = StringToFormula.RelationalExpression2(strConditionOp);
+                            string strItemShomareh = AddedItems.Trim() + strCharacterPlus.Trim();
+
+
+                            string CharForReplaceUp = "";
+                            string strTAEForReoplaceUp = "";
+
+                            decimal? dErtefaUp = null;
+                            decimal? dToolUp = null;
+
+                            if (strFinalWorkingSplitUp[0] == "z")
+                            {
+                                CharForReplaceUp = "z";
+                                strTAEForReoplaceUp = RizMetre.Ertefa != null ? RizMetre.Ertefa.Value.ToString().Trim() : "";
+                                dErtefaUp = intDividedUp;
+                                dToolUp = RizMetre.Tool;
+                            }
+                            else if (strFinalWorkingSplitUp[0] == "x")
+                            {
+                                CharForReplaceUp = "x";
+                                strTAEForReoplaceUp = RizMetre.Tool != null ? RizMetre.Tool.Value.ToString().Trim() : "";
+                                dErtefaUp = RizMetre.Ertefa;
+                                dToolUp = intDivided;
+                            }
+                            string strConditionOp = Condition.Replace(CharForReplaceUp, strTAEForReoplaceUp);
+                            StringToFormula stringToFormula = new StringToFormula();
+                            bool blnCheck = stringToFormula.RelationalExpression2(strConditionOp);
                             if (blnCheck)
                             {
-                                string strItemShomareh = AddedItems;
-
-                                if (strFinalWorking != "")
+                                if (FinalWorking != "")
                                 {
-                                    string[] strFinalWorkingSplit1 = strFinalWorking.Split('_');
-                                    int intDivided = int.Parse(strFinalWorkingSplit1[1]);
-                                    string[] strFinalWorkingSplit = strFinalWorkingSplit1[0].Split('-');
-
-                                    string strFinalWorking11 = strFinalWorkingSplit1[0].Replace("z", RizMetre.Ertefa != null ? RizMetre.Ertefa.Value.ToString().Trim() : "");
-                                    int intReapetCount = (int.Parse(Math.Floor(StringToFormula.Eval(strFinalWorking11)).ToString("n0")) / intDivided);
-
-                                    //int intReapetCount = (int.Parse(strFinalWorkingSplit[1]) / intDivided) - 1;
-
                                     clsFB? varFBUser = lstFBUser.FirstOrDefault(x => x.Shomareh == strItemShomareh);
                                     Guid intFBId = new Guid();
                                     if (varFBUser != null)
                                         intFBId = varFBUser.ID;
 
+
+                                    string strFinalWorking11 = strFinalWorkingSplitUp1[0].Replace(CharForReplaceUp, strTAEForReoplaceUp);
+
+                                    int intReapetCount = (int.Parse(Math.Floor(stringToFormula.Eval(strFinalWorking11)).ToString("n0")) / intDivided);
+
                                     //به تعداد intReapetCount
-                                    //رکورد با ارتفاع 2 درج می گردد
+                                    //رکورد با ارتفاع intDivided درج می گردد
                                     decimal? Tedad = RizMetre.Tedad == 0 ? 1 : RizMetre.Tedad;
-                                    decimal? Tool = RizMetre.Tool;
+                                    //decimal? Tool = RM.Tool;
                                     decimal? Arz = RizMetre.Arz;
                                     decimal? Vazn = 1;
                                     for (int i = 0; i < intReapetCount; i++)
                                     {
-                                        decimal dErtefa = 2;
+                                        //decimal dErtefa = intDivided;
                                         clsRizMetreUsers RizMetreUserses1 = new clsRizMetreUsers();
                                         RizMetreUserses1.Shomareh = RizMetre.Shomareh;
                                         ShomareNew++;
@@ -5000,7 +5336,7 @@ namespace RMS.Models.Common
 
                                         RizMetreUserses1.Sharh = RizMetre.Sharh;
                                         RizMetreUserses1.Tedad = Tedad;
-                                        RizMetreUserses1.Tool = Tool;
+                                        RizMetreUserses1.Tool = dTool;
                                         RizMetreUserses1.Arz = Arz;
                                         RizMetreUserses1.Ertefa = dErtefa;
                                         RizMetreUserses1.Vazn = Vazn++;
@@ -5019,71 +5355,252 @@ namespace RMS.Models.Common
 
                                         ///محاسبه مقدار جزء
                                         decimal? dMeghdarJoz1 = null;
-                                        if (Tedad == null && Tool == null && Arz == null && Vazn == null)
+                                        if (Tedad == null && dTool == null && Arz == null && Vazn == null)
                                             dMeghdarJoz1 = null;
                                         else
-                                            dMeghdarJoz1 = (Tedad == null ? 1 : Tedad.Value) * (Tool == null ? 1 : Tool.Value) *
+                                            dMeghdarJoz1 = (Tedad == null ? 1 : Tedad.Value) * (dTool == null ? 1 : dTool.Value) *
                                             (Arz == null ? 1 : Arz.Value) * dErtefa * (Vazn == null ? 1 : Vazn.Value);
                                         RizMetreUserses1.MeghdarJoz = dMeghdarJoz1;
 
                                         _context.RizMetreUserses.Add(RizMetreUserses1);
                                     }
-
                                     int intRemain = intReapetCount * intDivided;
 
-                                    strFinalWorking = strFinalWorkingSplit1[0].Replace("z", RizMetre.Ertefa != null ? RizMetre.Ertefa.Value.ToString().Trim() : "");
+                                    string strFinalWorking1 = strFinalWorkingSplitUp1[0].Replace(CharForReplaceUp, strTAEForReoplaceUp);
 
-                                    //رکورد آخری هم بنا به شرط فاینل ارتفاع درج میگردد
-                                    decimal Ertefa = decimal.Parse(StringToFormula.Eval(strFinalWorking).ToString("0.##"));
-                                    Ertefa -= intRemain;
-
-
-                                    //DataRow[] DrRizMetreUsersesCurrent = DtRizMetreUsersesCurrent.Select("shomareh=" + RM.Shomareh + " and FBId=" + FBId);
-                                    //if (DrRizMetreUsersesCurrent.Length == 0)
-                                    //{
-                                    if (Ertefa > 0)
+                                    decimal? dLastErtefa = RizMetre.Ertefa;
+                                    decimal? dLastTool = RizMetre.Tool;
+                                    //رکورد آخری هم بنا به شرط فاینل ارتفاع یا طول درج میگردد
+                                    if (strFinalWorkingSplitUp[0] == "z")
                                     {
-                                        clsRizMetreUsers RizMetreUserses = new clsRizMetreUsers();
-                                        RizMetreUserses.Shomareh = RizMetre.Shomareh;
-                                        ShomareNew++;
-                                        RizMetreUserses.ShomarehNew = ShomareNew.ToString();
+                                        dLastErtefa = decimal.Parse(stringToFormula.Eval(strFinalWorking1).ToString("0.##"));
+                                        dLastErtefa -= intRemain;
+                                        if (dLastErtefa > 0)
+                                        {
 
-                                        RizMetreUserses.Sharh = RizMetre.Sharh;
-                                        RizMetreUserses.Tedad = Tedad;
-                                        RizMetreUserses.Tool = Tool;
-                                        RizMetreUserses.Arz = Arz;
-                                        RizMetreUserses.Ertefa = Ertefa;
-                                        RizMetreUserses.Vazn = Vazn;
-                                        RizMetreUserses.Des = RizMetre.Des;
+                                            clsRizMetreUsers RizMetreUserses = new clsRizMetreUsers();
+                                            RizMetreUserses.Shomareh = RizMetre.Shomareh;
+                                            ShomareNew++;
+                                            RizMetreUserses.ShomarehNew = ShomareNew.ToString();
 
-                                        RizMetreUserses.FBId = intFBId;
-                                        RizMetreUserses.OperationsOfHamlId = 1;
-                                        RizMetreUserses.Type = "2";
-                                        RizMetreUserses.ForItem = strForItem;
-                                        RizMetreUserses.UseItem = strUseItem;
-                                        RizMetreUserses.LevelNumber = LevelNumber;
-                                        RizMetreUserses.InsertDateTime = Now;
+                                            RizMetreUserses.Sharh = RizMetre.Sharh;
+                                            RizMetreUserses.Tedad = Tedad;
+                                            RizMetreUserses.Tool = dLastTool;
+                                            RizMetreUserses.Arz = Arz;
+                                            RizMetreUserses.Ertefa = dLastErtefa;
+                                            RizMetreUserses.Vazn = Vazn;
+                                            RizMetreUserses.Des = RizMetre.Des;
 
-                                        //RizMetreUserses.ConditionContextRel = ConditionContextRel;
-                                        //RizMetreUserses.ConditionContextId = ConditionContextId;
+                                            RizMetreUserses.FBId = intFBId;
+                                            RizMetreUserses.OperationsOfHamlId = 1;
+                                            RizMetreUserses.Type = "2";
+                                            RizMetreUserses.ForItem = strForItem;
+                                            RizMetreUserses.UseItem = strUseItem;
+                                            RizMetreUserses.LevelNumber = LevelNumber;
+                                            RizMetreUserses.InsertDateTime = Now;
 
-                                        ///محاسبه مقدار جزء
-                                        decimal? dMeghdarJoz = null;
-                                        if (Tedad == null && Tool == null && Arz == null && Vazn == null)
-                                            dMeghdarJoz = null;
-                                        else
-                                            dMeghdarJoz = (Tedad == null ? 1 : Tedad.Value) * (Tool == null ? 1 : Tool.Value) *
-                                            (Arz == null ? 1 : Arz.Value) * Ertefa * (Vazn == null ? 1 : Vazn.Value);
-                                        RizMetreUserses.MeghdarJoz = dMeghdarJoz;
+                                            //RizMetreUserses.ConditionContextRel = ConditionContextRel;
+                                            //RizMetreUserses.ConditionContextId = ConditionContextId;
 
-                                        _context.RizMetreUserses.Add(RizMetreUserses);
+                                            ///محاسبه مقدار جزء
+                                            decimal? dMeghdarJoz = null;
+                                            if (Tedad == null && dLastTool == null && dLastErtefa == null && Arz == null && Vazn == null)
+                                                dMeghdarJoz = null;
+                                            else
+                                                dMeghdarJoz = (Tedad == null ? 1 : Tedad.Value) * (dLastTool == null ? 1 : dLastTool.Value) *
+                                                (Arz == null ? 1 : Arz.Value) * (dLastErtefa == null ? 1 : dLastErtefa.Value) * (Vazn == null ? 1 : Vazn.Value);
+                                            RizMetreUserses.MeghdarJoz = dMeghdarJoz;
+
+                                            _context.RizMetreUserses.Add(RizMetreUserses);
+                                        }
                                     }
-                                    //_context.SaveChanges();
+                                    else if (strFinalWorkingSplitUp[0] == "x")
+                                    {
+                                        dLastTool = decimal.Parse(stringToFormula.Eval(strFinalWorking1).ToString("0.##"));
+                                        dLastTool -= intRemain;
+                                        if (dLastTool > 0)
+                                        {
+
+                                            clsRizMetreUsers RizMetreUserses = new clsRizMetreUsers();
+                                            RizMetreUserses.Shomareh = RizMetre.Shomareh;
+                                            ShomareNew++;
+                                            RizMetreUserses.ShomarehNew = ShomareNew.ToString();
+
+                                            RizMetreUserses.Sharh = RizMetre.Sharh;
+                                            RizMetreUserses.Tedad = Tedad;
+                                            RizMetreUserses.Tool = dLastTool;
+                                            RizMetreUserses.Arz = Arz;
+                                            RizMetreUserses.Ertefa = dLastErtefa;
+                                            RizMetreUserses.Vazn = Vazn;
+                                            RizMetreUserses.Des = RizMetre.Des;
+
+                                            RizMetreUserses.FBId = intFBId;
+                                            RizMetreUserses.OperationsOfHamlId = 1;
+                                            RizMetreUserses.Type = "2";
+                                            RizMetreUserses.ForItem = strForItem;
+                                            RizMetreUserses.UseItem = strUseItem;
+                                            RizMetreUserses.LevelNumber = LevelNumber;
+                                            RizMetreUserses.InsertDateTime = Now;
+
+                                            //RizMetreUserses.ConditionContextRel = ConditionContextRel;
+                                            //RizMetreUserses.ConditionContextId = ConditionContextId;
+
+                                            ///محاسبه مقدار جزء
+                                            decimal? dMeghdarJoz = null;
+                                            if (Tedad == null && dLastTool == null && dLastErtefa == null && Arz == null && Vazn == null)
+                                                dMeghdarJoz = null;
+                                            else
+                                                dMeghdarJoz = (Tedad == null ? 1 : Tedad.Value) * (dLastTool == null ? 1 : dLastTool.Value) *
+                                                (Arz == null ? 1 : Arz.Value) * (dLastErtefa == null ? 1 : dLastErtefa.Value) * (Vazn == null ? 1 : Vazn.Value);
+                                            RizMetreUserses.MeghdarJoz = dMeghdarJoz;
+
+                                            _context.RizMetreUserses.Add(RizMetreUserses);
+                                        }
+                                    }
+                                    _context.SaveChanges();
                                     //RizMetreUserses.Save();
                                     //}
                                 }
                             }
                         }
+
+
+
+                        //if (blnCheckSave)
+                        //{
+                        //    string strItemFBShomareh = ItemHasCon.FBShomareh.Trim();
+
+                        //    string strCondition = Condition;
+                        //    string strFinalWorking = FinalWorking;
+                        //    string strAddedItems = AddedItems;
+                        //    Guid guFBId = FBId;
+                        //    string strUseItem = UseItemForAdd;
+                        //    string strForItem = strItemFBShomareh;
+
+                        //    List<clsFB> lstFBUser = _context.FBs.Where(x => x.BarAvordId == BarAvordId).ToList();
+                        //    string strConditionOp = strCondition.Replace("z", RizMetre.Ertefa.ToString().Trim());
+                        //    StringToFormula StringToFormula = new StringToFormula();
+                        //    bool blnCheck = StringToFormula.RelationalExpression2(strConditionOp);
+                        //    if (blnCheck)
+                        //    {
+                        //        string strItemShomareh = AddedItems;
+
+                        //        if (strFinalWorking != "")
+                        //        {
+                        //            string[] strFinalWorkingSplit1 = strFinalWorking.Split('_');
+                        //            int intDivided = int.Parse(strFinalWorkingSplit1[1]);
+                        //            string[] strFinalWorkingSplit = strFinalWorkingSplit1[0].Split('-');
+
+                        //            string strFinalWorking11 = strFinalWorkingSplit1[0].Replace("z", RizMetre.Ertefa != null ? RizMetre.Ertefa.Value.ToString().Trim() : "");
+                        //            int intReapetCount = (int.Parse(Math.Floor(StringToFormula.Eval(strFinalWorking11)).ToString("n0")) / intDivided);
+
+                        //            //int intReapetCount = (int.Parse(strFinalWorkingSplit[1]) / intDivided) - 1;
+
+                        //            clsFB? varFBUser = lstFBUser.FirstOrDefault(x => x.Shomareh == strItemShomareh);
+                        //            intFBId = new Guid();
+                        //            if (varFBUser != null)
+                        //                intFBId = varFBUser.ID;
+
+                        //            //به تعداد intReapetCount
+                        //            //رکورد با ارتفاع intDivided درج می گردد
+                        //            decimal? Tedad = RizMetre.Tedad == 0 ? 1 : RizMetre.Tedad;
+                        //            decimal? Tool = RizMetre.Tool;
+                        //            decimal? Arz = RizMetre.Arz;
+                        //            decimal? Vazn = 1;
+                        //            for (int i = 0; i < intReapetCount; i++)
+                        //            {
+                        //                decimal dErtefa = intDivided;
+                        //                clsRizMetreUsers RizMetreUserses1 = new clsRizMetreUsers();
+                        //                RizMetreUserses1.Shomareh = RizMetre.Shomareh;
+                        //                ShomareNew++;
+                        //                RizMetreUserses1.ShomarehNew = ShomareNew.ToString();
+
+                        //                RizMetreUserses1.Sharh = RizMetre.Sharh;
+                        //                RizMetreUserses1.Tedad = Tedad;
+                        //                RizMetreUserses1.Tool = Tool;
+                        //                RizMetreUserses1.Arz = Arz;
+                        //                RizMetreUserses1.Ertefa = dErtefa;
+                        //                RizMetreUserses1.Vazn = Vazn++;
+                        //                RizMetreUserses1.Des = RizMetre.Des;
+
+                        //                RizMetreUserses1.FBId = intFBId;
+                        //                RizMetreUserses1.OperationsOfHamlId = 1;
+                        //                RizMetreUserses1.Type = "2";
+                        //                RizMetreUserses1.ForItem = strForItem;
+                        //                RizMetreUserses1.UseItem = strUseItem;
+                        //                RizMetreUserses1.LevelNumber = LevelNumber;
+                        //                RizMetreUserses1.InsertDateTime = Now;
+
+                        //                //RizMetreUserses1.ConditionContextRel = ConditionContextRel;
+                        //                //RizMetreUserses1.ConditionContextId = ConditionContextId;
+
+                        //                ///محاسبه مقدار جزء
+                        //                decimal? dMeghdarJoz1 = null;
+                        //                if (Tedad == null && Tool == null && Arz == null && Vazn == null)
+                        //                    dMeghdarJoz1 = null;
+                        //                else
+                        //                    dMeghdarJoz1 = (Tedad == null ? 1 : Tedad.Value) * (Tool == null ? 1 : Tool.Value) *
+                        //                    (Arz == null ? 1 : Arz.Value) * dErtefa * (Vazn == null ? 1 : Vazn.Value);
+                        //                RizMetreUserses1.MeghdarJoz = dMeghdarJoz1;
+
+                        //                _context.RizMetreUserses.Add(RizMetreUserses1);
+                        //            }
+
+                        //            int intRemain = intReapetCount * intDivided;
+
+                        //            strFinalWorking = strFinalWorkingSplit1[0].Replace("z", RizMetre.Ertefa != null ? RizMetre.Ertefa.Value.ToString().Trim() : "");
+
+                        //            //رکورد آخری هم بنا به شرط فاینل ارتفاع درج میگردد
+                        //            decimal Ertefa = decimal.Parse(StringToFormula.Eval(strFinalWorking).ToString("0.##"));
+                        //            Ertefa -= intRemain;
+
+
+                        //            //DataRow[] DrRizMetreUsersesCurrent = DtRizMetreUsersesCurrent.Select("shomareh=" + RM.Shomareh + " and FBId=" + FBId);
+                        //            //if (DrRizMetreUsersesCurrent.Length == 0)
+                        //            //{
+                        //            if (Ertefa > 0)
+                        //            {
+                        //                clsRizMetreUsers RizMetreUserses = new clsRizMetreUsers();
+                        //                RizMetreUserses.Shomareh = RizMetre.Shomareh;
+                        //                ShomareNew++;
+                        //                RizMetreUserses.ShomarehNew = ShomareNew.ToString();
+
+                        //                RizMetreUserses.Sharh = RizMetre.Sharh;
+                        //                RizMetreUserses.Tedad = Tedad;
+                        //                RizMetreUserses.Tool = Tool;
+                        //                RizMetreUserses.Arz = Arz;
+                        //                RizMetreUserses.Ertefa = Ertefa;
+                        //                RizMetreUserses.Vazn = Vazn;
+                        //                RizMetreUserses.Des = RizMetre.Des;
+
+                        //                RizMetreUserses.FBId = intFBId;
+                        //                RizMetreUserses.OperationsOfHamlId = 1;
+                        //                RizMetreUserses.Type = "2";
+                        //                RizMetreUserses.ForItem = strForItem;
+                        //                RizMetreUserses.UseItem = strUseItem;
+                        //                RizMetreUserses.LevelNumber = LevelNumber;
+                        //                RizMetreUserses.InsertDateTime = Now;
+
+                        //                //RizMetreUserses.ConditionContextRel = ConditionContextRel;
+                        //                //RizMetreUserses.ConditionContextId = ConditionContextId;
+
+                        //                ///محاسبه مقدار جزء
+                        //                decimal? dMeghdarJoz = null;
+                        //                if (Tedad == null && Tool == null && Arz == null && Vazn == null)
+                        //                    dMeghdarJoz = null;
+                        //                else
+                        //                    dMeghdarJoz = (Tedad == null ? 1 : Tedad.Value) * (Tool == null ? 1 : Tool.Value) *
+                        //                    (Arz == null ? 1 : Arz.Value) * Ertefa * (Vazn == null ? 1 : Vazn.Value);
+                        //                RizMetreUserses.MeghdarJoz = dMeghdarJoz;
+
+                        //                _context.RizMetreUserses.Add(RizMetreUserses);
+                        //            }
+                        //            //_context.SaveChanges();
+                        //            //RizMetreUserses.Save();
+                        //            //}
+                        //        }
+                        //    }
+                        //}
 
                         break;
                     }

@@ -129,6 +129,7 @@ function renderTableFosoul(data) {
     const tbody = $('#fosoulTable tbody');
     tbody.empty();
     data.forEach((item, index) => {
+        debugger;
         const rowClass = index % 2 === 0 ? '' : 'table-alt';
         let style = '';
         let tagA = `<a href="#" onclick="event.stopPropagation();DescriptionShow(${item.id})">${item.faslName}</a>`;

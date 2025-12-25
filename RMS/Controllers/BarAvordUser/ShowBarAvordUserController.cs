@@ -45,7 +45,7 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
         var fbItems = (from fb in _context.FBs
                        join fehrestbaha in _context.FehrestBahas
                        on fb.Shomareh.Substring(0, 6) equals fehrestbaha.Shomareh.Trim()
-                       where fb.BarAvordId == request.BarAvordUserId && fb.NoeFBId==NoeFBId && fehrestbaha.Sal == request.Year
+                       where fb.BarAvordId == request.BarAvordUserId && fehrestbaha.NoeFB==NoeFBId && fehrestbaha.Sal == request.Year
                        select new FBForGetUserBarAvordDto
                        {
                            ID = fb.ID,

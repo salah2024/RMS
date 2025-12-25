@@ -460,7 +460,9 @@ namespace RMS.Controllers.Operation
                                         }
                                     case "17":
                                         {
-                                            var varFBUsersAdded = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == strFBShomarehAdded);
+                                            string strCharacterPlus = Dr[idr]["CharacterPlus"].ToString().Trim();
+
+                                            var varFBUsersAdded = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == strFBShomarehAdded + strCharacterPlus);
 
                                             if (varFBUsersAdded != null)
                                             {
