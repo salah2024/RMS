@@ -6,7 +6,7 @@ namespace RMS.Controllers.Dashboard;
 public class DashboardController : Controller
 {
     // صفحه اصلی داشبورد
-   // [Authorize]
+    [Authorize]
     public IActionResult Index()
     {
         if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")

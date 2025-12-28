@@ -21,7 +21,6 @@
         data: JSON.stringify(vardata),
         contentType: "application/json; charset=utf-8",
         success: function (data) {
-            debugger;
             lstItemFBShomarehForGet = data.lstItemFBShomarehForGet;
             lst = data.lst;
 
@@ -41,11 +40,25 @@
                 groupedData[row.itemFBShomareh].push(row);
             });
 
+            //let orderedGroupedData = Object.keys(lstItemFBShomarehForGet)
+            //    .sort((a, b) => a.localeCompare(b))
+            //    .reduce((acc, key) => {
+            //        acc[key] = groupedData[key];
+            //        return acc;
+            //    }, {});
+
+
+            let orderedList = lstItemFBShomarehForGet.sort((a, b) =>
+                a.itemFBShomareh.localeCompare(b.itemFBShomareh)
+            );
+
+            debugger;
+
             // ساخت HTML بر اساس lstItemFBShomarehForGet
             if (lst.length != 0) {
-                lstItemFBShomarehForGet.forEach(function (itemGroup) {
+                orderedList.forEach(function (itemGroup) {
 
-                    let itemFBShomareh = itemGroup.itemFBShomareh.substring(0, 6);
+                    let itemFBShomareh = itemGroup.itemFBShomareh;//.substring(0, 6);
                     let des = itemGroup.des;
                     let ItemFields = itemGroup.itemFields;
 

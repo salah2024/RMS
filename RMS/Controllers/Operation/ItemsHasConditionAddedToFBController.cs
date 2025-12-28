@@ -477,6 +477,90 @@ namespace RMS.Controllers.Operation
 
                                             break;
                                         }
+                                    case "19":
+                                        {
+                                            /////////////
+                                            /////حذف قبلی ها
+                                            /////////////
+
+                                            string strCharacterPlus = Dr[idr]["CharacterPlus"].ToString();
+
+                                            string strCondition = Dr[idr]["Condition"].ToString().Trim();
+                                            string[] strConditionSplit = strCondition.Split("_");
+
+                                            string strFinalWorking = Dr[idr]["FinalWorking"].ToString();
+                                            DataTable DtRizMetreUserses = new DataTable();
+                                            string strForItem = "";
+                                            string strUseItem = "";
+                                            string strItemFBShomareh = Dr[idr]["AddedItems"].ToString().Trim();
+
+                                            //clsBaravordUser? varBA = _context.BaravordUsers.FirstOrDefault(x => x.ID == BarAvordId);
+                                            //Guid guBAId = varBA.ID;
+                                            string strItemShomareh = Dr[idr]["AddedItems"].ToString().Trim();
+                                            clsFB? varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == strItemShomareh);
+
+                                            Guid guFBId = Guid.Parse(varFBUser.ID.ToString());
+                                            strUseItem = strItemShomareh;// varFBUser.Shomareh.Trim();
+                                            strForItem = Dr[idr]["UseItemForAdd"].ToString().Trim();
+
+                                            //List<clsRizMetreUsers> varRizMetreUsersesCurrent = _context.RizMetreUserses
+                                            //    .Where(x => x.ForItem == strForItem && x.Type == "2" && x.UseItem == strUseItem).ToList();
+
+
+                                            List<RizMetreUsersForItemsAddingToFBInputDto> varRizMetreUserses = (from RUsers in _context.RizMetreUserses
+                                                                                                                join fb in _context.FBs on RUsers.FBId equals fb.ID
+                                                                                                                where RUsers.LevelNumber == LevelNumber
+                                                                                                                select new RizMetreUsersForItemsAddingToFBInputDto
+                                                                                                                {
+                                                                                                                    Shomareh = RUsers.Shomareh,
+                                                                                                                    Sharh = RUsers.Sharh,
+                                                                                                                    Tedad = RUsers.Tedad,
+                                                                                                                    Tool = RUsers.Tool,
+                                                                                                                    Arz = RUsers.Arz,
+                                                                                                                    Ertefa = RUsers.Ertefa,
+                                                                                                                    Vazn = RUsers.Vazn,
+                                                                                                                    Des = RUsers.Des,
+                                                                                                                    ForItem = RUsers.ForItem,
+                                                                                                                    Type = RUsers.Type,
+                                                                                                                    FBId = RUsers.FBId
+                                                                                                                }).Where(x => x.FBId == guFBId).OrderBy(x => x.Shomareh).ToList();
+
+                                            //List<clsFB> lstFBUser = _context.FBs.Where(x => x.BarAvordId == BarAvordId).ToList();
+                                            //foreach (var RM in varRizMetreUserses)
+                                            //{
+
+                                            //    string[] strCondition2Condition = strCondition.Trim().Split(',');
+                                            //    string strConditionX = strCondition2Condition[0].Trim();
+                                            //    string strConditionZ = strCondition2Condition[1].Trim();
+
+                                            //    string strConditionOpX = strConditionX.Replace("x", RM.Tool != null ? RM.Tool.Value.ToString().Trim() : "");
+                                            //    string strConditionOpZ = strConditionZ.Replace("z", RM.Ertefa != null ? RM.Ertefa.Value.ToString().Trim() : "");
+
+                                            //    StringToFormula stringToFormula = new StringToFormula();
+                                            //    bool blnCheckX = stringToFormula.RelationalExpression2(strConditionOpX);
+                                            //    bool blnCheckZ = stringToFormula.RelationalExpression2(strConditionOpZ);
+                                            //    if (blnCheckX && blnCheckZ)
+                                            //    {
+                                            string strItemShomareh1 = Dr[idr]["AddedItems"].ToString().Trim() + strCharacterPlus;
+
+                                            clsFB? FBUser = _context.FBs.Where(x => x.BarAvordId == BarAvordId && x.Shomareh == strItemShomareh1).FirstOrDefault();
+
+                                            Guid intFBId1 = new Guid();
+                                            if (FBUser != null)
+                                                intFBId1 = FBUser.ID;
+
+                                            string strShomareh1 = strItemFBShomareh.Substring(0, 6);
+                                            //&& x.Shomareh == RM.Shomareh
+                                            List<clsRizMetreUsers> lstRizMetreUsersCurrent =
+                                                            _context.RizMetreUserses.Where(x => x.FBId == intFBId1 && x.ForItem == strShomareh1 && x.Type == "2").ToList();
+
+                                            _context.RizMetreUserses.RemoveRange(lstRizMetreUsersCurrent);
+
+                                            //}
+
+                                            _context.SaveChanges();
+                                            break;
+                                        }
                                     default:
                                         break;
                                 }
