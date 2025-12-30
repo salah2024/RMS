@@ -477,6 +477,73 @@ namespace RMS.Controllers.Operation
 
                                             break;
                                         }
+                                    case "15":
+                                        {
+                                            /////////////
+                                            /////حذف قبلی ها
+                                            /////////////
+
+                                            string strCharacterPlus = Dr[idr]["CharacterPlus"].ToString();
+
+                                            string strCondition = Dr[idr]["Condition"].ToString().Trim();
+                                            string[] strConditionSplit = strCondition.Split("_");
+
+                                            string strFinalWorking = Dr[idr]["FinalWorking"].ToString();
+                                            DataTable DtRizMetreUserses = new DataTable();
+                                            string strForItem = "";
+                                            string strUseItem = "";
+                                            string strItemFBShomareh = Dr[idr]["AddedItems"].ToString().Trim();
+
+                                            string strItemShomareh = Dr[idr]["AddedItems"].ToString().Trim();
+                                            clsFB? varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == strItemShomareh);
+
+                                            Guid guFBId = Guid.Parse(varFBUser.ID.ToString());
+                                            strUseItem = strItemShomareh;// varFBUser.Shomareh.Trim();
+                                            strForItem = Dr[idr]["UseItemForAdd"].ToString().Trim();
+
+
+                                            string strItemShomareh1 = Dr[idr]["AddedItems"].ToString().Trim() + strCharacterPlus;
+
+                                            clsFB? FBUser = _context.FBs.Where(x => x.BarAvordId == BarAvordId && x.Shomareh == strItemShomareh1).FirstOrDefault();
+
+
+
+                                     
+                                            Guid intFBId1 = new Guid();
+                                            if (FBUser != null)
+                                                intFBId1 = FBUser.ID;
+
+                                            string strShomareh1 = strItemFBShomareh.Substring(0, 6);
+                                            List<clsRizMetreUsers> lstRizMetreUsersBase =
+                                                            _context.RizMetreUserses.Where(x => x.FBId == guFBId).ToList();
+
+                                            List<clsRizMetreUsers> lstRizMetreUsersCurrent =
+                                                            _context.RizMetreUserses.Where(x => x.FBId == intFBId1 && x.ForItem == strShomareh1 && x.Type == "2").ToList();
+
+
+                                            List<Guid> lstRMIds = lstRizMetreUsersBase.Select(x => x.ID).ToList();
+                                            List<clsRizMetreUsersHistory> lstRMHistories = _context.RizMetreUsersHistories.Where(x => lstRMIds.Contains(x.RizMetreUsersId)).ToList();
+                                            foreach (var RMCurrent in lstRizMetreUsersBase)
+                                            {
+                                                clsRizMetreUsersHistory? RMHistory = lstRMHistories.FirstOrDefault(x => x.RizMetreUsersId == RMCurrent.ID);
+                                                if (RMHistory != null)
+                                                {
+                                                    RMCurrent.Sharh = RMHistory.Sharh;
+                                                    RMCurrent.Tedad = RMHistory.Tedad;
+                                                    RMCurrent.Tool = RMHistory.Tool;
+                                                    RMCurrent.Arz = RMHistory.Arz;
+                                                    RMCurrent.Ertefa = RMHistory.Ertefa;
+                                                    RMCurrent.Vazn = RMHistory.Vazn;
+                                                    RMCurrent.MeghdarJoz = RMHistory.MeghdarJoz;
+                                                    RMCurrent.Des = RMHistory.Des;
+                                                }
+                                            }
+
+                                            _context.RizMetreUsersHistories.RemoveRange(lstRMHistories);
+                                            _context.RizMetreUserses.RemoveRange(lstRizMetreUsersCurrent);
+                                            _context.SaveChanges();
+                                            break;
+                                        }
                                     case "19":
                                         {
                                             /////////////

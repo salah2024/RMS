@@ -1,6 +1,8 @@
 ﻿ActivityLength = 0;
 
 function PayKaniClick(OpId) {
+    ForItem = $('#HDFItemsFBShomareh').val();
+
     BarAvordUserId = $('#HDFBarAvordUserID').val();
     str = "";
     debugger;
@@ -68,11 +70,16 @@ function PayKaniClick(OpId) {
 </div>
     `;
 
-    $('#ula' + OpId).html(str);
+    $('#divItemsAddedAndRel' + ForItem).html(str);
+    $('#divAddedItems' + OpeId).show();
+
+
+    //$('#ula' + OpId).html(str);
 
     setTimeout(() => { $('#txtFromKMForPayKani').focus().select(); }, 200);
 
-    $('#ula' + OpId).off('keydown.paykani').on('keydown.paykani', '.khakbardariTextStyle', function (e) {
+    //$('#ula' + OpId).off('keydown.paykani').on('keydown.paykani', '.khakbardariTextStyle', function (e) {
+    $('#divItemsAddedAndRel' + ForItem).off('keydown.paykani').on('keydown.paykani', '.khakbardariTextStyle', function (e) {
         if (e.key === 'Enter') {
             e.preventDefault(); // جلوگیری از submit فرم
             const inputs = $('.khakbardariTextStyle');

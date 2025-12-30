@@ -68,6 +68,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<clsQuesForAbnieFaniValues> QuesForAbnieFaniValuess { get; set; }
     public DbSet<clsRizKiloMetrazhOfHaml> RizKiloMetrazhOfHamls { get; set; }
     public DbSet<clsRizMetreUsers> RizMetreUserses { get; set; }
+    public DbSet<clsRizMetreUsersHistory> RizMetreUsersHistories { get; set; }
     public DbSet<clsSegmentsFromGEODB> SegmentsFromGEODBs { get; set; }
     public DbSet<clsShomarehFBForQuesForAbnieFani> ShomarehFBForQuesForAbnieFanis { get; set; }
     public DbSet<clsSubItemsAddingToFB> SubItemsAddingToFBs { get; set; }

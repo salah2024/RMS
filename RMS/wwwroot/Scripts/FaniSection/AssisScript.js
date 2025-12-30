@@ -239,8 +239,7 @@ function ConfirmItemsCondition(object, Id, ConditionGroupId, LevelNumber) {
                     $(this).removeClass('blinking');
                 });
                 GetAndShowAddItems(Id, ConditionGroupId);
-
-                debugger;
+                GetRizMetreWithFBId(LevelNumber);
 
                 object.parent().parent().find('input[type="checkbox"]').prop('checked', true);
 
@@ -505,7 +504,8 @@ function spanOnClick(Id, ConditionGroupId) {
 
     if (checkbox.is(':checked')) {
         $('#divShowRizMetre' + Id).slideToggle(500);
-        GetAndShowAddItems(Id, ConditionGroupId)
+        GetAndShowAddItems(Id, ConditionGroupId);
+
     } else {
         $('#CK' + Id).click();
         checkbox.prop('checked', true);

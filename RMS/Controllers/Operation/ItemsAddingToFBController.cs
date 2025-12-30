@@ -3271,6 +3271,10 @@ namespace RMS.Controllers.Operation
                                         }
                                     }
 
+                                    List<Guid> lstRMIds = varRizMetreUsersesWithoutLakeAndTarash.Select(x => x.Id).ToList();
+
+                                    List<clsRizMetreUsers> lstRizMetreUser = _context.RizMetreUserses.Where(x => lstRMIds.Contains(x.ID)).ToList();
+
                                     if (varRizMetreUsersesWithoutLakeAndTarash.Count != 0)
                                     {
                                         var varRizMetreUsersesCurrent = (from RizMetreUserses in _context.RizMetreUserses
@@ -3293,6 +3297,7 @@ namespace RMS.Controllers.Operation
                                                                              UseItem = RizMetreUserses.UseItem,
                                                                              BarAvordId = FB.BarAvordId
                                                                          }).Where(x => x.ForItem == strForItem && x.Type == "2" && x.UseItem == strUseItem).ToList();
+
                                         DataTable DtRizMetreUsersesCurrent = clsConvert.ToDataTable(varRizMetreUsersesCurrent);
 
                                         List<clsFB> lstFBUser = _context.FBs.Where(x => x.BarAvordId == BarAvordId).ToList();
@@ -3317,7 +3322,7 @@ namespace RMS.Controllers.Operation
 
                                         //List<clsFB> varFBUser = _context.FBs.Where(x => x.BarAvordId == BarAvordId && x.Shomareh == strItemShomareh).ToList();
 
-                                        foreach (var RM in varRizMetreUsersesWithoutLakeAndTarash)
+                                        foreach (var RM in lstRizMetreUser)
                                         {
                                             string strConditionOp = strConditionSplit[0].Replace("x", RM.Arz.ToString().Trim());
                                             StringToFormula StringToFormula = new StringToFormula();
@@ -3346,7 +3351,35 @@ namespace RMS.Controllers.Operation
                                                 if (RM.Arz <= 2)
                                                     dArz = RM.Arz;
                                                 else
+                                                {
                                                     dArz = 2;
+                                                    ///بایستی سابقه در جدول سوابق ریزمتره دخیره گردد تا در صورتی که تیک تعریض برداشته شد، آیتم اصلی به حالت اولش برگردد
+                                                    ///
+                                                    clsRizMetreUsersHistory rizMetreUsersHistory = new clsRizMetreUsersHistory
+                                                    {
+                                                        RizMetreUsersId = RM.ID,
+                                                        Shomareh = RM.Shomareh,
+                                                        ShomarehNew = RM.ShomarehNew,
+                                                        Sharh = RM.Sharh,
+                                                        Tedad = RM.Tedad,
+                                                        Tool = RM.Tool,
+                                                        Arz = RM.Arz,
+                                                        Ertefa = RM.Ertefa,
+                                                        Vazn = RM.Vazn,
+                                                        MeghdarJoz = RM.MeghdarJoz,
+                                                        Des = RM.Des
+                                                    };
+                                                    _context.RizMetreUsersHistories.Add(rizMetreUsersHistory);
+
+                                                    RM.Arz = 2;
+
+                                                    decimal? dMeghdarJoz = null;
+
+                                                    dMeghdarJoz = (RM.Tedad == null ? 1 : RM.Tedad.Value) * (RM.Tool == null ? 1 : RM.Tool.Value) *
+                                                    2 * (RM.Ertefa == null ? 1 : RM.Ertefa.Value) * (RM.Vazn == null ? 1 : RM.Vazn.Value);
+
+                                                    RM.MeghdarJoz = dMeghdarJoz;
+                                                }
 
 
                                                 //string strItemShomareh = Dr[idr]["AddedItems"].ToString().Trim() + strCharacterPlus;
@@ -3398,28 +3431,28 @@ namespace RMS.Controllers.Operation
 
                                                     ///بایستی ریزمتره اصلی نیز آپدیت گردد
                                                     ///
-                                                    RM.Arz = dArz;
+                                                    //RM.Arz = dArz;
 
-                                                    UpdateRizMetreUsersInputDto request1 = new UpdateRizMetreUsersInputDto
-                                                    {
-                                                        Id = RM.Id,
-                                                        Sharh = RM.Sharh,
-                                                        Tedad = RM.Tedad,
-                                                        Tool = RM.Tool,
-                                                        Arz = RM.Arz,
-                                                        Ertefa = RM.Ertefa,
-                                                        Vazn = RM.Vazn,
-                                                        Des = RM.Des,
-                                                        NoeFBId = NoeFBId,
-                                                        Year = Year,
-                                                        BarAvordUserId = BarAvordId,
-                                                        LevelNumber = LevelNumber,
-                                                        Code = RBCode.ToString(),
-                                                        OperationId = OperationId,
-                                                        FBId = FBId
-                                                    };
+                                                    //UpdateRizMetreUsersInputDto request1 = new UpdateRizMetreUsersInputDto
+                                                    //{
+                                                    //    Id = RM.ID,
+                                                    //    Sharh = RM.Sharh,
+                                                    //    Tedad = RM.Tedad,
+                                                    //    Tool = RM.Tool,
+                                                    //    Arz = RM.Arz,
+                                                    //    Ertefa = RM.Ertefa,
+                                                    //    Vazn = RM.Vazn,
+                                                    //    Des = RM.Des,
+                                                    //    NoeFBId = NoeFBId,
+                                                    //    Year = Year,
+                                                    //    BarAvordUserId = BarAvordId,
+                                                    //    LevelNumber = LevelNumber,
+                                                    //    Code = RBCode.ToString(),
+                                                    //    OperationId = OperationId,
+                                                    //    FBId = FBId
+                                                    //};
 
-                                                    rizMetreCommon.UpdateRizMetreFromAddedItems(request1, _context);
+                                                    //rizMetreCommon.UpdateRizMetreFromAddedItems(request1, _context);
 
                                                 }
                                             }
@@ -5014,7 +5047,8 @@ namespace RMS.Controllers.Operation
                                                 ItemFBShomarehForGet = new ItemFBShomarehForGetAndShowAddItemsDto
                                                 {
                                                     ItemFBShomareh = varFBUsersAdded.Shomareh,
-                                                    Des = varFBUsersAdded.BahayeVahedSharh
+                                                    Des = varFBUsersAdded.BahayeVahedSharh,
+                                                    ItemFields = ItemFields
                                                 };
                                                 lstItemFBShomarehForGet.Add(ItemFBShomarehForGet);
                                             }

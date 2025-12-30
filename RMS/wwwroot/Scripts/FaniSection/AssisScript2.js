@@ -21,6 +21,7 @@
         data: JSON.stringify(vardata),
         contentType: "application/json; charset=utf-8",
         success: function (data) {
+            debugger;
             lstItemFBShomarehForGet = data.lstItemFBShomarehForGet;
             lst = data.lst;
 
@@ -243,6 +244,8 @@ function DeleteRMUAddedItemsClick(Id, ItemHasConditionId, ConditionGroupId) {
             if (response == "OK") {
                 toastr.success('ریز متره بدرستی حذف گردید', 'موفقیت');
                 GetAndShowAddItems(ItemHasConditionId, ConditionGroupId);
+                debugger;
+                GetRizMetreWithFBId(1);
             }
         },
         error: function () {
@@ -519,11 +522,13 @@ function GetRizMetreWithFBId(LevelNumber) {
 
             //$targetDiv.scrollTop($targetDiv[0].scrollHeight);
 
-
-
             if (rizMetreUsers.length != 0) {
                 if (!$("#divItemsAddedAndRel" + ItemsFBShomareh + " .styleHeaderTable1").length > 0) {
-                    GetItemsAddedAndRelForRizMetre(LevelNumber);
+                    if (true) {
+                        PayKaniClick(Operation);
+                    }
+                    else
+                        GetItemsAddedAndRelForRizMetre(LevelNumber);
                 }
             }
         },

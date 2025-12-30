@@ -2085,6 +2085,241 @@ namespace RMS.Models.Common
                         }
                         break;
                     }
+
+                case 15:
+                    {
+
+                        //بررسی اینکه در تراش یا لکه گیری هست یا خیر
+                        //اگر باشد دیگر صعوبت درج نمیشود
+
+                        RizMetreCommon rizMetreCommon = new RizMetreCommon();
+                        long[] lngConditionGroupId = { 31, 4 };
+
+                        string strFBShomareh = ItemHasCon.FBShomareh.Trim();
+                        GetAndShowAddItemsInputForSoubatDto request2 = new GetAndShowAddItemsInputForSoubatDto()
+                        {
+                            ShomarehFB = strFBShomareh,
+                            BarAvordUserId = guBAId,
+                            NoeFB = NoeFBId,
+                            Year = Year,
+                            LevelNumber = LevelNumber,
+                            ConditionGroupId = lngConditionGroupId
+                        };
+                        List<RizMetreForGetAndShowAddItemsDto> lstRM = rizMetreCommon.GetAndShowAddItemsForSoubat(request2, _context);
+
+                        string CharacterPlus = itemsAddingToFBForCheckOperation.CharacterPlus != null ? itemsAddingToFBForCheckOperation.CharacterPlus : "";
+
+                        string strCondition = Condition;
+                        string[] strConditionSplit = strCondition.Split("_");
+
+                        string strFinalWorking1 = FinalWorking;
+                        string[] strFinalWorkingSplit = strFinalWorking1.Split('_');
+                        string strFinalWorking = strFinalWorkingSplit[0];
+                        decimal dBahayeVahedZarib = strFinalWorkingSplit.Length > 1 ? decimal.Parse(strFinalWorkingSplit[1]) : 0;
+
+                        DataTable DtRizMetreUserses = new DataTable();
+                        string strItemFBShomareh = strFBShomareh;
+                        string strDesOfAddingItems = DesOfAddingItems;
+
+                        Guid guFBId = FBId;// Guid.Parse(DtFB.Rows[0]["ID"].ToString());
+                        string strUseItem = UseItemForAdd;
+                        string strForItem = strItemFBShomareh;
+                        //clsFB? varFBUser = _context.FBs.Where(x => x.BarAvordId == BarAvordId && x.Shomareh == strForItem).ToList();
+
+                        //if (varFBUser != null)
+                        //{
+                        List<RizMetreUsersForItemsAddingToFBInputDto> varRizMetreUserses = (from RUsers in _context.RizMetreUserses
+                                                                                            join fb in _context.FBs on RUsers.FBId equals fb.ID
+                                                                                            where RUsers.LevelNumber == LevelNumber
+                                                                                            select new RizMetreUsersForItemsAddingToFBInputDto
+                                                                                            {
+                                                                                                Id = RUsers.ID,
+                                                                                                Shomareh = RUsers.Shomareh,
+                                                                                                Sharh = RUsers.Sharh,
+                                                                                                Tedad = RUsers.Tedad,
+                                                                                                Tool = RUsers.Tool,
+                                                                                                Arz = RUsers.Arz,
+                                                                                                Ertefa = RUsers.Ertefa,
+                                                                                                Vazn = RUsers.Vazn,
+                                                                                                Des = RUsers.Des,
+                                                                                                ForItem = RUsers.ForItem,
+                                                                                                Type = RUsers.Type,
+                                                                                                FBId = RUsers.FBId
+                                                                                            }).Where(x => x.FBId == guFBId && x.Type == "1").OrderBy(x => x.Shomareh).ToList();
+
+                        //}
+
+                        List<RizMetreUsersForItemsAddingToFBInputDto> varRizMetreUsersesWithoutLakeAndTarash = new List<RizMetreUsersForItemsAddingToFBInputDto>();
+
+                        foreach (var RM1 in varRizMetreUserses)
+                        {
+                            RizMetreForGetAndShowAddItemsDto? FindRM = lstRM.FirstOrDefault(x => x.Shomareh == RM1.Shomareh);
+                            if (FindRM == null)
+                            {
+                                varRizMetreUsersesWithoutLakeAndTarash.Add(varRizMetreUserses.FirstOrDefault(x => x.Shomareh == RM1.Shomareh));
+                            }
+                        }
+
+                        List<Guid> lstRMIds = varRizMetreUsersesWithoutLakeAndTarash.Select(x => x.Id).ToList();
+
+                        List<clsRizMetreUsers> lstRizMetreUser = _context.RizMetreUserses.Where(x => lstRMIds.Contains(x.ID)).ToList();
+
+                        if (varRizMetreUsersesWithoutLakeAndTarash.Count != 0)
+                        {
+                            var varRizMetreUsersesCurrent = (from RizMetreUserses in _context.RizMetreUserses
+                                                             join FB in _context.FBs on RizMetreUserses.FBId equals FB.ID
+                                                             where RizMetreUserses.LevelNumber == LevelNumber
+                                                             select new
+                                                             {
+                                                                 ID = RizMetreUserses.ID,
+                                                                 Shomareh = RizMetreUserses.Shomareh,
+                                                                 Tedad = RizMetreUserses.Tedad,
+                                                                 Tool = RizMetreUserses.Tool,
+                                                                 Arz = RizMetreUserses.Arz,
+                                                                 Ertefa = RizMetreUserses.Ertefa,
+                                                                 Vazn = RizMetreUserses.Vazn,
+                                                                 Des = RizMetreUserses.Des,
+                                                                 FBId = RizMetreUserses.FBId,
+                                                                 OperationsOfHamlId = RizMetreUserses.OperationsOfHamlId,
+                                                                 ForItem = RizMetreUserses.ForItem,
+                                                                 Type = RizMetreUserses.Type,
+                                                                 UseItem = RizMetreUserses.UseItem,
+                                                                 BarAvordId = FB.BarAvordId
+                                                             }).Where(x => x.ForItem == strForItem && x.Type == "2" && x.UseItem == strUseItem).ToList();
+
+                            DataTable DtRizMetreUsersesCurrent = clsConvert.ToDataTable(varRizMetreUsersesCurrent);
+
+                            List<clsFB> lstFBUser = _context.FBs.Where(x => x.BarAvordId == guBAId).ToList();
+                            string strItemShomareh = AddedItems + CharacterPlus;
+                            clsFB? varFBUser = lstFBUser.FirstOrDefault(x => x.Shomareh == strItemShomareh);
+
+                            Guid intFBId = new Guid();
+                            if (varFBUser == null)
+                            {
+                                clsFB FB = new clsFB();
+                                FB.BarAvordId = guBAId; //Guid.Parse(DtBA.Rows[0]["ID"].ToString());
+                                FB.Shomareh = strItemShomareh; //AddedItems.Trim();
+                                FB.BahayeVahedZarib = FinalWorking.Length > 1 ? decimal.Parse(FinalWorking) : 0;
+                                FB.BahayeVahedSharh = strDesOfAddingItems;
+                                FB.NoeFBId = NoeFBId;
+                                _context.FBs.Add(FB);
+                                _context.SaveChanges();
+                                intFBId = FB.ID;
+                            }
+                            else
+                                intFBId = varFBUser.ID;
+
+                            string strConditionOp = strConditionSplit[0].Replace("x", RM.Arz.ToString().Trim());
+                            StringToFormula StringToFormula = new StringToFormula();
+                            bool blnCheck = StringToFormula.RelationalExpression2(strConditionOp);
+                            if (blnCheck)
+                            {
+                                string strCurrentFBShomareh = strItemFBShomareh;
+                                long lngItemsHasCondition_ConditionContextId = ItemHasCon.Id;
+                                clsItemsHasConditionAddedToFB? currentItemsHasConditionAddedToFBs = _context.ItemsHasConditionAddedToFBs
+                                     .FirstOrDefault(x => x.BarAvordId == guBAId && x.FBShomareh == strCurrentFBShomareh &&
+                                         x.ItemsHasCondition_ConditionContextId == lngItemsHasCondition_ConditionContextId);
+
+                                if (currentItemsHasConditionAddedToFBs == null)
+                                {
+                                    clsItemsHasConditionAddedToFB ItemsHasConditionAddedToFB = new clsItemsHasConditionAddedToFB();
+                                    ItemsHasConditionAddedToFB.BarAvordId = guBAId;
+                                    ItemsHasConditionAddedToFB.FBShomareh = strCurrentFBShomareh;
+                                    ItemsHasConditionAddedToFB.ItemsHasCondition_ConditionContextId = lngItemsHasCondition_ConditionContextId;
+                                    ItemsHasConditionAddedToFB.Meghdar = RM.Tool != null ? RM.Tool.Value : 0;
+                                    ItemsHasConditionAddedToFB.ConditionGroupId = ItemHasCon.ConditionGroupId;
+                                    _context.ItemsHasConditionAddedToFBs.Add(ItemsHasConditionAddedToFB);
+                                    _context.SaveChanges();
+                                }
+
+                                decimal? dArz = null;
+                                if (RM.Arz <= 2)
+                                    dArz = RM.Arz;
+                                else
+                                {
+                                    dArz = 2;
+                                    ///بایستی سابقه در جدول سوابق ریزمتره دخیره گردد تا در صورتی که تیک تعریض برداشته شد، آیتم اصلی به حالت اولش برگردد
+                                    ///
+                                    clsRizMetreUsersHistory rizMetreUsersHistory = new clsRizMetreUsersHistory
+                                    {
+                                        RizMetreUsersId = RM.ID,
+                                        Shomareh = RM.Shomareh,
+                                        ShomarehNew = RM.ShomarehNew,
+                                        Sharh = RM.Sharh,
+                                        Tedad = RM.Tedad,
+                                        Tool = RM.Tool,
+                                        Arz = RM.Arz,
+                                        Ertefa = RM.Ertefa,
+                                        Vazn = RM.Vazn,
+                                        MeghdarJoz = RM.MeghdarJoz,
+                                        Des = RM.Des
+                                    };
+                                    _context.RizMetreUsersHistories.Add(rizMetreUsersHistory);
+
+                                    RM.Arz = 2;
+
+                                    decimal? dMeghdarJoz = null;
+
+                                    dMeghdarJoz = (RM.Tedad == null ? 1 : RM.Tedad.Value) * (RM.Tool == null ? 1 : RM.Tool.Value) *
+                                    2 * (RM.Ertefa == null ? 1 : RM.Ertefa.Value) * (RM.Vazn == null ? 1 : RM.Vazn.Value);
+
+                                    RM.MeghdarJoz = dMeghdarJoz;
+                                }
+
+
+                                //string strItemShomareh = Dr[idr]["AddedItems"].ToString().Trim() + strCharacterPlus;
+
+
+                                DataRow[] DrRizMetreUsersesCurrent = DtRizMetreUsersesCurrent.Select("shomareh=" + RM.Shomareh + " and FBId='" + FBId + "'");
+                                if (DrRizMetreUsersesCurrent.Length == 0)
+                                {
+                                    decimal? Tedad = RM.Tedad == 0 ? 1 : RM.Tedad;
+                                    decimal? Tool = RM.Tool;
+                                    //decimal? Arz = RM.Arz;
+                                    decimal? Ertefa = RM.Ertefa;
+                                    decimal? Vazn = RM.Vazn;
+
+                                    clsRizMetreUsers RizMetreUserses = new clsRizMetreUsers();
+                                    RizMetreUserses.Shomareh = RM.Shomareh;
+                                    ShomareNew++;
+                                    RizMetreUserses.ShomarehNew = ShomareNew.ToString();
+
+                                    RizMetreUserses.Sharh = RM.Sharh;
+                                    RizMetreUserses.Tedad = Tedad;
+                                    RizMetreUserses.Tool = Tool;
+                                    RizMetreUserses.Arz = dArz;
+                                    RizMetreUserses.Ertefa = Ertefa;
+                                    RizMetreUserses.Vazn = Vazn;
+                                    RizMetreUserses.Des = RM.Des;
+
+                                    RizMetreUserses.FBId = intFBId;
+                                    RizMetreUserses.OperationsOfHamlId = 1;
+                                    RizMetreUserses.Type = "2";
+                                    RizMetreUserses.ForItem = strForItem;
+                                    RizMetreUserses.UseItem = strUseItem;
+                                    RizMetreUserses.LevelNumber = LevelNumber;
+                                    RizMetreUserses.InsertDateTime = Now;
+
+                                    ///محاسبه مقدار جزء
+                                    decimal? dMeghdarJoz = null;
+                                    if (Tedad == null && Tool == null && dArz == null && Ertefa == null && dArz == null && Vazn == null)
+                                        dMeghdarJoz = null;
+                                    else
+                                        dMeghdarJoz = (Tedad == null ? 1 : Tedad.Value) * (Tool == null ? 1 : Tool.Value) *
+                                        (dArz == null ? 1 : dArz.Value) * (Ertefa == null ? 1 : Ertefa.Value) * (Vazn == null ? 1 : Vazn.Value);
+
+                                    RizMetreUserses.MeghdarJoz = dMeghdarJoz;
+
+                                    _context.RizMetreUserses.Add(RizMetreUserses);
+                                    _context.SaveChanges();
+
+
+                                }
+                            }
+                        }
+                        break;
+                    }
+
                 case 16:
                     {
                         ///بررسی پخش، آبپاشی، تسطیح و کوبیدن قشر زیراساس  
@@ -3661,6 +3896,73 @@ namespace RMS.Models.Common
                         }
                         break;
                     }
+                case 15:
+                    {
+                        /////////////
+                        /////حذف قبلی ها
+                        /////////////
+                        string strCharacterPlus = itemsAddingToFBForCheckOperation.CharacterPlus != null ? itemsAddingToFBForCheckOperation.CharacterPlus : "";
+
+                        string strCondition = Condition;
+                        string[] strConditionSplit = strCondition.Split("_");
+
+                        string strItemFBShomareh = AddedItems;
+                        string strFinalWorking = FinalWorking;
+                        DataTable DtRizMetreUserses = new DataTable();
+                        string strUseItem = UseItemForAdd;
+                        string strForItem = strItemFBShomareh;
+
+                        string strItemShomareh1 = AddedItems + strCharacterPlus;
+
+                        clsFB? FBUser = _context.FBs.Where(x => x.BarAvordId == guBAId && x.Shomareh == strItemShomareh1).FirstOrDefault();
+
+                        Guid intFBId1 = new Guid();
+                        if (FBUser != null)
+                            intFBId1 = FBUser.ID;
+
+                        string strShomareh1 = strItemFBShomareh.Substring(0, 6);
+                        List<clsRizMetreUsers> lstRizMetreBase =
+                                        _context.RizMetreUserses.Where(x => x.FBId == intFBId1).ToList();
+
+                        List<clsRizMetreUsers> lstRizMetreUsersCurrent =
+                                        _context.RizMetreUserses.Where(x => x.FBId == intFBId1 && x.ForItem == strShomareh1 && x.Type == "2").ToList();
+                        clsRizMetreUsers? RizMetreUsersCurrent = lstRizMetreUsersCurrent.FirstOrDefault(x => x.Shomareh == RizMetre.Shomareh);
+
+                        clsRizMetreUsers? RizMetreUsersBaseCurrent = lstRizMetreBase.FirstOrDefault(x => x.Shomareh == RizMetre.Shomareh);
+
+
+
+                        List<Guid> lstRMIds = lstRizMetreBase.Select(x => x.ID).ToList();
+
+                        if (RizMetreUsersCurrent != null)
+                        {
+                            if (lstRizMetreBase.Count == 1)
+                            {
+                                clsItemsHasConditionAddedToFB? ItemsHasConditionAddedToFB =
+                                    _context.ItemsHasConditionAddedToFBs.FirstOrDefault(x => x.BarAvordId == ItemHasCon.BarAvordId
+                                         && x.ItemsHasCondition_ConditionContextId == ItemHasCon.Id && x.ConditionGroupId == ItemHasCon.ConditionGroupId);
+
+                                if (ItemsHasConditionAddedToFB != null)
+                                {
+                                    _context.ItemsHasConditionAddedToFBs.RemoveRange(ItemsHasConditionAddedToFB);
+                                }
+                            }
+                            _context.RizMetreUserses.Remove(RizMetreUsersCurrent);
+                        }
+                        if (RizMetreUsersBaseCurrent != null)
+                        {
+                            clsRizMetreUsersHistory? RMHistory = _context.RizMetreUsersHistories.FirstOrDefault(x => x.RizMetreUsersId == RizMetreUsersBaseCurrent.ID);
+
+                            if (RMHistory != null)
+                            {
+
+                                _context.RizMetreUsersHistories.Remove(RMHistory);
+                            }
+                        }
+
+                        _context.SaveChanges();
+                        break;
+                    }
                 case 16:
                     {
                         string strAddedItems = AddedItems;
@@ -5071,6 +5373,302 @@ namespace RMS.Models.Common
                         }
                         break;
                     }
+                case 15:
+                    {
+
+                        /////////////
+                        /////حذف قبلی ها
+                        /////////////
+                        string strCharacterPlus = itemsAddingToFBForCheckOperation.CharacterPlus != null ? itemsAddingToFBForCheckOperation.CharacterPlus : "";
+
+                        string strCondition = Condition;
+                        string[] strConditionSplit = strCondition.Split("_");
+
+                        string strItemFBShomareh = AddedItems;
+                        //string strFinalWorking = FinalWorking;
+                        DataTable DtRizMetreUserses = new DataTable();
+                        string strUseItem = UseItemForAdd;
+                        string strForItem = strItemFBShomareh;
+
+                        string strItemShomareh1 = AddedItems + strCharacterPlus;
+
+                        clsFB? FBUser = _context.FBs.Where(x => x.BarAvordId == guBAId && x.Shomareh == strItemShomareh1).FirstOrDefault();
+
+                        Guid intFBId1 = new Guid();
+                        if (FBUser != null)
+                            intFBId1 = FBUser.ID;
+
+                        string strShomareh1 = strItemFBShomareh.Substring(0, 6);
+                        List<clsRizMetreUsers> lstRizMetreBase =
+                                        _context.RizMetreUserses.Where(x => x.FBId == intFBId1).ToList();
+
+                        List<clsRizMetreUsers> lstRizMetreUsersCurrent =
+                                        _context.RizMetreUserses.Where(x => x.FBId == intFBId1 && x.ForItem == strShomareh1 && x.Type == "2").ToList();
+                        clsRizMetreUsers? RizMetreUsersCurrent = lstRizMetreUsersCurrent.FirstOrDefault(x => x.Shomareh == RizMetre.Shomareh);
+
+                        clsRizMetreUsers? RizMetreUsersBaseCurrent = lstRizMetreBase.FirstOrDefault(x => x.Shomareh == RizMetre.Shomareh);
+
+
+                        List<Guid> lstRMIds = lstRizMetreBase.Select(x => x.ID).ToList();
+
+                        if (RizMetreUsersCurrent != null)
+                        {
+                            if (lstRizMetreBase.Count == 1)
+                            {
+                                clsItemsHasConditionAddedToFB? ItemsHasConditionAddedToFB =
+                                    _context.ItemsHasConditionAddedToFBs.FirstOrDefault(x => x.BarAvordId == ItemHasCon.BarAvordId
+                                         && x.ItemsHasCondition_ConditionContextId == ItemHasCon.Id && x.ConditionGroupId == ItemHasCon.ConditionGroupId);
+
+                                if (ItemsHasConditionAddedToFB != null)
+                                {
+                                    _context.ItemsHasConditionAddedToFBs.RemoveRange(ItemsHasConditionAddedToFB);
+                                }
+                            }
+                            _context.RizMetreUserses.Remove(RizMetreUsersCurrent);
+                        }
+                        if (RizMetreUsersBaseCurrent != null)
+                        {
+                            clsRizMetreUsersHistory? RMHistory = _context.RizMetreUsersHistories.FirstOrDefault(x => x.RizMetreUsersId == RizMetreUsersBaseCurrent.ID);
+
+                            if (RMHistory != null)
+                            {
+
+                                _context.RizMetreUsersHistories.Remove(RMHistory);
+                            }
+                        }
+
+                        ////////////
+                        ///درج جدید
+                        ////////////
+                        //بررسی اینکه در تراش یا لکه گیری هست یا خیر
+                        //اگر باشد دیگر صعوبت درج نمیشود
+
+                        RizMetreCommon rizMetreCommon = new RizMetreCommon();
+                        long[] lngConditionGroupId = { 31, 4 };
+
+                        string strFBShomareh = ItemHasCon.FBShomareh.Trim();
+                        GetAndShowAddItemsInputForSoubatDto request2 = new GetAndShowAddItemsInputForSoubatDto()
+                        {
+                            ShomarehFB = strFBShomareh,
+                            BarAvordUserId = guBAId,
+                            NoeFB = NoeFBId,
+                            Year = Year,
+                            LevelNumber = LevelNumber,
+                            ConditionGroupId = lngConditionGroupId
+                        };
+                        List<RizMetreForGetAndShowAddItemsDto> lstRM = rizMetreCommon.GetAndShowAddItemsForSoubat(request2, _context);
+
+                        string CharacterPlus = itemsAddingToFBForCheckOperation.CharacterPlus != null ? itemsAddingToFBForCheckOperation.CharacterPlus : "";
+
+                        //string strCondition = Condition;
+                        //string[] strConditionSplit = strCondition.Split("_");
+
+                        string strFinalWorking1 = FinalWorking;
+                        string[] strFinalWorkingSplit = strFinalWorking1.Split('_');
+                        string strFinalWorking = strFinalWorkingSplit[0];
+                        decimal dBahayeVahedZarib = strFinalWorkingSplit.Length > 1 ? decimal.Parse(strFinalWorkingSplit[1]) : 0;
+
+                        //DataTable DtRizMetreUserses = new DataTable();
+                        //string strItemFBShomareh = strFBShomareh;
+                        string strDesOfAddingItems = DesOfAddingItems;
+
+                        Guid guFBId = FBId;// Guid.Parse(DtFB.Rows[0]["ID"].ToString());
+                        //string strUseItem = UseItemForAdd;
+                        //string strForItem = strItemFBShomareh;
+                        //clsFB? varFBUser = _context.FBs.Where(x => x.BarAvordId == BarAvordId && x.Shomareh == strForItem).ToList();
+
+                        //if (varFBUser != null)
+                        //{
+                        List<RizMetreUsersForItemsAddingToFBInputDto> varRizMetreUserses = (from RUsers in _context.RizMetreUserses
+                                                                                            join fb in _context.FBs on RUsers.FBId equals fb.ID
+                                                                                            where RUsers.LevelNumber == LevelNumber
+                                                                                            select new RizMetreUsersForItemsAddingToFBInputDto
+                                                                                            {
+                                                                                                Id = RUsers.ID,
+                                                                                                Shomareh = RUsers.Shomareh,
+                                                                                                Sharh = RUsers.Sharh,
+                                                                                                Tedad = RUsers.Tedad,
+                                                                                                Tool = RUsers.Tool,
+                                                                                                Arz = RUsers.Arz,
+                                                                                                Ertefa = RUsers.Ertefa,
+                                                                                                Vazn = RUsers.Vazn,
+                                                                                                Des = RUsers.Des,
+                                                                                                ForItem = RUsers.ForItem,
+                                                                                                Type = RUsers.Type,
+                                                                                                FBId = RUsers.FBId
+                                                                                            }).Where(x => x.FBId == guFBId && x.Type == "1").OrderBy(x => x.Shomareh).ToList();
+
+                        //}
+
+                        List<RizMetreUsersForItemsAddingToFBInputDto> varRizMetreUsersesWithoutLakeAndTarash = new List<RizMetreUsersForItemsAddingToFBInputDto>();
+
+                        foreach (var RM1 in varRizMetreUserses)
+                        {
+                            RizMetreForGetAndShowAddItemsDto? FindRM = lstRM.FirstOrDefault(x => x.Shomareh == RM1.Shomareh);
+                            if (FindRM == null)
+                            {
+                                varRizMetreUsersesWithoutLakeAndTarash.Add(varRizMetreUserses.FirstOrDefault(x => x.Shomareh == RM1.Shomareh));
+                            }
+                        }
+
+                        List<Guid> lstRMIds1 = varRizMetreUsersesWithoutLakeAndTarash.Select(x => x.Id).ToList();
+
+                        List<clsRizMetreUsers> lstRizMetreUser = _context.RizMetreUserses.Where(x => lstRMIds1.Contains(x.ID)).ToList();
+
+                        if (varRizMetreUsersesWithoutLakeAndTarash.Count != 0)
+                        {
+                            var varRizMetreUsersesCurrent = (from RizMetreUserses in _context.RizMetreUserses
+                                                             join FB in _context.FBs on RizMetreUserses.FBId equals FB.ID
+                                                             where RizMetreUserses.LevelNumber == LevelNumber
+                                                             select new
+                                                             {
+                                                                 ID = RizMetreUserses.ID,
+                                                                 Shomareh = RizMetreUserses.Shomareh,
+                                                                 Tedad = RizMetreUserses.Tedad,
+                                                                 Tool = RizMetreUserses.Tool,
+                                                                 Arz = RizMetreUserses.Arz,
+                                                                 Ertefa = RizMetreUserses.Ertefa,
+                                                                 Vazn = RizMetreUserses.Vazn,
+                                                                 Des = RizMetreUserses.Des,
+                                                                 FBId = RizMetreUserses.FBId,
+                                                                 OperationsOfHamlId = RizMetreUserses.OperationsOfHamlId,
+                                                                 ForItem = RizMetreUserses.ForItem,
+                                                                 Type = RizMetreUserses.Type,
+                                                                 UseItem = RizMetreUserses.UseItem,
+                                                                 BarAvordId = FB.BarAvordId
+                                                             }).Where(x => x.ForItem == strForItem && x.Type == "2" && x.UseItem == strUseItem).ToList();
+
+                            DataTable DtRizMetreUsersesCurrent = clsConvert.ToDataTable(varRizMetreUsersesCurrent);
+
+                            List<clsFB> lstFBUser = _context.FBs.Where(x => x.BarAvordId == guBAId).ToList();
+                            string strItemShomareh = AddedItems + CharacterPlus;
+                            clsFB? varFBUser = lstFBUser.FirstOrDefault(x => x.Shomareh == strItemShomareh);
+
+                            Guid intFBId = new Guid();
+                            if (varFBUser == null)
+                            {
+                                clsFB FB = new clsFB();
+                                FB.BarAvordId = guBAId; //Guid.Parse(DtBA.Rows[0]["ID"].ToString());
+                                FB.Shomareh = strItemShomareh; //AddedItems.Trim();
+                                FB.BahayeVahedZarib = FinalWorking.Length > 1 ? decimal.Parse(FinalWorking) : 0;
+                                FB.BahayeVahedSharh = strDesOfAddingItems;
+                                FB.NoeFBId = NoeFBId;
+                                _context.FBs.Add(FB);
+                                _context.SaveChanges();
+                                intFBId = FB.ID;
+                            }
+                            else
+                                intFBId = varFBUser.ID;
+
+                            string strConditionOp = strConditionSplit[0].Replace("x", RizMetre.Arz.ToString().Trim());
+                            StringToFormula StringToFormula = new StringToFormula();
+                            bool blnCheck = StringToFormula.RelationalExpression2(strConditionOp);
+                            if (blnCheck)
+                            {
+                                string strCurrentFBShomareh = strItemFBShomareh;
+                                long lngItemsHasCondition_ConditionContextId = ItemHasCon.Id;
+                                clsItemsHasConditionAddedToFB? currentItemsHasConditionAddedToFBs = _context.ItemsHasConditionAddedToFBs
+                                     .FirstOrDefault(x => x.BarAvordId == guBAId && x.FBShomareh == strCurrentFBShomareh &&
+                                         x.ItemsHasCondition_ConditionContextId == lngItemsHasCondition_ConditionContextId);
+
+                                if (currentItemsHasConditionAddedToFBs == null)
+                                {
+                                    clsItemsHasConditionAddedToFB ItemsHasConditionAddedToFB = new clsItemsHasConditionAddedToFB();
+                                    ItemsHasConditionAddedToFB.BarAvordId = guBAId;
+                                    ItemsHasConditionAddedToFB.FBShomareh = strCurrentFBShomareh;
+                                    ItemsHasConditionAddedToFB.ItemsHasCondition_ConditionContextId = lngItemsHasCondition_ConditionContextId;
+                                    ItemsHasConditionAddedToFB.Meghdar = RizMetre.Tool != null ? RizMetre.Tool.Value : 0;
+                                    ItemsHasConditionAddedToFB.ConditionGroupId = ItemHasCon.ConditionGroupId;
+                                    _context.ItemsHasConditionAddedToFBs.Add(ItemsHasConditionAddedToFB);
+                                    _context.SaveChanges();
+                                }
+
+                                decimal? dArz = null;
+                                if (RizMetre.Arz <= 2)
+                                    dArz = RizMetre.Arz;
+                                else
+                                {
+                                    dArz = 2;
+                                    ///بایستی سابقه در جدول سوابق ریزمتره دخیره گردد تا در صورتی که تیک تعریض برداشته شد، آیتم اصلی به حالت اولش برگردد
+                                    ///
+                                    clsRizMetreUsersHistory rizMetreUsersHistory = new clsRizMetreUsersHistory
+                                    {
+                                        RizMetreUsersId = RizMetre.ID,
+                                        Shomareh = RizMetre.Shomareh,
+                                        ShomarehNew = RizMetre.ShomarehNew,
+                                        Sharh = RizMetre.Sharh,
+                                        Tedad = RizMetre.Tedad,
+                                        Tool = RizMetre.Tool,
+                                        Arz = RizMetre.Arz,
+                                        Ertefa = RizMetre.Ertefa,
+                                        Vazn = RizMetre.Vazn,
+                                        MeghdarJoz = RizMetre.MeghdarJoz,
+                                        Des = RizMetre.Des
+                                    };
+                                    _context.RizMetreUsersHistories.Add(rizMetreUsersHistory);
+
+                                    RizMetre.Arz = 2;
+
+                                    decimal? dMeghdarJoz = null;
+
+                                    dMeghdarJoz = (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                                    2 * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                                    RizMetre.MeghdarJoz = dMeghdarJoz;
+                                }
+
+
+                                //string strItemShomareh = Dr[idr]["AddedItems"].ToString().Trim() + strCharacterPlus;
+
+
+                                DataRow[] DrRizMetreUsersesCurrent = DtRizMetreUsersesCurrent.Select("shomareh=" + RizMetre.Shomareh + " and FBId='" + FBId + "'");
+                                if (DrRizMetreUsersesCurrent.Length == 0)
+                                {
+                                    decimal? Tedad = RizMetre.Tedad == 0 ? 1 : RizMetre.Tedad;
+                                    decimal? Tool = RizMetre.Tool;
+                                    //decimal? Arz = RM.Arz;
+                                    decimal? Ertefa = RizMetre.Ertefa;
+                                    decimal? Vazn = RizMetre.Vazn;
+
+                                    clsRizMetreUsers RizMetreUserses = new clsRizMetreUsers();
+                                    RizMetreUserses.Shomareh = RizMetre.Shomareh;
+                                    ShomareNew++;
+                                    RizMetreUserses.ShomarehNew = ShomareNew.ToString();
+
+                                    RizMetreUserses.Sharh = RizMetre.Sharh;
+                                    RizMetreUserses.Tedad = Tedad;
+                                    RizMetreUserses.Tool = Tool;
+                                    RizMetreUserses.Arz = dArz;
+                                    RizMetreUserses.Ertefa = Ertefa;
+                                    RizMetreUserses.Vazn = Vazn;
+                                    RizMetreUserses.Des = RizMetre.Des;
+
+                                    RizMetreUserses.FBId = intFBId;
+                                    RizMetreUserses.OperationsOfHamlId = 1;
+                                    RizMetreUserses.Type = "2";
+                                    RizMetreUserses.ForItem = strForItem;
+                                    RizMetreUserses.UseItem = strUseItem;
+                                    RizMetreUserses.LevelNumber = LevelNumber;
+                                    RizMetreUserses.InsertDateTime = Now;
+
+                                    ///محاسبه مقدار جزء
+                                    decimal? dMeghdarJoz = null;
+                                    if (Tedad == null && Tool == null && dArz == null && Ertefa == null && dArz == null && Vazn == null)
+                                        dMeghdarJoz = null;
+                                    else
+                                        dMeghdarJoz = (Tedad == null ? 1 : Tedad.Value) * (Tool == null ? 1 : Tool.Value) *
+                                        (dArz == null ? 1 : dArz.Value) * (Ertefa == null ? 1 : Ertefa.Value) * (Vazn == null ? 1 : Vazn.Value);
+
+                                    RizMetreUserses.MeghdarJoz = dMeghdarJoz;
+
+                                    _context.RizMetreUserses.Add(RizMetreUserses);
+                                    _context.SaveChanges();
+                                }
+                            }
+                        }
+                        break;
+                    }
+
                 case 16:
                     {
                         ////

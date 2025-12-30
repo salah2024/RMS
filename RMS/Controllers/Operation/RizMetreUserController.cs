@@ -1527,1521 +1527,1521 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
         //try
         //{
 
-            Guid Id = request.Id;
+        Guid Id = request.Id;
 
-            clsRizMetreUsers? clsRizMetreUsers1 = context.RizMetreUserses.Where(x => x.ID == Id).FirstOrDefault();
-
-
-            RizMetreInputDto OldRizMetre = new RizMetreInputDto
-            {
-                Sharh = clsRizMetreUsers1.Sharh,
-                Tedad = clsRizMetreUsers1.Tedad,
-                Tool = clsRizMetreUsers1.Tool,
-                Arz = clsRizMetreUsers1.Arz,
-                Ertefa = clsRizMetreUsers1.Ertefa,
-                Vazn = clsRizMetreUsers1.Vazn,
-                Des = clsRizMetreUsers1.Des,
-                FBId = clsRizMetreUsers1.FBId,
-                ForItem = clsRizMetreUsers1.ForItem,
-                LevelNumber = clsRizMetreUsers1.LevelNumber.Value,
-                Shomareh = clsRizMetreUsers1.Shomareh
-            };
-
-            string Sharh = request.Sharh;
-            decimal? Tedad = request.Tedad;
-            decimal? Tool = request.Tool;
-            decimal? Arz = request.Arz;
-            decimal? Ertefa = request.Ertefa;
-            decimal? Vazn = request.Vazn;
-            string Des = request.Des;
-            NoeFehrestBaha NoeFBId = request.NoeFBId;
-            int Year = request.Year;
-            int LevelNumber = request.LevelNumber == 0 ? 1 : request.LevelNumber;
-            DastyarCommon DastyarCommon = new DastyarCommon(context);
-
-            DataTable DtRizMetreUsers = new DataTable();
-            if (request.LevelNumber == 0)
-            {
-                var varRizMetreUsers = (from RizMetreUsers in context.RizMetreUserses
-                                        join FB in context.FBs on RizMetreUsers.FBId equals FB.ID
-                                        select new
-                                        {
-                                            ID = RizMetreUsers.ID,
-                                            Shomareh = RizMetreUsers.Shomareh,
-                                            Tedad = RizMetreUsers.Tedad,
-                                            Tool = RizMetreUsers.Tool,
-                                            Arz = RizMetreUsers.Arz,
-                                            Ertefa = RizMetreUsers.Ertefa,
-                                            Vazn = RizMetreUsers.Vazn,
-                                            Des = RizMetreUsers.Des,
-                                            FBId = RizMetreUsers.FBId,
-                                            OperationsOfHamlId = RizMetreUsers.OperationsOfHamlId,
-                                            ForItem = RizMetreUsers.ForItem,
-                                            Type = RizMetreUsers.Type,
-                                            UseItem = RizMetreUsers.UseItem,
-                                            BarAvordId = FB.BarAvordId
-                                        }).Where(x => x.ID == Id).OrderBy(x => x.Shomareh).ToList();
-                DtRizMetreUsers = clsConvert.ToDataTable(varRizMetreUsers);
-            }
-            else
-            {
-                var varRizMetreUsers = (from RizMetreUsers in context.RizMetreUserses
-                                        join FB in context.FBs on RizMetreUsers.FBId equals FB.ID
-                                        where RizMetreUsers.LevelNumber == LevelNumber
-                                        select new
-                                        {
-                                            ID = RizMetreUsers.ID,
-                                            Shomareh = RizMetreUsers.Shomareh,
-                                            Tedad = RizMetreUsers.Tedad,
-                                            Tool = RizMetreUsers.Tool,
-                                            Arz = RizMetreUsers.Arz,
-                                            Ertefa = RizMetreUsers.Ertefa,
-                                            Vazn = RizMetreUsers.Vazn,
-                                            Des = RizMetreUsers.Des,
-                                            FBId = RizMetreUsers.FBId,
-                                            OperationsOfHamlId = RizMetreUsers.OperationsOfHamlId,
-                                            ForItem = RizMetreUsers.ForItem,
-                                            Type = RizMetreUsers.Type,
-                                            UseItem = RizMetreUsers.UseItem,
-                                            BarAvordId = FB.BarAvordId
-                                        }).Where(x => x.ID == Id).OrderBy(x => x.Shomareh).ToList();
-                DtRizMetreUsers = clsConvert.ToDataTable(varRizMetreUsers);
-            }
-
-            // DataTable DtRizMetreUsers = clsRizMetreUserss.RizMetreUsersesListWithParameter("clsRizMetreUserss.Id=" + Id);
-            int intShomareh = int.Parse(DtRizMetreUsers.Rows[0]["Shomareh"].ToString().Trim());
-            string Type = DtRizMetreUsers.Rows[0]["Type"].ToString().Trim();
-            Guid intFBId = Guid.Parse(DtRizMetreUsers.Rows[0]["FBId"].ToString().Trim());
-            var varFBUser = context.FBs.Where(x => x.ID == intFBId).ToList();
-            DataTable DtFBUsers = clsConvert.ToDataTable(varFBUser);
-            //DataTable DtFBUsers = clsOperationItemsFB.FBListWithParameter("Id=" + intFBId);
-            Guid intBarAvordId = Guid.Parse(DtFBUsers.Rows[0]["BarAvordId"].ToString().Trim());
-            string strFBShomareh = DtFBUsers.Rows[0]["Shomareh"].ToString().Trim();
-            string strForItemCurrent = DtRizMetreUsers.Rows[0]["ForItem"].ToString().Trim();
+        clsRizMetreUsers? clsRizMetreUsers1 = context.RizMetreUserses.Where(x => x.ID == Id).FirstOrDefault();
 
 
-            //var varItemsHasConditionAddedToFB = (from clsItemsHasConditionAddedToFB in context.ItemsHasConditionAddedToFBs
-            //                                     join tblItemsHasConditionConditionContext in context.ItemsHasCondition_ConditionContexts
-            //                                     on clsItemsHasConditionAddedToFB.ItemsHasCondition_ConditionContextId equals tblItemsHasConditionConditionContext.Id
-            //                                     join tblItemsHasCondition in context.ItemsHasConditions on tblItemsHasConditionConditionContext.ItemsHasConditionId equals tblItemsHasCondition.Id
-            //                                     select new
-            //                                     {
-            //                                         clsItemsHasConditionAddedToFB.ID,
-            //                                         clsItemsHasConditionAddedToFB.FBShomareh,
-            //                                         clsItemsHasConditionAddedToFB.BarAvordId,
-            //                                         clsItemsHasConditionAddedToFB.Meghdar,
-            //                                         clsItemsHasConditionAddedToFB.ItemsHasCondition_ConditionContextId,
-            //                                         clsItemsHasConditionAddedToFB.ConditionGroupId,
-            //                                         ItemFBShomareh = tblItemsHasCondition.ItemFBShomareh
-            //                                     }).Where(x => x.BarAvordId == intBarAvordId && x.FBShomareh == strFBShomareh).ToList();
-            //DataTable DtItemsHasConditionAddedToFB = clsConvert.ToDataTable(varItemsHasConditionAddedToFB);
-            ////DataTable DtItemsHasConditionAddedToFB = clsItemsHasConditionAddedToFB.ListWithParameterSimple("BarAvordId=" + intBarAvordId + " and FBShomareh='" + strFBShomareh + "'");
-            //var varItemsFBShomarehValueShomareh = context.ItemsFBShomarehValueShomarehs.Where(x => x.FBShomareh == strFBShomareh && x.BarAvordId == intBarAvordId).ToList();
-            //DataTable DtItemsFBShomarehValueShomareh = clsConvert.ToDataTable(varItemsFBShomarehValueShomareh);
-            ////DataTable DtItemsFBShomarehValueShomareh = clsItemsFBShomarehValueShomareh.ListWithParameter("FBShomareh='" + strFBShomareh + "' and BarAvordId=" + intBarAvordId);
-            var varItemsFields = (from ItemF in context.ItemsFieldses
-                                  join OpItemFB in context.Operation_ItemsFBs
-                                  on ItemF.ItemShomareh equals OpItemFB.ItemsFBShomareh
-                                  select new
-                                  {
-                                      ItemShomareh = ItemF.ItemShomareh,
-                                      NoeFB = ItemF.NoeFB,
-                                      IsEnteringValue = ItemF.IsEnteringValue,
-                                      Vahed = ItemF.Vahed,
-                                      FieldType = ItemF.FieldType,
-                                      OperationId = OpItemFB.OperationId
-                                  }).Where(x => x.ItemShomareh == strFBShomareh && x.NoeFB == NoeFBId).OrderBy(x => x.FieldType).ToList();
-            DataTable DtItemsFields = clsConvert.ToDataTable(varItemsFields);
-            //DataTable DtItemsFields = clsItemsFields.ItemsFieldsListWithParameter("ItemShomareh='" + strFBShomareh + "' and NoeFB=234");
+        RizMetreInputDto OldRizMetre = new RizMetreInputDto
+        {
+            Sharh = clsRizMetreUsers1.Sharh,
+            Tedad = clsRizMetreUsers1.Tedad,
+            Tool = clsRizMetreUsers1.Tool,
+            Arz = clsRizMetreUsers1.Arz,
+            Ertefa = clsRizMetreUsers1.Ertefa,
+            Vazn = clsRizMetreUsers1.Vazn,
+            Des = clsRizMetreUsers1.Des,
+            FBId = clsRizMetreUsers1.FBId,
+            ForItem = clsRizMetreUsers1.ForItem,
+            LevelNumber = clsRizMetreUsers1.LevelNumber.Value,
+            Shomareh = clsRizMetreUsers1.Shomareh
+        };
 
-            clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-            if (DtItemsFields.Rows[0]["IsEnteringValue"].ToString() == "True")
-                RizMetre.Tedad = Tedad;
-            else
-                RizMetre.Tedad = OldRizMetre.Tedad;
+        string Sharh = request.Sharh;
+        decimal? Tedad = request.Tedad;
+        decimal? Tool = request.Tool;
+        decimal? Arz = request.Arz;
+        decimal? Ertefa = request.Ertefa;
+        decimal? Vazn = request.Vazn;
+        string Des = request.Des;
+        NoeFehrestBaha NoeFBId = request.NoeFBId;
+        int Year = request.Year;
+        int LevelNumber = request.LevelNumber == 0 ? 1 : request.LevelNumber;
+        DastyarCommon DastyarCommon = new DastyarCommon(context);
 
-            if (DtItemsFields.Rows[1]["IsEnteringValue"].ToString() == "True")
-                RizMetre.Tool = Tool;
-            else
-                RizMetre.Tool = OldRizMetre.Tool;
-
-            if (DtItemsFields.Rows[2]["IsEnteringValue"].ToString() == "True")
-                RizMetre.Arz = Arz;
-            else
-                RizMetre.Arz = OldRizMetre.Arz;
-
-            if (DtItemsFields.Rows[3]["IsEnteringValue"].ToString() == "True")
-                RizMetre.Ertefa = Ertefa;
-            else
-                RizMetre.Ertefa = OldRizMetre.Ertefa;
-
-            if (DtItemsFields.Rows[4]["IsEnteringValue"].ToString() == "True")
-                RizMetre.Vazn = Vazn;
-            else
-                RizMetre.Vazn = OldRizMetre.Vazn;
-
-            RizMetre.ID = Id;
-            RizMetre.Sharh = Sharh.Trim();
-            //RizMetre.Tedad = Tedad;
-            //RizMetre.Tool = Tool;
-            //RizMetre.Arz = Arz;
-            //RizMetre.Ertefa = Ertefa;
-            //RizMetre.Vazn = Vazn;
-            RizMetre.Des = Des.Trim();
-            RizMetre.LevelNumber = LevelNumber;
-            RizMetre.Type = Type;
-            RizMetre.ForItem = strForItemCurrent.Trim();
-
-
-            decimal dMeghdarJoz = 0;
-            if (Tedad == null && Tool == null && Arz == null && Ertefa == null && Vazn == null)
-                dMeghdarJoz = 0;
-            else
-                dMeghdarJoz += (Tedad == null ? 1 : Tedad.Value) * (Tool == null ? 1 : Tool.Value) *
-                (Arz == null ? 1 : Arz.Value) * (Ertefa == null ? 1 : Ertefa.Value) * (Vazn == null ? 1 : Vazn.Value);
-
-            RizMetre.MeghdarJoz = dMeghdarJoz;
-
-            bool blnCheckUpdate1 = false;
-
-
-
-            if (clsRizMetreUsers1 != null)
-            {
-                RizMetre.FBId = clsRizMetreUsers1.FBId;
-                RizMetre.Shomareh = clsRizMetreUsers1.Shomareh;
-                RizMetre.ShomarehNew = clsRizMetreUsers1.ShomarehNew;
-                RizMetre.OperationsOfHamlId = 1;
-                try
-                {
-                    context.Entry(clsRizMetreUsers1).CurrentValues.SetValues(RizMetre);
-
-                    clsFB? currentFb = context.FBs.FirstOrDefault(x => x.ID == RizMetre.FBId);
-                    if (currentFb != null)
-                    {
-                        string currentShomareh = currentFb.Shomareh;
-                        clsBarAvordHaml? barAvordHaml = context.BarAvordHamls.FirstOrDefault(x => x.BarAvordId == request.BarAvordUserId && x.NoeFBId == NoeFBId && x.FBShomareh == currentShomareh);
-                        if (barAvordHaml != null)
-                        {
-                            List<clsBarAvordHamlRizMetre> lstBAHRM =
-                                context.BarAvordHamlRizMetres.Where(x => x.BarAvordHamlId == barAvordHaml.ID).ToList();
-                            List<Guid> lstRizMetreIds = lstBAHRM.Select(x => x.RizMetreId).ToList();
-                            if (lstBAHRM.Count != 0)
-                            {
-                                List<clsRizMetreUsers> lstRizMetreForHaml = context.RizMetreUserses.Where(x => lstRizMetreIds.Contains(x.ID) && x.Shomareh == RizMetre.Shomareh).ToList();
-                                if (lstRizMetreForHaml.Count != 0)
-                                {
-                                    foreach (var RizMetreForHaml in lstRizMetreForHaml)
+        DataTable DtRizMetreUsers = new DataTable();
+        if (request.LevelNumber == 0)
+        {
+            var varRizMetreUsers = (from RizMetreUsers in context.RizMetreUserses
+                                    join FB in context.FBs on RizMetreUsers.FBId equals FB.ID
+                                    select new
                                     {
-                                        RizMetreForHaml.Tedad = Tedad;
-                                        RizMetreForHaml.Tool = Tool;
-                                        RizMetreForHaml.Arz = Arz;
-                                        RizMetreForHaml.Ertefa = Ertefa;
-                                        decimal dMeghdarJozHaml = 0;
-                                        if (Tedad == null && Tool == null && Arz == null && Ertefa == null)
-                                            dMeghdarJozHaml = 0;
-                                        else
-                                            dMeghdarJozHaml += (Tedad == null ? 1 : Tedad.Value) * (Tool == null ? 1 : Tool.Value) *
-                                            (Arz == null ? 1 : Arz.Value) * (Ertefa == null ? 1 : Ertefa.Value) * (RizMetreForHaml.Vazn == null ? 1 : RizMetreForHaml.Vazn.Value);
-                                        RizMetreForHaml.MeghdarJoz = dMeghdarJozHaml;
-                                    }
+                                        ID = RizMetreUsers.ID,
+                                        Shomareh = RizMetreUsers.Shomareh,
+                                        Tedad = RizMetreUsers.Tedad,
+                                        Tool = RizMetreUsers.Tool,
+                                        Arz = RizMetreUsers.Arz,
+                                        Ertefa = RizMetreUsers.Ertefa,
+                                        Vazn = RizMetreUsers.Vazn,
+                                        Des = RizMetreUsers.Des,
+                                        FBId = RizMetreUsers.FBId,
+                                        OperationsOfHamlId = RizMetreUsers.OperationsOfHamlId,
+                                        ForItem = RizMetreUsers.ForItem,
+                                        Type = RizMetreUsers.Type,
+                                        UseItem = RizMetreUsers.UseItem,
+                                        BarAvordId = FB.BarAvordId
+                                    }).Where(x => x.ID == Id).OrderBy(x => x.Shomareh).ToList();
+            DtRizMetreUsers = clsConvert.ToDataTable(varRizMetreUsers);
+        }
+        else
+        {
+            var varRizMetreUsers = (from RizMetreUsers in context.RizMetreUserses
+                                    join FB in context.FBs on RizMetreUsers.FBId equals FB.ID
+                                    where RizMetreUsers.LevelNumber == LevelNumber
+                                    select new
+                                    {
+                                        ID = RizMetreUsers.ID,
+                                        Shomareh = RizMetreUsers.Shomareh,
+                                        Tedad = RizMetreUsers.Tedad,
+                                        Tool = RizMetreUsers.Tool,
+                                        Arz = RizMetreUsers.Arz,
+                                        Ertefa = RizMetreUsers.Ertefa,
+                                        Vazn = RizMetreUsers.Vazn,
+                                        Des = RizMetreUsers.Des,
+                                        FBId = RizMetreUsers.FBId,
+                                        OperationsOfHamlId = RizMetreUsers.OperationsOfHamlId,
+                                        ForItem = RizMetreUsers.ForItem,
+                                        Type = RizMetreUsers.Type,
+                                        UseItem = RizMetreUsers.UseItem,
+                                        BarAvordId = FB.BarAvordId
+                                    }).Where(x => x.ID == Id).OrderBy(x => x.Shomareh).ToList();
+            DtRizMetreUsers = clsConvert.ToDataTable(varRizMetreUsers);
+        }
+
+        // DataTable DtRizMetreUsers = clsRizMetreUserss.RizMetreUsersesListWithParameter("clsRizMetreUserss.Id=" + Id);
+        int intShomareh = int.Parse(DtRizMetreUsers.Rows[0]["Shomareh"].ToString().Trim());
+        string Type = DtRizMetreUsers.Rows[0]["Type"].ToString().Trim();
+        Guid intFBId = Guid.Parse(DtRizMetreUsers.Rows[0]["FBId"].ToString().Trim());
+        var varFBUser = context.FBs.Where(x => x.ID == intFBId).ToList();
+        DataTable DtFBUsers = clsConvert.ToDataTable(varFBUser);
+        //DataTable DtFBUsers = clsOperationItemsFB.FBListWithParameter("Id=" + intFBId);
+        Guid intBarAvordId = Guid.Parse(DtFBUsers.Rows[0]["BarAvordId"].ToString().Trim());
+        string strFBShomareh = DtFBUsers.Rows[0]["Shomareh"].ToString().Trim();
+        string strForItemCurrent = DtRizMetreUsers.Rows[0]["ForItem"].ToString().Trim();
+
+
+        //var varItemsHasConditionAddedToFB = (from clsItemsHasConditionAddedToFB in context.ItemsHasConditionAddedToFBs
+        //                                     join tblItemsHasConditionConditionContext in context.ItemsHasCondition_ConditionContexts
+        //                                     on clsItemsHasConditionAddedToFB.ItemsHasCondition_ConditionContextId equals tblItemsHasConditionConditionContext.Id
+        //                                     join tblItemsHasCondition in context.ItemsHasConditions on tblItemsHasConditionConditionContext.ItemsHasConditionId equals tblItemsHasCondition.Id
+        //                                     select new
+        //                                     {
+        //                                         clsItemsHasConditionAddedToFB.ID,
+        //                                         clsItemsHasConditionAddedToFB.FBShomareh,
+        //                                         clsItemsHasConditionAddedToFB.BarAvordId,
+        //                                         clsItemsHasConditionAddedToFB.Meghdar,
+        //                                         clsItemsHasConditionAddedToFB.ItemsHasCondition_ConditionContextId,
+        //                                         clsItemsHasConditionAddedToFB.ConditionGroupId,
+        //                                         ItemFBShomareh = tblItemsHasCondition.ItemFBShomareh
+        //                                     }).Where(x => x.BarAvordId == intBarAvordId && x.FBShomareh == strFBShomareh).ToList();
+        //DataTable DtItemsHasConditionAddedToFB = clsConvert.ToDataTable(varItemsHasConditionAddedToFB);
+        ////DataTable DtItemsHasConditionAddedToFB = clsItemsHasConditionAddedToFB.ListWithParameterSimple("BarAvordId=" + intBarAvordId + " and FBShomareh='" + strFBShomareh + "'");
+        //var varItemsFBShomarehValueShomareh = context.ItemsFBShomarehValueShomarehs.Where(x => x.FBShomareh == strFBShomareh && x.BarAvordId == intBarAvordId).ToList();
+        //DataTable DtItemsFBShomarehValueShomareh = clsConvert.ToDataTable(varItemsFBShomarehValueShomareh);
+        ////DataTable DtItemsFBShomarehValueShomareh = clsItemsFBShomarehValueShomareh.ListWithParameter("FBShomareh='" + strFBShomareh + "' and BarAvordId=" + intBarAvordId);
+        var varItemsFields = (from ItemF in context.ItemsFieldses
+                              join OpItemFB in context.Operation_ItemsFBs
+                              on ItemF.ItemShomareh equals OpItemFB.ItemsFBShomareh
+                              select new
+                              {
+                                  ItemShomareh = ItemF.ItemShomareh,
+                                  NoeFB = ItemF.NoeFB,
+                                  IsEnteringValue = ItemF.IsEnteringValue,
+                                  Vahed = ItemF.Vahed,
+                                  FieldType = ItemF.FieldType,
+                                  OperationId = OpItemFB.OperationId
+                              }).Where(x => x.ItemShomareh == strFBShomareh && x.NoeFB == NoeFBId).OrderBy(x => x.FieldType).ToList();
+        DataTable DtItemsFields = clsConvert.ToDataTable(varItemsFields);
+        //DataTable DtItemsFields = clsItemsFields.ItemsFieldsListWithParameter("ItemShomareh='" + strFBShomareh + "' and NoeFB=234");
+
+        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+        if (DtItemsFields.Rows[0]["IsEnteringValue"].ToString() == "True")
+            RizMetre.Tedad = Tedad;
+        else
+            RizMetre.Tedad = OldRizMetre.Tedad;
+
+        if (DtItemsFields.Rows[1]["IsEnteringValue"].ToString() == "True")
+            RizMetre.Tool = Tool;
+        else
+            RizMetre.Tool = OldRizMetre.Tool;
+
+        if (DtItemsFields.Rows[2]["IsEnteringValue"].ToString() == "True")
+            RizMetre.Arz = Arz;
+        else
+            RizMetre.Arz = OldRizMetre.Arz;
+
+        if (DtItemsFields.Rows[3]["IsEnteringValue"].ToString() == "True")
+            RizMetre.Ertefa = Ertefa;
+        else
+            RizMetre.Ertefa = OldRizMetre.Ertefa;
+
+        if (DtItemsFields.Rows[4]["IsEnteringValue"].ToString() == "True")
+            RizMetre.Vazn = Vazn;
+        else
+            RizMetre.Vazn = OldRizMetre.Vazn;
+
+        RizMetre.ID = Id;
+        RizMetre.Sharh = Sharh.Trim();
+        //RizMetre.Tedad = Tedad;
+        //RizMetre.Tool = Tool;
+        //RizMetre.Arz = Arz;
+        //RizMetre.Ertefa = Ertefa;
+        //RizMetre.Vazn = Vazn;
+        RizMetre.Des = Des.Trim();
+        RizMetre.LevelNumber = LevelNumber;
+        RizMetre.Type = Type;
+        RizMetre.ForItem = strForItemCurrent.Trim();
+
+
+        decimal dMeghdarJoz = 0;
+        if (Tedad == null && Tool == null && Arz == null && Ertefa == null && Vazn == null)
+            dMeghdarJoz = 0;
+        else
+            dMeghdarJoz += (Tedad == null ? 1 : Tedad.Value) * (Tool == null ? 1 : Tool.Value) *
+            (Arz == null ? 1 : Arz.Value) * (Ertefa == null ? 1 : Ertefa.Value) * (Vazn == null ? 1 : Vazn.Value);
+
+        RizMetre.MeghdarJoz = dMeghdarJoz;
+
+        bool blnCheckUpdate1 = false;
+
+
+
+        if (clsRizMetreUsers1 != null)
+        {
+            RizMetre.FBId = clsRizMetreUsers1.FBId;
+            RizMetre.Shomareh = clsRizMetreUsers1.Shomareh;
+            RizMetre.ShomarehNew = clsRizMetreUsers1.ShomarehNew;
+            RizMetre.OperationsOfHamlId = 1;
+            try
+            {
+                context.Entry(clsRizMetreUsers1).CurrentValues.SetValues(RizMetre);
+
+                clsFB? currentFb = context.FBs.FirstOrDefault(x => x.ID == RizMetre.FBId);
+                if (currentFb != null)
+                {
+                    string currentShomareh = currentFb.Shomareh;
+                    clsBarAvordHaml? barAvordHaml = context.BarAvordHamls.FirstOrDefault(x => x.BarAvordId == request.BarAvordUserId && x.NoeFBId == NoeFBId && x.FBShomareh == currentShomareh);
+                    if (barAvordHaml != null)
+                    {
+                        List<clsBarAvordHamlRizMetre> lstBAHRM =
+                            context.BarAvordHamlRizMetres.Where(x => x.BarAvordHamlId == barAvordHaml.ID).ToList();
+                        List<Guid> lstRizMetreIds = lstBAHRM.Select(x => x.RizMetreId).ToList();
+                        if (lstBAHRM.Count != 0)
+                        {
+                            List<clsRizMetreUsers> lstRizMetreForHaml = context.RizMetreUserses.Where(x => lstRizMetreIds.Contains(x.ID) && x.Shomareh == RizMetre.Shomareh).ToList();
+                            if (lstRizMetreForHaml.Count != 0)
+                            {
+                                foreach (var RizMetreForHaml in lstRizMetreForHaml)
+                                {
+                                    RizMetreForHaml.Tedad = Tedad;
+                                    RizMetreForHaml.Tool = Tool;
+                                    RizMetreForHaml.Arz = Arz;
+                                    RizMetreForHaml.Ertefa = Ertefa;
+                                    decimal dMeghdarJozHaml = 0;
+                                    if (Tedad == null && Tool == null && Arz == null && Ertefa == null)
+                                        dMeghdarJozHaml = 0;
+                                    else
+                                        dMeghdarJozHaml += (Tedad == null ? 1 : Tedad.Value) * (Tool == null ? 1 : Tool.Value) *
+                                        (Arz == null ? 1 : Arz.Value) * (Ertefa == null ? 1 : Ertefa.Value) * (RizMetreForHaml.Vazn == null ? 1 : RizMetreForHaml.Vazn.Value);
+                                    RizMetreForHaml.MeghdarJoz = dMeghdarJozHaml;
                                 }
                             }
                         }
                     }
-
-
-                    context.SaveChanges();
-                    blnCheckUpdate1 = true;
                 }
-                catch (Exception e)
-                {
-                    throw e;
-                    //blnCheckUpdate1 = false;
-                }
-            }
-            //if (RizMetre.Update())
-            if (blnCheckUpdate1)
-            {
 
-
-                /////////////
-                //////////////
-                //////////////
-                ///
-                long OperationId = request.OperationId;
-                Guid FBId = request.FBId;
-
-                clsOperation_ItemsFB operation_ItemsFB = context.Operation_ItemsFBs.First(x => x.OperationId == OperationId);
-
-
-                List<ItemsFieldsDto> ItemsField = (from ItemF in context.ItemsFieldses
-                                                   join OpItemFB in context.Operation_ItemsFBs
-                                                   on ItemF.ItemShomareh equals OpItemFB.ItemsFBShomareh
-                                                   select new ItemsFieldsDto
-                                                   {
-                                                       ItemShomareh = ItemF.ItemShomareh,
-                                                       NoeFB = ItemF.NoeFB,
-                                                       IsEnteringValue = ItemF.IsEnteringValue,
-                                                       Vahed = ItemF.Vahed,
-                                                       FieldType = ItemF.FieldType,
-                                                       OperationId = OpItemFB.OperationId
-                                                   }).Where(x => x.OperationId == OperationId && x.NoeFB == NoeFBId).OrderBy(x => x.FieldType).ToList();
-
-                List<ItemsHasConditionConditionContextForCheckOperationDto> lstItemsHasCondition = _context.ItemsHasCondition_ConditionContexts
-                    .Where(cc => cc.Year == Year)
-                    .Join(_context.ItemsHasConditionAddedToFBs,
-                    cc => cc.Id,
-                    fb => fb.ItemsHasCondition_ConditionContextId,
-            (cc, fb) => new { cc, fb })
-                .Join(_context.ItemsHasConditions,
-            temp => temp.cc.ItemsHasConditionId,
-            ihc => ihc.Id,
-            (temp, ihc) => new { temp.cc, temp.fb, ihc })
-                .Join(_context.Operation_ItemsFBs,
-            temp => temp.ihc.ItemFBShomareh,
-            ofb => ofb.ItemsFBShomareh,
-            (temp, ofb) => new ItemsHasConditionConditionContextForCheckOperationDto
-            {
-                Id = temp.cc.Id,
-                ItemsHasConditionId = temp.cc.ItemsHasConditionId,
-                ConditionContextId = temp.cc.ConditionContextId,
-                HasEnteringValue = temp.cc.HasEnteringValue,
-                Des = temp.cc.Des,
-                DefaultValue = temp.cc.DefaultValue,
-                IsShow = temp.cc.IsShow,
-                ParentId = temp.cc.ParentId,
-                MoveToRel = temp.cc.MoveToRel,
-                ViewCheckAllRecords = temp.cc.ViewCheckAllRecords,
-                StepChange = temp.cc.StepChange,
-                Meghdar = temp.fb.Meghdar,
-                Meghdar2 = temp.fb.Meghdar2,
-                FBShomareh = temp.fb.FBShomareh,
-                ConditionGroupId = temp.fb.ConditionGroupId,
-                BarAvordId = temp.fb.BarAvordId,
-                OperationId = ofb.OperationId
-            }).Where(x => x.OperationId == OperationId && x.BarAvordId == intBarAvordId).ToList();
-
-
-                var ItemsAddingToFBs = _context.ItemsAddingToFBs.Where(x => x.Year == Year).Select(x => new
-                {
-                    x.ItemsHasCondition_ConditionContextId,
-                    x.AddedItems,
-                    x.Condition,
-                    x.FinalWorking,
-                    x.ConditionType,
-                    x.DesOfAddingItems,
-                    x.UseItemForAdd,
-                    x.FieldsAdding,
-                    x.CharacterPlus
-                }).ToList();
-
-                foreach (var ItemHasCon in lstItemsHasCondition)
-                {
-                    List<ItemsAddingToFBForCheckOperationDto> lstItemsAddingToFBForCheckOperation = ItemsAddingToFBs.Where(x => x.ItemsHasCondition_ConditionContextId == ItemHasCon.Id).Select(x => new
-                    ItemsAddingToFBForCheckOperationDto
-                    {
-                        ItemsHasCondition_ConditionContextId = x.ItemsHasCondition_ConditionContextId,
-                        AddedItems = x.AddedItems,
-                        Condition = x.Condition,
-                        FinalWorking = x.FinalWorking,
-                        ConditionType = x.ConditionType,
-                        DesOfAddingItems = x.DesOfAddingItems,
-                        UseItemForAdd = x.UseItemForAdd,
-                        FieldsAdding = x.FieldsAdding,
-                        CharacterPlus = x.CharacterPlus
-                    }).ToList();
-
-                    CheckOperationConditions checkOperationConditions = new CheckOperationConditions();
-                    foreach (var itemsAddingToFBForCheckOperation in lstItemsAddingToFBForCheckOperation)
-                    {
-                        checkOperationConditions.fnCheckOperationConditionForUpdate(_context, itemsAddingToFBForCheckOperation,
-                            ItemsField, ItemHasCon, FBId, RizMetre, OldRizMetre, LevelNumber, Year, NoeFBId);
-                    }
-                }
 
                 context.SaveChanges();
-
-                //////////
-                ///////////////
-                //////////////
-                ///
-
-
-                return new JsonResult("OK_" + operation_ItemsFB.ItemsFBShomareh);
-
-                //if (DtItemsHasConditionAddedToFB.Rows.Count != 0)
-                //{
-                //    //string strItemsHasConditionConditionContext = "";
-                //    //if (DtItemsHasConditionAddedToFB.Rows.Count != 0)
-                //    //{
-                //    //    strItemsHasConditionConditionContext += "ItemsHasCondition_ConditionContextId in(";
-                //    //    for (int i = 0; i < DtItemsHasConditionAddedToFB.Rows.Count; i++)
-                //    //    {
-                //    //        if ((i + 1) < DtItemsHasConditionAddedToFB.Rows.Count)
-                //    //            strItemsHasConditionConditionContext += DtItemsHasConditionAddedToFB.Rows[i]["ItemsHasCondition_ConditionContextId"].ToString() + ",";
-                //    //        else
-                //    //            strItemsHasConditionConditionContext += DtItemsHasConditionAddedToFB.Rows[i]["ItemsHasCondition_ConditionContextId"].ToString();
-                //    //    }
-                //    //    strItemsHasConditionConditionContext += ")";
-                //    //}
-
-                //    List<long> strItemsHasConditionConditionContext = new List<long>();
-                //    if (DtItemsHasConditionAddedToFB.Rows.Count != 0)
-                //    {
-                //        for (int i = 0; i < DtItemsHasConditionAddedToFB.Rows.Count; i++)
-                //        {
-                //            strItemsHasConditionConditionContext.Add(long.Parse(DtItemsHasConditionAddedToFB.Rows[i]["ItemsHasCondition_ConditionContextId"].ToString()));
-                //        }
-                //    }
-
-                //    var varItemsAddingToFB = context.ItemsAddingToFBs.Where(x => strItemsHasConditionConditionContext.Contains(x.ItemsHasCondition_ConditionContextId)).ToList();
-                //    DataTable DtItemsAddingToFB = clsConvert.ToDataTable(varItemsAddingToFB);
-
-
-                //    //DataTable DtItemsAddingToFB = clsItemsAddingToFB.ListWithParameter(strItemsHasConditionConditionContext);
-                //    for (int Counter = 0; Counter < DtItemsHasConditionAddedToFB.Rows.Count; Counter++)
-                //    {
-                //        decimal Meghdar = decimal.Parse(DtItemsHasConditionAddedToFB.Rows[Counter]["Meghdar"].ToString());
-                //        string RBCode = DtItemsHasConditionAddedToFB.Rows[Counter]["ItemsHasCondition_ConditionContextId"].ToString().Trim();
-                //        DataRow[] Dr = DtItemsAddingToFB.Select("ItemsHasCondition_ConditionContextId=" + RBCode);
-                //        if (Dr.Length != 0)
-                //        {
-                //            for (int idr = 0; idr < Dr.Length; idr++)
-                //            {
-                //                string strFBShomarehAdded = Dr[idr]["AddedItems"].ToString().Trim();
-                //                switch (Dr[idr]["ConditionType"].ToString())
-                //                {
-                //                    case "1":
-                //                        {
-
-                //                            var varFBUsersAdded = context.FBs.Where(x => x.BarAvordId == intBarAvordId && x.Shomareh == strFBShomarehAdded + "A").ToList();
-                //                            DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
-
-                //                            //DataTable DtFBUsersAdded = clsOperationItemsFB.FBListWithParameter("BarAvordId=" + intBarAvordId + " and Shomareh='" + strFBShomarehAdded + "A'");
-                //                            if (DtFBUsersAdded.Rows.Count != 0)
-                //                            {
-                //                                clsRizMetreUsers RizMetreUsers = new clsRizMetreUsers();
-
-                //                                if (DtItemsFields.Rows[0]["IsEnteringValue"].ToString() == "True")
-                //                                    RizMetreUsers.Tedad = Tedad;
-                //                                else
-                //                                    RizMetreUsers.Tedad = 0;
-
-                //                                if (DtItemsFields.Rows[1]["IsEnteringValue"].ToString() == "True")
-                //                                    RizMetreUsers.Tool = Tool;
-                //                                else
-                //                                    RizMetreUsers.Tool = 0;
-
-                //                                if (DtItemsFields.Rows[2]["IsEnteringValue"].ToString() == "True")
-                //                                    RizMetreUsers.Arz = Arz;
-                //                                else
-                //                                    RizMetreUsers.Arz = 0;
-
-                //                                if (DtItemsFields.Rows[3]["IsEnteringValue"].ToString() == "True")
-                //                                    RizMetreUsers.Ertefa = Ertefa;
-                //                                else
-                //                                    RizMetreUsers.Ertefa = 0;
-
-                //                                if (DtItemsFields.Rows[4]["IsEnteringValue"].ToString() == "True")
-                //                                    RizMetreUsers.Vazn = Vazn;
-                //                                else
-                //                                    RizMetreUsers.Vazn = 0;
-
-                //                                RizMetreUsers.Shomareh = intShomareh;
-                //                                RizMetreUsers.Sharh = Sharh;
-                //                                //RizMetreUsers.Tedad = Tedad;
-                //                                //RizMetreUsers.Tool = Tool;
-                //                                //RizMetreUsers.Arz = Arz;
-                //                                //RizMetreUsers.Ertefa = Ertefa;
-                //                                //RizMetreUsers.Vazn = Vazn;
-                //                                RizMetreUsers.ForItem = strFBShomareh.Trim();
-                //                                RizMetreUsers.UseItem = "";
-                //                                RizMetreUsers.LevelNumber = LevelNumber;
-                //                                RizMetreUsers.FBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
-                //                                Guid guFBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
-                //                                RizMetreUsers.FBId = guFBId;
-
-                //                                dMeghdarJoz = 0;
-                //                                if (Tedad == 0 && Tool == 0 && Arz == 0 && Ertefa == 0 && Vazn == 0)
-                //                                    dMeghdarJoz = 0;
-                //                                else
-                //                                    dMeghdarJoz += (Tedad == 0 ? 1 : Tedad) * (Tool == 0 ? 1 : Tool) *
-                //                                    (Arz == 0 ? 1 : Arz) * (Ertefa == 0 ? 1 : Ertefa) * (Vazn == 0 ? 1 : Vazn);
-
-                //                                RizMetreUsers.MeghdarJoz = dMeghdarJoz;
-                //                                RizMetreUsers.OperationsOfHamlId = 1;
-
-                //                                string strForItem = strFBShomareh.Trim().Substring(0, 6);
-                //                                string strUseItem = "";
-                //                                clsRizMetreUsers? clsRizMetreUsers = context.RizMetreUserses.Where(x => x.FBId == guFBId && x.Shomareh == intShomareh
-                //                                && x.ForItem == strForItem && x.UseItem == strUseItem).FirstOrDefault();
-                //                                if (clsRizMetreUsers != null)
-                //                                {
-                //                                    try
-                //                                    {
-                //                                        var entry = context.Entry(clsRizMetreUsers);
-                //                                        var excludedProperties = new[] { "ID", "CreatedDate", "Type" };
-
-                //                                        foreach (var property in entry.OriginalValues.Properties)
-                //                                        {
-                //                                            if (!excludedProperties.Contains(property.Name))
-                //                                            {
-                //                                                var newValue = RizMetreUsers.GetType().GetProperty(property.Name)?.GetValue(RizMetreUsers);
-                //                                                entry.CurrentValues[property] = newValue;
-                //                                            }
-                //                                        }
-                //                                        //context.Entry(clsRizMetreUsers).CurrentValues.SetValues(RizMetreUsers);
-                //                                        context.SaveChanges();
-                //                                    }
-                //                                    catch (Exception)
-                //                                    {
-                //                                    }
-                //                                }
-                //                                //RizMetreUsers.UpdateWithFBIdAndShomareh();
-                //                            }
-                //                            break;
-                //                        }
-                //                    case "2":
-                //                        {
-                //                            var varFBUsersAdded = context.FBs.Where(x => x.BarAvordId == intBarAvordId && x.Shomareh == strFBShomarehAdded).ToList();
-                //                            DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
-
-                //                            //DataTable DtFBUsersAdded = clsOperationItemsFB.FBListWithParameter("BarAvordId=" + intBarAvordId + " and Shomareh='" + strFBShomarehAdded + "'");
-                //                            if (DtFBUsersAdded.Rows.Count != 0)
-                //                            {
-                //                                clsRizMetreUsers RizMetreUsers = new clsRizMetreUsers();
-
-                //                                if (DtItemsFields.Rows[0]["IsEnteringValue"].ToString() == "True")
-                //                                    RizMetreUsers.Tedad = Tedad;
-                //                                else
-                //                                    RizMetreUsers.Tedad = 0;
-
-                //                                if (DtItemsFields.Rows[1]["IsEnteringValue"].ToString() == "True")
-                //                                    RizMetreUsers.Tool = Tool;
-                //                                else
-                //                                    RizMetreUsers.Tool = 0;
-
-                //                                if (DtItemsFields.Rows[2]["IsEnteringValue"].ToString() == "True")
-                //                                    RizMetreUsers.Arz = Arz;
-                //                                else
-                //                                    RizMetreUsers.Arz = 0;
-
-                //                                if (DtItemsFields.Rows[3]["IsEnteringValue"].ToString() == "True")
-                //                                    RizMetreUsers.Ertefa = Ertefa;
-                //                                else
-                //                                    RizMetreUsers.Ertefa = 0;
-
-                //                                if (DtItemsFields.Rows[4]["IsEnteringValue"].ToString() == "True")
-                //                                    RizMetreUsers.Vazn = Vazn;
-                //                                else
-                //                                    RizMetreUsers.Vazn = 0;
-
-                //                                RizMetreUsers.Shomareh = intShomareh;
-                //                                RizMetreUsers.Sharh = Sharh;
-                //                                //RizMetreUsers.Tedad = Tedad;
-                //                                //RizMetreUsers.Tool = Tool;
-                //                                //RizMetreUsers.Arz = Arz;
-                //                                //RizMetreUsers.Ertefa = Ertefa;
-                //                                //RizMetreUsers.Vazn = Vazn;
-                //                                RizMetreUsers.ForItem = strFBShomareh.Trim();
-                //                                RizMetreUsers.UseItem = "";
-                //                                RizMetreUsers.LevelNumber = LevelNumber;
-                //                                RizMetreUsers.FBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
-                //                                Guid guFBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
-                //                                RizMetreUsers.FBId = guFBId;
-
-                //                                dMeghdarJoz = 0;
-                //                                if (Tedad == 0 && Tool == 0 && Arz == 0 && Ertefa == 0 && Vazn == 0)
-                //                                    dMeghdarJoz = 0;
-                //                                else
-                //                                    dMeghdarJoz += (Tedad == 0 ? 1 : Tedad) * (Tool == 0 ? 1 : Tool) *
-                //                                    (Arz == 0 ? 1 : Arz) * (Ertefa == 0 ? 1 : Ertefa) * (Vazn == 0 ? 1 : Vazn);
-
-                //                                RizMetreUsers.MeghdarJoz = dMeghdarJoz;
-                //                                RizMetreUsers.OperationsOfHamlId = 1;
-
-
-                //                                string strForItem = strFBShomareh.Trim().Substring(0, 6);
-                //                                string strUseItem = "";
-                //                                clsRizMetreUsers? clsRizMetreUsers = context.RizMetreUserses.Where(x => x.FBId == guFBId && x.Shomareh == intShomareh
-                //                                && x.ForItem == strForItem && x.UseItem == strUseItem).FirstOrDefault();
-                //                                if (clsRizMetreUsers != null)
-                //                                {
-                //                                    try
-                //                                    {
-                //                                        var entry = context.Entry(clsRizMetreUsers);
-                //                                        var excludedProperties = new[] { "ID", "CreatedDate", "Type" };
-
-                //                                        foreach (var property in entry.OriginalValues.Properties)
-                //                                        {
-                //                                            if (!excludedProperties.Contains(property.Name))
-                //                                            {
-                //                                                var newValue = RizMetreUsers.GetType().GetProperty(property.Name)?.GetValue(RizMetreUsers);
-                //                                                entry.CurrentValues[property] = newValue;
-                //                                            }
-                //                                        }
-                //                                        //context.Entry(clsRizMetreUsers).CurrentValues.SetValues(RizMetreUsers);
-                //                                        context.SaveChanges();
-                //                                    }
-                //                                    catch (Exception)
-                //                                    {
-                //                                    }
-                //                                }
-                //                                //RizMetreUsers.UpdateWithFBIdAndShomareh();
-                //                            }
-                //                            break;
-                //                        }
-                //                    case "3":
-                //                        {
-                //                            decimal dPercent = decimal.Parse(Dr[0]["FinalWorking"].ToString());
-                //                            string strStatus = dPercent > 0 ? "B" : "e";
-                //                            var varFBUsersAdded = context.FBs.Where(x => x.BarAvordId == intBarAvordId && x.Shomareh == strFBShomarehAdded + strStatus).ToList();
-                //                            DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
-
-                //                            //DataTable DtFBUsersAdded = clsOperationItemsFB.FBListWithParameter("BarAvordId=" + intBarAvordId + " and Shomareh='" + strFBShomarehAdded + strStatus + "'");
-                //                            if (DtFBUsersAdded.Rows.Count != 0)
-                //                            {
-                //                                clsRizMetreUsers RizMetreUsers = new clsRizMetreUsers();
-
-                //                                if (DtItemsFields.Rows[0]["IsEnteringValue"].ToString() == "True")
-                //                                    RizMetreUsers.Tedad = Tedad;
-                //                                else
-                //                                    RizMetreUsers.Tedad = 0;
-
-                //                                if (DtItemsFields.Rows[1]["IsEnteringValue"].ToString() == "True")
-                //                                    RizMetreUsers.Tool = Tool;
-                //                                else
-                //                                    RizMetreUsers.Tool = 0;
-
-                //                                if (DtItemsFields.Rows[2]["IsEnteringValue"].ToString() == "True")
-                //                                    RizMetreUsers.Arz = Arz;
-                //                                else
-                //                                    RizMetreUsers.Arz = 0;
-
-                //                                if (DtItemsFields.Rows[3]["IsEnteringValue"].ToString() == "True")
-                //                                    RizMetreUsers.Ertefa = Ertefa;
-                //                                else
-                //                                    RizMetreUsers.Ertefa = 0;
-
-                //                                if (DtItemsFields.Rows[4]["IsEnteringValue"].ToString() == "True")
-                //                                    RizMetreUsers.Vazn = Vazn;
-                //                                else
-                //                                    RizMetreUsers.Vazn = 0;
-
-                //                                RizMetreUsers.Shomareh = intShomareh;
-                //                                RizMetreUsers.Sharh = Sharh;
-                //                                //RizMetreUsers.Tedad = Tedad;
-                //                                //RizMetreUsers.Tool = Tool;
-                //                                //RizMetreUsers.Arz = Arz;
-                //                                //RizMetreUsers.Ertefa = Ertefa;
-                //                                //RizMetreUsers.Vazn = Vazn;
-                //                                RizMetreUsers.ForItem = strFBShomareh.Trim();
-                //                                RizMetreUsers.UseItem = "";
-                //                                RizMetreUsers.LevelNumber = LevelNumber;
-                //                                //RizMetreUsers.FBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
-                //                                Guid guFBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
-                //                                RizMetreUsers.FBId = guFBId;
-
-                //                                dMeghdarJoz = 0;
-                //                                if (Tedad == 0 && Tool == 0 && Arz == 0 && Ertefa == 0 && Vazn == 0)
-                //                                    dMeghdarJoz = 0;
-                //                                else
-                //                                    dMeghdarJoz += (Tedad == 0 ? 1 : Tedad) * (Tool == 0 ? 1 : Tool) *
-                //                                    (Arz == 0 ? 1 : Arz) * (Ertefa == 0 ? 1 : Ertefa) * (Vazn == 0 ? 1 : Vazn);
-
-                //                                RizMetreUsers.MeghdarJoz = dMeghdarJoz;
-                //                                RizMetreUsers.OperationsOfHamlId = 1;
-
-                //                                string strForItem = strFBShomareh.Trim().Substring(0, 6);
-                //                                string strUseItem = "";
-                //                                clsRizMetreUsers? clsRizMetreUsers = context.RizMetreUserses.Where(x => x.FBId == guFBId && x.Shomareh == intShomareh
-                //                                && x.ForItem == strForItem && x.UseItem == strUseItem).FirstOrDefault();
-                //                                if (clsRizMetreUsers != null)
-                //                                {
-                //                                    try
-                //                                    {
-                //                                        var entry = context.Entry(clsRizMetreUsers);
-                //                                        var excludedProperties = new[] { "ID", "CreatedDate", "Type" };
-
-                //                                        foreach (var property in entry.OriginalValues.Properties)
-                //                                        {
-                //                                            if (!excludedProperties.Contains(property.Name))
-                //                                            {
-                //                                                var newValue = RizMetreUsers.GetType().GetProperty(property.Name)?.GetValue(RizMetreUsers);
-                //                                                entry.CurrentValues[property] = newValue;
-                //                                            }
-                //                                        }
-
-                //                                        //var Original = clsRizMetreUsers;
-                //                                        //clsRizMetreUsers.ID = Original.ID;
-                //                                        //context.Entry(clsRizMetreUsers).CurrentValues.SetValues(RizMetreUsers);
-                //                                        context.SaveChanges();
-                //                                    }
-                //                                    catch (Exception)
-                //                                    {
-                //                                    }
-                //                                }
-                //                                //RizMetreUsers.UpdateWithFBIdAndShomareh();
-                //                            }
-                //                            break;
-                //                        }
-                //                    case "4":
-                //                        {
-                //                            var varFBUsersAdded = context.FBs.Where(x => x.BarAvordId == intBarAvordId && x.Shomareh == strFBShomarehAdded).ToList();
-                //                            DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
-
-                //                            //DataTable DtFBUsersAdded = clsOperationItemsFB.FBListWithParameter("BarAvordId=" + intBarAvordId + " and Shomareh='" + strFBShomarehAdded + "'");
-                //                            if (DtFBUsersAdded.Rows.Count != 0)
-                //                            {
-                //                                string strCondition = Dr[idr]["Condition"].ToString().Trim();
-                //                                string strFinalWorking = Dr[idr]["FinalWorking"].ToString().Trim();
-                //                                if (strFinalWorking != "")
-                //                                {
-                //                                    string strConditionOp = strCondition.Replace("x", Meghdar.ToString().Trim());
-                //                                    StringToFormula StringToFormula = new StringToFormula();
-                //                                    bool blnCheck = StringToFormula.RelationalExpression(strConditionOp);
-                //                                    if (blnCheck)
-                //                                    {
-                //                                        string strForItem = "";
-                //                                        string strUseItem = "";
-                //                                        if (Dr[idr]["UseItemForAdd"].ToString().Trim() == "")
-                //                                        {
-                //                                            strForItem = strFBShomareh.Trim();
-                //                                            strFinalWorking = strFinalWorking.Replace("x", Meghdar.ToString().Trim());
-                //                                            decimal dMultiple = decimal.Parse(StringToFormula.Eval(strFinalWorking).ToString());
-                //                                            clsRizMetreUsers RizMetreUsers = new clsRizMetreUsers();
-                //                                            RizMetreUsers.Shomareh = intShomareh;
-                //                                            RizMetreUsers.Sharh = Sharh;
-
-
-                //                                            if (DtItemsFields.Rows[0]["IsEnteringValue"].ToString() == "True")
-                //                                                RizMetreUsers.Tedad = ((Tedad == 0) ? 1 : Tedad) * dMultiple;
-                //                                            else
-                //                                                RizMetreUsers.Tedad = 0;
-
-                //                                            if (DtItemsFields.Rows[1]["IsEnteringValue"].ToString() == "True")
-                //                                                RizMetreUsers.Tool = Tool;
-                //                                            else
-                //                                                RizMetreUsers.Tool = 0;
-
-                //                                            if (DtItemsFields.Rows[2]["IsEnteringValue"].ToString() == "True")
-                //                                                RizMetreUsers.Arz = Arz;
-                //                                            else
-                //                                                RizMetreUsers.Arz = 0;
-
-                //                                            if (DtItemsFields.Rows[3]["IsEnteringValue"].ToString() == "True")
-                //                                                RizMetreUsers.Ertefa = Ertefa;
-                //                                            else
-                //                                                RizMetreUsers.Ertefa = 0;
-
-                //                                            if (DtItemsFields.Rows[4]["IsEnteringValue"].ToString() == "True")
-                //                                                RizMetreUsers.Vazn = Vazn;
-                //                                            else
-                //                                                RizMetreUsers.Vazn = 0;
-
-                //                                            //RizMetreUsers.Tedad = ((Tedad == 0) ? 1 : Tedad) * dMultiple;
-                //                                            //RizMetreUsers.Tool = Tool;
-                //                                            //RizMetreUsers.Arz = Arz;
-                //                                            //RizMetreUsers.Ertefa = Ertefa;
-                //                                            //RizMetreUsers.Vazn = Vazn;
-                //                                            RizMetreUsers.ForItem = strForItem;
-                //                                            RizMetreUsers.UseItem = strUseItem;
-                //                                            RizMetreUsers.LevelNumber = LevelNumber;
-                //                                            Guid guFBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
-                //                                            RizMetreUsers.FBId = guFBId;
-
-                //                                            dMeghdarJoz = 0;
-                //                                            if (Tedad == 0 && Tool == 0 && Arz == 0 && Ertefa == 0 && Vazn == 0)
-                //                                                dMeghdarJoz = 0;
-                //                                            else
-                //                                                dMeghdarJoz += (Tedad == 0 ? 1 : Tedad) * (Tool == 0 ? 1 : Tool) *
-                //                                                (Arz == 0 ? 1 : Arz) * (Ertefa == 0 ? 1 : Ertefa) * (Vazn == 0 ? 1 : Vazn);
-
-                //                                            RizMetreUsers.MeghdarJoz = dMeghdarJoz;
-                //                                            RizMetreUsers.OperationsOfHamlId = 1;
-
-                //                                            string strForItem1 = strFBShomareh.Trim().Substring(0, 6);
-                //                                            clsRizMetreUsers? clsRizMetreUsers = context.RizMetreUserses.Where(x => x.FBId == guFBId && x.Shomareh == intShomareh
-                //                                            && x.ForItem == strForItem1 && x.UseItem == strUseItem).FirstOrDefault();
-                //                                            if (clsRizMetreUsers != null)
-                //                                            {
-                //                                                try
-                //                                                {
-                //                                                    var entry = context.Entry(clsRizMetreUsers);
-                //                                                    var excludedProperties = new[] { "ID", "CreatedDate", "Type" };
-
-                //                                                    foreach (var property in entry.OriginalValues.Properties)
-                //                                                    {
-                //                                                        if (!excludedProperties.Contains(property.Name))
-                //                                                        {
-                //                                                            var newValue = RizMetreUsers.GetType().GetProperty(property.Name)?.GetValue(RizMetreUsers);
-                //                                                            entry.CurrentValues[property] = newValue;
-                //                                                        }
-                //                                                    }
-
-                //                                                    //context.Entry(clsRizMetreUsers).CurrentValues.SetValues(RizMetreUsers);
-                //                                                    context.SaveChanges();
-                //                                                }
-                //                                                catch (Exception)
-                //                                                {
-                //                                                }
-                //                                            }
-                //                                            //RizMetreUsers.UpdateWithFBIdAndShomareh();
-                //                                        }
-                //                                        else
-                //                                        {
-                //                                            strForItem = Dr[idr]["UseItemForAdd"].ToString().Trim();
-                //                                            strUseItem = strFBShomareh.Trim();
-                //                                            if (strForItem == strUseItem)
-                //                                            {
-                //                                                strUseItem = DtRizMetreUsers.Rows[0]["ForItem"].ToString().Trim();
-
-                //                                                strFinalWorking = strFinalWorking.Replace("x", Meghdar.ToString().Trim());
-                //                                                decimal dMultiple = decimal.Parse(StringToFormula.Eval(strFinalWorking).ToString());
-                //                                                clsRizMetreUsers RizMetreUsers = new clsRizMetreUsers();
-
-
-
-                //                                                if (DtItemsFields.Rows[0]["IsEnteringValue"].ToString() == "True")
-                //                                                    RizMetreUsers.Tedad = ((Tedad == 0) ? 1 : Tedad) * dMultiple;
-                //                                                else
-                //                                                    RizMetreUsers.Tedad = 0;
-
-                //                                                if (DtItemsFields.Rows[1]["IsEnteringValue"].ToString() == "True")
-                //                                                    RizMetreUsers.Tool = Tool;
-                //                                                else
-                //                                                    RizMetreUsers.Tool = 0;
-
-                //                                                if (DtItemsFields.Rows[2]["IsEnteringValue"].ToString() == "True")
-                //                                                    RizMetreUsers.Arz = Arz;
-                //                                                else
-                //                                                    RizMetreUsers.Arz = 0;
-
-                //                                                if (DtItemsFields.Rows[3]["IsEnteringValue"].ToString() == "True")
-                //                                                    RizMetreUsers.Ertefa = Ertefa;
-                //                                                else
-                //                                                    RizMetreUsers.Ertefa = 0;
-
-                //                                                if (DtItemsFields.Rows[4]["IsEnteringValue"].ToString() == "True")
-                //                                                    RizMetreUsers.Vazn = Vazn;
-                //                                                else
-                //                                                    RizMetreUsers.Vazn = 0;
-
-                //                                                RizMetreUsers.Shomareh = intShomareh;
-                //                                                RizMetreUsers.Sharh = Sharh;
-                //                                                //RizMetreUsers.Tedad = ((Tedad == 0) ? 1 : Tedad) * dMultiple;
-                //                                                //RizMetreUsers.Tool = Tool;
-                //                                                //RizMetreUsers.Arz = Arz;
-                //                                                //RizMetreUsers.Ertefa = Ertefa;
-                //                                                //RizMetreUsers.Vazn = Vazn;
-                //                                                RizMetreUsers.ForItem = strForItem;
-                //                                                RizMetreUsers.UseItem = strUseItem;
-                //                                                Guid guFBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
-                //                                                RizMetreUsers.FBId = guFBId;
-                //                                                RizMetreUsers.LevelNumber = LevelNumber;
-
-                //                                                dMeghdarJoz = 0;
-                //                                                if (Tedad == 0 && Tool == 0 && Arz == 0 && Ertefa == 0 && Vazn == 0)
-                //                                                    dMeghdarJoz = 0;
-                //                                                else
-                //                                                    dMeghdarJoz += (Tedad == 0 ? 1 : Tedad) * (Tool == 0 ? 1 : Tool) *
-                //                                                    (Arz == 0 ? 1 : Arz) * (Ertefa == 0 ? 1 : Ertefa) * (Vazn == 0 ? 1 : Vazn);
-
-                //                                                RizMetreUsers.MeghdarJoz = dMeghdarJoz;
-                //                                                RizMetreUsers.OperationsOfHamlId = 1;
-
-                //                                                string strForItem1 = strFBShomareh.Trim().Substring(0, 6);
-                //                                                clsRizMetreUsers? clsRizMetreUsers = context.RizMetreUserses.Where(x => x.FBId == guFBId && x.Shomareh == intShomareh
-                //                                                && x.ForItem == strForItem1 && x.UseItem == strUseItem).FirstOrDefault();
-                //                                                if (clsRizMetreUsers != null)
-                //                                                {
-                //                                                    try
-                //                                                    {
-                //                                                        var entry = context.Entry(clsRizMetreUsers);
-                //                                                        var excludedProperties = new[] { "ID", "CreatedDate", "Type" };
-
-                //                                                        foreach (var property in entry.OriginalValues.Properties)
-                //                                                        {
-                //                                                            if (!excludedProperties.Contains(property.Name))
-                //                                                            {
-                //                                                                var newValue = RizMetreUsers.GetType().GetProperty(property.Name)?.GetValue(RizMetreUsers);
-                //                                                                entry.CurrentValues[property] = newValue;
-                //                                                            }
-                //                                                        }
-
-                //                                                        //context.Entry(clsRizMetreUsers).CurrentValues.SetValues(RizMetreUsers);
-                //                                                        context.SaveChanges();
-                //                                                    }
-                //                                                    catch (Exception)
-                //                                                    {
-                //                                                    }
-                //                                                }
-                //                                                //RizMetreUsers.UpdateWithFBIdAndShomareh();
-                //                                            }
-                //                                            else
-                //                                            {
-                //                                                strFinalWorking = strFinalWorking.Replace("x", Meghdar.ToString().Trim());
-                //                                                decimal dMultiple = decimal.Parse(StringToFormula.Eval(strFinalWorking).ToString());
-
-                //                                                if (DtItemsFBShomarehValueShomareh.Rows.Count != 0)
-                //                                                {
-                //                                                    string strUseItemForAdd = Dr[idr]["UseItemForAdd"].ToString().Trim();
-                //                                                    var varItemsForGetValues = context.ItemsForGetValuess.Where(x => x.ItemShomareh == strUseItemForAdd && x.Year == Year).ToList();
-                //                                                    DataTable DtItemsForGetValues = clsConvert.ToDataTable(varItemsForGetValues);
-                //                                                    //DataTable DtItemsForGetValues = clsOperationItemsFB.ItemsForGetValuesListWithParameter("ItemShomareh='" + Dr[idr]["UseItemForAdd"].ToString().Trim() + "' and Year=1397");
-                //                                                    if (DtItemsForGetValues.Rows[0]["RizMetreFieldsRequire"].ToString().Trim() != "")
-                //                                                        if (DtItemsForGetValues.Rows.Count != 0)
-                //                                                        {
-                //                                                            if (strFBShomareh.Trim() != "")
-                //                                                            {
-                //                                                                DataRow[] DrItemsForGetValues = DtItemsForGetValues.Select("ItemShomarehForGetValue='" + strFBShomareh.Trim() + "'");
-
-                //                                                                clsItemsFBShomarehValueShomareh ItemsFBShomarehValueShomareh = new clsItemsFBShomarehValueShomareh();
-
-                //                                                                string[] strRizMetreFieldsRequire = DtItemsForGetValues.Rows[0]["RizMetreFieldsRequire"].ToString().Split(',');
-                //                                                                List<string> lst = new List<string>();
-                //                                                                for (int j = 0; j < strRizMetreFieldsRequire.Length; j++)
-                //                                                                {
-                //                                                                    lst.Add(strRizMetreFieldsRequire[j]);
-                //                                                                }
-
-                //                                                                decimal dTedad = 0;
-                //                                                                decimal dTool = 0;
-                //                                                                decimal dArz = 0;
-                //                                                                decimal dErtefa = 0;
-                //                                                                decimal dVazn = 0;
-                //                                                                var strCal = lst.Where(a => a.Substring(0, 1) == "1").ToList();
-                //                                                                if (strCal.Count != 0)
-                //                                                                {
-                //                                                                    string[] s = strCal[0].ToString().Split('+');
-                //                                                                    if (s.Length > 1)
-                //                                                                        dTedad = ((Tedad != 0 ? 1 : Tedad) * dMultiple) * decimal.Parse(s[1]) + Tedad;
-                //                                                                    else
-                //                                                                        dTedad = Tedad * dMultiple;
-                //                                                                }
-                //                                                                strCal = lst.Where(a => a.Substring(0, 1) == "2").ToList();
-                //                                                                if (strCal.Count != 0)
-                //                                                                {
-                //                                                                    string[] s = strCal[0].ToString().Split('+');
-                //                                                                    if (s.Length > 1)
-                //                                                                        dTool = (Tool != 0 ? 1 : Tool) * decimal.Parse(s[1]) + Tool;
-                //                                                                    else
-
-                //                                                                        dTool = Tool;
-                //                                                                }
-                //                                                                strCal = lst.Where(a => a.Substring(0, 1) == "3").ToList();
-                //                                                                if (strCal.Count != 0)
-                //                                                                {
-                //                                                                    string[] s = strCal[0].ToString().Split('+');
-                //                                                                    if (s.Length > 1)
-                //                                                                        dArz = (Arz != 0 ? 1 : Arz) * decimal.Parse(s[1]) + Arz;
-                //                                                                    else
-
-                //                                                                        dArz = Arz;
-                //                                                                }
-                //                                                                strCal = lst.Where(a => a.Substring(0, 1) == "4").ToList();
-                //                                                                if (strCal.Count != 0)
-                //                                                                {
-                //                                                                    string[] s = strCal[0].ToString().Split('+');
-                //                                                                    if (s.Length > 1)
-                //                                                                        dErtefa = (Ertefa != 0 ? 1 : Ertefa) * decimal.Parse(s[1]) + Ertefa;
-                //                                                                    else
-                //                                                                        dErtefa = Ertefa;
-                //                                                                }
-                //                                                                strCal = lst.Where(a => a.Substring(0, 1) == "5").ToList();
-                //                                                                if (strCal.Count != 0)
-                //                                                                {
-                //                                                                    string[] s = strCal[0].ToString().Split('+');
-                //                                                                    if (s.Length > 1)
-                //                                                                        dVazn = (Vazn != 0 ? 1 : Vazn) * decimal.Parse(s[1]) + Vazn;
-                //                                                                    else
-                //                                                                        dVazn = Vazn;
-                //                                                                }
-                //                                                                /////////////////////
-                //                                                                /////////////////////
-                //                                                                if (DtItemsFields.Rows[0]["IsEnteringValue"].ToString() == "True")
-                //                                                                    RizMetre.Tedad = dTedad;
-                //                                                                else
-                //                                                                    RizMetre.Tedad = 0;
-
-                //                                                                if (DtItemsFields.Rows[1]["IsEnteringValue"].ToString() == "True")
-                //                                                                    RizMetre.Tool = dTool;
-                //                                                                else
-                //                                                                    RizMetre.Tool = 0;
-
-                //                                                                if (DtItemsFields.Rows[2]["IsEnteringValue"].ToString() == "True")
-                //                                                                    RizMetre.Arz = dArz;
-                //                                                                else
-                //                                                                    RizMetre.Arz = 0;
-
-                //                                                                if (DtItemsFields.Rows[3]["IsEnteringValue"].ToString() == "True")
-                //                                                                    RizMetre.Ertefa = dErtefa;
-                //                                                                else
-                //                                                                    RizMetre.Ertefa = 0;
-
-                //                                                                if (DtItemsFields.Rows[4]["IsEnteringValue"].ToString() == "True")
-                //                                                                    RizMetre.Vazn = dVazn;
-                //                                                                else
-                //                                                                    RizMetre.Vazn = 0;
-
-                //                                                                RizMetre.Sharh = Sharh.Trim();
-                //                                                                //RizMetre.Tedad = dTedad;
-                //                                                                //RizMetre.Tool = dTool;
-                //                                                                //RizMetre.Arz = dArz;
-                //                                                                //RizMetre.Ertefa = dErtefa;
-                //                                                                //RizMetre.Vazn = dVazn;
-
-                //                                                                RizMetre.Shomareh = intShomareh;
-                //                                                                RizMetre.ForItem = strForItem;
-                //                                                                RizMetre.UseItem = strUseItem;
-                //                                                                Guid guFBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
-                //                                                                RizMetre.FBId = guFBId;
-                //                                                                RizMetre.LevelNumber = LevelNumber;
-                //                                                                string strForItem1 = strFBShomareh.Trim().Substring(0, 6);
-
-
-                //                                                                dMeghdarJoz = 0;
-                //                                                                if (Tedad == 0 && Tool == 0 && Arz == 0 && Ertefa == 0 && Vazn == 0)
-                //                                                                    dMeghdarJoz = 0;
-                //                                                                else
-                //                                                                    dMeghdarJoz += (Tedad == 0 ? 1 : Tedad) * (Tool == 0 ? 1 : Tool) *
-                //                                                                    (Arz == 0 ? 1 : Arz) * (Ertefa == 0 ? 1 : Ertefa) * (Vazn == 0 ? 1 : Vazn);
-
-                //                                                                RizMetre.MeghdarJoz = dMeghdarJoz;
-
-
-                //                                                                clsRizMetreUsers? clsRizMetreUsers = context.RizMetreUserses.Where(x => x.FBId == guFBId && x.Shomareh == intShomareh
-                //                                                                && x.ForItem == strForItem1 && x.UseItem == strUseItem).FirstOrDefault();
-                //                                                                if (clsRizMetreUsers != null)
-                //                                                                {
-                //                                                                    try
-                //                                                                    {
-                //                                                                        context.Entry(clsRizMetreUsers).CurrentValues.SetValues(RizMetre);
-                //                                                                        context.SaveChanges();
-                //                                                                    }
-                //                                                                    catch (Exception)
-                //                                                                    {
-                //                                                                    }
-                //                                                                }
-                //                                                                //RizMetre.UpdateWithFBIdAndShomareh();
-                //                                                            }
-                //                                                        }
-                //                                                }
-                //                                            }
-                //                                        }
-                //                                    }
-                //                                }
-                //                            }
-                //                            break;
-                //                        }
-                //                    case "5":
-                //                        {
-                //                            var varFBUser1 = context.FBs.Where(x => x.BarAvordId == intBarAvordId && x.Shomareh == strFBShomarehAdded).ToList();
-                //                            DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUser1);
-                //                            //DataTable DtFBUsersAdded = clsOperationItemsFB.FBListWithParameter("BarAvordId=" + intBarAvordId + " and Shomareh='" + strFBShomarehAdded + "'");
-                //                            if (DtFBUsersAdded.Rows.Count != 0)
-                //                            {
-                //                                clsRizMetreUsers RizMetreUsers = new clsRizMetreUsers();
-
-                //                                if (DtItemsFields.Rows[0]["IsEnteringValue"].ToString() == "True")
-                //                                    RizMetreUsers.Tedad = Tedad;
-                //                                else
-                //                                    RizMetreUsers.Tedad = 0;
-
-                //                                if (DtItemsFields.Rows[1]["IsEnteringValue"].ToString() == "True")
-                //                                    RizMetreUsers.Tool = Tool;
-                //                                else
-                //                                    RizMetreUsers.Tool = 0;
-
-                //                                if (DtItemsFields.Rows[2]["IsEnteringValue"].ToString() == "True")
-                //                                    RizMetreUsers.Arz = Arz;
-                //                                else
-                //                                    RizMetreUsers.Arz = 0;
-
-                //                                if (DtItemsFields.Rows[3]["IsEnteringValue"].ToString() == "True")
-                //                                    RizMetreUsers.Ertefa = Ertefa;
-                //                                else
-                //                                    RizMetreUsers.Ertefa = 0;
-
-                //                                if (DtItemsFields.Rows[4]["IsEnteringValue"].ToString() == "True")
-                //                                    RizMetreUsers.Vazn = Vazn;
-                //                                else
-                //                                    RizMetreUsers.Vazn = 0;
-
-                //                                RizMetreUsers.Shomareh = intShomareh;
-                //                                RizMetreUsers.Sharh = Sharh;
-                //                                //RizMetreUsers.Tedad = Tedad;
-                //                                //RizMetreUsers.Tool = Tool;
-                //                                //RizMetreUsers.Arz = Arz;
-                //                                //RizMetreUsers.Ertefa = Ertefa;
-                //                                //RizMetreUsers.Vazn = Vazn;
-                //                                RizMetreUsers.ForItem = strFBShomareh.Trim();
-                //                                RizMetreUsers.UseItem = "";
-                //                                RizMetreUsers.LevelNumber = LevelNumber;
-                //                                Guid guFBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
-                //                                RizMetreUsers.FBId = guFBId;
-
-                //                                dMeghdarJoz = 0;
-                //                                if (Tedad == 0 && Tool == 0 && Arz == 0 && Ertefa == 0 && Vazn == 0)
-                //                                    dMeghdarJoz = 0;
-                //                                else
-                //                                    dMeghdarJoz += (Tedad == 0 ? 1 : Tedad) * (Tool == 0 ? 1 : Tool) *
-                //                                    (Arz == 0 ? 1 : Arz) * (Ertefa == 0 ? 1 : Ertefa) * (Vazn == 0 ? 1 : Vazn);
-
-                //                                RizMetreUsers.MeghdarJoz = dMeghdarJoz;
-                //                                RizMetreUsers.OperationsOfHamlId = 1;
-
-
-                //                                string strForItem = strFBShomareh.Trim().Substring(0, 6);
-                //                                string strUseItem = "";
-                //                                clsRizMetreUsers? clsRizMetreUsers = context.RizMetreUserses.Where(x => x.FBId == guFBId && x.Shomareh == intShomareh
-                //                                && x.ForItem == strForItem && x.UseItem == strUseItem).FirstOrDefault();
-                //                                if (clsRizMetreUsers != null)
-                //                                {
-                //                                    try
-                //                                    {
-                //                                        var entry = context.Entry(clsRizMetreUsers);
-                //                                        var excludedProperties = new[] { "ID", "CreatedDate", "Type" };
-
-                //                                        foreach (var property in entry.OriginalValues.Properties)
-                //                                        {
-                //                                            if (!excludedProperties.Contains(property.Name))
-                //                                            {
-                //                                                var newValue = RizMetreUsers.GetType().GetProperty(property.Name)?.GetValue(RizMetreUsers);
-                //                                                entry.CurrentValues[property] = newValue;
-                //                                            }
-                //                                        }
-                //                                        //context.Entry(clsRizMetreUsers).CurrentValues.SetValues(RizMetreUsers);
-                //                                        context.SaveChanges();
-                //                                    }
-                //                                    catch (Exception)
-                //                                    {
-                //                                    }
-                //                                }
-                //                                //RizMetreUsers.UpdateWithFBIdAndShomareh();
-                //                            }
-                //                            break;
-                //                        }
-                //                    case "6":
-                //                        {
-                //                            var varFBUsersAdded = context.FBs.Where(x => x.BarAvordId == intBarAvordId && x.Shomareh == strFBShomarehAdded).ToList();
-                //                            DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
-                //                            //DataTable DtFBUsersAdded = clsOperationItemsFB.FBListWithParameter("BarAvordId=" + intBarAvordId + " and Shomareh='" + strFBShomarehAdded + "'");
-                //                            if (DtFBUsersAdded.Rows.Count != 0)
-                //                            {
-                //                                string strCondition = Dr[idr]["Condition"].ToString().Trim();
-                //                                string strFinalWorking = Dr[idr]["FinalWorking"].ToString();
-                //                                string strConditionOp = strCondition.Replace("x", Ertefa.ToString().Trim());
-                //                                StringToFormula StringToFormula = new StringToFormula();
-                //                                bool blnCheck = StringToFormula.RelationalExpression(strConditionOp);
-                //                                if (blnCheck)
-                //                                {
-                //                                    strFinalWorking = strFinalWorking.Replace("x", Ertefa.ToString().Trim());
-                //                                    clsRizMetreUsers RizMetreUsers = new clsRizMetreUsers();
-                //                                    RizMetreUsers.Shomareh = intShomareh;
-                //                                    RizMetreUsers.Sharh = Sharh;
-
-
-                //                                    if (DtItemsFields.Rows[0]["IsEnteringValue"].ToString() == "True")
-                //                                        RizMetreUsers.Tedad = ((Tedad == 0) ? 1 : Tedad);
-                //                                    else
-                //                                        RizMetreUsers.Tedad = 0;
-
-                //                                    if (DtItemsFields.Rows[1]["IsEnteringValue"].ToString() == "True")
-                //                                        RizMetreUsers.Tool = Tool;
-                //                                    else
-                //                                        RizMetreUsers.Tool = 0;
-
-                //                                    if (DtItemsFields.Rows[2]["IsEnteringValue"].ToString() == "True")
-                //                                        RizMetreUsers.Arz = Arz;
-                //                                    else
-                //                                        RizMetreUsers.Arz = 0;
-
-                //                                    if (DtItemsFields.Rows[3]["IsEnteringValue"].ToString() == "True")
-                //                                        RizMetreUsers.Ertefa = Ertefa;
-                //                                    else
-                //                                        RizMetreUsers.Ertefa = 0;
-
-                //                                    if (DtItemsFields.Rows[4]["IsEnteringValue"].ToString() == "True")
-                //                                        RizMetreUsers.Vazn = Vazn;
-                //                                    else
-                //                                        RizMetreUsers.Vazn = 0;
-                //                                    RizMetreUsers.ForItem = strFBShomareh.Trim();
-                //                                    RizMetreUsers.UseItem = "";
-                //                                    Guid guFBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
-                //                                    RizMetreUsers.FBId = guFBId;
-
-                //                                    dMeghdarJoz = 0;
-                //                                    if (Tedad == 0 && Tool == 0 && Arz == 0 && Ertefa == 0 && Vazn == 0)
-                //                                        dMeghdarJoz = 0;
-                //                                    else
-                //                                        dMeghdarJoz += (Tedad == 0 ? 1 : Tedad) * (Tool == 0 ? 1 : Tool) *
-                //                                        (Arz == 0 ? 1 : Arz) * (Ertefa == 0 ? 1 : Ertefa) * (Vazn == 0 ? 1 : Vazn);
-
-                //                                    RizMetreUsers.MeghdarJoz = dMeghdarJoz;
-                //                                    RizMetreUsers.OperationsOfHamlId = 1;
-
-
-                //                                    string strForItem = strFBShomareh.Trim().Substring(0, 6);
-                //                                    string strUseItem = "";
-                //                                    clsRizMetreUsers? clsRizMetreUsers = context.RizMetreUserses.Where(x => x.FBId == guFBId && x.Shomareh == intShomareh
-                //                                    && x.ForItem == strForItem && x.UseItem == strUseItem).FirstOrDefault();
-                //                                    bool blnCheckUpdate = false;
-                //                                    if (clsRizMetreUsers != null)
-                //                                    {
-                //                                        try
-                //                                        {
-                //                                            var entry = context.Entry(clsRizMetreUsers);
-                //                                            var excludedProperties = new[] { "ID", "CreatedDate", "Type" };
-
-                //                                            foreach (var property in entry.OriginalValues.Properties)
-                //                                            {
-                //                                                if (!excludedProperties.Contains(property.Name))
-                //                                                {
-                //                                                    var newValue = RizMetreUsers.GetType().GetProperty(property.Name)?.GetValue(RizMetreUsers);
-                //                                                    entry.CurrentValues[property] = newValue;
-                //                                                }
-                //                                            }
-                //                                            //context.Entry(clsRizMetreUsers).CurrentValues.SetValues(RizMetreUsers);
-                //                                            context.SaveChanges();
-                //                                            blnCheckUpdate = true;
-                //                                        }
-                //                                        catch (Exception)
-                //                                        {
-                //                                            blnCheckUpdate = false;
-                //                                        }
-                //                                    }
-                //                                    //if (!RizMetreUsers.UpdateWithFBIdAndShomareh())
-                //                                    if (!blnCheckUpdate)
-                //                                    {
-                //                                        RizMetre.ID = Guid.NewGuid();
-                //                                        RizMetre.Sharh = Sharh.Trim();
-                //                                        RizMetre.Tedad = Tedad;
-                //                                        RizMetre.Tool = Tool;
-                //                                        RizMetre.Arz = Arz;
-                //                                        RizMetre.Ertefa = Ertefa;
-                //                                        RizMetre.Vazn = Vazn;
-                //                                        RizMetre.FBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
-                //                                        RizMetre.Shomareh = intShomareh;
-                //                                        RizMetre.Des = Dr[idr]["DesOfAddingItems"].ToString().Trim() + " به آیتم " + strFBShomareh.Trim();
-                //                                        RizMetre.Type = "2";
-                //                                        RizMetre.ForItem = strFBShomareh.Trim();
-                //                                        RizMetre.UseItem = "";
-                //                                        RizMetre.LevelNumber = LevelNumber;
-
-
-                //                                        ///محاسبه مقدار جزء
-                //                                        dMeghdarJoz = 0;
-                //                                        if (Tedad == 0 && Tool == 0 && Arz == 0 && Ertefa == 0 && Vazn == 0)
-                //                                            dMeghdarJoz = 0;
-                //                                        else
-                //                                            dMeghdarJoz += (Tedad == 0 ? 1 : Tedad) * (Tool == 0 ? 1 : Tool) *
-                //                                            (Arz == 0 ? 1 : Arz) * (Ertefa == 0 ? 1 : Ertefa) * (Vazn == 0 ? 1 : Vazn);
-                //                                        RizMetre.MeghdarJoz = dMeghdarJoz;
-
-
-                //                                        context.RizMetreUserses.Add(RizMetre);
-                //                                        context.SaveChanges();
-                //                                        //RizMetre.Save();
-                //                                    }
-                //                                }
-                //                                else
-                //                                {
-                //                                    Guid guFBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
-                //                                    var clsRizMetreUsers = context.RizMetreUserses.Where(x => x.FBId == guFBId && x.ForItem == strFBShomareh.Trim()
-                //                                                                                        && x.Shomareh == intShomareh).ToList();
-
-                //                                    if (clsRizMetreUsers != null)
-                //                                    {
-                //                                        context.RizMetreUserses.RemoveRange(clsRizMetreUsers);
-                //                                        context.SaveChanges();
-                //                                    }
-                //                                    //clsRizMetreUserss.Delete("FBId=" + DtFBUsersAdded.Rows[0]["Id"].ToString().Trim() + " and ForItem='" + strFBShomareh.Trim() + "' and clsRizMetreUserss.Shomareh=" + intShomareh);
-                //                                }
-                //                            }
-                //                            break;
-                //                        }
-                //                    case "8":
-                //                        {
-                //                            var varFBUsersAdded = context.FBs.Where(x => x.BarAvordId == intBarAvordId && x.Shomareh == strFBShomarehAdded).ToList();
-                //                            DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
-
-                //                            //DataTable DtFBUsersAdded = clsOperationItemsFB.FBListWithParameter("BarAvordId=" + intBarAvordId + " and Shomareh='" + strFBShomarehAdded + "'");
-                //                            if (DtFBUsersAdded.Rows.Count != 0)
-                //                            {
-                //                                string strCondition = Dr[idr]["Condition"].ToString().Trim();
-                //                                string strFinalWorking = Dr[idr]["FinalWorking"].ToString();
-                //                                string strConditionOp = strCondition.Replace("x", Arz.ToString().Trim());
-                //                                StringToFormula StringToFormula = new StringToFormula();
-                //                                bool blnCheck = StringToFormula.RelationalExpression(strConditionOp);
-                //                                if (blnCheck)
-                //                                {
-                //                                    strFinalWorking = strFinalWorking.Replace("x", Arz.ToString().Trim());
-                //                                    clsRizMetreUsers RizMetreUsers = new clsRizMetreUsers();
-                //                                    RizMetreUsers.Shomareh = intShomareh;
-                //                                    RizMetreUsers.Sharh = Sharh;
-
-                //                                    decimal ArzEzafi = 1;
-                //                                    if (strFinalWorking != "")
-                //                                    {
-                //                                        ArzEzafi = decimal.Parse(StringToFormula.Eval(strFinalWorking).ToString());
-                //                                    }
-
-                //                                    if (DtItemsFields.Rows[0]["IsEnteringValue"].ToString() == "True")
-                //                                        RizMetreUsers.Tedad = ((Tedad == 0) ? 1 : Tedad) * ArzEzafi;
-                //                                    else
-                //                                        RizMetreUsers.Tedad = 0;
-
-                //                                    if (DtItemsFields.Rows[1]["IsEnteringValue"].ToString() == "True")
-                //                                        RizMetreUsers.Tool = Tool;
-                //                                    else
-                //                                        RizMetreUsers.Tool = 0;
-
-                //                                    if (DtItemsFields.Rows[2]["IsEnteringValue"].ToString() == "True")
-                //                                        RizMetreUsers.Arz = Arz;
-                //                                    else
-                //                                        RizMetreUsers.Arz = 0;
-
-                //                                    if (DtItemsFields.Rows[3]["IsEnteringValue"].ToString() == "True")
-                //                                        RizMetreUsers.Ertefa = Ertefa;
-                //                                    else
-                //                                        RizMetreUsers.Ertefa = 0;
-
-                //                                    if (DtItemsFields.Rows[4]["IsEnteringValue"].ToString() == "True")
-                //                                        RizMetreUsers.Vazn = Vazn;
-                //                                    else
-                //                                        RizMetreUsers.Vazn = 0;
-                //                                    RizMetreUsers.ForItem = strFBShomareh.Trim();
-                //                                    RizMetreUsers.UseItem = "";
-                //                                    Guid guFBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
-                //                                    RizMetreUsers.FBId = guFBId;
-
-                //                                    dMeghdarJoz = 0;
-                //                                    if (Tedad == 0 && Tool == 0 && Arz == 0 && Ertefa == 0 && Vazn == 0)
-                //                                        dMeghdarJoz = 0;
-                //                                    else
-                //                                        dMeghdarJoz += (Tedad == 0 ? 1 : Tedad) * (Tool == 0 ? 1 : Tool) *
-                //                                        (Arz == 0 ? 1 : Arz) * (Ertefa == 0 ? 1 : Ertefa) * (Vazn == 0 ? 1 : Vazn);
-
-                //                                    RizMetre.MeghdarJoz = dMeghdarJoz;
-                //                                    RizMetreUsers.OperationsOfHamlId = 1;
-
-                //                                    bool blnCheckUpdate = false;
-                //                                    string strForItem = strFBShomareh.Trim().Substring(0, 6);
-                //                                    string strUseItem = "";
-                //                                    clsRizMetreUsers? clsRizMetreUsers = context.RizMetreUserses.Where(x => x.FBId == guFBId && x.Shomareh == intShomareh
-                //                                    && x.ForItem == strForItem && x.UseItem == strUseItem).FirstOrDefault();
-                //                                    if (clsRizMetreUsers != null)
-                //                                    {
-                //                                        try
-                //                                        {
-                //                                            var entry = context.Entry(clsRizMetreUsers);
-                //                                            var excludedProperties = new[] { "ID", "CreatedDate", "Type" };
-
-                //                                            foreach (var property in entry.OriginalValues.Properties)
-                //                                            {
-                //                                                if (!excludedProperties.Contains(property.Name))
-                //                                                {
-                //                                                    var newValue = RizMetreUsers.GetType().GetProperty(property.Name)?.GetValue(RizMetreUsers);
-                //                                                    entry.CurrentValues[property] = newValue;
-                //                                                }
-                //                                            }
-                //                                            //context.Entry(clsRizMetreUsers).CurrentValues.SetValues(RizMetreUsers);
-                //                                            context.SaveChanges();
-                //                                            blnCheckUpdate = true;
-                //                                        }
-                //                                        catch (Exception)
-                //                                        {
-                //                                            blnCheckUpdate = false;
-                //                                        }
-                //                                    }
-                //                                    //if (!RizMetreUsers.UpdateWithFBIdAndShomareh())
-                //                                    if (!blnCheckUpdate)
-                //                                    {
-                //                                        RizMetre.ID = Guid.NewGuid();
-                //                                        RizMetre.Sharh = Sharh.Trim();
-                //                                        RizMetre.Tedad = Tedad;
-                //                                        RizMetre.Tool = Tool;
-                //                                        RizMetre.Arz = Arz;
-                //                                        RizMetre.Ertefa = Ertefa;
-                //                                        RizMetre.Vazn = Vazn;
-                //                                        RizMetre.FBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
-                //                                        RizMetre.Shomareh = intShomareh;
-                //                                        RizMetre.Des = Dr[idr]["DesOfAddingItems"].ToString().Trim() + " به آیتم " + strFBShomareh.Trim();
-                //                                        RizMetre.Type = "2";
-                //                                        RizMetre.ForItem = strFBShomareh.Trim();
-                //                                        RizMetre.UseItem = "";
-                //                                        RizMetre.LevelNumber = LevelNumber;
-
-
-                //                                        ///محاسبه مقدار جزء
-                //                                        dMeghdarJoz = 0;
-                //                                        if (Tedad == 0 && Tool == 0 && Arz == 0 && Ertefa == 0 && Vazn == 0)
-                //                                            dMeghdarJoz = 0;
-                //                                        else
-                //                                            dMeghdarJoz += (Tedad == 0 ? 1 : Tedad) * (Tool == 0 ? 1 : Tool) *
-                //                                            (Arz == 0 ? 1 : Arz) * (Ertefa == 0 ? 1 : Ertefa) * (Vazn == 0 ? 1 : Vazn);
-                //                                        RizMetre.MeghdarJoz = dMeghdarJoz;
-
-
-                //                                        context.RizMetreUserses.Add(RizMetre);
-                //                                        context.SaveChanges();
-                //                                        //RizMetre.Save();
-                //                                    }
-                //                                }
-                //                                else
-                //                                {
-                //                                    //clsRizMetreUserss.Delete("FBId=" + DtFBUsersAdded.Rows[0]["Id"].ToString().Trim() + " and ForItem='" + strFBShomareh.Trim() + "' and clsRizMetreUserss.Shomareh=" + intShomareh);
-                //                                    Guid guFBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
-                //                                    strFBShomareh = strFBShomareh.Trim();
-                //                                    var clsRizMetreUsers = context.RizMetreUserses.Where(x => x.ID == guFBId && x.ForItem == strFBShomareh.Trim()
-                //                                                                                        && x.Shomareh == intShomareh);
-
-                //                                    if (clsRizMetreUsers != null)
-                //                                    {
-                //                                        context.RizMetreUserses.RemoveRange(clsRizMetreUsers);
-                //                                        context.SaveChanges();
-                //                                    }
-                //                                }
-                //                            }
-                //                            break;
-                //                        }
-                //                    default:
-                //                        break;
-                //                }
-                //            }
-                //        }
-                //    }
-                //}
-
-                //if (DtItemsFBShomarehValueShomareh.Rows.Count != 0)
-                //{
-                //    string strGetValuesShomareh = DtItemsFBShomarehValueShomareh.Rows[0]["GetValuesShomareh"].ToString().Trim();
-                //    var varFB1 = context.FBs.Where(x => x.BarAvordId == intBarAvordId && x.Shomareh == strGetValuesShomareh).ToList();
-                //    DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFB1);
-
-                //    //DataTable DtFBUsersAdded = clsOperationItemsFB.FBListWithParameter("BarAvordId=" + intBarAvordId + " and Shomareh='" + DtItemsFBShomarehValueShomareh.Rows[0]["GetValuesShomareh"].ToString().Trim() + "'");
-                //    string strUsersAdded = DtFBUsersAdded.Rows[0]["Shomareh"].ToString().Trim();
-                //    var varItemsForGetValues = context.ItemsForGetValuess.Where(x => x.ItemShomareh == strUsersAdded && x.Year == Year).ToList();
-                //    DataTable DtItemsForGetValues = clsConvert.ToDataTable(varItemsForGetValues);
-                //    //DataTable DtItemsForGetValues = clsOperationItemsFB.ItemsForGetValuesListWithParameter("ItemShomareh='" + DtFBUsersAdded.Rows[0]["Shomareh"].ToString().Trim() + "' and Year=1397");// and ItemShomarehForGetValue='" + ItemsFBShomareh + "'");
-
-                //    if (DtItemsForGetValues.Rows[0]["RizMetreFieldsRequire"].ToString().Trim() != "")
-                //        if (DtItemsForGetValues.Rows.Count != 0)
-                //        {
-                //            if (strFBShomareh.Trim() != "")
-                //            {
-                //                DataRow[] DrItemsForGetValues = DtItemsForGetValues.Select("ItemShomarehForGetValue='" + strFBShomareh.Trim() + "'");
-
-                //                clsItemsFBShomarehValueShomareh ItemsFBShomarehValueShomareh = new clsItemsFBShomarehValueShomareh();
-
-                //                string[] strRizMetreFieldsRequire = DtItemsForGetValues.Rows[0]["RizMetreFieldsRequire"].ToString().Split(',');
-                //                List<string> lst = new List<string>();
-                //                for (int j = 0; j < strRizMetreFieldsRequire.Length; j++)
-                //                {
-                //                    lst.Add(strRizMetreFieldsRequire[j]);
-                //                }
-
-                //                decimal dTedad = 0;
-                //                decimal dTool = 0;
-                //                decimal dArz = 0;
-                //                decimal dErtefa = 0;
-                //                decimal dVazn = 0;
-                //                var strCal = lst.Where(a => a.Substring(0, 1) == "1").ToList();
-                //                if (strCal.Count != 0)
-                //                {
-                //                    string[] s = strCal[0].ToString().Split('+');
-                //                    if (s.Length > 1)
-                //                        dTedad = (Tedad != 0 ? 1 : Tedad) * decimal.Parse(s[1]) + Tedad;
-                //                    else
-                //                        dTedad = Tedad;
-                //                }
-                //                strCal = lst.Where(a => a.Substring(0, 1) == "2").ToList();
-                //                if (strCal.Count != 0)
-                //                {
-                //                    string[] s = strCal[0].ToString().Split('+');
-                //                    if (s.Length > 1)
-                //                        dTool = (Tool != 0 ? 1 : Tool) * decimal.Parse(s[1]) + Tool;
-                //                    else
-
-                //                        dTool = Tool;
-                //                }
-                //                strCal = lst.Where(a => a.Substring(0, 1) == "3").ToList();
-                //                if (strCal.Count != 0)
-                //                {
-                //                    string[] s = strCal[0].ToString().Split('+');
-                //                    if (s.Length > 1)
-                //                        dArz = (Arz != 0 ? 1 : Arz) * decimal.Parse(s[1]) + Arz;
-                //                    else
-
-                //                        dArz = Arz;
-                //                }
-                //                strCal = lst.Where(a => a.Substring(0, 1) == "4").ToList();
-                //                if (strCal.Count != 0)
-                //                {
-                //                    string[] s = strCal[0].ToString().Split('+');
-                //                    if (s.Length > 1)
-                //                        dErtefa = (Ertefa != 0 ? 1 : Ertefa) * decimal.Parse(s[1]) + Ertefa;
-                //                    else
-                //                        dErtefa = Ertefa;
-                //                }
-                //                strCal = lst.Where(a => a.Substring(0, 1) == "5").ToList();
-                //                if (strCal.Count != 0)
-                //                {
-                //                    string[] s = strCal[0].ToString().Split('+');
-                //                    if (s.Length > 1)
-                //                        dVazn = (Vazn != 0 ? 1 : Vazn) * decimal.Parse(s[1]) + Vazn;
-                //                    else
-                //                        dVazn = Vazn;
-                //                }
-
-                //                Guid guFBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
-                //                RizMetre.Sharh = Sharh.Trim();
-                //                RizMetre.Tedad = dTedad;
-                //                RizMetre.Tool = dTool;
-                //                RizMetre.Arz = dArz;
-                //                RizMetre.Ertefa = dErtefa;
-                //                RizMetre.Vazn = dVazn;
-                //                RizMetre.FBId = guFBId;
-                //                RizMetre.Shomareh = intShomareh;
-                //                RizMetre.ForItem = strFBShomareh.Trim();
-                //                RizMetre.UseItem = "";
-
-                //                dMeghdarJoz = 0;
-                //                if (Tedad == 0 && Tool == 0 && Arz == 0 && Ertefa == 0 && Vazn == 0)
-                //                    dMeghdarJoz = 0;
-                //                else
-                //                    dMeghdarJoz += (Tedad == 0 ? 1 : Tedad) * (Tool == 0 ? 1 : Tool) *
-                //                    (Arz == 0 ? 1 : Arz) * (Ertefa == 0 ? 1 : Ertefa) * (Vazn == 0 ? 1 : Vazn);
-
-                //                RizMetre.MeghdarJoz = dMeghdarJoz;
-
-                //                string strForItem = strFBShomareh.Trim().Substring(0, 6);
-                //                string strUseItem = "";
-                //                clsRizMetreUsers? clsRizMetreUsers = context.RizMetreUserses.Where(x => x.FBId == guFBId && x.Shomareh == intShomareh
-                //                && x.ForItem == strForItem && x.UseItem == strUseItem).FirstOrDefault();
-                //                if (clsRizMetreUsers != null)
-                //                {
-                //                    var entry = context.Entry(clsRizMetreUsers);
-                //                    var excludedProperties = new[] { "ID", "CreatedDate", "Type" };
-
-                //                    foreach (var property in entry.OriginalValues.Properties)
-                //                    {
-                //                        if (!excludedProperties.Contains(property.Name))
-                //                        {
-                //                            var newValue = RizMetre.GetType().GetProperty(property.Name)?.GetValue(RizMetre);
-                //                            entry.CurrentValues[property] = newValue;
-                //                        }
-                //                    }
-                //                    //context.Entry(clsRizMetreUsers).CurrentValues.SetValues(RizMetre);
-                //                    context.SaveChanges();
-                //                }
-                //            }
-                //        }
-                //}
+                blnCheckUpdate1 = true;
             }
-            return new JsonResult("OK_");
+            catch (Exception e)
+            {
+                throw e;
+                //blnCheckUpdate1 = false;
+            }
+        }
+        //if (RizMetre.Update())
+        if (blnCheckUpdate1)
+        {
+
+
+            /////////////
+            //////////////
+            //////////////
+            ///
+            long OperationId = request.OperationId;
+            Guid FBId = request.FBId;
+
+            clsOperation_ItemsFB operation_ItemsFB = context.Operation_ItemsFBs.First(x => x.OperationId == OperationId);
+
+
+            List<ItemsFieldsDto> ItemsField = (from ItemF in context.ItemsFieldses
+                                               join OpItemFB in context.Operation_ItemsFBs
+                                               on ItemF.ItemShomareh equals OpItemFB.ItemsFBShomareh
+                                               select new ItemsFieldsDto
+                                               {
+                                                   ItemShomareh = ItemF.ItemShomareh,
+                                                   NoeFB = ItemF.NoeFB,
+                                                   IsEnteringValue = ItemF.IsEnteringValue,
+                                                   Vahed = ItemF.Vahed,
+                                                   FieldType = ItemF.FieldType,
+                                                   OperationId = OpItemFB.OperationId
+                                               }).Where(x => x.OperationId == OperationId && x.NoeFB == NoeFBId).OrderBy(x => x.FieldType).ToList();
+
+            List<ItemsHasConditionConditionContextForCheckOperationDto> lstItemsHasCondition = _context.ItemsHasCondition_ConditionContexts
+                .Where(cc => cc.Year == Year)
+                .Join(_context.ItemsHasConditionAddedToFBs,
+                cc => cc.Id,
+                fb => fb.ItemsHasCondition_ConditionContextId,
+        (cc, fb) => new { cc, fb })
+            .Join(_context.ItemsHasConditions,
+        temp => temp.cc.ItemsHasConditionId,
+        ihc => ihc.Id,
+        (temp, ihc) => new { temp.cc, temp.fb, ihc })
+            .Join(_context.Operation_ItemsFBs,
+        temp => temp.ihc.ItemFBShomareh,
+        ofb => ofb.ItemsFBShomareh,
+        (temp, ofb) => new ItemsHasConditionConditionContextForCheckOperationDto
+        {
+            Id = temp.cc.Id,
+            ItemsHasConditionId = temp.cc.ItemsHasConditionId,
+            ConditionContextId = temp.cc.ConditionContextId,
+            HasEnteringValue = temp.cc.HasEnteringValue,
+            Des = temp.cc.Des,
+            DefaultValue = temp.cc.DefaultValue,
+            IsShow = temp.cc.IsShow,
+            ParentId = temp.cc.ParentId,
+            MoveToRel = temp.cc.MoveToRel,
+            ViewCheckAllRecords = temp.cc.ViewCheckAllRecords,
+            StepChange = temp.cc.StepChange,
+            Meghdar = temp.fb.Meghdar,
+            Meghdar2 = temp.fb.Meghdar2,
+            FBShomareh = temp.fb.FBShomareh,
+            ConditionGroupId = temp.fb.ConditionGroupId,
+            BarAvordId = temp.fb.BarAvordId,
+            OperationId = ofb.OperationId
+        }).Where(x => x.OperationId == OperationId && x.BarAvordId == intBarAvordId).ToList();
+
+
+            var ItemsAddingToFBs = _context.ItemsAddingToFBs.Where(x => x.Year == Year).Select(x => new
+            {
+                x.ItemsHasCondition_ConditionContextId,
+                x.AddedItems,
+                x.Condition,
+                x.FinalWorking,
+                x.ConditionType,
+                x.DesOfAddingItems,
+                x.UseItemForAdd,
+                x.FieldsAdding,
+                x.CharacterPlus
+            }).ToList();
+
+            foreach (var ItemHasCon in lstItemsHasCondition)
+            {
+                List<ItemsAddingToFBForCheckOperationDto> lstItemsAddingToFBForCheckOperation = ItemsAddingToFBs.Where(x => x.ItemsHasCondition_ConditionContextId == ItemHasCon.Id).Select(x => new
+                ItemsAddingToFBForCheckOperationDto
+                {
+                    ItemsHasCondition_ConditionContextId = x.ItemsHasCondition_ConditionContextId,
+                    AddedItems = x.AddedItems,
+                    Condition = x.Condition,
+                    FinalWorking = x.FinalWorking,
+                    ConditionType = x.ConditionType,
+                    DesOfAddingItems = x.DesOfAddingItems,
+                    UseItemForAdd = x.UseItemForAdd,
+                    FieldsAdding = x.FieldsAdding,
+                    CharacterPlus = x.CharacterPlus
+                }).ToList();
+
+                CheckOperationConditions checkOperationConditions = new CheckOperationConditions();
+                foreach (var itemsAddingToFBForCheckOperation in lstItemsAddingToFBForCheckOperation)
+                {
+                    checkOperationConditions.fnCheckOperationConditionForUpdate(_context, itemsAddingToFBForCheckOperation,
+                        ItemsField, ItemHasCon, FBId, RizMetre, OldRizMetre, LevelNumber, Year, NoeFBId);
+                }
+            }
+
+            context.SaveChanges();
+
+            //////////
+            ///////////////
+            //////////////
+            ///
+
+
+            return new JsonResult("OK_" + operation_ItemsFB.ItemsFBShomareh);
+
+            //if (DtItemsHasConditionAddedToFB.Rows.Count != 0)
+            //{
+            //    //string strItemsHasConditionConditionContext = "";
+            //    //if (DtItemsHasConditionAddedToFB.Rows.Count != 0)
+            //    //{
+            //    //    strItemsHasConditionConditionContext += "ItemsHasCondition_ConditionContextId in(";
+            //    //    for (int i = 0; i < DtItemsHasConditionAddedToFB.Rows.Count; i++)
+            //    //    {
+            //    //        if ((i + 1) < DtItemsHasConditionAddedToFB.Rows.Count)
+            //    //            strItemsHasConditionConditionContext += DtItemsHasConditionAddedToFB.Rows[i]["ItemsHasCondition_ConditionContextId"].ToString() + ",";
+            //    //        else
+            //    //            strItemsHasConditionConditionContext += DtItemsHasConditionAddedToFB.Rows[i]["ItemsHasCondition_ConditionContextId"].ToString();
+            //    //    }
+            //    //    strItemsHasConditionConditionContext += ")";
+            //    //}
+
+            //    List<long> strItemsHasConditionConditionContext = new List<long>();
+            //    if (DtItemsHasConditionAddedToFB.Rows.Count != 0)
+            //    {
+            //        for (int i = 0; i < DtItemsHasConditionAddedToFB.Rows.Count; i++)
+            //        {
+            //            strItemsHasConditionConditionContext.Add(long.Parse(DtItemsHasConditionAddedToFB.Rows[i]["ItemsHasCondition_ConditionContextId"].ToString()));
+            //        }
+            //    }
+
+            //    var varItemsAddingToFB = context.ItemsAddingToFBs.Where(x => strItemsHasConditionConditionContext.Contains(x.ItemsHasCondition_ConditionContextId)).ToList();
+            //    DataTable DtItemsAddingToFB = clsConvert.ToDataTable(varItemsAddingToFB);
+
+
+            //    //DataTable DtItemsAddingToFB = clsItemsAddingToFB.ListWithParameter(strItemsHasConditionConditionContext);
+            //    for (int Counter = 0; Counter < DtItemsHasConditionAddedToFB.Rows.Count; Counter++)
+            //    {
+            //        decimal Meghdar = decimal.Parse(DtItemsHasConditionAddedToFB.Rows[Counter]["Meghdar"].ToString());
+            //        string RBCode = DtItemsHasConditionAddedToFB.Rows[Counter]["ItemsHasCondition_ConditionContextId"].ToString().Trim();
+            //        DataRow[] Dr = DtItemsAddingToFB.Select("ItemsHasCondition_ConditionContextId=" + RBCode);
+            //        if (Dr.Length != 0)
+            //        {
+            //            for (int idr = 0; idr < Dr.Length; idr++)
+            //            {
+            //                string strFBShomarehAdded = Dr[idr]["AddedItems"].ToString().Trim();
+            //                switch (Dr[idr]["ConditionType"].ToString())
+            //                {
+            //                    case "1":
+            //                        {
+
+            //                            var varFBUsersAdded = context.FBs.Where(x => x.BarAvordId == intBarAvordId && x.Shomareh == strFBShomarehAdded + "A").ToList();
+            //                            DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
+
+            //                            //DataTable DtFBUsersAdded = clsOperationItemsFB.FBListWithParameter("BarAvordId=" + intBarAvordId + " and Shomareh='" + strFBShomarehAdded + "A'");
+            //                            if (DtFBUsersAdded.Rows.Count != 0)
+            //                            {
+            //                                clsRizMetreUsers RizMetreUsers = new clsRizMetreUsers();
+
+            //                                if (DtItemsFields.Rows[0]["IsEnteringValue"].ToString() == "True")
+            //                                    RizMetreUsers.Tedad = Tedad;
+            //                                else
+            //                                    RizMetreUsers.Tedad = 0;
+
+            //                                if (DtItemsFields.Rows[1]["IsEnteringValue"].ToString() == "True")
+            //                                    RizMetreUsers.Tool = Tool;
+            //                                else
+            //                                    RizMetreUsers.Tool = 0;
+
+            //                                if (DtItemsFields.Rows[2]["IsEnteringValue"].ToString() == "True")
+            //                                    RizMetreUsers.Arz = Arz;
+            //                                else
+            //                                    RizMetreUsers.Arz = 0;
+
+            //                                if (DtItemsFields.Rows[3]["IsEnteringValue"].ToString() == "True")
+            //                                    RizMetreUsers.Ertefa = Ertefa;
+            //                                else
+            //                                    RizMetreUsers.Ertefa = 0;
+
+            //                                if (DtItemsFields.Rows[4]["IsEnteringValue"].ToString() == "True")
+            //                                    RizMetreUsers.Vazn = Vazn;
+            //                                else
+            //                                    RizMetreUsers.Vazn = 0;
+
+            //                                RizMetreUsers.Shomareh = intShomareh;
+            //                                RizMetreUsers.Sharh = Sharh;
+            //                                //RizMetreUsers.Tedad = Tedad;
+            //                                //RizMetreUsers.Tool = Tool;
+            //                                //RizMetreUsers.Arz = Arz;
+            //                                //RizMetreUsers.Ertefa = Ertefa;
+            //                                //RizMetreUsers.Vazn = Vazn;
+            //                                RizMetreUsers.ForItem = strFBShomareh.Trim();
+            //                                RizMetreUsers.UseItem = "";
+            //                                RizMetreUsers.LevelNumber = LevelNumber;
+            //                                RizMetreUsers.FBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
+            //                                Guid guFBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
+            //                                RizMetreUsers.FBId = guFBId;
+
+            //                                dMeghdarJoz = 0;
+            //                                if (Tedad == 0 && Tool == 0 && Arz == 0 && Ertefa == 0 && Vazn == 0)
+            //                                    dMeghdarJoz = 0;
+            //                                else
+            //                                    dMeghdarJoz += (Tedad == 0 ? 1 : Tedad) * (Tool == 0 ? 1 : Tool) *
+            //                                    (Arz == 0 ? 1 : Arz) * (Ertefa == 0 ? 1 : Ertefa) * (Vazn == 0 ? 1 : Vazn);
+
+            //                                RizMetreUsers.MeghdarJoz = dMeghdarJoz;
+            //                                RizMetreUsers.OperationsOfHamlId = 1;
+
+            //                                string strForItem = strFBShomareh.Trim().Substring(0, 6);
+            //                                string strUseItem = "";
+            //                                clsRizMetreUsers? clsRizMetreUsers = context.RizMetreUserses.Where(x => x.FBId == guFBId && x.Shomareh == intShomareh
+            //                                && x.ForItem == strForItem && x.UseItem == strUseItem).FirstOrDefault();
+            //                                if (clsRizMetreUsers != null)
+            //                                {
+            //                                    try
+            //                                    {
+            //                                        var entry = context.Entry(clsRizMetreUsers);
+            //                                        var excludedProperties = new[] { "ID", "CreatedDate", "Type" };
+
+            //                                        foreach (var property in entry.OriginalValues.Properties)
+            //                                        {
+            //                                            if (!excludedProperties.Contains(property.Name))
+            //                                            {
+            //                                                var newValue = RizMetreUsers.GetType().GetProperty(property.Name)?.GetValue(RizMetreUsers);
+            //                                                entry.CurrentValues[property] = newValue;
+            //                                            }
+            //                                        }
+            //                                        //context.Entry(clsRizMetreUsers).CurrentValues.SetValues(RizMetreUsers);
+            //                                        context.SaveChanges();
+            //                                    }
+            //                                    catch (Exception)
+            //                                    {
+            //                                    }
+            //                                }
+            //                                //RizMetreUsers.UpdateWithFBIdAndShomareh();
+            //                            }
+            //                            break;
+            //                        }
+            //                    case "2":
+            //                        {
+            //                            var varFBUsersAdded = context.FBs.Where(x => x.BarAvordId == intBarAvordId && x.Shomareh == strFBShomarehAdded).ToList();
+            //                            DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
+
+            //                            //DataTable DtFBUsersAdded = clsOperationItemsFB.FBListWithParameter("BarAvordId=" + intBarAvordId + " and Shomareh='" + strFBShomarehAdded + "'");
+            //                            if (DtFBUsersAdded.Rows.Count != 0)
+            //                            {
+            //                                clsRizMetreUsers RizMetreUsers = new clsRizMetreUsers();
+
+            //                                if (DtItemsFields.Rows[0]["IsEnteringValue"].ToString() == "True")
+            //                                    RizMetreUsers.Tedad = Tedad;
+            //                                else
+            //                                    RizMetreUsers.Tedad = 0;
+
+            //                                if (DtItemsFields.Rows[1]["IsEnteringValue"].ToString() == "True")
+            //                                    RizMetreUsers.Tool = Tool;
+            //                                else
+            //                                    RizMetreUsers.Tool = 0;
+
+            //                                if (DtItemsFields.Rows[2]["IsEnteringValue"].ToString() == "True")
+            //                                    RizMetreUsers.Arz = Arz;
+            //                                else
+            //                                    RizMetreUsers.Arz = 0;
+
+            //                                if (DtItemsFields.Rows[3]["IsEnteringValue"].ToString() == "True")
+            //                                    RizMetreUsers.Ertefa = Ertefa;
+            //                                else
+            //                                    RizMetreUsers.Ertefa = 0;
+
+            //                                if (DtItemsFields.Rows[4]["IsEnteringValue"].ToString() == "True")
+            //                                    RizMetreUsers.Vazn = Vazn;
+            //                                else
+            //                                    RizMetreUsers.Vazn = 0;
+
+            //                                RizMetreUsers.Shomareh = intShomareh;
+            //                                RizMetreUsers.Sharh = Sharh;
+            //                                //RizMetreUsers.Tedad = Tedad;
+            //                                //RizMetreUsers.Tool = Tool;
+            //                                //RizMetreUsers.Arz = Arz;
+            //                                //RizMetreUsers.Ertefa = Ertefa;
+            //                                //RizMetreUsers.Vazn = Vazn;
+            //                                RizMetreUsers.ForItem = strFBShomareh.Trim();
+            //                                RizMetreUsers.UseItem = "";
+            //                                RizMetreUsers.LevelNumber = LevelNumber;
+            //                                RizMetreUsers.FBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
+            //                                Guid guFBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
+            //                                RizMetreUsers.FBId = guFBId;
+
+            //                                dMeghdarJoz = 0;
+            //                                if (Tedad == 0 && Tool == 0 && Arz == 0 && Ertefa == 0 && Vazn == 0)
+            //                                    dMeghdarJoz = 0;
+            //                                else
+            //                                    dMeghdarJoz += (Tedad == 0 ? 1 : Tedad) * (Tool == 0 ? 1 : Tool) *
+            //                                    (Arz == 0 ? 1 : Arz) * (Ertefa == 0 ? 1 : Ertefa) * (Vazn == 0 ? 1 : Vazn);
+
+            //                                RizMetreUsers.MeghdarJoz = dMeghdarJoz;
+            //                                RizMetreUsers.OperationsOfHamlId = 1;
+
+
+            //                                string strForItem = strFBShomareh.Trim().Substring(0, 6);
+            //                                string strUseItem = "";
+            //                                clsRizMetreUsers? clsRizMetreUsers = context.RizMetreUserses.Where(x => x.FBId == guFBId && x.Shomareh == intShomareh
+            //                                && x.ForItem == strForItem && x.UseItem == strUseItem).FirstOrDefault();
+            //                                if (clsRizMetreUsers != null)
+            //                                {
+            //                                    try
+            //                                    {
+            //                                        var entry = context.Entry(clsRizMetreUsers);
+            //                                        var excludedProperties = new[] { "ID", "CreatedDate", "Type" };
+
+            //                                        foreach (var property in entry.OriginalValues.Properties)
+            //                                        {
+            //                                            if (!excludedProperties.Contains(property.Name))
+            //                                            {
+            //                                                var newValue = RizMetreUsers.GetType().GetProperty(property.Name)?.GetValue(RizMetreUsers);
+            //                                                entry.CurrentValues[property] = newValue;
+            //                                            }
+            //                                        }
+            //                                        //context.Entry(clsRizMetreUsers).CurrentValues.SetValues(RizMetreUsers);
+            //                                        context.SaveChanges();
+            //                                    }
+            //                                    catch (Exception)
+            //                                    {
+            //                                    }
+            //                                }
+            //                                //RizMetreUsers.UpdateWithFBIdAndShomareh();
+            //                            }
+            //                            break;
+            //                        }
+            //                    case "3":
+            //                        {
+            //                            decimal dPercent = decimal.Parse(Dr[0]["FinalWorking"].ToString());
+            //                            string strStatus = dPercent > 0 ? "B" : "e";
+            //                            var varFBUsersAdded = context.FBs.Where(x => x.BarAvordId == intBarAvordId && x.Shomareh == strFBShomarehAdded + strStatus).ToList();
+            //                            DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
+
+            //                            //DataTable DtFBUsersAdded = clsOperationItemsFB.FBListWithParameter("BarAvordId=" + intBarAvordId + " and Shomareh='" + strFBShomarehAdded + strStatus + "'");
+            //                            if (DtFBUsersAdded.Rows.Count != 0)
+            //                            {
+            //                                clsRizMetreUsers RizMetreUsers = new clsRizMetreUsers();
+
+            //                                if (DtItemsFields.Rows[0]["IsEnteringValue"].ToString() == "True")
+            //                                    RizMetreUsers.Tedad = Tedad;
+            //                                else
+            //                                    RizMetreUsers.Tedad = 0;
+
+            //                                if (DtItemsFields.Rows[1]["IsEnteringValue"].ToString() == "True")
+            //                                    RizMetreUsers.Tool = Tool;
+            //                                else
+            //                                    RizMetreUsers.Tool = 0;
+
+            //                                if (DtItemsFields.Rows[2]["IsEnteringValue"].ToString() == "True")
+            //                                    RizMetreUsers.Arz = Arz;
+            //                                else
+            //                                    RizMetreUsers.Arz = 0;
+
+            //                                if (DtItemsFields.Rows[3]["IsEnteringValue"].ToString() == "True")
+            //                                    RizMetreUsers.Ertefa = Ertefa;
+            //                                else
+            //                                    RizMetreUsers.Ertefa = 0;
+
+            //                                if (DtItemsFields.Rows[4]["IsEnteringValue"].ToString() == "True")
+            //                                    RizMetreUsers.Vazn = Vazn;
+            //                                else
+            //                                    RizMetreUsers.Vazn = 0;
+
+            //                                RizMetreUsers.Shomareh = intShomareh;
+            //                                RizMetreUsers.Sharh = Sharh;
+            //                                //RizMetreUsers.Tedad = Tedad;
+            //                                //RizMetreUsers.Tool = Tool;
+            //                                //RizMetreUsers.Arz = Arz;
+            //                                //RizMetreUsers.Ertefa = Ertefa;
+            //                                //RizMetreUsers.Vazn = Vazn;
+            //                                RizMetreUsers.ForItem = strFBShomareh.Trim();
+            //                                RizMetreUsers.UseItem = "";
+            //                                RizMetreUsers.LevelNumber = LevelNumber;
+            //                                //RizMetreUsers.FBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
+            //                                Guid guFBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
+            //                                RizMetreUsers.FBId = guFBId;
+
+            //                                dMeghdarJoz = 0;
+            //                                if (Tedad == 0 && Tool == 0 && Arz == 0 && Ertefa == 0 && Vazn == 0)
+            //                                    dMeghdarJoz = 0;
+            //                                else
+            //                                    dMeghdarJoz += (Tedad == 0 ? 1 : Tedad) * (Tool == 0 ? 1 : Tool) *
+            //                                    (Arz == 0 ? 1 : Arz) * (Ertefa == 0 ? 1 : Ertefa) * (Vazn == 0 ? 1 : Vazn);
+
+            //                                RizMetreUsers.MeghdarJoz = dMeghdarJoz;
+            //                                RizMetreUsers.OperationsOfHamlId = 1;
+
+            //                                string strForItem = strFBShomareh.Trim().Substring(0, 6);
+            //                                string strUseItem = "";
+            //                                clsRizMetreUsers? clsRizMetreUsers = context.RizMetreUserses.Where(x => x.FBId == guFBId && x.Shomareh == intShomareh
+            //                                && x.ForItem == strForItem && x.UseItem == strUseItem).FirstOrDefault();
+            //                                if (clsRizMetreUsers != null)
+            //                                {
+            //                                    try
+            //                                    {
+            //                                        var entry = context.Entry(clsRizMetreUsers);
+            //                                        var excludedProperties = new[] { "ID", "CreatedDate", "Type" };
+
+            //                                        foreach (var property in entry.OriginalValues.Properties)
+            //                                        {
+            //                                            if (!excludedProperties.Contains(property.Name))
+            //                                            {
+            //                                                var newValue = RizMetreUsers.GetType().GetProperty(property.Name)?.GetValue(RizMetreUsers);
+            //                                                entry.CurrentValues[property] = newValue;
+            //                                            }
+            //                                        }
+
+            //                                        //var Original = clsRizMetreUsers;
+            //                                        //clsRizMetreUsers.ID = Original.ID;
+            //                                        //context.Entry(clsRizMetreUsers).CurrentValues.SetValues(RizMetreUsers);
+            //                                        context.SaveChanges();
+            //                                    }
+            //                                    catch (Exception)
+            //                                    {
+            //                                    }
+            //                                }
+            //                                //RizMetreUsers.UpdateWithFBIdAndShomareh();
+            //                            }
+            //                            break;
+            //                        }
+            //                    case "4":
+            //                        {
+            //                            var varFBUsersAdded = context.FBs.Where(x => x.BarAvordId == intBarAvordId && x.Shomareh == strFBShomarehAdded).ToList();
+            //                            DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
+
+            //                            //DataTable DtFBUsersAdded = clsOperationItemsFB.FBListWithParameter("BarAvordId=" + intBarAvordId + " and Shomareh='" + strFBShomarehAdded + "'");
+            //                            if (DtFBUsersAdded.Rows.Count != 0)
+            //                            {
+            //                                string strCondition = Dr[idr]["Condition"].ToString().Trim();
+            //                                string strFinalWorking = Dr[idr]["FinalWorking"].ToString().Trim();
+            //                                if (strFinalWorking != "")
+            //                                {
+            //                                    string strConditionOp = strCondition.Replace("x", Meghdar.ToString().Trim());
+            //                                    StringToFormula StringToFormula = new StringToFormula();
+            //                                    bool blnCheck = StringToFormula.RelationalExpression(strConditionOp);
+            //                                    if (blnCheck)
+            //                                    {
+            //                                        string strForItem = "";
+            //                                        string strUseItem = "";
+            //                                        if (Dr[idr]["UseItemForAdd"].ToString().Trim() == "")
+            //                                        {
+            //                                            strForItem = strFBShomareh.Trim();
+            //                                            strFinalWorking = strFinalWorking.Replace("x", Meghdar.ToString().Trim());
+            //                                            decimal dMultiple = decimal.Parse(StringToFormula.Eval(strFinalWorking).ToString());
+            //                                            clsRizMetreUsers RizMetreUsers = new clsRizMetreUsers();
+            //                                            RizMetreUsers.Shomareh = intShomareh;
+            //                                            RizMetreUsers.Sharh = Sharh;
+
+
+            //                                            if (DtItemsFields.Rows[0]["IsEnteringValue"].ToString() == "True")
+            //                                                RizMetreUsers.Tedad = ((Tedad == 0) ? 1 : Tedad) * dMultiple;
+            //                                            else
+            //                                                RizMetreUsers.Tedad = 0;
+
+            //                                            if (DtItemsFields.Rows[1]["IsEnteringValue"].ToString() == "True")
+            //                                                RizMetreUsers.Tool = Tool;
+            //                                            else
+            //                                                RizMetreUsers.Tool = 0;
+
+            //                                            if (DtItemsFields.Rows[2]["IsEnteringValue"].ToString() == "True")
+            //                                                RizMetreUsers.Arz = Arz;
+            //                                            else
+            //                                                RizMetreUsers.Arz = 0;
+
+            //                                            if (DtItemsFields.Rows[3]["IsEnteringValue"].ToString() == "True")
+            //                                                RizMetreUsers.Ertefa = Ertefa;
+            //                                            else
+            //                                                RizMetreUsers.Ertefa = 0;
+
+            //                                            if (DtItemsFields.Rows[4]["IsEnteringValue"].ToString() == "True")
+            //                                                RizMetreUsers.Vazn = Vazn;
+            //                                            else
+            //                                                RizMetreUsers.Vazn = 0;
+
+            //                                            //RizMetreUsers.Tedad = ((Tedad == 0) ? 1 : Tedad) * dMultiple;
+            //                                            //RizMetreUsers.Tool = Tool;
+            //                                            //RizMetreUsers.Arz = Arz;
+            //                                            //RizMetreUsers.Ertefa = Ertefa;
+            //                                            //RizMetreUsers.Vazn = Vazn;
+            //                                            RizMetreUsers.ForItem = strForItem;
+            //                                            RizMetreUsers.UseItem = strUseItem;
+            //                                            RizMetreUsers.LevelNumber = LevelNumber;
+            //                                            Guid guFBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
+            //                                            RizMetreUsers.FBId = guFBId;
+
+            //                                            dMeghdarJoz = 0;
+            //                                            if (Tedad == 0 && Tool == 0 && Arz == 0 && Ertefa == 0 && Vazn == 0)
+            //                                                dMeghdarJoz = 0;
+            //                                            else
+            //                                                dMeghdarJoz += (Tedad == 0 ? 1 : Tedad) * (Tool == 0 ? 1 : Tool) *
+            //                                                (Arz == 0 ? 1 : Arz) * (Ertefa == 0 ? 1 : Ertefa) * (Vazn == 0 ? 1 : Vazn);
+
+            //                                            RizMetreUsers.MeghdarJoz = dMeghdarJoz;
+            //                                            RizMetreUsers.OperationsOfHamlId = 1;
+
+            //                                            string strForItem1 = strFBShomareh.Trim().Substring(0, 6);
+            //                                            clsRizMetreUsers? clsRizMetreUsers = context.RizMetreUserses.Where(x => x.FBId == guFBId && x.Shomareh == intShomareh
+            //                                            && x.ForItem == strForItem1 && x.UseItem == strUseItem).FirstOrDefault();
+            //                                            if (clsRizMetreUsers != null)
+            //                                            {
+            //                                                try
+            //                                                {
+            //                                                    var entry = context.Entry(clsRizMetreUsers);
+            //                                                    var excludedProperties = new[] { "ID", "CreatedDate", "Type" };
+
+            //                                                    foreach (var property in entry.OriginalValues.Properties)
+            //                                                    {
+            //                                                        if (!excludedProperties.Contains(property.Name))
+            //                                                        {
+            //                                                            var newValue = RizMetreUsers.GetType().GetProperty(property.Name)?.GetValue(RizMetreUsers);
+            //                                                            entry.CurrentValues[property] = newValue;
+            //                                                        }
+            //                                                    }
+
+            //                                                    //context.Entry(clsRizMetreUsers).CurrentValues.SetValues(RizMetreUsers);
+            //                                                    context.SaveChanges();
+            //                                                }
+            //                                                catch (Exception)
+            //                                                {
+            //                                                }
+            //                                            }
+            //                                            //RizMetreUsers.UpdateWithFBIdAndShomareh();
+            //                                        }
+            //                                        else
+            //                                        {
+            //                                            strForItem = Dr[idr]["UseItemForAdd"].ToString().Trim();
+            //                                            strUseItem = strFBShomareh.Trim();
+            //                                            if (strForItem == strUseItem)
+            //                                            {
+            //                                                strUseItem = DtRizMetreUsers.Rows[0]["ForItem"].ToString().Trim();
+
+            //                                                strFinalWorking = strFinalWorking.Replace("x", Meghdar.ToString().Trim());
+            //                                                decimal dMultiple = decimal.Parse(StringToFormula.Eval(strFinalWorking).ToString());
+            //                                                clsRizMetreUsers RizMetreUsers = new clsRizMetreUsers();
+
+
+
+            //                                                if (DtItemsFields.Rows[0]["IsEnteringValue"].ToString() == "True")
+            //                                                    RizMetreUsers.Tedad = ((Tedad == 0) ? 1 : Tedad) * dMultiple;
+            //                                                else
+            //                                                    RizMetreUsers.Tedad = 0;
+
+            //                                                if (DtItemsFields.Rows[1]["IsEnteringValue"].ToString() == "True")
+            //                                                    RizMetreUsers.Tool = Tool;
+            //                                                else
+            //                                                    RizMetreUsers.Tool = 0;
+
+            //                                                if (DtItemsFields.Rows[2]["IsEnteringValue"].ToString() == "True")
+            //                                                    RizMetreUsers.Arz = Arz;
+            //                                                else
+            //                                                    RizMetreUsers.Arz = 0;
+
+            //                                                if (DtItemsFields.Rows[3]["IsEnteringValue"].ToString() == "True")
+            //                                                    RizMetreUsers.Ertefa = Ertefa;
+            //                                                else
+            //                                                    RizMetreUsers.Ertefa = 0;
+
+            //                                                if (DtItemsFields.Rows[4]["IsEnteringValue"].ToString() == "True")
+            //                                                    RizMetreUsers.Vazn = Vazn;
+            //                                                else
+            //                                                    RizMetreUsers.Vazn = 0;
+
+            //                                                RizMetreUsers.Shomareh = intShomareh;
+            //                                                RizMetreUsers.Sharh = Sharh;
+            //                                                //RizMetreUsers.Tedad = ((Tedad == 0) ? 1 : Tedad) * dMultiple;
+            //                                                //RizMetreUsers.Tool = Tool;
+            //                                                //RizMetreUsers.Arz = Arz;
+            //                                                //RizMetreUsers.Ertefa = Ertefa;
+            //                                                //RizMetreUsers.Vazn = Vazn;
+            //                                                RizMetreUsers.ForItem = strForItem;
+            //                                                RizMetreUsers.UseItem = strUseItem;
+            //                                                Guid guFBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
+            //                                                RizMetreUsers.FBId = guFBId;
+            //                                                RizMetreUsers.LevelNumber = LevelNumber;
+
+            //                                                dMeghdarJoz = 0;
+            //                                                if (Tedad == 0 && Tool == 0 && Arz == 0 && Ertefa == 0 && Vazn == 0)
+            //                                                    dMeghdarJoz = 0;
+            //                                                else
+            //                                                    dMeghdarJoz += (Tedad == 0 ? 1 : Tedad) * (Tool == 0 ? 1 : Tool) *
+            //                                                    (Arz == 0 ? 1 : Arz) * (Ertefa == 0 ? 1 : Ertefa) * (Vazn == 0 ? 1 : Vazn);
+
+            //                                                RizMetreUsers.MeghdarJoz = dMeghdarJoz;
+            //                                                RizMetreUsers.OperationsOfHamlId = 1;
+
+            //                                                string strForItem1 = strFBShomareh.Trim().Substring(0, 6);
+            //                                                clsRizMetreUsers? clsRizMetreUsers = context.RizMetreUserses.Where(x => x.FBId == guFBId && x.Shomareh == intShomareh
+            //                                                && x.ForItem == strForItem1 && x.UseItem == strUseItem).FirstOrDefault();
+            //                                                if (clsRizMetreUsers != null)
+            //                                                {
+            //                                                    try
+            //                                                    {
+            //                                                        var entry = context.Entry(clsRizMetreUsers);
+            //                                                        var excludedProperties = new[] { "ID", "CreatedDate", "Type" };
+
+            //                                                        foreach (var property in entry.OriginalValues.Properties)
+            //                                                        {
+            //                                                            if (!excludedProperties.Contains(property.Name))
+            //                                                            {
+            //                                                                var newValue = RizMetreUsers.GetType().GetProperty(property.Name)?.GetValue(RizMetreUsers);
+            //                                                                entry.CurrentValues[property] = newValue;
+            //                                                            }
+            //                                                        }
+
+            //                                                        //context.Entry(clsRizMetreUsers).CurrentValues.SetValues(RizMetreUsers);
+            //                                                        context.SaveChanges();
+            //                                                    }
+            //                                                    catch (Exception)
+            //                                                    {
+            //                                                    }
+            //                                                }
+            //                                                //RizMetreUsers.UpdateWithFBIdAndShomareh();
+            //                                            }
+            //                                            else
+            //                                            {
+            //                                                strFinalWorking = strFinalWorking.Replace("x", Meghdar.ToString().Trim());
+            //                                                decimal dMultiple = decimal.Parse(StringToFormula.Eval(strFinalWorking).ToString());
+
+            //                                                if (DtItemsFBShomarehValueShomareh.Rows.Count != 0)
+            //                                                {
+            //                                                    string strUseItemForAdd = Dr[idr]["UseItemForAdd"].ToString().Trim();
+            //                                                    var varItemsForGetValues = context.ItemsForGetValuess.Where(x => x.ItemShomareh == strUseItemForAdd && x.Year == Year).ToList();
+            //                                                    DataTable DtItemsForGetValues = clsConvert.ToDataTable(varItemsForGetValues);
+            //                                                    //DataTable DtItemsForGetValues = clsOperationItemsFB.ItemsForGetValuesListWithParameter("ItemShomareh='" + Dr[idr]["UseItemForAdd"].ToString().Trim() + "' and Year=1397");
+            //                                                    if (DtItemsForGetValues.Rows[0]["RizMetreFieldsRequire"].ToString().Trim() != "")
+            //                                                        if (DtItemsForGetValues.Rows.Count != 0)
+            //                                                        {
+            //                                                            if (strFBShomareh.Trim() != "")
+            //                                                            {
+            //                                                                DataRow[] DrItemsForGetValues = DtItemsForGetValues.Select("ItemShomarehForGetValue='" + strFBShomareh.Trim() + "'");
+
+            //                                                                clsItemsFBShomarehValueShomareh ItemsFBShomarehValueShomareh = new clsItemsFBShomarehValueShomareh();
+
+            //                                                                string[] strRizMetreFieldsRequire = DtItemsForGetValues.Rows[0]["RizMetreFieldsRequire"].ToString().Split(',');
+            //                                                                List<string> lst = new List<string>();
+            //                                                                for (int j = 0; j < strRizMetreFieldsRequire.Length; j++)
+            //                                                                {
+            //                                                                    lst.Add(strRizMetreFieldsRequire[j]);
+            //                                                                }
+
+            //                                                                decimal dTedad = 0;
+            //                                                                decimal dTool = 0;
+            //                                                                decimal dArz = 0;
+            //                                                                decimal dErtefa = 0;
+            //                                                                decimal dVazn = 0;
+            //                                                                var strCal = lst.Where(a => a.Substring(0, 1) == "1").ToList();
+            //                                                                if (strCal.Count != 0)
+            //                                                                {
+            //                                                                    string[] s = strCal[0].ToString().Split('+');
+            //                                                                    if (s.Length > 1)
+            //                                                                        dTedad = ((Tedad != 0 ? 1 : Tedad) * dMultiple) * decimal.Parse(s[1]) + Tedad;
+            //                                                                    else
+            //                                                                        dTedad = Tedad * dMultiple;
+            //                                                                }
+            //                                                                strCal = lst.Where(a => a.Substring(0, 1) == "2").ToList();
+            //                                                                if (strCal.Count != 0)
+            //                                                                {
+            //                                                                    string[] s = strCal[0].ToString().Split('+');
+            //                                                                    if (s.Length > 1)
+            //                                                                        dTool = (Tool != 0 ? 1 : Tool) * decimal.Parse(s[1]) + Tool;
+            //                                                                    else
+
+            //                                                                        dTool = Tool;
+            //                                                                }
+            //                                                                strCal = lst.Where(a => a.Substring(0, 1) == "3").ToList();
+            //                                                                if (strCal.Count != 0)
+            //                                                                {
+            //                                                                    string[] s = strCal[0].ToString().Split('+');
+            //                                                                    if (s.Length > 1)
+            //                                                                        dArz = (Arz != 0 ? 1 : Arz) * decimal.Parse(s[1]) + Arz;
+            //                                                                    else
+
+            //                                                                        dArz = Arz;
+            //                                                                }
+            //                                                                strCal = lst.Where(a => a.Substring(0, 1) == "4").ToList();
+            //                                                                if (strCal.Count != 0)
+            //                                                                {
+            //                                                                    string[] s = strCal[0].ToString().Split('+');
+            //                                                                    if (s.Length > 1)
+            //                                                                        dErtefa = (Ertefa != 0 ? 1 : Ertefa) * decimal.Parse(s[1]) + Ertefa;
+            //                                                                    else
+            //                                                                        dErtefa = Ertefa;
+            //                                                                }
+            //                                                                strCal = lst.Where(a => a.Substring(0, 1) == "5").ToList();
+            //                                                                if (strCal.Count != 0)
+            //                                                                {
+            //                                                                    string[] s = strCal[0].ToString().Split('+');
+            //                                                                    if (s.Length > 1)
+            //                                                                        dVazn = (Vazn != 0 ? 1 : Vazn) * decimal.Parse(s[1]) + Vazn;
+            //                                                                    else
+            //                                                                        dVazn = Vazn;
+            //                                                                }
+            //                                                                /////////////////////
+            //                                                                /////////////////////
+            //                                                                if (DtItemsFields.Rows[0]["IsEnteringValue"].ToString() == "True")
+            //                                                                    RizMetre.Tedad = dTedad;
+            //                                                                else
+            //                                                                    RizMetre.Tedad = 0;
+
+            //                                                                if (DtItemsFields.Rows[1]["IsEnteringValue"].ToString() == "True")
+            //                                                                    RizMetre.Tool = dTool;
+            //                                                                else
+            //                                                                    RizMetre.Tool = 0;
+
+            //                                                                if (DtItemsFields.Rows[2]["IsEnteringValue"].ToString() == "True")
+            //                                                                    RizMetre.Arz = dArz;
+            //                                                                else
+            //                                                                    RizMetre.Arz = 0;
+
+            //                                                                if (DtItemsFields.Rows[3]["IsEnteringValue"].ToString() == "True")
+            //                                                                    RizMetre.Ertefa = dErtefa;
+            //                                                                else
+            //                                                                    RizMetre.Ertefa = 0;
+
+            //                                                                if (DtItemsFields.Rows[4]["IsEnteringValue"].ToString() == "True")
+            //                                                                    RizMetre.Vazn = dVazn;
+            //                                                                else
+            //                                                                    RizMetre.Vazn = 0;
+
+            //                                                                RizMetre.Sharh = Sharh.Trim();
+            //                                                                //RizMetre.Tedad = dTedad;
+            //                                                                //RizMetre.Tool = dTool;
+            //                                                                //RizMetre.Arz = dArz;
+            //                                                                //RizMetre.Ertefa = dErtefa;
+            //                                                                //RizMetre.Vazn = dVazn;
+
+            //                                                                RizMetre.Shomareh = intShomareh;
+            //                                                                RizMetre.ForItem = strForItem;
+            //                                                                RizMetre.UseItem = strUseItem;
+            //                                                                Guid guFBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
+            //                                                                RizMetre.FBId = guFBId;
+            //                                                                RizMetre.LevelNumber = LevelNumber;
+            //                                                                string strForItem1 = strFBShomareh.Trim().Substring(0, 6);
+
+
+            //                                                                dMeghdarJoz = 0;
+            //                                                                if (Tedad == 0 && Tool == 0 && Arz == 0 && Ertefa == 0 && Vazn == 0)
+            //                                                                    dMeghdarJoz = 0;
+            //                                                                else
+            //                                                                    dMeghdarJoz += (Tedad == 0 ? 1 : Tedad) * (Tool == 0 ? 1 : Tool) *
+            //                                                                    (Arz == 0 ? 1 : Arz) * (Ertefa == 0 ? 1 : Ertefa) * (Vazn == 0 ? 1 : Vazn);
+
+            //                                                                RizMetre.MeghdarJoz = dMeghdarJoz;
+
+
+            //                                                                clsRizMetreUsers? clsRizMetreUsers = context.RizMetreUserses.Where(x => x.FBId == guFBId && x.Shomareh == intShomareh
+            //                                                                && x.ForItem == strForItem1 && x.UseItem == strUseItem).FirstOrDefault();
+            //                                                                if (clsRizMetreUsers != null)
+            //                                                                {
+            //                                                                    try
+            //                                                                    {
+            //                                                                        context.Entry(clsRizMetreUsers).CurrentValues.SetValues(RizMetre);
+            //                                                                        context.SaveChanges();
+            //                                                                    }
+            //                                                                    catch (Exception)
+            //                                                                    {
+            //                                                                    }
+            //                                                                }
+            //                                                                //RizMetre.UpdateWithFBIdAndShomareh();
+            //                                                            }
+            //                                                        }
+            //                                                }
+            //                                            }
+            //                                        }
+            //                                    }
+            //                                }
+            //                            }
+            //                            break;
+            //                        }
+            //                    case "5":
+            //                        {
+            //                            var varFBUser1 = context.FBs.Where(x => x.BarAvordId == intBarAvordId && x.Shomareh == strFBShomarehAdded).ToList();
+            //                            DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUser1);
+            //                            //DataTable DtFBUsersAdded = clsOperationItemsFB.FBListWithParameter("BarAvordId=" + intBarAvordId + " and Shomareh='" + strFBShomarehAdded + "'");
+            //                            if (DtFBUsersAdded.Rows.Count != 0)
+            //                            {
+            //                                clsRizMetreUsers RizMetreUsers = new clsRizMetreUsers();
+
+            //                                if (DtItemsFields.Rows[0]["IsEnteringValue"].ToString() == "True")
+            //                                    RizMetreUsers.Tedad = Tedad;
+            //                                else
+            //                                    RizMetreUsers.Tedad = 0;
+
+            //                                if (DtItemsFields.Rows[1]["IsEnteringValue"].ToString() == "True")
+            //                                    RizMetreUsers.Tool = Tool;
+            //                                else
+            //                                    RizMetreUsers.Tool = 0;
+
+            //                                if (DtItemsFields.Rows[2]["IsEnteringValue"].ToString() == "True")
+            //                                    RizMetreUsers.Arz = Arz;
+            //                                else
+            //                                    RizMetreUsers.Arz = 0;
+
+            //                                if (DtItemsFields.Rows[3]["IsEnteringValue"].ToString() == "True")
+            //                                    RizMetreUsers.Ertefa = Ertefa;
+            //                                else
+            //                                    RizMetreUsers.Ertefa = 0;
+
+            //                                if (DtItemsFields.Rows[4]["IsEnteringValue"].ToString() == "True")
+            //                                    RizMetreUsers.Vazn = Vazn;
+            //                                else
+            //                                    RizMetreUsers.Vazn = 0;
+
+            //                                RizMetreUsers.Shomareh = intShomareh;
+            //                                RizMetreUsers.Sharh = Sharh;
+            //                                //RizMetreUsers.Tedad = Tedad;
+            //                                //RizMetreUsers.Tool = Tool;
+            //                                //RizMetreUsers.Arz = Arz;
+            //                                //RizMetreUsers.Ertefa = Ertefa;
+            //                                //RizMetreUsers.Vazn = Vazn;
+            //                                RizMetreUsers.ForItem = strFBShomareh.Trim();
+            //                                RizMetreUsers.UseItem = "";
+            //                                RizMetreUsers.LevelNumber = LevelNumber;
+            //                                Guid guFBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
+            //                                RizMetreUsers.FBId = guFBId;
+
+            //                                dMeghdarJoz = 0;
+            //                                if (Tedad == 0 && Tool == 0 && Arz == 0 && Ertefa == 0 && Vazn == 0)
+            //                                    dMeghdarJoz = 0;
+            //                                else
+            //                                    dMeghdarJoz += (Tedad == 0 ? 1 : Tedad) * (Tool == 0 ? 1 : Tool) *
+            //                                    (Arz == 0 ? 1 : Arz) * (Ertefa == 0 ? 1 : Ertefa) * (Vazn == 0 ? 1 : Vazn);
+
+            //                                RizMetreUsers.MeghdarJoz = dMeghdarJoz;
+            //                                RizMetreUsers.OperationsOfHamlId = 1;
+
+
+            //                                string strForItem = strFBShomareh.Trim().Substring(0, 6);
+            //                                string strUseItem = "";
+            //                                clsRizMetreUsers? clsRizMetreUsers = context.RizMetreUserses.Where(x => x.FBId == guFBId && x.Shomareh == intShomareh
+            //                                && x.ForItem == strForItem && x.UseItem == strUseItem).FirstOrDefault();
+            //                                if (clsRizMetreUsers != null)
+            //                                {
+            //                                    try
+            //                                    {
+            //                                        var entry = context.Entry(clsRizMetreUsers);
+            //                                        var excludedProperties = new[] { "ID", "CreatedDate", "Type" };
+
+            //                                        foreach (var property in entry.OriginalValues.Properties)
+            //                                        {
+            //                                            if (!excludedProperties.Contains(property.Name))
+            //                                            {
+            //                                                var newValue = RizMetreUsers.GetType().GetProperty(property.Name)?.GetValue(RizMetreUsers);
+            //                                                entry.CurrentValues[property] = newValue;
+            //                                            }
+            //                                        }
+            //                                        //context.Entry(clsRizMetreUsers).CurrentValues.SetValues(RizMetreUsers);
+            //                                        context.SaveChanges();
+            //                                    }
+            //                                    catch (Exception)
+            //                                    {
+            //                                    }
+            //                                }
+            //                                //RizMetreUsers.UpdateWithFBIdAndShomareh();
+            //                            }
+            //                            break;
+            //                        }
+            //                    case "6":
+            //                        {
+            //                            var varFBUsersAdded = context.FBs.Where(x => x.BarAvordId == intBarAvordId && x.Shomareh == strFBShomarehAdded).ToList();
+            //                            DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
+            //                            //DataTable DtFBUsersAdded = clsOperationItemsFB.FBListWithParameter("BarAvordId=" + intBarAvordId + " and Shomareh='" + strFBShomarehAdded + "'");
+            //                            if (DtFBUsersAdded.Rows.Count != 0)
+            //                            {
+            //                                string strCondition = Dr[idr]["Condition"].ToString().Trim();
+            //                                string strFinalWorking = Dr[idr]["FinalWorking"].ToString();
+            //                                string strConditionOp = strCondition.Replace("x", Ertefa.ToString().Trim());
+            //                                StringToFormula StringToFormula = new StringToFormula();
+            //                                bool blnCheck = StringToFormula.RelationalExpression(strConditionOp);
+            //                                if (blnCheck)
+            //                                {
+            //                                    strFinalWorking = strFinalWorking.Replace("x", Ertefa.ToString().Trim());
+            //                                    clsRizMetreUsers RizMetreUsers = new clsRizMetreUsers();
+            //                                    RizMetreUsers.Shomareh = intShomareh;
+            //                                    RizMetreUsers.Sharh = Sharh;
+
+
+            //                                    if (DtItemsFields.Rows[0]["IsEnteringValue"].ToString() == "True")
+            //                                        RizMetreUsers.Tedad = ((Tedad == 0) ? 1 : Tedad);
+            //                                    else
+            //                                        RizMetreUsers.Tedad = 0;
+
+            //                                    if (DtItemsFields.Rows[1]["IsEnteringValue"].ToString() == "True")
+            //                                        RizMetreUsers.Tool = Tool;
+            //                                    else
+            //                                        RizMetreUsers.Tool = 0;
+
+            //                                    if (DtItemsFields.Rows[2]["IsEnteringValue"].ToString() == "True")
+            //                                        RizMetreUsers.Arz = Arz;
+            //                                    else
+            //                                        RizMetreUsers.Arz = 0;
+
+            //                                    if (DtItemsFields.Rows[3]["IsEnteringValue"].ToString() == "True")
+            //                                        RizMetreUsers.Ertefa = Ertefa;
+            //                                    else
+            //                                        RizMetreUsers.Ertefa = 0;
+
+            //                                    if (DtItemsFields.Rows[4]["IsEnteringValue"].ToString() == "True")
+            //                                        RizMetreUsers.Vazn = Vazn;
+            //                                    else
+            //                                        RizMetreUsers.Vazn = 0;
+            //                                    RizMetreUsers.ForItem = strFBShomareh.Trim();
+            //                                    RizMetreUsers.UseItem = "";
+            //                                    Guid guFBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
+            //                                    RizMetreUsers.FBId = guFBId;
+
+            //                                    dMeghdarJoz = 0;
+            //                                    if (Tedad == 0 && Tool == 0 && Arz == 0 && Ertefa == 0 && Vazn == 0)
+            //                                        dMeghdarJoz = 0;
+            //                                    else
+            //                                        dMeghdarJoz += (Tedad == 0 ? 1 : Tedad) * (Tool == 0 ? 1 : Tool) *
+            //                                        (Arz == 0 ? 1 : Arz) * (Ertefa == 0 ? 1 : Ertefa) * (Vazn == 0 ? 1 : Vazn);
+
+            //                                    RizMetreUsers.MeghdarJoz = dMeghdarJoz;
+            //                                    RizMetreUsers.OperationsOfHamlId = 1;
+
+
+            //                                    string strForItem = strFBShomareh.Trim().Substring(0, 6);
+            //                                    string strUseItem = "";
+            //                                    clsRizMetreUsers? clsRizMetreUsers = context.RizMetreUserses.Where(x => x.FBId == guFBId && x.Shomareh == intShomareh
+            //                                    && x.ForItem == strForItem && x.UseItem == strUseItem).FirstOrDefault();
+            //                                    bool blnCheckUpdate = false;
+            //                                    if (clsRizMetreUsers != null)
+            //                                    {
+            //                                        try
+            //                                        {
+            //                                            var entry = context.Entry(clsRizMetreUsers);
+            //                                            var excludedProperties = new[] { "ID", "CreatedDate", "Type" };
+
+            //                                            foreach (var property in entry.OriginalValues.Properties)
+            //                                            {
+            //                                                if (!excludedProperties.Contains(property.Name))
+            //                                                {
+            //                                                    var newValue = RizMetreUsers.GetType().GetProperty(property.Name)?.GetValue(RizMetreUsers);
+            //                                                    entry.CurrentValues[property] = newValue;
+            //                                                }
+            //                                            }
+            //                                            //context.Entry(clsRizMetreUsers).CurrentValues.SetValues(RizMetreUsers);
+            //                                            context.SaveChanges();
+            //                                            blnCheckUpdate = true;
+            //                                        }
+            //                                        catch (Exception)
+            //                                        {
+            //                                            blnCheckUpdate = false;
+            //                                        }
+            //                                    }
+            //                                    //if (!RizMetreUsers.UpdateWithFBIdAndShomareh())
+            //                                    if (!blnCheckUpdate)
+            //                                    {
+            //                                        RizMetre.ID = Guid.NewGuid();
+            //                                        RizMetre.Sharh = Sharh.Trim();
+            //                                        RizMetre.Tedad = Tedad;
+            //                                        RizMetre.Tool = Tool;
+            //                                        RizMetre.Arz = Arz;
+            //                                        RizMetre.Ertefa = Ertefa;
+            //                                        RizMetre.Vazn = Vazn;
+            //                                        RizMetre.FBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
+            //                                        RizMetre.Shomareh = intShomareh;
+            //                                        RizMetre.Des = Dr[idr]["DesOfAddingItems"].ToString().Trim() + " به آیتم " + strFBShomareh.Trim();
+            //                                        RizMetre.Type = "2";
+            //                                        RizMetre.ForItem = strFBShomareh.Trim();
+            //                                        RizMetre.UseItem = "";
+            //                                        RizMetre.LevelNumber = LevelNumber;
+
+
+            //                                        ///محاسبه مقدار جزء
+            //                                        dMeghdarJoz = 0;
+            //                                        if (Tedad == 0 && Tool == 0 && Arz == 0 && Ertefa == 0 && Vazn == 0)
+            //                                            dMeghdarJoz = 0;
+            //                                        else
+            //                                            dMeghdarJoz += (Tedad == 0 ? 1 : Tedad) * (Tool == 0 ? 1 : Tool) *
+            //                                            (Arz == 0 ? 1 : Arz) * (Ertefa == 0 ? 1 : Ertefa) * (Vazn == 0 ? 1 : Vazn);
+            //                                        RizMetre.MeghdarJoz = dMeghdarJoz;
+
+
+            //                                        context.RizMetreUserses.Add(RizMetre);
+            //                                        context.SaveChanges();
+            //                                        //RizMetre.Save();
+            //                                    }
+            //                                }
+            //                                else
+            //                                {
+            //                                    Guid guFBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
+            //                                    var clsRizMetreUsers = context.RizMetreUserses.Where(x => x.FBId == guFBId && x.ForItem == strFBShomareh.Trim()
+            //                                                                                        && x.Shomareh == intShomareh).ToList();
+
+            //                                    if (clsRizMetreUsers != null)
+            //                                    {
+            //                                        context.RizMetreUserses.RemoveRange(clsRizMetreUsers);
+            //                                        context.SaveChanges();
+            //                                    }
+            //                                    //clsRizMetreUserss.Delete("FBId=" + DtFBUsersAdded.Rows[0]["Id"].ToString().Trim() + " and ForItem='" + strFBShomareh.Trim() + "' and clsRizMetreUserss.Shomareh=" + intShomareh);
+            //                                }
+            //                            }
+            //                            break;
+            //                        }
+            //                    case "8":
+            //                        {
+            //                            var varFBUsersAdded = context.FBs.Where(x => x.BarAvordId == intBarAvordId && x.Shomareh == strFBShomarehAdded).ToList();
+            //                            DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFBUsersAdded);
+
+            //                            //DataTable DtFBUsersAdded = clsOperationItemsFB.FBListWithParameter("BarAvordId=" + intBarAvordId + " and Shomareh='" + strFBShomarehAdded + "'");
+            //                            if (DtFBUsersAdded.Rows.Count != 0)
+            //                            {
+            //                                string strCondition = Dr[idr]["Condition"].ToString().Trim();
+            //                                string strFinalWorking = Dr[idr]["FinalWorking"].ToString();
+            //                                string strConditionOp = strCondition.Replace("x", Arz.ToString().Trim());
+            //                                StringToFormula StringToFormula = new StringToFormula();
+            //                                bool blnCheck = StringToFormula.RelationalExpression(strConditionOp);
+            //                                if (blnCheck)
+            //                                {
+            //                                    strFinalWorking = strFinalWorking.Replace("x", Arz.ToString().Trim());
+            //                                    clsRizMetreUsers RizMetreUsers = new clsRizMetreUsers();
+            //                                    RizMetreUsers.Shomareh = intShomareh;
+            //                                    RizMetreUsers.Sharh = Sharh;
+
+            //                                    decimal ArzEzafi = 1;
+            //                                    if (strFinalWorking != "")
+            //                                    {
+            //                                        ArzEzafi = decimal.Parse(StringToFormula.Eval(strFinalWorking).ToString());
+            //                                    }
+
+            //                                    if (DtItemsFields.Rows[0]["IsEnteringValue"].ToString() == "True")
+            //                                        RizMetreUsers.Tedad = ((Tedad == 0) ? 1 : Tedad) * ArzEzafi;
+            //                                    else
+            //                                        RizMetreUsers.Tedad = 0;
+
+            //                                    if (DtItemsFields.Rows[1]["IsEnteringValue"].ToString() == "True")
+            //                                        RizMetreUsers.Tool = Tool;
+            //                                    else
+            //                                        RizMetreUsers.Tool = 0;
+
+            //                                    if (DtItemsFields.Rows[2]["IsEnteringValue"].ToString() == "True")
+            //                                        RizMetreUsers.Arz = Arz;
+            //                                    else
+            //                                        RizMetreUsers.Arz = 0;
+
+            //                                    if (DtItemsFields.Rows[3]["IsEnteringValue"].ToString() == "True")
+            //                                        RizMetreUsers.Ertefa = Ertefa;
+            //                                    else
+            //                                        RizMetreUsers.Ertefa = 0;
+
+            //                                    if (DtItemsFields.Rows[4]["IsEnteringValue"].ToString() == "True")
+            //                                        RizMetreUsers.Vazn = Vazn;
+            //                                    else
+            //                                        RizMetreUsers.Vazn = 0;
+            //                                    RizMetreUsers.ForItem = strFBShomareh.Trim();
+            //                                    RizMetreUsers.UseItem = "";
+            //                                    Guid guFBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
+            //                                    RizMetreUsers.FBId = guFBId;
+
+            //                                    dMeghdarJoz = 0;
+            //                                    if (Tedad == 0 && Tool == 0 && Arz == 0 && Ertefa == 0 && Vazn == 0)
+            //                                        dMeghdarJoz = 0;
+            //                                    else
+            //                                        dMeghdarJoz += (Tedad == 0 ? 1 : Tedad) * (Tool == 0 ? 1 : Tool) *
+            //                                        (Arz == 0 ? 1 : Arz) * (Ertefa == 0 ? 1 : Ertefa) * (Vazn == 0 ? 1 : Vazn);
+
+            //                                    RizMetre.MeghdarJoz = dMeghdarJoz;
+            //                                    RizMetreUsers.OperationsOfHamlId = 1;
+
+            //                                    bool blnCheckUpdate = false;
+            //                                    string strForItem = strFBShomareh.Trim().Substring(0, 6);
+            //                                    string strUseItem = "";
+            //                                    clsRizMetreUsers? clsRizMetreUsers = context.RizMetreUserses.Where(x => x.FBId == guFBId && x.Shomareh == intShomareh
+            //                                    && x.ForItem == strForItem && x.UseItem == strUseItem).FirstOrDefault();
+            //                                    if (clsRizMetreUsers != null)
+            //                                    {
+            //                                        try
+            //                                        {
+            //                                            var entry = context.Entry(clsRizMetreUsers);
+            //                                            var excludedProperties = new[] { "ID", "CreatedDate", "Type" };
+
+            //                                            foreach (var property in entry.OriginalValues.Properties)
+            //                                            {
+            //                                                if (!excludedProperties.Contains(property.Name))
+            //                                                {
+            //                                                    var newValue = RizMetreUsers.GetType().GetProperty(property.Name)?.GetValue(RizMetreUsers);
+            //                                                    entry.CurrentValues[property] = newValue;
+            //                                                }
+            //                                            }
+            //                                            //context.Entry(clsRizMetreUsers).CurrentValues.SetValues(RizMetreUsers);
+            //                                            context.SaveChanges();
+            //                                            blnCheckUpdate = true;
+            //                                        }
+            //                                        catch (Exception)
+            //                                        {
+            //                                            blnCheckUpdate = false;
+            //                                        }
+            //                                    }
+            //                                    //if (!RizMetreUsers.UpdateWithFBIdAndShomareh())
+            //                                    if (!blnCheckUpdate)
+            //                                    {
+            //                                        RizMetre.ID = Guid.NewGuid();
+            //                                        RizMetre.Sharh = Sharh.Trim();
+            //                                        RizMetre.Tedad = Tedad;
+            //                                        RizMetre.Tool = Tool;
+            //                                        RizMetre.Arz = Arz;
+            //                                        RizMetre.Ertefa = Ertefa;
+            //                                        RizMetre.Vazn = Vazn;
+            //                                        RizMetre.FBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
+            //                                        RizMetre.Shomareh = intShomareh;
+            //                                        RizMetre.Des = Dr[idr]["DesOfAddingItems"].ToString().Trim() + " به آیتم " + strFBShomareh.Trim();
+            //                                        RizMetre.Type = "2";
+            //                                        RizMetre.ForItem = strFBShomareh.Trim();
+            //                                        RizMetre.UseItem = "";
+            //                                        RizMetre.LevelNumber = LevelNumber;
+
+
+            //                                        ///محاسبه مقدار جزء
+            //                                        dMeghdarJoz = 0;
+            //                                        if (Tedad == 0 && Tool == 0 && Arz == 0 && Ertefa == 0 && Vazn == 0)
+            //                                            dMeghdarJoz = 0;
+            //                                        else
+            //                                            dMeghdarJoz += (Tedad == 0 ? 1 : Tedad) * (Tool == 0 ? 1 : Tool) *
+            //                                            (Arz == 0 ? 1 : Arz) * (Ertefa == 0 ? 1 : Ertefa) * (Vazn == 0 ? 1 : Vazn);
+            //                                        RizMetre.MeghdarJoz = dMeghdarJoz;
+
+
+            //                                        context.RizMetreUserses.Add(RizMetre);
+            //                                        context.SaveChanges();
+            //                                        //RizMetre.Save();
+            //                                    }
+            //                                }
+            //                                else
+            //                                {
+            //                                    //clsRizMetreUserss.Delete("FBId=" + DtFBUsersAdded.Rows[0]["Id"].ToString().Trim() + " and ForItem='" + strFBShomareh.Trim() + "' and clsRizMetreUserss.Shomareh=" + intShomareh);
+            //                                    Guid guFBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
+            //                                    strFBShomareh = strFBShomareh.Trim();
+            //                                    var clsRizMetreUsers = context.RizMetreUserses.Where(x => x.ID == guFBId && x.ForItem == strFBShomareh.Trim()
+            //                                                                                        && x.Shomareh == intShomareh);
+
+            //                                    if (clsRizMetreUsers != null)
+            //                                    {
+            //                                        context.RizMetreUserses.RemoveRange(clsRizMetreUsers);
+            //                                        context.SaveChanges();
+            //                                    }
+            //                                }
+            //                            }
+            //                            break;
+            //                        }
+            //                    default:
+            //                        break;
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
+
+            //if (DtItemsFBShomarehValueShomareh.Rows.Count != 0)
+            //{
+            //    string strGetValuesShomareh = DtItemsFBShomarehValueShomareh.Rows[0]["GetValuesShomareh"].ToString().Trim();
+            //    var varFB1 = context.FBs.Where(x => x.BarAvordId == intBarAvordId && x.Shomareh == strGetValuesShomareh).ToList();
+            //    DataTable DtFBUsersAdded = clsConvert.ToDataTable(varFB1);
+
+            //    //DataTable DtFBUsersAdded = clsOperationItemsFB.FBListWithParameter("BarAvordId=" + intBarAvordId + " and Shomareh='" + DtItemsFBShomarehValueShomareh.Rows[0]["GetValuesShomareh"].ToString().Trim() + "'");
+            //    string strUsersAdded = DtFBUsersAdded.Rows[0]["Shomareh"].ToString().Trim();
+            //    var varItemsForGetValues = context.ItemsForGetValuess.Where(x => x.ItemShomareh == strUsersAdded && x.Year == Year).ToList();
+            //    DataTable DtItemsForGetValues = clsConvert.ToDataTable(varItemsForGetValues);
+            //    //DataTable DtItemsForGetValues = clsOperationItemsFB.ItemsForGetValuesListWithParameter("ItemShomareh='" + DtFBUsersAdded.Rows[0]["Shomareh"].ToString().Trim() + "' and Year=1397");// and ItemShomarehForGetValue='" + ItemsFBShomareh + "'");
+
+            //    if (DtItemsForGetValues.Rows[0]["RizMetreFieldsRequire"].ToString().Trim() != "")
+            //        if (DtItemsForGetValues.Rows.Count != 0)
+            //        {
+            //            if (strFBShomareh.Trim() != "")
+            //            {
+            //                DataRow[] DrItemsForGetValues = DtItemsForGetValues.Select("ItemShomarehForGetValue='" + strFBShomareh.Trim() + "'");
+
+            //                clsItemsFBShomarehValueShomareh ItemsFBShomarehValueShomareh = new clsItemsFBShomarehValueShomareh();
+
+            //                string[] strRizMetreFieldsRequire = DtItemsForGetValues.Rows[0]["RizMetreFieldsRequire"].ToString().Split(',');
+            //                List<string> lst = new List<string>();
+            //                for (int j = 0; j < strRizMetreFieldsRequire.Length; j++)
+            //                {
+            //                    lst.Add(strRizMetreFieldsRequire[j]);
+            //                }
+
+            //                decimal dTedad = 0;
+            //                decimal dTool = 0;
+            //                decimal dArz = 0;
+            //                decimal dErtefa = 0;
+            //                decimal dVazn = 0;
+            //                var strCal = lst.Where(a => a.Substring(0, 1) == "1").ToList();
+            //                if (strCal.Count != 0)
+            //                {
+            //                    string[] s = strCal[0].ToString().Split('+');
+            //                    if (s.Length > 1)
+            //                        dTedad = (Tedad != 0 ? 1 : Tedad) * decimal.Parse(s[1]) + Tedad;
+            //                    else
+            //                        dTedad = Tedad;
+            //                }
+            //                strCal = lst.Where(a => a.Substring(0, 1) == "2").ToList();
+            //                if (strCal.Count != 0)
+            //                {
+            //                    string[] s = strCal[0].ToString().Split('+');
+            //                    if (s.Length > 1)
+            //                        dTool = (Tool != 0 ? 1 : Tool) * decimal.Parse(s[1]) + Tool;
+            //                    else
+
+            //                        dTool = Tool;
+            //                }
+            //                strCal = lst.Where(a => a.Substring(0, 1) == "3").ToList();
+            //                if (strCal.Count != 0)
+            //                {
+            //                    string[] s = strCal[0].ToString().Split('+');
+            //                    if (s.Length > 1)
+            //                        dArz = (Arz != 0 ? 1 : Arz) * decimal.Parse(s[1]) + Arz;
+            //                    else
+
+            //                        dArz = Arz;
+            //                }
+            //                strCal = lst.Where(a => a.Substring(0, 1) == "4").ToList();
+            //                if (strCal.Count != 0)
+            //                {
+            //                    string[] s = strCal[0].ToString().Split('+');
+            //                    if (s.Length > 1)
+            //                        dErtefa = (Ertefa != 0 ? 1 : Ertefa) * decimal.Parse(s[1]) + Ertefa;
+            //                    else
+            //                        dErtefa = Ertefa;
+            //                }
+            //                strCal = lst.Where(a => a.Substring(0, 1) == "5").ToList();
+            //                if (strCal.Count != 0)
+            //                {
+            //                    string[] s = strCal[0].ToString().Split('+');
+            //                    if (s.Length > 1)
+            //                        dVazn = (Vazn != 0 ? 1 : Vazn) * decimal.Parse(s[1]) + Vazn;
+            //                    else
+            //                        dVazn = Vazn;
+            //                }
+
+            //                Guid guFBId = Guid.Parse(DtFBUsersAdded.Rows[0]["ID"].ToString().Trim());
+            //                RizMetre.Sharh = Sharh.Trim();
+            //                RizMetre.Tedad = dTedad;
+            //                RizMetre.Tool = dTool;
+            //                RizMetre.Arz = dArz;
+            //                RizMetre.Ertefa = dErtefa;
+            //                RizMetre.Vazn = dVazn;
+            //                RizMetre.FBId = guFBId;
+            //                RizMetre.Shomareh = intShomareh;
+            //                RizMetre.ForItem = strFBShomareh.Trim();
+            //                RizMetre.UseItem = "";
+
+            //                dMeghdarJoz = 0;
+            //                if (Tedad == 0 && Tool == 0 && Arz == 0 && Ertefa == 0 && Vazn == 0)
+            //                    dMeghdarJoz = 0;
+            //                else
+            //                    dMeghdarJoz += (Tedad == 0 ? 1 : Tedad) * (Tool == 0 ? 1 : Tool) *
+            //                    (Arz == 0 ? 1 : Arz) * (Ertefa == 0 ? 1 : Ertefa) * (Vazn == 0 ? 1 : Vazn);
+
+            //                RizMetre.MeghdarJoz = dMeghdarJoz;
+
+            //                string strForItem = strFBShomareh.Trim().Substring(0, 6);
+            //                string strUseItem = "";
+            //                clsRizMetreUsers? clsRizMetreUsers = context.RizMetreUserses.Where(x => x.FBId == guFBId && x.Shomareh == intShomareh
+            //                && x.ForItem == strForItem && x.UseItem == strUseItem).FirstOrDefault();
+            //                if (clsRizMetreUsers != null)
+            //                {
+            //                    var entry = context.Entry(clsRizMetreUsers);
+            //                    var excludedProperties = new[] { "ID", "CreatedDate", "Type" };
+
+            //                    foreach (var property in entry.OriginalValues.Properties)
+            //                    {
+            //                        if (!excludedProperties.Contains(property.Name))
+            //                        {
+            //                            var newValue = RizMetre.GetType().GetProperty(property.Name)?.GetValue(RizMetre);
+            //                            entry.CurrentValues[property] = newValue;
+            //                        }
+            //                    }
+            //                    //context.Entry(clsRizMetreUsers).CurrentValues.SetValues(RizMetre);
+            //                    context.SaveChanges();
+            //                }
+            //            }
+            //        }
+            //}
+        }
+        return new JsonResult("OK_");
         //}
         //catch (Exception)
         //{
@@ -3507,7 +3507,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                     if (DrItemsHasConditionWithItemFBShomarehFiltered[ii]["HasEnteringValue"].ToString() == "True")
                                     {
                                         string strMeghdar = "0";
-                                        strDes = DrItemsHasConditionWithItemFBShomarehFiltered[ii]["HasDes"].ToString().Trim() == "True" ? "<span style=\"margin-left:30px\">" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["TitleDes"].ToString().Trim() + "</span>" : "";
+                                        strDes = "<span style=\"margin-left:30px\">" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["TitleDes"].ToString().Trim() + "</span>";// DrItemsHasConditionWithItemFBShomarehFiltered[ii]["HasDes"].ToString().Trim() == "True" ? "<span style=\"margin-left:30px\">" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["TitleDes"].ToString().Trim() + "</span>" : "";
                                         if (Dr.Length != 0)
                                         {
 
@@ -3627,7 +3627,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                 DataRow[] Dr = DtItemsHasConditionAddedToFB.Select("ItemsHasCondition_ConditionContextId=" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ID"].ToString());
                                 if (DrItemsHasConditionWithItemFBShomarehFiltered[0]["HasEnteringValue"].ToString() == "True")
                                 {
-                                    strDes = DrItemsHasConditionWithItemFBShomarehFiltered[0]["HasDes"].ToString().Trim() == "True" ? "<div class=\"col-md-1\"><span>" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["TitleDes"].ToString().Trim() + "</span></div>" : "";
+                                    strDes = "<div class=\"col-md-1\"><span>" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["TitleDes"].ToString().Trim() + "</span></div>";//DrItemsHasConditionWithItemFBShomarehFiltered[0]["HasDes"].ToString().Trim() == "True" ? "<div class=\"col-md-1\"><span>" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["TitleDes"].ToString().Trim() + "</span></div>" : "";
                                     if (Dr.Length != 0)
                                     {
 
@@ -3809,7 +3809,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                 decimal dTool = decimal.Parse(DtRizMetreUsers.Rows[i]["Tool"].ToString());
                 decimal dArz = decimal.Parse(DtRizMetreUsers.Rows[i]["Arz"].ToString());
                 decimal dErtefa = decimal.Parse(DtRizMetreUsers.Rows[i]["Ertefa"].ToString());
-                decimal dVazn = decimal.Parse(DtRizMetreUsers.Rows[i]["Vazn"].ToString());
+                decimal dVazn = decimal.Parse(DtRizMetreUsers.Rows[i]["Vazn"].ToString().Trim()==""?"0": DtRizMetreUsers.Rows[i]["Vazn"].ToString().Trim());
                 if (dTedad == 0 && dTool == 0 && dArz == 0 && dErtefa == 0 && dVazn == 0)
                     dMeghdarJoz = 0;
                 else
@@ -3889,7 +3889,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                 string strTool = decimal.Parse(DtRizMetreUsers.Rows[i]["Tool"].ToString()) == 0 ? "" : decimal.Parse(DtRizMetreUsers.Rows[i]["Tool"].ToString()).ToString("G29");
                 string strArz = decimal.Parse(DtRizMetreUsers.Rows[i]["Arz"].ToString()) == 0 ? "" : decimal.Parse(DtRizMetreUsers.Rows[i]["Arz"].ToString()).ToString("G29");
                 string strErtefa = decimal.Parse(DtRizMetreUsers.Rows[i]["Ertefa"].ToString()) == 0 ? "" : decimal.Parse(DtRizMetreUsers.Rows[i]["Ertefa"].ToString()).ToString("G29");
-                string strVazn = decimal.Parse(DtRizMetreUsers.Rows[i]["Vazn"].ToString()) == 0 ? "" : decimal.Parse(DtRizMetreUsers.Rows[i]["Vazn"].ToString()).ToString("G29");
+                string strVazn = DtRizMetreUsers.Rows[i]["Vazn"].ToString().Trim() == "" ? "0" : decimal.Parse(DtRizMetreUsers.Rows[i]["Vazn"].ToString()).ToString("G29");
 
                 str += "<div class=\"row styleRowTable\" onclick=\"RizMetreSelectClick('" + DtRizMetreUsers.Rows[i]["ID"].ToString() + "')\"><div class=\"col-md-1\"><div class=\"col-md-12\" style=\"padding-left:0px;\"><span>" + DtRizMetreUsers.Rows[i]["Shomareh"].ToString() + "</span></div>" + strEzafeBaha + "</div>";
                 str += "<div class=\"col-md-2\"><input type=\"text\" disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\" id=\"txtSharh" + DtRizMetreUsers.Rows[i]["ID"].ToString() + "\" value=\"" + DtRizMetreUsers.Rows[i]["Sharh"].ToString() + "\"/></div>";
@@ -5396,7 +5396,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
             else
                 ShomareNew = RizMetreUser.Shomareh;
         }
-
+     
         foreach (var RM in varRizMetreUserses)
         {
             //string[] strParamSplit = strParam[ii].Split(',');
@@ -6165,6 +6165,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                             FBSave.NoeFBId = NoeFBId;
                                             FBSave.Shomareh = strAddedItems.Trim();
                                             FBSave.BahayeVahedZarib = 0;
+                                            FBSave.BahayeVahedSharh = AddingToFB.DesOfAddingItems;
                                             context.FBs.Add(FBSave);
                                             context.SaveChanges();
                                             FBId = FBSave.ID;
@@ -7746,8 +7747,28 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
 
         List<clsRizMetreUsers> lstAllRizMetre = context.RizMetreUserses.Include(x => x.FB).Where(x => x.FB.BarAvordId == BarAvordId && x.ForItem.Substring(0, 6) == ItemFBShomareh).ToList();
         clsRizMetreUsers? entity = context.RizMetreUserses.Find(request.Id);
+
+
         if (entity != null)
         {
+            ///پیدا کردن آیتم پایه
+            ///
+            clsRizMetreUsers? rizMetreUsersBase = context.RizMetreUserses.Include(x => x.FB).FirstOrDefault(x => x.FB.BarAvordId == BarAvordId && x.FB.Shomareh == ItemFBShomareh && x.Shomareh == entity.Shomareh);
+            if (rizMetreUsersBase!=null)
+            {
+                clsRizMetreUsersHistory? rizMetreUsersHistory = context.RizMetreUsersHistories.FirstOrDefault(x => x.RizMetreUsersId == rizMetreUsersBase.ID);
+                if (rizMetreUsersHistory!=null)
+                {
+                    rizMetreUsersBase.Sharh = rizMetreUsersHistory.Sharh;
+                    rizMetreUsersBase.Tedad = rizMetreUsersHistory.Tedad;
+                    rizMetreUsersBase.Tool = rizMetreUsersHistory.Tool;
+                    rizMetreUsersBase.Arz = rizMetreUsersHistory.Arz;
+                    rizMetreUsersBase.Ertefa = rizMetreUsersHistory.Ertefa;
+                    rizMetreUsersBase.MeghdarJoz = rizMetreUsersHistory.MeghdarJoz;
+                    rizMetreUsersBase.Des = rizMetreUsersHistory.Des;
+                    context.RizMetreUsersHistories.Remove(rizMetreUsersHistory);
+                }
+            }
             context.RizMetreUserses.Remove(entity);
             // context.SaveChanges();
 
