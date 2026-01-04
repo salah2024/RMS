@@ -9,6 +9,7 @@ using static RMS.Models.Common.EnumForEntity;
 using RMS.Controllers.AmalyateKhaki.Dto;
 using RMS.Controllers.AmalyateKhaki.Common;
 using Microsoft.AspNetCore.Authorization;
+using RMS.Controllers.PayKani.Dto;
 
 namespace RMS.Controllers.PayKani;
 public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : Controller
@@ -22,9 +23,10 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
         return new JsonResult(lstNoePayKani);
     }
 
+
+    [HttpPost]
     public JsonResult SavePayKaniInfoForBarAvord([FromBody] SavePayKaniInfoForBarAvordDto request)
     {
-
         Guid BarAvordUserId = request.BarAvordUserId;
         NoeFehrestBaha NoeFBId = request.NoeFBId;
 
@@ -40,20 +42,10 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
         List<clsNoeKhakBardari> lstNoeKB = _context.NoeKhakBardaris.Where(x => lstlngNoePayKani.Contains(x.Id)).ToList();
 
         decimal dHKB = decimal.Parse(HKB);
-        int intKMNum = 1;
-        clsPayKaniInfoForBarAvord? KMNum = _context.PayKaniInfoForBarAvords.OrderByDescending(x => x.KMNum).FirstOrDefault(x => x.BaravordUserId == BarAvordUserId);
-
-        if (KMNum != null)
-        {
-            intKMNum = KMNum.KMNum + 1; //int.Parse(DtKMNum.Rows[0]["KMNum"].ToString()) + 1;
-        }
 
         clsPayKaniInfoForBarAvord PayKaniInfoForBarAvord = new clsPayKaniInfoForBarAvord();
         PayKaniInfoForBarAvord.BaravordUserId = BarAvordUserId;
-        PayKaniInfoForBarAvord.FromKM = FromKM.ToString();
-        PayKaniInfoForBarAvord.ToKM = ToKM.ToString();
         PayKaniInfoForBarAvord.Name = "";
-        PayKaniInfoForBarAvord.KMNum = intKMNum;
         PayKaniInfoForBarAvord.Value = dHKB;
         PayKaniInfoForBarAvord.Type = Type;
         _context.PayKaniInfoForBarAvords.Add(PayKaniInfoForBarAvord);
@@ -180,10 +172,10 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
                         RizMetre.Arz = null;
                         RizMetre.Ertefa = null;
                         RizMetre.Vazn = Hajm;
-                        RizMetre.Des = "کیلومتراژ " + FromKM + " تا " + ToKM;
+                        RizMetre.Des = "";
                         RizMetre.FBId = gFBId;
                         RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "1";//"400" + KMNum.ToString("D3") + "05";///خاکبرداری با مواد سوزا
+                        RizMetre.Type = "1";
                         RizMetre.ForItem = "";
                         RizMetre.UseItem = "";
 
@@ -213,7 +205,7 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
         }
 
         _context.SaveChanges();
-        return new JsonResult("OK_" + Id + "_" + intKMNum);
+        return new JsonResult("OK_" + Id);
     }
 
 
@@ -223,12 +215,9 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
         {
             Guid BarAvordUserId = request.BarAvordUserId;
             NoeFehrestBaha NoeFBId = request.NoeFBId;
-            long FromKM = request.FromKM;
-            long ToKM = request.ToKM;
             string HKB = request.HKB;
             Guid KMPayKaniId = request.KMPayKaniId;
             long Year = request.Year;
-            long Num = request.KMNum;
 
             DateTime Now = DateTime.Now;
             List<PayKaniInfoForBarAvordItemsForUpdateDto> lstItems = request.lstItems;
@@ -239,14 +228,12 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
 
             decimal dHKB = decimal.Parse(HKB);
 
-            clsPayKaniInfoForBarAvord? currentPayKaniInfoForBarAvord = _context.PayKaniInfoForBarAvords.FirstOrDefault(x => x.BaravordUserId == BarAvordUserId && x.KMNum == Num);
+            clsPayKaniInfoForBarAvord? currentPayKaniInfoForBarAvord = _context.PayKaniInfoForBarAvords.FirstOrDefault(x => x.BaravordUserId == BarAvordUserId && x.NoeFBId == NoeFBId);
             if (currentPayKaniInfoForBarAvord != null)
             {
 
                 _context.Entry(currentPayKaniInfoForBarAvord).CurrentValues.SetValues(new
                 {
-                    FromKM = FromKM.ToString(),
-                    ToKM = ToKM.ToString(),
                     Value = dHKB
                 });
 
@@ -380,7 +367,7 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
                                 BarAvordId = BarAvordUserId,
                                 InsertDateTime = Now,
                                 Shomareh = strCurrentShomareh,
-                                NoeFBId=NoeFBId
+                                NoeFBId = NoeFBId
                             };
                             _context.FBs.Add(newFB);
                             gFBId = newFB.ID;
@@ -397,10 +384,10 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
                             RizMetre.Arz = null;
                             RizMetre.Ertefa = null;
                             RizMetre.Vazn = Hajm;
-                            RizMetre.Des = "کیلومتراژ " + FromKM + " تا " + ToKM;
+                            RizMetre.Des = "";
                             RizMetre.FBId = gFBId;
                             RizMetre.OperationsOfHamlId = 1;
-                            RizMetre.Type = "1";//"400" + KMNum.ToString("D3") + "05";///خاکبرداری با مواد سوزا
+                            RizMetre.Type = "1";
                             RizMetre.ForItem = "";
                             RizMetre.UseItem = "";
 
@@ -418,39 +405,6 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
                         }
                     }
                 }
-
-                ////
-                /////دریافت اضافه بهاهای درج شده
-                ////
-
-                //List<clsPayKaniInfoForBarAvordEzafeBaha> lstAKhForBEB =
-                //        _context.PayKaniInfoForBarAvordEzafeBahas.Where(x => x.PayKaniInfoForBarAvordId == currentPayKaniInfoForBarAvord.ID).ToList();
-
-                /////حذف اضافه بهاهای قبلی
-                //_context.PayKaniInfoForBarAvordEzafeBahas.RemoveRange(lstAKhForBEB);
-
-
-                //SaveEzafeBahaPayKaniDto request1 = new SaveEzafeBahaPayKaniDto
-                //{
-                //    PayKaniInfoForBarAvordId = currentPayKaniInfoForBarAvord.ID,
-                //    BarAvordUserId = BarAvordUserId,
-                //    Year = Year
-                //};
-                //_context.SaveChanges();
-
-                //List<long> lstAKh = lstAKhForBEB.Select(x => x.NoeKhakBardariEzafeBahaId).ToList();
-
-                //foreach (var item in lstAKh)
-                //{
-                //    PayKaniCommon common = new PayKaniCommon();
-                //    request1.NoeKhakBardariEzafeBahaId = item;
-                //    common.SaveEzafeBahaPayKani(request1, context);
-                //    //if ()
-                //    //    return new JsonResult("OK");
-                //    //else
-                //    //    return new JsonResult("نوع اضافه بها یافت نشد");
-                //}
-
                 _context.SaveChanges();
 
             }
@@ -761,155 +715,180 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
         }
     }
 
+    public JsonResult SumRizMetreWithOperationId([FromBody] SumRizMetreWithOperationIdDto request)
+    {
+        Guid BarAvordUserId = request.BarAvordUserId;
+        long OpId = request.OpId;
+        int Year = request.Year;
+        NoeFehrestBaha NoeFBId = request.NoeFBId;
 
-    //public JsonResult SaveEzafeBahaAKh([FromBody] SaveEzafeBahaAKhDto request)
-    //{
+        clsOperation_ItemsFB? OpeartionItem = _context.Operation_ItemsFBs.Include(x => x.Operation).FirstOrDefault(x => x.OperationId == OpId && x.Year == Year);
+        if (OpeartionItem != null)
+        {
+            string ItemsFBShomareh = OpeartionItem.ItemsFBShomareh.Trim();
+            List<clsFB> lstFBs = _context.FBs.Where(x => x.BarAvordId == BarAvordUserId && x.NoeFBId == NoeFBId && x.Shomareh == ItemsFBShomareh).ToList();
+            decimal? dSumRizMetre = 0;
+            foreach (var FB in lstFBs)
+            {
+                dSumRizMetre += _context.RizMetreUserses.Where(x => x.FBId == FB.ID).Sum(x => x.MeghdarJoz);
+            }
 
-    //    PayKaniCommon common = new PayKaniCommon();
-    //    if (common.SaveEzafeBahaAKh(request, _context))
-    //    {
-    //        _context.SaveChanges();
-    //        return new JsonResult("OK");
-    //    }
-    //    else
-    //        return new JsonResult("نوع اضافه بها یافت نشد");
+            return new JsonResult("OK_" + dSumRizMetre);
+        }
+        else
+            return new JsonResult("NOK");
 
-
-    //    //clsNoePayKaniEzafeBaha? NoeKhB_EB = _context.NoePayKaniEzafeBahas.FirstOrDefault(x => x.Id == request.NoePayKaniEzafeBahaId);
-    //    //string strCurrentShomareh = "";
-    //    //string? strCondition = "";
-    //    //if (NoeKhB_EB != null)
-    //    //{
-    //    //    strCurrentShomareh = NoeKhB_EB.FBItemShomareh;
-    //    //    strCondition = NoeKhB_EB.Condition;
-    //    //}
-    //    //else
-    //    //{
-    //    //    return new JsonResult("نوع اضافه بها یافت نشد");
-    //    //}
-    //    //DateTime Now = DateTime.Now;
-    //    //Guid BarAvordUserId = request.BarAvordUserId;
-
-    //    //long Shomareh = 1;
-    //    //clsRizMetreUsers? rizMetreUser = _context.RizMetreUserses.Include(x => x.FB).OrderByDescending(x => x.Shomareh).FirstOrDefault(x => x.FB.BarAvordId == BarAvordUserId);
-    //    //if (rizMetreUser != null)
-    //    //{
-    //    //    Shomareh = rizMetreUser.Shomareh + 1;
-    //    //}
-
-    //    //List<long> noeKhB = _context.NoePayKani_NoePayKaniEzafeBahas
-    //    //      .Where(x => x.NoePayKaniEzafeBahaId == request.NoePayKaniEzafeBahaId).Select(x => x.NoePayKaniId).ToList();
+    }
 
 
-    //    //List<PayKaniInfoForBarAvordDetailsInsertedDto> lstAKhForBD =
-    //    //    _context.PayKaniInfoForBarAvordDetailsRizMetres.Include(x => x.PayKaniInfoForBarAvordDetails).ThenInclude(x => x.lstPayKaniInfoForBarAvordDetailsMore)
-    //    //     .Where(x => x.PayKaniInfoForBarAvordDetails.PayKaniInfoForBarAvordId == request.PayKaniInfoForBarAvordId
-    //    //                 && noeKhB.Contains(x.PayKaniInfoForBarAvordDetails.NoePayKaniId))
-    //    //     .Select(x => new PayKaniInfoForBarAvordDetailsInsertedDto
-    //    //     {
-    //    //         RizMetreId = x.RizMetreUserId,
-    //    //         //PayKaniInfoForBarAvordDetailId = x.PayKaniInfoForBarAvordDetailsId,
-    //    //         //PayKaniInfoForBarAvordId = x.PayKaniInfoForBarAvordDetails.PayKaniInfoForBarAvordId,
-    //    //         NoePayKaniId = x.PayKaniInfoForBarAvordDetails.NoePayKaniId,
-    //    //         lstPayKaniInfoForBarAvordDetailsMore = x.PayKaniInfoForBarAvordDetails.lstPayKaniInfoForBarAvordDetailsMore.ToList()
-    //    //     }).ToList();
+    public JsonResult SaveEzafeBahaPayKani([FromBody] SaveEzafeBahaPayKaniDto request)
+    {
+
+        PayKaniCommon common = new PayKaniCommon();
+        if (common.SaveEzafeBahaPayKani(request, _context))
+        {
+            _context.SaveChanges();
+            return new JsonResult("OK");
+        }
+        else
+            return new JsonResult("نوع اضافه بها یافت نشد");
+
+
+        //clsNoePayKaniEzafeBaha? NoeKhB_EB = _context.NoePayKaniEzafeBahas.FirstOrDefault(x => x.Id == request.NoePayKaniEzafeBahaId);
+        //string strCurrentShomareh = "";
+        //string? strCondition = "";
+        //if (NoeKhB_EB != null)
+        //{
+        //    strCurrentShomareh = NoeKhB_EB.FBItemShomareh;
+        //    strCondition = NoeKhB_EB.Condition;
+        //}
+        //else
+        //{
+        //    return new JsonResult("نوع اضافه بها یافت نشد");
+        //}
+        //DateTime Now = DateTime.Now;
+        //Guid BarAvordUserId = request.BarAvordUserId;
+
+        //long Shomareh = 1;
+        //clsRizMetreUsers? rizMetreUser = _context.RizMetreUserses.Include(x => x.FB).OrderByDescending(x => x.Shomareh).FirstOrDefault(x => x.FB.BarAvordId == BarAvordUserId);
+        //if (rizMetreUser != null)
+        //{
+        //    Shomareh = rizMetreUser.Shomareh + 1;
+        //}
+
+        //List<long> noeKhB = _context.NoePayKani_NoePayKaniEzafeBahas
+        //      .Where(x => x.NoePayKaniEzafeBahaId == request.NoePayKaniEzafeBahaId).Select(x => x.NoePayKaniId).ToList();
+
+
+        //List<PayKaniInfoForBarAvordDetailsInsertedDto> lstAKhForBD =
+        //    _context.PayKaniInfoForBarAvordDetailsRizMetres.Include(x => x.PayKaniInfoForBarAvordDetails).ThenInclude(x => x.lstPayKaniInfoForBarAvordDetailsMore)
+        //     .Where(x => x.PayKaniInfoForBarAvordDetails.PayKaniInfoForBarAvordId == request.PayKaniInfoForBarAvordId
+        //                 && noeKhB.Contains(x.PayKaniInfoForBarAvordDetails.NoePayKaniId))
+        //     .Select(x => new PayKaniInfoForBarAvordDetailsInsertedDto
+        //     {
+        //         RizMetreId = x.RizMetreUserId,
+        //         //PayKaniInfoForBarAvordDetailId = x.PayKaniInfoForBarAvordDetailsId,
+        //         //PayKaniInfoForBarAvordId = x.PayKaniInfoForBarAvordDetails.PayKaniInfoForBarAvordId,
+        //         NoePayKaniId = x.PayKaniInfoForBarAvordDetails.NoePayKaniId,
+        //         lstPayKaniInfoForBarAvordDetailsMore = x.PayKaniInfoForBarAvordDetails.lstPayKaniInfoForBarAvordDetailsMore.ToList()
+        //     }).ToList();
 
 
 
-    //    //clsPayKaniInfoForBarAvordEzafeBaha PayKaniInfoForBarAvordEzafeBaha = new clsPayKaniInfoForBarAvordEzafeBaha
-    //    //{
-    //    //    PayKaniInfoForBarAvordId = request.PayKaniInfoForBarAvordId,
-    //    //    NoePayKaniEzafeBahaId = NoeKhB_EB.Id,
-    //    //    InsertDateTime = Now
-    //    //};
-    //    //_context.PayKaniInfoForBarAvordEzafeBahas.Add(PayKaniInfoForBarAvordEzafeBaha);
+        //clsPayKaniInfoForBarAvordEzafeBaha PayKaniInfoForBarAvordEzafeBaha = new clsPayKaniInfoForBarAvordEzafeBaha
+        //{
+        //    PayKaniInfoForBarAvordId = request.PayKaniInfoForBarAvordId,
+        //    NoePayKaniEzafeBahaId = NoeKhB_EB.Id,
+        //    InsertDateTime = Now
+        //};
+        //_context.PayKaniInfoForBarAvordEzafeBahas.Add(PayKaniInfoForBarAvordEzafeBaha);
 
-    //    //clsFB? FB = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordUserId && x.Shomareh == strCurrentShomareh);
-    //    //Guid gFBId = new Guid();
-    //    //if (FB != null)
-    //    //{
-    //    //    gFBId = FB.ID;
-    //    //}
-    //    //else
-    //    //{
-    //    //    clsFB newFB = new clsFB
-    //    //    {
-    //    //        BarAvordId = BarAvordUserId,
-    //    //        InsertDateTime = Now,
-    //    //        Shomareh = strCurrentShomareh
-    //    //    };
-    //    //    _context.FBs.Add(newFB);
-    //    //    gFBId = newFB.ID;
-    //    //}
-    //    //foreach (var item in lstAKhForBD)
-    //    //{
+        //clsFB? FB = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordUserId && x.Shomareh == strCurrentShomareh);
+        //Guid gFBId = new Guid();
+        //if (FB != null)
+        //{
+        //    gFBId = FB.ID;
+        //}
+        //else
+        //{
+        //    clsFB newFB = new clsFB
+        //    {
+        //        BarAvordId = BarAvordUserId,
+        //        InsertDateTime = Now,
+        //        Shomareh = strCurrentShomareh
+        //    };
+        //    _context.FBs.Add(newFB);
+        //    gFBId = newFB.ID;
+        //}
+        //foreach (var item in lstAKhForBD)
+        //{
 
-    //    //    decimal? MeghdarJoz = null;
-    //    //    clsPayKaniInfoForBarAvordDetailsMore? PayKaniInfoForBarAvordDetailsMore = null;
-    //    //    switch (strCondition)
-    //    //    {
-    //    //        case "z*m":
-    //    //            {
-    //    //                PayKaniInfoForBarAvordDetailsMore =
-    //    //                                    item.lstPayKaniInfoForBarAvordDetailsMore.FirstOrDefault(x => x.Name.ToLower() == "haml");
-    //    //                if (PayKaniInfoForBarAvordDetailsMore != null)
-    //    //                {
-    //    //                    MeghdarJoz = PayKaniInfoForBarAvordDetailsMore.Value;
-    //    //                }
-    //    //                break;
-    //    //            }
-    //    //        case "(z+y)*m":
-    //    //            {
-    //    //                decimal? d1 = null;
-    //    //                decimal? d2 = null;
-    //    //                PayKaniInfoForBarAvordDetailsMore =
-    //    //                             item.lstPayKaniInfoForBarAvordDetailsMore.FirstOrDefault(x => x.Name.ToLower() == "haml");
-    //    //                if (PayKaniInfoForBarAvordDetailsMore != null)
-    //    //                {
-    //    //                    d1 = PayKaniInfoForBarAvordDetailsMore.Value;
-    //    //                }
+        //    decimal? MeghdarJoz = null;
+        //    clsPayKaniInfoForBarAvordDetailsMore? PayKaniInfoForBarAvordDetailsMore = null;
+        //    switch (strCondition)
+        //    {
+        //        case "z*m":
+        //            {
+        //                PayKaniInfoForBarAvordDetailsMore =
+        //                                    item.lstPayKaniInfoForBarAvordDetailsMore.FirstOrDefault(x => x.Name.ToLower() == "haml");
+        //                if (PayKaniInfoForBarAvordDetailsMore != null)
+        //                {
+        //                    MeghdarJoz = PayKaniInfoForBarAvordDetailsMore.Value;
+        //                }
+        //                break;
+        //            }
+        //        case "(z+y)*m":
+        //            {
+        //                decimal? d1 = null;
+        //                decimal? d2 = null;
+        //                PayKaniInfoForBarAvordDetailsMore =
+        //                             item.lstPayKaniInfoForBarAvordDetailsMore.FirstOrDefault(x => x.Name.ToLower() == "haml");
+        //                if (PayKaniInfoForBarAvordDetailsMore != null)
+        //                {
+        //                    d1 = PayKaniInfoForBarAvordDetailsMore.Value;
+        //                }
 
-    //    //                PayKaniInfoForBarAvordDetailsMore =
-    //    //                             item.lstPayKaniInfoForBarAvordDetailsMore.FirstOrDefault(x => x.Name.ToLower() == "reusehajm");
-    //    //                if (PayKaniInfoForBarAvordDetailsMore != null)
-    //    //                {
-    //    //                    d2 = PayKaniInfoForBarAvordDetailsMore.Value;
-    //    //                }
+        //                PayKaniInfoForBarAvordDetailsMore =
+        //                             item.lstPayKaniInfoForBarAvordDetailsMore.FirstOrDefault(x => x.Name.ToLower() == "reusehajm");
+        //                if (PayKaniInfoForBarAvordDetailsMore != null)
+        //                {
+        //                    d2 = PayKaniInfoForBarAvordDetailsMore.Value;
+        //                }
 
-    //    //                MeghdarJoz = d1 * d2;
-    //    //                break;
-    //    //            }
-    //    //        default:
-    //    //            break;
-    //    //    }
+        //                MeghdarJoz = d1 * d2;
+        //                break;
+        //            }
+        //        default:
+        //            break;
+        //    }
 
-    //    //    clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-    //    //    RizMetre.Shomareh = Shomareh++;
-    //    //    RizMetre.Sharh = "";
-    //    //    RizMetre.Tedad = null;
-    //    //    RizMetre.Tool = null;
-    //    //    RizMetre.Arz = null;
-    //    //    RizMetre.Ertefa = null;
-    //    //    RizMetre.Vazn = null;
-    //    //    RizMetre.Des = "";
-    //    //    RizMetre.FBId = gFBId;
-    //    //    RizMetre.OperationsOfHamlId = 1;
-    //    //    RizMetre.Type = "1";
-    //    //    RizMetre.ForItem = "";
-    //    //    RizMetre.UseItem = "";
-    //    //    RizMetre.MeghdarJoz = MeghdarJoz;
-    //    //    _context.RizMetreUserses.Add(RizMetre);
+        //    clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+        //    RizMetre.Shomareh = Shomareh++;
+        //    RizMetre.Sharh = "";
+        //    RizMetre.Tedad = null;
+        //    RizMetre.Tool = null;
+        //    RizMetre.Arz = null;
+        //    RizMetre.Ertefa = null;
+        //    RizMetre.Vazn = null;
+        //    RizMetre.Des = "";
+        //    RizMetre.FBId = gFBId;
+        //    RizMetre.OperationsOfHamlId = 1;
+        //    RizMetre.Type = "1";
+        //    RizMetre.ForItem = "";
+        //    RizMetre.UseItem = "";
+        //    RizMetre.MeghdarJoz = MeghdarJoz;
+        //    _context.RizMetreUserses.Add(RizMetre);
 
-    //    //    clsPayKaniInfoForBarAvordEzafeBahaRizMetre PayKaniInfoForBarAvordEzafeBahaRizMetre
-    //    //        = new clsPayKaniInfoForBarAvordEzafeBahaRizMetre
-    //    //        {
-    //    //            PayKaniInfoForBarAvordEzafeBahaId = PayKaniInfoForBarAvordEzafeBaha.ID,
-    //    //            RizMetreUserId = RizMetre.ID
-    //    //        };
-    //    //    _context.PayKaniInfoForBarAvordEzafeBahaRizMetres.Add(PayKaniInfoForBarAvordEzafeBahaRizMetre);
-    //    //}
-    //    //_context.SaveChanges();
-    //}
+        //    clsPayKaniInfoForBarAvordEzafeBahaRizMetre PayKaniInfoForBarAvordEzafeBahaRizMetre
+        //        = new clsPayKaniInfoForBarAvordEzafeBahaRizMetre
+        //        {
+        //            PayKaniInfoForBarAvordEzafeBahaId = PayKaniInfoForBarAvordEzafeBaha.ID,
+        //            RizMetreUserId = RizMetre.ID
+        //        };
+        //    _context.PayKaniInfoForBarAvordEzafeBahaRizMetres.Add(PayKaniInfoForBarAvordEzafeBahaRizMetre);
+        //}
+        //_context.SaveChanges();
+    }
 
     //public JsonResult GetAKh_EzafeBaha([FromBody] GetAKh_EzafeBahaDto request)
     //{
@@ -1028,24 +1007,136 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
     //    return new JsonResult("OK");
     //}
 
-    public JsonResult OverLowKMCheck(OverLowKMCheckDto request)
+    public JsonResult GetPK_EzafeBaha([FromBody] GetPK_EzafeBahaDto request)
     {
-        List<clsPayKaniInfoForBarAvord> lstAKhInfo = _context.PayKaniInfoForBarAvords.Where(x => x.BaravordUserId == request.BarAvordId).ToList();
+        long Year = request.Year;
+        NoeFehrestBaha NoeFB = request.NoeFB;
+        Guid BarAvordId = request.BarAvordId;
+        // Guid PayKaniInfoForBarAvordId = request.PayKaniInfoForBarAvordId;
 
-        long KMS = request.KMS;
-        long KME = request.KME;
+        List<ItemFBShomarehForGetAndShowAddItemsFieldsDto> lstItemFields = _context.ItemsFieldses.Where(x => x.NoeFB == NoeFB).Select(x => new ItemFBShomarehForGetAndShowAddItemsFieldsDto
+        {
+            Shomareh = x.ItemShomareh,
+            FieldType = x.FieldType,
+            Vahed = x.Vahed,
+            IsEnteringValue = x.IsEnteringValue
+        }).ToList();
 
-        List<OverLowKMCheckK_Start_EndDto> lstKMS =
-            lstAKhInfo.Select(x => new OverLowKMCheckK_Start_EndDto
+        List<PayKaniI_EzafeBahaRizMetreDto> lstPKInfoRizMetre = _context.PayKaniInfoForBarAvordEzafeBahaRizMetres
+            .Include(x => x.PayKaniInfoForBarAvordEzafeBaha).ThenInclude(x => x.NoeKhakBardariEzafeBaha)
+            .Include(x => x.PayKaniInfoForBarAvordEzafeBaha).ThenInclude(x => x.PayKaniInfoForBarAvord)
+            .Where(x => x.PayKaniInfoForBarAvordEzafeBaha.PayKaniInfoForBarAvord.BaravordUserId == BarAvordId
+                        && x.PayKaniInfoForBarAvordEzafeBaha.PayKaniInfoForBarAvord.NoeFBId == NoeFB
+                        && x.PayKaniInfoForBarAvordEzafeBaha.NoeKhakBardariEzafeBahaId == request.NoeKhakBardariEzafeBahaId)
+            .Select(x => new PayKaniI_EzafeBahaRizMetreDto
             {
-                KStart = long.Parse(x.FromKM),
-                KEnd = long.Parse(x.ToKM)
+                RMId = x.RizMetreUser.ID,
+                Shomareh = x.RizMetreUser.Shomareh,
+                ShomarehNew = x.RizMetreUser.ShomarehNew,
+                Sharh = x.RizMetreUser.Sharh,
+                Tedad = x.RizMetreUser.Tedad,
+                Tool = x.RizMetreUser.Tool,
+                Arz = x.RizMetreUser.Arz,
+                Ertefa = x.RizMetreUser.Ertefa,
+                Vazn = x.RizMetreUser.Vazn,
+                MeghdarJoz = x.RizMetreUser.MeghdarJoz,
+                Des = x.RizMetreUser.Des,
+                FBId = x.RizMetreUser.FBId,
+                ForItem = x.RizMetreUser.ForItem,
+                Type = x.RizMetreUser.Type,
+                UseItem = x.RizMetreUser.Type,
+                ItemFBShomareh = x.RizMetreUser.FB.Shomareh,
+                hasDelButton = x.PayKaniInfoForBarAvordEzafeBaha.NoeKhakBardariEzafeBaha.EnableDeleting,
+                hasEditButton = x.PayKaniInfoForBarAvordEzafeBaha.NoeKhakBardariEzafeBaha.EnableEditing,
             }).ToList();
 
-        var overlaps = lstKMS.Where(r =>
-            Math.Max(r.KStart, KMS) <= Math.Min(r.KEnd, KME)
-        ).ToList();
+        List<string> lstItemFBShomareh = lstPKInfoRizMetre.Select(x => x.ItemFBShomareh).Distinct().ToList();
 
-        return new JsonResult("OK");
+        List<clsFehrestBaha> lstFehrestBahas = _context.FehrestBahas.Where(x => x.Sal == Year && x.NoeFB == NoeFB && lstItemFBShomareh.Contains(x.Shomareh.Trim())).ToList();
+
+        List<ItemFBShomarehForGetAndShowAddItemsDto> lstItemFBShomarehForGet = new List<ItemFBShomarehForGetAndShowAddItemsDto>();
+
+        List<ItemFBShomarehForGetAndShowAddItemsFieldsDto> ItemFields = new List<ItemFBShomarehForGetAndShowAddItemsFieldsDto>();
+
+        foreach (var item in lstItemFBShomareh)
+        {
+            clsFehrestBaha fehrestBaha = lstFehrestBahas.First(x => x.Shomareh == item);
+
+            ItemFields = lstItemFields.Where(x => x.Shomareh.Trim() == item).ToList();
+            ItemFBShomarehForGetAndShowAddItemsDto ItemFBShomarehForGet = new ItemFBShomarehForGetAndShowAddItemsDto
+            {
+                ItemFBShomareh = item,
+                Des = fehrestBaha.Sharh,
+                ItemFields = ItemFields
+
+            };
+            lstItemFBShomarehForGet.Add(ItemFBShomarehForGet);
+        }
+
+        var result = new
+        {
+            lstPKInfoRizMetre,
+            lstItemFBShomarehForGet
+        };
+
+        return new JsonResult(result);
+
     }
+
+
+
+    [HttpPost]
+    public JsonResult GetEzafeBaha([FromBody] GetEzafeBahaForPayKaniDto request)
+    {
+        List<clsPayKaniInfoForBarAvordDetails> lstPKIForBD =
+            _context.PayKaniInfoForBarAvordDetailses.Include(x => x.PayKaniInfoForBarAvord)
+            .Where(x => x.PayKaniInfoForBarAvord.BaravordUserId == request.BarAvordUserId).ToList();
+
+        List<long> lstNoePayKaniId = lstPKIForBD.Select(x => x.NoeKhakBardariId).ToList();
+
+        List<NoePayKaniEzafeBahaDto> lstNoePayKaniEzafeBaha
+            = _context.NoeKhakBardari_NoeKhakBardariEzafeBahas.Include(x => x.NoeKhakBardari).Where(x => lstNoePayKaniId.Contains(x.NoeKhakBardariId) && x.NoeKhakBardari.Type == 2)
+            .Include(x => x.NoeKhakBardariEzafeBaha).Select(x => new NoePayKaniEzafeBahaDto
+            {
+                Id = x.NoeKhakBardariEzafeBaha.Id,
+                NoePayKaniEzafeBaha = x.NoeKhakBardariEzafeBaha.Title,
+                hasEnteringValue = x.NoeKhakBardariEzafeBaha.hasEnteringValue,
+                CountForEnteringValue = x.NoeKhakBardariEzafeBaha.CountForEnteringValue,
+                DefaultForEnteringValue = x.NoeKhakBardariEzafeBaha.DefaultForEnteringValue,
+                DesForEnteringValue = x.NoeKhakBardariEzafeBaha.DesForEnteringValue
+            }).Distinct().ToList();
+
+        List<clsPayKaniInfoForBarAvordEzafeBaha> lstPKForBEB =
+            _context.PayKaniInfoForBarAvordEzafeBahas.Where(x => x.PayKaniInfoForBarAvord.BaravordUserId == request.BarAvordUserId).ToList();
+
+        var Result = new
+        {
+            lstNoePayKaniEzafeBaha,
+            lstPKForBEB
+        };
+
+        return new JsonResult(Result);
+    }
+
+
+    //public JsonResult OverLowKMCheck(OverLowKMCheckDto request)
+    //{
+    //    List<clsPayKaniInfoForBarAvord> lstAKhInfo = _context.PayKaniInfoForBarAvords.Where(x => x.BaravordUserId == request.BarAvordId).ToList();
+
+    //    long KMS = request.KMS;
+    //    long KME = request.KME;
+
+    //    List<OverLowKMCheckK_Start_EndDto> lstKMS =
+    //        lstAKhInfo.Select(x => new OverLowKMCheckK_Start_EndDto
+    //        {
+    //            KStart = long.Parse(x.FromKM),
+    //            KEnd = long.Parse(x.ToKM)
+    //        }).ToList();
+
+    //    var overlaps = lstKMS.Where(r =>
+    //        Math.Max(r.KStart, KMS) <= Math.Min(r.KEnd, KME)
+    //    ).ToList();
+
+    //    return new JsonResult("OK");
+    //}
 }
