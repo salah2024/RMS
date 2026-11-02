@@ -620,40 +620,37 @@ function DrawDastakNew4(h, x, alfa, D, L, w4, b2, c1, c2, j, alfaw4, hminw4, t, 
 }
 
 function DrawLineWithTwoPointDastak(x1, y1, x2, y2) {
-    debugger;
+    PolExistingId = $('#HDFPolIdForEdit').val();
     Line = "<line x1=\"" + x1 + "\" x2=\"" + x2 + "\" y1=\"" + y1 + "\" y2=\"" + y2 + "\" style=\"stroke: rgb(52, 101, 18); stroke-width:1\" />";
-    $('#AbnieShow').find('#svgLinesPlan').append(Line);
-    $('#AbnieShow').find('#svgContainerPlan').html($('#AbnieShow').find('#svgContainerPlan').html());
+    $('#svgLinesPlan-' + PolExistingId).append(Line);
+    $('#svgContainerPlan-' + PolExistingId).html($('#svgContainerPlan-' + PolExistingId).html());
 }
 
 function LineWithAlfaAndLength(theta, x, y, Len) {
-    debugger;
-
+    PolExistingId = $('#HDFPolIdForEdit').val();
     xnew = x + Len * Math.cos(toRadians(theta));
     ynew = y + Len * Math.sin(toRadians(theta))
     Line = "<line x1=\"" + x + "\" x2=\"" + xnew + "\" y1=\"" + y + "\" y2=\"" + ynew + "\" style=\"stroke:rgb(31, 0, 116); stroke-width:1\" />";
-    $('#AbnieShow').find('#svgLinesPlan').append(Line);
-    $('#AbnieShow').find('#svgContainerPlan').html($('#AbnieShow').find('#svgContainerPlan').html());
+    $('#svgLinesPlan-' + PolExistingId).append(Line);
+    $('#svgContainerPlan-' + PolExistingId).html($('#svgContainerPlan-' + PolExistingId).html());
 }
 
 function LineWithAlfaAndLengthDash(theta, x, y, Len) {
-    debugger;
-
+    PolExistingId = $('#HDFPolIdForEdit').val();
     xnew = x + Len * Math.cos(toRadians(theta));
     ynew = y + Len * Math.sin(toRadians(theta))
     Line = "<line x1=\"" + x + "\" x2=\"" + xnew + "\" y1=\"" + y + "\" y2=\"" + ynew + "\" stroke-dasharray=\"4\" style=\"stroke:rgb(31, 0, 116); stroke-width:1\" />";
-    $('#AbnieShow').find('#svgLinesPlan').append(Line);
-    $('#AbnieShow').find('#svgContainerPlan').html($('#AbnieShow').find('#svgContainerPlan').html());
+    $('#svgLinesPlan-' + PolExistingId).append(Line);
+    $('#svgContainerPlan-' + PolExistingId).html($('#svgContainerPlan-' + PolExistingId).html());
 }
 
 function LineWithAlfaAndLengthDastak(theta, x, y, Len) {
-    debugger;
-
+    PolExistingId = $('#HDFPolIdForEdit').val();
     xnew = x + Len * Math.cos(toRadians(theta));
     ynew = y + Len * Math.sin(toRadians(theta))
     Line = "<line x1=\"" + x + "\" x2=\"" + xnew + "\" y1=\"" + y + "\" y2=\"" + ynew + "\" style=\"stroke: rgb(52, 101, 18); stroke-width:1\" />";
-    $('#AbnieShow').find('#svgLinesPlan').append(Line);
-    $('#AbnieShow').find('#svgContainerPlan').html($('#AbnieShow').find('#svgContainerPlan').html());
+    $('#svgLinesPlan-' + PolExistingId).append(Line);
+    $('#svgContainerPlan-' + PolExistingId).html($('#svgContainerPlan-' + PolExistingId).html());
 }
 
 
@@ -662,8 +659,7 @@ function toRadians(angle) {
 }
 
 function lineDistanceHPlan(theta, x, y, Len, dOfLine, Pos, ScaleNormal, cm) {
-    debugger;
-
+    PolExistingId = $('#HDFPolIdForEdit').val();
     if (Len != 0) {
        xnew = x + Len * Math.cos(toRadians(theta));
        ynew = y + Len * Math.sin(toRadians(theta))
@@ -676,18 +672,18 @@ function lineDistanceHPlan(theta, x, y, Len, dOfLine, Pos, ScaleNormal, cm) {
 
         Line = "<line x1=\"" + x + "\" x2=\"" + xnew + "\" y1=\"" + (y + dOfLine) + "\" y2=\"" + (ynew + dOfLine) + "\" style=\"stroke: rgb(38, 130, 161); stroke-width:0.5\" />";
 
-        $('#AbnieShow').find('#svgLinesPlan').append(Line);
-        $('#AbnieShow').find('#svgLinesPlan').append(Text);
+        $('#svgLinesPlan-' + PolExistingId).append(Line);
+        $('#svgLinesPlan-' + PolExistingId).append(Text);
         Line1 = "<line x1=\"" + (x - 2) + "\" x2=\"" + (x + 2) + "\" y1=\"" + ((y + dOfLine) + 2) + "\" y2=\"" + ((y + dOfLine) - 2) + "\" style=\"stroke: rgb(38, 130, 161); stroke-width:0.5\" />";
-        $('#AbnieShow').find('#svgLinesPlan').append(Line1);
+        $('#svgLinesPlan-' + PolExistingId).append(Line1);
         Line1 = "<line x1=\"" + (xnew - 2) + "\" x2=\"" + (xnew + 2) + "\" y1=\"" + ((ynew + dOfLine) + 2) + "\" y2=\"" + ((ynew + dOfLine) - 2) + "\" style=\"stroke: rgb(38, 130, 161); stroke-width:0.5\" />";
-        $('#AbnieShow').find('#svgLinesPlan').append(Line1);
-        $('#AbnieShow').find('#svgContainerPlan').html($('#AbnieShow').find('#svgContainerPlan').html());
+        $('#svgLinesPlan-' + PolExistingId).append(Line1);
+        $('#svgContainerPlan-' + PolExistingId).html($('#svgContainerPlan-' + PolExistingId).html());
     }
 }
 
 function lineDistanceVPlan(theta, x, y, Len, Pos, ScaleNormal, cm, LF) {
-    debugger;
+    PolExistingId = $('#HDFPolIdForEdit').val();
 
     if (Len != 0) {
         xnew = x + Len * Math.cos(toRadians(theta));
@@ -713,26 +709,27 @@ function lineDistanceVPlan(theta, x, y, Len, Pos, ScaleNormal, cm, LF) {
         else
             Line = "<line x1=\"" + (x - 15) + "\" x2=\"" + (xnew - 15) + "\" y1=\"" + y + "\" y2=\"" + ynew + "\" style=\"stroke: rgb(38, 130, 161); stroke-width:0.5\" />";
 
-        $('#AbnieShow').find('#svgLinesPlan').append(Line);
-        $('#AbnieShow').find('#svgLinesPlan').append(Text);
+        $('#svgLinesPlan-' + PolExistingId).append(Line);
+        $('#svgLinesPlan-' + PolExistingId).append(Text);
         if (LF == 1)
             Line1 = "<line x1=\"" + ((x + 15) - 2) + "\" x2=\"" + ((x + 15) + 2) + "\" y1=\"" + (y + 2) + "\" y2=\"" + (y - 2) + "\" style=\"stroke: rgb(38, 130, 161); stroke-width:0.5\" />";
         else
             Line1 = "<line x1=\"" + ((x - 15) - 2) + "\" x2=\"" + ((x - 15) + 2) + "\" y1=\"" + (y + 2) + "\" y2=\"" + (y - 2) + "\" style=\"stroke: rgb(38, 130, 161); stroke-width:0.5\" />";
 
 
-        $('#AbnieShow').find('#svgLinesPlan').append(Line1);
+        $('#svgLinesPlan-' + PolExistingId).append(Line1);
         if (LF == 1)
             Line1 = "<line x1=\"" + ((xnew + 15) - 2) + "\" x2=\"" + ((xnew + 15) + 2) + "\" y1=\"" + (ynew + 2) + "\" y2=\"" + (ynew - 2) + "\" style=\"stroke: rgb(38, 130, 161); stroke-width:0.5\" />";
         else
             Line1 = "<line x1=\"" + ((xnew - 15) - 2) + "\" x2=\"" + ((xnew - 15) + 2) + "\" y1=\"" + (ynew + 2) + "\" y2=\"" + (ynew - 2) + "\" style=\"stroke: rgb(38, 130, 161); stroke-width:0.5\" />";
 
-        $('#AbnieShow').find('#svgLinesPlan').append(Line1);
-        $('#AbnieShow').find('#svgContainerPlan').html($('#AbnieShow').find('#svgContainerPlan').html());
+        $('#svgLinesPlan-' + PolExistingId).append(Line1);
+        $('#svgContainerPlan-' + PolExistingId).html($('#svgContainerPlan-' + PolExistingId).html());
     }
 }
 
 function lineDistanceHTwoPointPlan(x1, y1, x2, y2, dOfLine, Pos, ScaleNormal, cm) {
+    PolExistingId = $('#HDFPolIdForEdit').val();
         if (Pos == 1) /////1= L to R
             ////////2= R to L
             Text = "<text style=\"font-size:16px\" x=\"" + (x1 + 8) + "\" y=\"" + ((y1 - dOfLine) - 5) + "\" fill=\"blue\">" + Math.ceil(ScaleNormal) / cm + "</text>";
@@ -741,13 +738,13 @@ function lineDistanceHTwoPointPlan(x1, y1, x2, y2, dOfLine, Pos, ScaleNormal, cm
 
         Line = "<line x1=\"" + x1 + "\" x2=\"" + x2 + "\" y1=\"" + (y1 - dOfLine) + "\" y2=\"" + (y2 - dOfLine) + "\" style=\"stroke: rgb(38, 130, 161); stroke-width:0.5\" />";
 
-        $('#AbnieShow').find('#svgLinesPlan').append(Line);
-        $('#AbnieShow').find('#svgLinesPlan').append(Text);
+    $('#svgLinesPlan-' + PolExistingId).append(Line);
+    $('#svgLinesPlan-' + PolExistingId).append(Text);
         Line1 = "<line x1=\"" + (x1 - 2) + "\" x2=\"" + (x1 + 2) + "\" y1=\"" + ((y1 - dOfLine) + 2) + "\" y2=\"" + ((y1 - dOfLine) - 2) + "\" style=\"stroke: rgb(38, 130, 161); stroke-width:0.5\" />";
-        $('#AbnieShow').find('#svgLinesPlan').append(Line1);
+    $('#svgLinesPlan-' + PolExistingId).append(Line1);
         Line1 = "<line x1=\"" + (x2 - 2) + "\" x2=\"" + (x2 + 2) + "\" y1=\"" + ((y2 - dOfLine) + 2) + "\" y2=\"" + ((y2 - dOfLine) - 2) + "\" style=\"stroke: rgb(38, 130, 161); stroke-width:0.5\" />";
-        $('#AbnieShow').find('#svgLinesPlan').append(Line1);
-        $('#AbnieShow').find('#svgContainerPlan').html($('#AbnieShow').find('#svgContainerPlan').html());
+    $('#svgLinesPlan-' + PolExistingId).append(Line1);
+    $('#svgContainerPlan-' + PolExistingId).html($('#svgContainerPlan-' + PolExistingId).html());
 }
 
 

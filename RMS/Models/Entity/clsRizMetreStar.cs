@@ -10,9 +10,8 @@ public class clsRizMetreStar : clsBaseEntity
     /// شماره ای که برای اضافه/کسر بها ایجاد میشود
     /// </summary>
     public string? ShomarehNew { get; set; }      
-
-    public string Sharh { get; set; }               
-
+    public string Sharh { get; set; }
+    public string? TajmieItem { get; set; }               // شماره آیتم تجمیعی در صورت وجود
     [Column(TypeName = "decimal(18,4)")]
     public decimal? Tedad { get; set; }                 
     [Column(TypeName = "decimal(18,4)")]

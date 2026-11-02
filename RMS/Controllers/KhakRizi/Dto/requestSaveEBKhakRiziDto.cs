@@ -9,7 +9,7 @@ public class requestSaveEBKhakRiziDto
     public NoeFehrestBaha NoeFBId { get; set; }
     public long Year { get; set; }
     public int Num { get; set; }
-
+    public string TextVal { get; set; }
 
 }
 

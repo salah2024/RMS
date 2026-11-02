@@ -11,8 +11,8 @@ namespace RMS.Controllers.AmalyateKhaki.Dto
         /// 3- کانال کنی
         /// </summary>
         public int Type { get; set; }
-        public long FromKM { get; set; }
-        public long ToKM { get; set; }
+        //public long FromKM { get; set; }
+        //public long ToKM { get; set; }
         public string HKB { get; set; }
         public List<PayKaniInfoForBarAvordItemsDto> lstItems { get; set; }
         

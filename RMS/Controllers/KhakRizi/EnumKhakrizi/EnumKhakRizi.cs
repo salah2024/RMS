@@ -22,9 +22,9 @@ public enum EnumNoeDaneBandi
 
 public enum EnumHajmKhakRizi
 {
-    [Description("حجم خاکریزی قشرهای بین 30 سانتیمتر تا بستر روسازی")]
+    [Description("حجم خاکریزی از تراز 30 سانتی‌متر زیر بستر روسازی تا بستر روسازی")]
     Top30 = 1,
-    [Description("حجم خاکریزی قشرهای پایین تر از 30 سانتیمتر بستر روسازی")]
+    [Description("حجم خاکریزی پایین‌تر از 30 سانتیمتر زیر بستر روسازی")]
     Low30 = 2
 }
 

@@ -1,30 +1,208 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @inject UserManager<ApplicationUser> UserManager
 
-<nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top shadow">
+<nav class="navbar navbar-top  navbar-expand-md navbar-dark" id="navbar-main">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">داشبورد</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarUser" aria-controls="navbarUser" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+        <a aria-label="Hide Sidebar" class="app-sidebar__toggle" data-toggle="sidebar"
+           href="#"></a>
+        <span id="spanProjectTitle" style="direction:ltr"></span>
+        @*<ul class="navbar-nav align-items-center d-none d-xl-block pr-4">
+                                     <li class="nav-item dropdown">
+                                        <a id="aCurrentProject" aria-expanded="false" aria-haspopup="true"
+                                           class="nav-link pr-md-0 d-none d-lg-block" data-toggle="dropdown" href="#"
+                                           role="button">
+                                            پروژه ها <span class="fas fa-caret-down"></span>
+                                        </a>
+                                        <div id="OurProjects" class="dropdown-menu dropdown-menu-arrow dropdown-menu-right">
+                                            <a class="dropdown-item" href="#"><span>فعال</span></a>
+                                            <a class="dropdown-item" href="#"><span>بازاریابی</span></a>
+                                            <a class="dropdown-item" href="#"><span>کاربران</span></a>
+                                            <a class="dropdown-item" href="#"><span>توسعه</span></a>
+                                            <a class="dropdown-item" href="#"><span>تنظیمات</span></a>
+                                        </div>
+                                    </li>
+                                </ul>*@
 
-        <div class="collapse navbar-collapse justify-content-end" id="navbarUser">
-            <ul class="navbar-nav mb-2 mb-lg-0">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="https://i.pravatar.cc/40?img=3" alt="Avatar" class="rounded-circle me-2" width="36" height="36">
-                        <span class="text-white fw-bold">@User.Identity?.Name</span>
+        <!-- Brand -->
+        <a class="navbar-brand pt-0 d-md-none" href="index-ldf-2.html">
+            <img src="~/assets/img/brand/logo-light.png" class="navbar-brand-img" alt="...">
+        </a>
+        <!-- Form -->
+        <form class="navbar-search navbar-search-dark form-inline mr-3 ml-lg-auto" style="">
+            <div class="form-group mb-0">
+                <div class="input-group input-group-alternative">
+                    <div class="input-group-prepend">
+                        @* <span style="font-size:22px">
+                            اداره کل میراث فرهنگی، صنایع دستی و گردشگری استان کردستان
+                        </span> *@
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!-- User -->
+        <ul class="navbar-nav align-items-center ">
+            <li class="nav-item d-none d-md-flex">
+                <div class="dropdown d-none d-md-flex mt-2 ">
+                    <a class="nav-link full-screen-link pl-0 pr-0">
+                        <i class="fe fe-maximize-2 floating " id="fullscreen-button"></i>
                     </a>
+                </div>
+            </li>
+            <li class="nav-item dropdown d-none d-md-flex">
+                <a aria-expanded="false" aria-haspopup="true" class="nav-link pl-0"
+                   data-toggle="dropdown" href="#" role="button">
+                    <div class="media align-items-center">
+                        <i class="fe fe-mail f-30 "></i>
+                    </div>
+                </a>
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-arrow dropdown-menu-right">
+                    <a href="#" class="dropdown-item d-flex">
+                        <div>
+                            <strong>تعدادی از پست های شما پسندیده شد</strong>
+                            <div class="small text-muted">5 ساعت قبل</div>
+                        </div>
+                    </a>
+                    <a href="#" class="dropdown-item d-flex">
+                        <div>
+                            <strong> 3 دیدگاه جدید</strong>
+                            <div class="small text-muted">3 ساعت قبل</div>
+                        </div>
+                    </a>
+                    <a href="#" class="dropdown-item d-flex">
+                        <div>
+                            <strong> محصول شما شما ثبت شد</strong>
+                            <div class="small text-muted">45 دقیقه قبل</div>
+                        </div>
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item text-center">مشاهده همه اعلان ها</a>
+                </div>
+            </li>
+            <li class="nav-item dropdown d-none d-md-flex">
+                <a aria-expanded="false" aria-haspopup="true" class="nav-link pr-0"
+                   data-toggle="dropdown" href="#" role="button"
+                   id="notificationBell">
+                    <div class="media align-items-center">
+                        <i id="notificationIcon" class="fe fe-bell" style="font-size:22px"></i>
+                        <span id="notificationCount"
+                              class="badge badge-danger"
+                              style="position:absolute;margin-top:30px;left: 20px;">
+                            0
+                        </span>
+                    </div>
+                </a>
+                <div id="notificationContainer" class="dropdown-menu  dropdown-menu-lg dropdown-menu-arrow dropdown-menu-right">
+                </div>
+            </li>
+            <li class="nav-item dropdown">
+                <a aria-expanded="false" aria-haspopup="true" class="nav-link pr-md-0"
+                   data-toggle="dropdown" href="#" role="button" style="width: 300px;">
+                    <div class="media align-items-center">
+                        <span class="avatar avatar-sm rounded-circle">
+                            <img alt="Image placeholder"
+                                 src="~/assets/img/faces/_default.png">
+                        </span>
+                        <div class="media-body ml-2 d-none d-lg-block">
+                            @{
+                                var user = await UserManager.GetUserAsync(User);
+                            }
+                            <div class="media-body ml-2 d-none d-lg-block">
+                                <span class="mb-0 text-white fw-bold" style="color:#000 !important">
+                                    @(user?.FullName ?? user?.UserName)
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <span id="spanAccountCompanyName" style="color: #000;">
+                        @(user?.UserDetail?.Company?.CompanyName)
 
-                    <ul class="dropdown-menu dropdown-menu-end text-end shadow">
-                        <li><h6 class="dropdown-header">👋 خوش آمدید، @User.Identity?.Name</h6></li>
-                        <li><a class="dropdown-item" href="#">پروفایل من</a></li>
-                        <li><a class="dropdown-item" href="#">تنظیمات</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="/Account/Logout">🚪 خروج</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
+                    </span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-right">
+                    <div class=" dropdown-header noti-title">
+                        <span style="color:#38293d;font-size:16px;font-weight:500;">خوش آمدید !</span>
+                    </div>
+                    <a class="dropdown-item" href="#">
+                        <i class="ni ni-single-02"></i><span>پروفایل من</span>
+                    </a>
+                    <a class="dropdown-item" href="#">
+                        <i class="ni ni-settings-gear-65"></i>
+                        <span>تنظیمات</span>
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    @* <a class="dropdown-item"
+					 	href="#" onclick="Exit()">
+						 <i class="ni ni-user-run"></i><span>خروج</span></a> *@
+
+                    <form asp-controller="Account" asp-action="Logout" method="post">
+                        @Html.AntiForgeryToken()
+                        <button class="dropdown-item" type="submit">
+                            <i class="ni ni-user-run"></i>
+                            <span>خروج</span>
+                        </button>
+                    </form>
+
+                </div>
+            </li>
+            <li class="nav-item dropdown">
+
+            </li>
+        </ul>
     </div>
+
 </nav>
+
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+
+        $("#notificationBell").on("click", function () {
+
+            loadNotifications();
+        });
+
+        setInterval(function () {
+            GetUnreadCount();
+        }, 60000); // هر 60 ثانیه
+
+
+        setInterval(function () {
+
+            if ($("#notificationCount").text() > 0) {
+
+                $("#notificationIcon").removeClass("shake");
+
+                setTimeout(function () {
+                    $("#notificationIcon").addClass("shake");
+                }, 50);
+            }
+
+        }, 4000);
+
+    });
+
+
+ $(document).on("click", ".notification-item", function (e) {
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        let card = $(this).closest(".notification-card");
+
+        if (card.hasClass("active")) {
+
+            card.removeClass("active");
+
+        } else {
+
+            $(".notification-card").removeClass("active");
+
+            card.addClass("active");
+        }
+    });
+
+
+ </script>

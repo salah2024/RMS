@@ -1,0 +1,53 @@
+﻿@using RMS.Controllers.Menu.Dto
+@model List<SidebarMenuItemVm>
+
+
+    <style>
+
+    </style>
+
+
+<ul class="side-menu">
+    @foreach (var m in Model)
+    {
+        // اگر Url دارد = لینک مستقیم
+        if (!string.IsNullOrWhiteSpace(m.Url))
+        {
+            <li class="slide">
+                <a class="slide-item ajax-link" href="@m.Url">
+                    @if (!string.IsNullOrWhiteSpace(m.Icon))
+                    {
+                        <i class="side-menu__icon @m.Icon"></i>
+                    }
+                    <span class="side-menu__label">@m.Title</span>
+                </a>
+            </li>
+        }
+        else
+        {
+            // اگر Url ندارد = گروه/پدر با زیرمنو
+            <li class="slide">
+                <a class="side-menu__item active" data-toggle="slide" href="#">
+                    @if (!string.IsNullOrWhiteSpace(m.Icon))
+                    {
+                        <i class="side-menu__icon @m.Icon"></i>
+                    }
+                    <span class="side-menu__label">@m.Title</span>
+                    <i class="angle fa fa fa-angle-down"></i>
+                </a>
+
+                @if (m.Children.Any())
+                {
+                    <ul class="slide-menu">
+                        @foreach (var c in m.Children)
+                        {
+                            <li>
+                                <a class="slide-item ajax-link" href="@c.Url">@c.Title</a>
+                            </li>
+                        }
+                    </ul>
+                }
+            </li>
+        }
+    }
+</ul>

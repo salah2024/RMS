@@ -1,0 +1,48 @@
+﻿<style>
+
+    a {
+        color: #2f019b;
+        font-size: 20px;
+        font-family: 'BMitra', sans-serif;
+    }
+</style>
+
+@using RMS.Models.Entity
+@model clsPermission
+
+<div style="margin-top:70px">
+    <h2>ویرایش مجوز</h2>
+
+    <form asp-action="Edit" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+
+        <div>
+            <label asp-for="Key"></label>
+            <input asp-for="Key" />
+            <span asp-validation-for="Key"></span>
+        </div>
+
+        <div>
+            <label asp-for="Title"></label>
+            <input asp-for="Title" />
+            <span asp-validation-for="Title"></span>
+        </div>
+
+        <div>
+            <label asp-for="Group"></label>
+            <input asp-for="Group" />
+        </div>
+
+        <div>
+            <label asp-for="IsActive"></label>
+            <input asp-for="IsActive" type="checkbox" />
+        </div>
+
+        <button type="submit">ذخیره</button>
+        <a asp-action="Index">بازگشت</a>
+    </form>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

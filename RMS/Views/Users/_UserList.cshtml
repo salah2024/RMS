@@ -1,0 +1,93 @@
+﻿@using RMS.Controllers.Users.Dto
+@model PagedResult<UserListViewModel>
+
+<div style="margin-top:70px">
+<h2>لیست کاربران شرکت - @ViewBag.CompanyName</h2>
+
+<div class="col-12 row">
+    <div class="co-3">
+        <a asp-controller="RegisterInPanel"
+           asp-action="Index"
+           asp-route-companyId="@ViewBag.CompanyId"
+           class="btn btn-primary ajax-link" style="background-color: #7a5a12;">
+            + افزودن کاربر
+        </a>
+    </div>
+    <div class="col-1"></div>
+    <div class="co-3">
+        <a asp-controller="ViewCompany"
+           asp-action="Index" style="background-color: red;color: #fff;"
+           class="btn btn-outline-secondary">
+            ← بازگشت
+        </a>
+    </div>
+</div>
+@if (!Model.Items.Any())
+{
+    <div class="alert alert-warning text-center">
+        کاربری برای این شرکت ثبت نشده است
+    </div>
+}
+else
+{
+
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>نام کاربری</th>
+            <th>نام کامل</th>
+            <th>موبایل</th>
+            <th>شرکت</th>
+            <th>عملیات</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model.Items)
+        {
+            <tr>
+                <td>@user.UserName</td>
+                <td>@user.FullName</td>
+                <td>@user.PhoneNumber</td>
+                <td>@user.CompanyName</td>
+                <td>
+                    <a asp-action="ResetPassword"
+                       asp-route-id="@user.Id"
+                       class="btn btn-sm btn-secondary">
+                        ریست پسورد
+                    </a>
+
+                    <a asp-action="Edit" asp-route-id="@user.Id" class="btn btn-sm btn-warning">ویرایش</a>
+
+                    <form asp-action="Delete" asp-route-id="@user.Id" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-sm btn-danger"
+                                onclick="return confirm('آیا مطمئن هستید؟');">
+                            حذف
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+}
+
+@if (Model.TotalPages > 1)
+{
+    <nav>
+        <ul class="pagination">
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                    <a class="page-link"
+                       asp-action="UserList"
+                       asp-route-companyId="@ViewBag.CompanyId"
+                       asp-route-page="@i">
+                        @i
+                    </a>
+                </li>
+            }
+        </ul>
+    </nav>
+}
+
+</div>

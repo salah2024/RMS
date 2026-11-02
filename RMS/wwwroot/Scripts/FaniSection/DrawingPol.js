@@ -1,16 +1,62 @@
-﻿function Pol(D, h, a1, a2, b1, b2, c1, c2, f, m, t, j, StartPointX, StartPointY, Scale, cm) {
-    debugger;
+﻿function Pol(D, h, a1, a2, b1, b2, c1, c2, f, m, t, j, StartPointX, StartPointY, Scale, cm, NoeBanaii) {
+
+
+    intN = h / 4;
+
     D *= Scale; h *= Scale; a1 *= Scale; a2 *= Scale; b1 *= Scale; b2 *= Scale; c1 *= Scale; c2 *= Scale;
     f *= Scale; m *= Scale; t *= Scale; j *= Scale;
 
     Fix = 30; Fix *= Scale;
 
-    ScaleNormal=(1/Scale);
+    ScaleNormal = (1 / Scale);
+
+
     lineDistanceH(StartPointX, StartPointY, StartPointX + a1, StartPointY, a1, 1, -10, ScaleNormal, cm);
     lineDistanceH(StartPointX + a1, StartPointY, StartPointX + a1 + b1, StartPointY, b1, 1, -10, ScaleNormal, cm);
     lineDistanceH(StartPointX + a1 + b1, StartPointY, StartPointX + a1 + b1 + a2, StartPointY, a2, 1, -10, ScaleNormal, cm);
 
     line(StartPointX, StartPointY, StartPointX + a1 + b1 + a2, StartPointY);////2
+
+
+    if (NoeBanaii == 2) {
+        ///خط های مورب بنایی سنگی طرف چپ
+
+        debugger;
+        counterI = 1;
+        _50InScale = 50 * Scale;
+        _30InScale = 30 * Scale;
+        _80InScale = 80 * Scale;
+
+        N = (b1 - b2) * _50InScale / (h - _30InScale);//_50InScale / 3;
+
+        X1 = StartPointX+a1;
+        Y1 = StartPointY;
+        do {
+            X2 = X1;
+            Y2 = Y1 - _50InScale;
+
+            line(X1, Y1, X2, Y2);
+
+
+            line(X2, Y2, X2 + N, Y2);
+
+            X1 = X2 + N;
+            Y1 = Y2;
+            condition = (counterI * _50InScale) < (h - _80InScale);
+            counterI++;
+        }
+        while (condition)
+
+        Pe = h - _30InScale - ((counterI - 1) * _50InScale);
+        Ne = (b1 - b2) - (counterI - 1) * N;
+
+        line(X1, Y1, X1, Y1 - Pe);
+
+        line(X1, Y1 - Pe, X1 + Ne, Y1 - Pe);
+
+    }
+
+
     line(StartPointX + a1 + b1 + a2, StartPointY, StartPointX + a1 + b1 + a2, StartPointY + m);////3
     line(StartPointX, StartPointY, StartPointX, StartPointY + m);//////1
     line(StartPointX, StartPointY + m, StartPointX + f, StartPointY + m);///4
@@ -20,19 +66,24 @@
     line(StartPointX + a1 + b1, StartPointY - hmin30, StartPointX + a1 + b1 - b2, StartPointY - hmin30);///6
     lineDistanceH(StartPointX + a1 + b1, StartPointY - hmin30, StartPointX + a1 + b1 - b2, StartPointY - hmin30, b2, 2, 20, ScaleNormal, cm);
 
+
     line(StartPointX + a1 + b1, StartPointY - hmin30, StartPointX + a1 + b1, StartPointY - hmin30 - Fix);////////7
     line(StartPointX + a1 + b1, StartPointY - hmin30 - Fix, StartPointX + a1 + b1 - c1, StartPointY - hmin30 - Fix);////8
     lineDistanceH(StartPointX + a1 + b1, StartPointY - hmin30 - Fix - t, StartPointX + a1 + b1 - c1, StartPointY - hmin30 - t - Fix, c1, 2, -10, ScaleNormal, cm);
 
     line(StartPointX + a1 + b1 - c1, StartPointY - hmin30 - Fix, StartPointX + a1 + b1 - c1, StartPointY - hmin30 - Fix - t);////9
     ////خط مورب پایه کناری
-    line(StartPointX + a1 + b1 - b2, StartPointY - hmin30, StartPointX + a1, StartPointY);////10
+
+    if (NoeBanaii == 1) {
+        line(StartPointX + a1 + b1 - b2, StartPointY - hmin30, StartPointX + a1, StartPointY);////10
+    }
     x1Moarab = StartPointX + a1 + b1 - b2;
     y1Moarab = StartPointY - hmin30;
     x2Moarab = StartPointX + a1;
     y2Moarab = StartPointY;
     LPayeMoarab = Math.sqrt(Math.pow((x2Moarab - x1Moarab), 2) + Math.pow((y2Moarab - y1Moarab), 2));
     LPayeMoarab *= ScaleNormal;
+    debugger;
     $('#HDFLPayeMoarab').val(LPayeMoarab.toFixed(0));
     ////////////
 
@@ -62,6 +113,56 @@
 
     lineDistanceV(StartPointX + POfRightCol + a2 + b1 + a1 + 15, StartPointY + m, StartPointX + POfRightCol + a2 + b1 + a1 + 15, StartPointY, m, 1, ScaleNormal, cm);
 
+    if (NoeBanaii == 2) {
+        ///بنایی سنگی طرف راست
+        ////////
+        X1 = StartPointX + POfRightCol + a2 + b1;
+        Y1 = StartPointY;
+
+        counterI = 1;
+        _50InScale = 50 * Scale;
+        _30InScale = 30 * Scale;
+        _80InScale = 80 * Scale;
+
+        N = (-1) * (b1 - b2) * _50InScale / (h - _30InScale);
+
+        do {
+            X2 = X1;
+            Y2 = Y1 - _50InScale;
+
+            line(X1, Y1, X2, Y2);
+
+
+            if (counterI == 1) {
+                lineDistanceV(X1 + (_30InScale + _30InScale), Y1, X2 + (_30InScale + _30InScale), Y2, _50InScale, 1, ScaleNormal, cm);
+            }
+
+
+            line(X2, Y2, X2 + N, Y2);
+
+            X1 = X2 + N;
+            Y1 = Y2;
+
+
+            condition = (counterI * _50InScale) < (h - _80InScale)
+            counterI++;
+        }
+        while (condition)
+
+        Pe = h - _30InScale - ((counterI - 1) * _50InScale);
+        Ne = (-1) * ((b1 - b2) + (counterI - 1) * N);
+
+        line(X1, Y1, X1, Y1 - Pe);
+
+        line(X1, Y1 - Pe, X1 + Ne, Y1 - Pe);
+
+
+
+        ////////
+        /////////
+    }
+
+
     line(StartPointX + POfRightCol + a2, StartPointY, StartPointX + POfRightCol + a2, StartPointY - hmin30);////21
 
     lineDistanceH(StartPointX + a1 + b1, StartPointY, StartPointX + POfRightCol + a2, StartPointY, D, 1, -40, ScaleNormal, cm);
@@ -73,7 +174,9 @@
 
     lineDistanceV(StartPointX + POfRightCol + a2 - 25, StartPointY - hmin30, StartPointX + POfRightCol + a2 - 25, StartPointY - hmin30 - Fix, 30, 1, 1, cm);
 
-    line(StartPointX + POfRightCol + a2 + b2, StartPointY - hmin30, StartPointX + POfRightCol + a2 + b1, StartPointY);////24
+    if (NoeBanaii == 1) {
+        line(StartPointX + POfRightCol + a2 + b2, StartPointY - hmin30, StartPointX + POfRightCol + a2 + b1, StartPointY);////24
+    }
     line(StartPointX + POfRightCol + a2 + b2, StartPointY - hmin30, StartPointX + POfRightCol + a2 + b2, StartPointY - hmin30 - tPlus30);////25
 
     line(StartPointX + POfRightCol + a2, StartPointY - hmin30 - Fix, StartPointX + POfRightCol + a2 + c1, StartPointY - hmin30 - Fix);////26
@@ -110,7 +213,9 @@ function Pol2Dahaneh(D, h, a1, a2, b1, b2, c1, c2, f, m, p1, p2, e, n, k, t, j, 
     line(StartPointX + a1 + b1 - c1, StartPointY - hmin30 - Fix, StartPointX + a1 + b1 - c1, StartPointY - hmin30 - Fix - t);////9
     //////////
     ////خط مورب پایه کناری
-    line(StartPointX + a1 + b1 - b2, StartPointY - hmin30, StartPointX + a1, StartPointY);////10
+    if (NoeBanaii == 1) {
+        line(StartPointX + a1 + b1 - b2, StartPointY - hmin30, StartPointX + a1, StartPointY);////10
+    }
     x1Moarab = StartPointX + a1 + b1 - b2;
     y1Moarab = StartPointY - hmin30;
     x2Moarab = StartPointX + a1;
@@ -135,7 +240,7 @@ function Pol2Dahaneh(D, h, a1, a2, b1, b2, c1, c2, f, m, p1, p2, e, n, k, t, j, 
 
     line(ColLeftX + ToolDal, ColLeftY, ColLeftX + ToolDal, ColLeftY + t);////16
     ////////////رسم دال دوم
-    ColLeftX = (StartPointX + a1 + b1 - b2 + c2 + j) + (ToolDal)+(2*j);
+    ColLeftX = (StartPointX + a1 + b1 - b2 + c2 + j) + (ToolDal) + (2 * j);
     ColLeftY = StartPointY - hmin30 - tPlus30;
     //ToolDal = D + (2 * c1) - (2 * j);
     line(ColLeftX, ColLeftY, ColLeftX, ColLeftY + t);//////رسم دال13  
@@ -158,7 +263,7 @@ function Pol2Dahaneh(D, h, a1, a2, b1, b2, c1, c2, f, m, p1, p2, e, n, k, t, j, 
 
     line(StartPointX + POfRightCol + a2, StartPointY, StartPointX + POfRightCol + a2, StartPointY - hmin30);////21
 
-    lineDistanceH(StartPointX + a1 + b1, StartPointY, StartPointX + a1 + b1 + D, StartPointY, D, 1, -hmin30-10, ScaleNormal, cm);
+    lineDistanceH(StartPointX + a1 + b1, StartPointY, StartPointX + a1 + b1 + D, StartPointY, D, 1, -hmin30 - 10, ScaleNormal, cm);
 
     line(StartPointX + POfRightCol + a2, StartPointY - hmin30, StartPointX + POfRightCol + a2 + b2, StartPointY - hmin30);///22
     line(StartPointX + POfRightCol + a2, StartPointY - hmin30, StartPointX + POfRightCol + a2, StartPointY - hmin30 - Fix);///23
@@ -166,6 +271,7 @@ function Pol2Dahaneh(D, h, a1, a2, b1, b2, c1, c2, f, m, p1, p2, e, n, k, t, j, 
     lineDistanceV(StartPointX + POfRightCol + a2 + b1 + a1 + 15, StartPointY, StartPointX + POfRightCol + a2 + b1 + a1 + 15, StartPointY - hmin30 - Fix, h, 1, ScaleNormal, cm);
 
     lineDistanceV(StartPointX + POfRightCol + a2 + 15, StartPointY - hmin30, StartPointX + POfRightCol + a2 + 15, StartPointY - hmin30 - Fix, 30, 1, 1, cm);
+
 
     line(StartPointX + POfRightCol + a2 + b2, StartPointY - hmin30, StartPointX + POfRightCol + a2 + b1, StartPointY);////24
     line(StartPointX + POfRightCol + a2 + b2, StartPointY - hmin30, StartPointX + POfRightCol + a2 + b2, StartPointY - hmin30 - tPlus30);////25
@@ -190,16 +296,17 @@ function Pol2Dahaneh(D, h, a1, a2, b1, b2, c1, c2, f, m, p1, p2, e, n, k, t, j, 
 
     lineDistanceH(StartPointX + POfRightCol, StartPointY, StartPointX + POfRightCol + e, StartPointY, e, 1, -10, ScaleNormal, cm);
     lineDistanceH(StartPointX + POfRightCol + e, StartPointY, StartPointX + POfRightCol + e + p1, StartPointY, p1, 1, -10, ScaleNormal, cm);
-    lineDistanceH(StartPointX + POfRightCol + e+p1, StartPointY, StartPointX + POfRightCol + e + p1+e, StartPointY, e, 1, -10, ScaleNormal, cm);
+    lineDistanceH(StartPointX + POfRightCol + e + p1, StartPointY, StartPointX + POfRightCol + e + p1 + e, StartPointY, e, 1, -10, ScaleNormal, cm);
 
     line(StartPointX + a1 + b1 + D, StartPointY - hmin30, StartPointX + a1 + b1 + D + p2, StartPointY - hmin30);///22
     line(StartPointX + POfRightCol + e, StartPointY - hmin30, StartPointX + POfRightCol + e, StartPointY - hmin30 - Fix);///23
 
     lineDistanceV(StartPointX + POfRightCol + (2 * e) + p1 + 15, StartPointY, StartPointX + POfRightCol + (2 * e) + p1 + 15, StartPointY - hmin30 - Fix, h, 1, ScaleNormal, cm);
-    lineDistanceH(StartPointX + a1 + b1 + D, StartPointY - hmin30, StartPointX + a1 + b1 + D+p2, StartPointY - hmin30, p2, 1, -10, ScaleNormal, cm);
+    lineDistanceH(StartPointX + a1 + b1 + D, StartPointY - hmin30, StartPointX + a1 + b1 + D + p2, StartPointY - hmin30, p2, 1, -10, ScaleNormal, cm);
 
     /////////////خط مورب پایه میانی
     line(StartPointX + POfRightCol + e + p1, StartPointY - hmin30, StartPointX + a1 + b1 + D + p2, StartPointY);////24
+
     x1Moarab = StartPointX + POfRightCol + e + p1;
     y1Moarab = StartPointY - hmin30;
     x2Moarab = StartPointX + a1 + b1 + D + p2;
@@ -216,12 +323,16 @@ function Pol2Dahaneh(D, h, a1, a2, b1, b2, c1, c2, f, m, p1, p2, e, n, k, t, j, 
     line(StartPointX + a1 + b1 + D, StartPointY - hmin30 - Fix, StartPointX + a1 + b1 + D + p2, StartPointY - hmin30 - Fix);////26
 }
 
-function Pol3Dahaneh(D, h, a1, a2, b1, b2, c1, c2, f, m, p1, p2, e, n, k, t, j, StartPointX, StartPointY, Scale, cm) {
+function Pol3Dahaneh(D, h, a1, a2, b1, b2, c1, c2, f, m, p1, p2, e, n, k, t, j, StartPointX, StartPointY, Scale, cm, NoeBanaii) {
+
+
+    debugger;
+
     D *= Scale; h *= Scale; a1 *= Scale; a2 *= Scale; b1 *= Scale; b2 *= Scale; c1 *= Scale; c2 *= Scale;
     f *= Scale; m *= Scale; t *= Scale; j *= Scale; p1 *= Scale; p2 *= Scale; e *= Scale; n *= Scale; k *= Scale;
 
     Fix = 30; Fix *= Scale;
-    
+
     ScaleNormal = (1 / Scale);
     lineDistanceH(StartPointX, StartPointY, StartPointX + a1, StartPointY, a1, 1, -10, ScaleNormal, cm);
     lineDistanceH(StartPointX + a1, StartPointY, StartPointX + a1 + b1, StartPointY, b1, 1, -10, ScaleNormal, cm);
@@ -243,7 +354,47 @@ function Pol3Dahaneh(D, h, a1, a2, b1, b2, c1, c2, f, m, p1, p2, e, n, k, t, j, 
 
     line(StartPointX + a1 + b1 - c1, StartPointY - hmin30 - Fix, StartPointX + a1 + b1 - c1, StartPointY - hmin30 - Fix - t);////9
     ////خط مورب پایه کناری
-    line(StartPointX + a1 + b1 - b2, StartPointY - hmin30, StartPointX + a1, StartPointY);////10
+    if (NoeBanaii == 1) {
+        line(StartPointX + a1 + b1 - b2, StartPointY - hmin30, StartPointX + a1, StartPointY);////10
+    }
+    else {
+        counterI = 1;
+        _50InScale = 50 * Scale;
+        _30InScale = 30 * Scale;
+        _80InScale = 80 * Scale;
+
+        N = (b1 - b2) * _50InScale / (h - _30InScale);//_50InScale / 3;
+
+        X1 = StartPointX + a1;
+        Y1 = StartPointY;
+        do {
+            X2 = X1;
+            Y2 = Y1 - _50InScale;
+
+            line(X1, Y1, X2, Y2);
+
+            if (counterI == 1) {
+                lineDistanceV(X1 - _30InScale, Y1, X2 - _30InScale, Y2, _50InScale, 1, ScaleNormal, cm);
+            }
+
+            line(X2, Y2, X2 + N, Y2);
+
+            X1 = X2 + N;
+            Y1 = Y2;
+
+            condition = (counterI * _50InScale) < (h - _80InScale)
+            counterI++;
+        }
+        while (condition)
+
+        Pe = h - _30InScale - ((counterI - 1) * _50InScale);
+        Ne = (b1 - b2) - (counterI - 1) * N;
+
+        line(X1, Y1, X1, Y1 - Pe);
+
+        line(X1, Y1 - Pe, X1 + Ne, Y1 - Pe);
+    }
+
     x1Moarab = StartPointX + a1 + b1 - b2;
     y1Moarab = StartPointY - hmin30;
     x2Moarab = StartPointX + a1;
@@ -277,7 +428,7 @@ function Pol3Dahaneh(D, h, a1, a2, b1, b2, c1, c2, f, m, p1, p2, e, n, k, t, j, 
 
     line(ColLeftX + ToolDal, ColLeftY, ColLeftX + ToolDal, ColLeftY + t);////16
     ////////////رسم دال سوم
-    ColLeftX = (StartPointX + a1 + b1 - b2 + c2 + j) + (2*ToolDal) + (4 * j);
+    ColLeftX = (StartPointX + a1 + b1 - b2 + c2 + j) + (2 * ToolDal) + (4 * j);
     ColLeftY = StartPointY - hmin30 - tPlus30;
     line(ColLeftX, ColLeftY, ColLeftX, ColLeftY + t);//////رسم دال13  
     line(ColLeftX, ColLeftY + t, ColLeftX + ToolDal, ColLeftY + t);////14
@@ -290,7 +441,7 @@ function Pol3Dahaneh(D, h, a1, a2, b1, b2, c1, c2, f, m, p1, p2, e, n, k, t, j, 
     dOfTwoCol = D - (a2 + e);
     dOfTwoCol2 = D - (2 * e);
     //POfRightCol = f + (2 * k) + (2 * dOfTwoCol) + dOfTwoCol2;
-    POfRightCol = a1 + b1 + D + p2 + D +p2+D-a2;
+    POfRightCol = a1 + b1 + D + p2 + D + p2 + D - a2;
     line(StartPointX + POfRightCol, StartPointY, StartPointX + POfRightCol + a2 + b1 + a1, StartPointY);////17
     line(StartPointX + POfRightCol, StartPointY, StartPointX + POfRightCol, StartPointY + m);////18
     line(StartPointX + POfRightCol, StartPointY + m, StartPointX + POfRightCol + a2 + b1 + a1, StartPointY + m);////19
@@ -309,7 +460,46 @@ function Pol3Dahaneh(D, h, a1, a2, b1, b2, c1, c2, f, m, p1, p2, e, n, k, t, j, 
 
     lineDistanceV(StartPointX + POfRightCol + a2 + 15, StartPointY - hmin30, StartPointX + POfRightCol + a2 + 15, StartPointY - hmin30 - Fix, 30, 1, 1, cm);
 
-    line(StartPointX + POfRightCol + a2 + b2, StartPointY - hmin30, StartPointX + POfRightCol + a2 + b1, StartPointY);////24
+    if (NoeBanaii == 1) {
+        line(StartPointX + POfRightCol + a2 + b2, StartPointY - hmin30, StartPointX + POfRightCol + a2 + b1, StartPointY);////24
+    }
+    else if (NoeBanaii == 2) {
+        ///بنایی سنگی طرف راست
+        ////////
+        X1 = StartPointX + POfRightCol + a2 + b1;
+        Y1 = StartPointY;
+
+        counterI = 1;
+        _50InScale = 50 * Scale;
+        _30InScale = 30 * Scale;
+        _80InScale = 80 * Scale;
+
+        N = (-1) * (b1 - b2) * _50InScale / (h - _30InScale);
+
+        do {
+            X2 = X1;
+            Y2 = Y1 - _50InScale;
+
+            line(X1, Y1, X2, Y2);
+
+            line(X2, Y2, X2 + N, Y2);
+
+            X1 = X2 + N;
+            Y1 = Y2;
+
+            condition = (counterI * _50InScale) < (h - _80InScale)
+            counterI++;
+        }
+        while (condition)
+
+        Pe = h - _30InScale - ((counterI - 1) * _50InScale);
+        Ne = (-1) * ((b1 - b2) + (counterI - 1) * N);
+
+        line(X1, Y1, X1, Y1 - Pe);
+
+        line(X1, Y1 - Pe, X1 + Ne, Y1 - Pe);
+
+    }
     line(StartPointX + POfRightCol + a2 + b2, StartPointY - hmin30, StartPointX + POfRightCol + a2 + b2, StartPointY - hmin30 - tPlus30);////25
 
     line(StartPointX + POfRightCol + a2, StartPointY - hmin30 - Fix, StartPointX + POfRightCol + a2 + c1, StartPointY - hmin30 - Fix);////26
@@ -362,7 +552,7 @@ function Pol3Dahaneh(D, h, a1, a2, b1, b2, c1, c2, f, m, p1, p2, e, n, k, t, j, 
     dOfTwoCol = D - (a2 + e);
     dOfTwoCol2 = D - (2 * e);
     //POfRightCol = f + k + dOfTwoCol + dOfTwoCol2;
-    POfRightCol = a1 + b1 + D + p2+D-e;
+    POfRightCol = a1 + b1 + D + p2 + D - e;
     line(StartPointX + POfRightCol - MoveToLeft, StartPointY, StartPointX + POfRightCol - MoveToLeft + k, StartPointY);////17
     line(StartPointX + POfRightCol - MoveToLeft, StartPointY, StartPointX + POfRightCol - MoveToLeft, StartPointY + n);////18
     line(StartPointX + POfRightCol - MoveToLeft, StartPointY + n, StartPointX + POfRightCol - MoveToLeft + k, StartPointY + n);////19
@@ -375,13 +565,15 @@ function Pol3Dahaneh(D, h, a1, a2, b1, b2, c1, c2, f, m, p1, p2, e, n, k, t, j, 
     //lineDistanceH(StartPointX + POfRightCol + e, StartPointY, StartPointX + POfRightCol + e + p1, StartPointY, p1, 1, -10, ScaleNormal, cm);
     //lineDistanceH(StartPointX + POfRightCol + e + p1, StartPointY, StartPointX + POfRightCol + e + p1 + e, StartPointY, e, 1, -10, ScaleNormal, cm);
 
-    line(StartPointX + a1 + b1 + (2*D) + p2, StartPointY - hmin30, StartPointX + a1 + b1 + (2*D) + (2*p2), StartPointY - hmin30);///22
+    line(StartPointX + a1 + b1 + (2 * D) + p2, StartPointY - hmin30, StartPointX + a1 + b1 + (2 * D) + (2 * p2), StartPointY - hmin30);///22
     line(StartPointX + POfRightCol + e, StartPointY - hmin30, StartPointX + POfRightCol + e, StartPointY - hmin30 - Fix);///23
 
     //lineDistanceV(StartPointX + POfRightCol + (2 * e) + p1 + 15, StartPointY, StartPointX + POfRightCol + (2 * e) + p1 + 15, StartPointY - hmin30 - 30, h, 1, ScaleNormal, cm);
     //lineDistanceH(StartPointX + a1 + b1 + D, StartPointY - hmin30, StartPointX + a1 + b1 + D + p2, StartPointY - hmin30, p2, 1, -10, ScaleNormal, cm);
 
+
     line(StartPointX + POfRightCol - MoveToLeft + e + p1, StartPointY, StartPointX + a1 + b1 + (2 * D) + (2 * p2), StartPointY - hmin30);////24
+
     line(StartPointX + a1 + b1 + (2 * D) + (2 * p2), StartPointY - hmin30, StartPointX + a1 + b1 + (2 * D) + (2 * p2), StartPointY - hmin30 - Fix);////25
 
     //lineDistanceH(StartPointX + a1 + b1 + D, StartPointY - t - hmin30 - 30, StartPointX + a1 + b1 + D + c1, StartPointY - t - hmin30 - 30, c1, 1, -10, ScaleNormal, cm);
@@ -433,7 +625,7 @@ function DivarBali(h, x, b, f, m, StartPointX, StartPointY, Scale, cm) {
 }
 
 function DrawPos1(D, t1, t2, t3, c1, j, StartPointX, StartPointY, Scale, Meyar) {
-    fix1=0.08*100;fix1*=Scale;
+    fix1 = 0.08 * 100; fix1 *= Scale;
     D *= Scale; t1 *= Scale; t2 *= Scale; t3 *= Scale; c1 *= Scale; j *= Scale;
     Tool = D + ((2 * c1) - (2 * j) - fix1);
     ToolEnteha = Tool - (t2 + t3);
@@ -451,9 +643,9 @@ function DrawPos2(D, t1, t2, t3, c1, j, StartPointX, StartPointY, Scale, Meyar) 
     ToolEnteha = Tool - (t2 + t3);
     line(StartPointX, StartPointY, StartPointX, StartPointY + t1);////1
     line(StartPointX, StartPointY + t1, StartPointX + ToolEnteha, StartPointY + t1);////2
-    line(StartPointX + ToolEnteha, StartPointY + t1 , StartPointX + ToolEnteha + t3, StartPointY + t1 - t3);////3
-    line(StartPointX + ToolEnteha + t3, StartPointY + t1 - t3, StartPointX + ToolEnteha + t3+t2, StartPointY + t1 - t3);////4
-    line(StartPointX + ToolEnteha + t3 + t2, StartPointY + t1 - t3 + t2, StartPointX  + t3+ t2 + ToolEnteha, StartPointY + t1 - t3 + t2-t1);////5
+    line(StartPointX + ToolEnteha, StartPointY + t1, StartPointX + ToolEnteha + t3, StartPointY + t1 - t3);////3
+    line(StartPointX + ToolEnteha + t3, StartPointY + t1 - t3, StartPointX + ToolEnteha + t3 + t2, StartPointY + t1 - t3);////4
+    line(StartPointX + ToolEnteha + t3 + t2, StartPointY + t1 - t3 + t2, StartPointX + t3 + t2 + ToolEnteha, StartPointY + t1 - t3 + t2 - t1);////5
 }
 
 function DrawPos4(D, t1, c1, j, StartPointX, StartPointY, Scale, Meyar) {
@@ -480,9 +672,9 @@ function DrawPos7Left(b2, c1, c2, t, StartPointX, StartPointY, Scale, Meyar) {
     line(StartPointX + c2, StartPointY, StartPointX + c2, StartPointY + t);////6
     //////////////////////////////
     line(StartPointX + fix3, StartPointY + fix2, StartPointX + c2 - fix3, StartPointY + fix2);////1
-    line(StartPointX + fix3, StartPointY + fix2, StartPointX + fix3, StartPointY + (t + fix1-fix2));////2
+    line(StartPointX + fix3, StartPointY + fix2, StartPointX + fix3, StartPointY + (t + fix1 - fix2));////2
     line(StartPointX + c2 - fix3, StartPointY + fix2, StartPointX + c2 - fix3, StartPointY + (t + fix1 - fix2));////3
-    line(StartPointX + fix3, StartPointY + (t + fix1 - fix2), StartPointX + b2-fix3, StartPointY + (t + fix1 - fix2));////4
+    line(StartPointX + fix3, StartPointY + (t + fix1 - fix2), StartPointX + b2 - fix3, StartPointY + (t + fix1 - fix2));////4
     line(StartPointX + (b2 - fix3), StartPointY + t + fix2, StartPointX + (b2 - fix3), StartPointY + t + fix1 - fix2);////5
     line(StartPointX + fix3, StartPointY + t + fix2, StartPointX + (b2 - fix3), StartPointY + t + fix2);////6
 }
@@ -499,18 +691,18 @@ function DrawPos7Right(D, j, b2, c1, c2, t, StartPointX, StartPointY, Scale, Mey
     line(StartPointX + Tool, StartPointY, StartPointX + Tool + c2, StartPointY);////2
     line(StartPointX + Tool - c1, StartPointY + Ertefa, StartPointX + Tool + b2 - c1, StartPointY + Ertefa);////3
     line(StartPointX + Tool - c1, StartPointY + Ertefa, StartPointX + Tool - c1, StartPointY + Ertefa - fix1);////4
-    line(StartPointX + Tool - c1, StartPointY + Ertefa - fix1, StartPointX + Tool , StartPointY + Ertefa - fix1);////5
-    line(StartPointX + Tool + c2, StartPointY, StartPointX + Tool + c2, StartPointY + t+fix1);////6
+    line(StartPointX + Tool - c1, StartPointY + Ertefa - fix1, StartPointX + Tool, StartPointY + Ertefa - fix1);////5
+    line(StartPointX + Tool + c2, StartPointY, StartPointX + Tool + c2, StartPointY + t + fix1);////6
     //////////////////////////////
     line(StartPointX + Tool + fix3, StartPointY + fix2, StartPointX + Tool + c2 - fix3, StartPointY + fix2);////1
     line(StartPointX + Tool + fix3, StartPointY + fix2, StartPointX + Tool + fix3, StartPointY + (t + fix1 - fix2));////2
-    line(StartPointX + Tool + c2 - fix3, StartPointY + fix2, StartPointX + Tool + c2 - fix3, StartPointY + (t + fix1-fix2));////3
+    line(StartPointX + Tool + c2 - fix3, StartPointY + fix2, StartPointX + Tool + c2 - fix3, StartPointY + (t + fix1 - fix2));////3
     line(StartPointX + Tool - c1 + fix3, StartPointY + (t + fix1 - fix2), StartPointX + Tool - c1 - fix3 + b2, StartPointY + (t + fix1 - fix2));////4
     line(StartPointX + Tool - c1 + fix3, StartPointY + t + fix2, StartPointX + Tool - c1 + fix3, StartPointY + t + fix1 - fix2);////5
     line(StartPointX + Tool - c1 + fix3, StartPointY + fix2 + t, StartPointX + Tool - c1 - fix3 + b2, StartPointY + fix2 + t);////
 }
 
-function DrawDal(D, c1, j,t, StartPointX, StartPointY, Scale, Meyar) {
+function DrawDal(D, c1, j, t, StartPointX, StartPointY, Scale, Meyar) {
     D *= Scale; t1 *= Scale; c1 *= Scale; j *= Scale; t *= Scale;
     Tool = D + ((2 * c1) - (2 * j));
     line(StartPointX, StartPointY, StartPointX, StartPointY - t);////1
@@ -520,11 +712,14 @@ function DrawDal(D, c1, j,t, StartPointX, StartPointY, Scale, Meyar) {
 }
 
 function line(x1, y1, x2, y2) {
+    PolExistingId = $('#HDFPolIdForEdit').val();
+
     Line = "<line x1=\"" + x1 + "\" x2=\"" + x2 + "\" y1=\"" + y1 + "\" y2=\"" + y2 + "\" style=\"stroke: rgb(0,0,0); stroke-width:1\" />";
-    $('#svgLines').append(Line);
-    $('#svgContainerPol').html($('#svgContainerPol').html());
+    $('#svgLines-' + PolExistingId).append(Line);
+    $('#svgContainerPol-' + PolExistingId).html($('#svgContainerPol-' + PolExistingId).html());
 }
 function lineDistanceH(x1, y1, x2, y2, distance, Pos, dOfLine, ScaleNormal, cm) {
+    PolExistingId = $('#HDFPolIdForEdit').val();
     if (distance != 0) {
         if (Pos == 1) /////1= L to R
             ////////2= R to L
@@ -532,29 +727,32 @@ function lineDistanceH(x1, y1, x2, y2, distance, Pos, dOfLine, ScaleNormal, cm) 
         else
             Text = "<text style=\"font-size:20px\" x=\"" + (x2 + ((distance / 2) + 8)) + "\" y=\"" + ((y2 + dOfLine) - 5) + "\" fill=\"blue\">" + parseInt(distance * ScaleNormal) / cm + "</text>";
         Line = "<line x1=\"" + x1 + "\" x2=\"" + x2 + "\" y1=\"" + (y1 + dOfLine) + "\" y2=\"" + (y2 + dOfLine) + "\" style=\"stroke: rgb(0,0,0); stroke-width:0.5\" />";
-        $('#svgLines').append(Line);
-        $('#svgLines').append(Text);
+        $('#svgLines-' + PolExistingId).append(Line);
+        $('#svgLines-' + PolExistingId).append(Text);
         Line1 = "<line x1=\"" + (x1 - 2) + "\" x2=\"" + (x1 + 2) + "\" y1=\"" + ((y1 + dOfLine) + 2) + "\" y2=\"" + ((y1 + dOfLine) - 2) + "\" style=\"stroke: rgb(0,0,0); stroke-width:0.5\" />";
-        $('#svgLines').append(Line1);
+        $('#svgLines-' + PolExistingId).append(Line1);
         Line1 = "<line x1=\"" + (x2 - 2) + "\" x2=\"" + (x2 + 2) + "\" y1=\"" + ((y2 + dOfLine) + 2) + "\" y2=\"" + ((y2 + dOfLine) - 2) + "\" style=\"stroke: rgb(0,0,0); stroke-width:0.5\" />";
-        $('#svgLines').append(Line1);
-        $('#svgContainerPol').html($('#svgContainerPol').html());
+        $('#svgLines-' + PolExistingId).append(Line1);
+        $('#svgContainerPol-' + PolExistingId).html($('#svgContainerPol-' + PolExistingId).html());
     }
 }
 function lineDistanceV(x1, y1, x2, y2, distance, Pos, ScaleNormal, cm) {
+    PolExistingId = $('#HDFPolIdForEdit').val();
     if (distance != 0) {
+        Meghdar = Math.round((distance * ScaleNormal) / cm);
+
         if (Pos == 1) /////1= L to R
             ////////2= R to L
-            Text = "<text style=\"font-size:20px\" x=\"" + (x1 + 17) + "\" y=\"" + (y1 - ((distance / 2))) + "\" fill=\"blue\">" + (distance * ScaleNormal) / cm + "</text>";
+            Text = "<text style=\"font-size:20px\" x=\"" + (x1 + 17) + "\" y=\"" + (y1 - ((distance / 2))) + "\" fill=\"blue\">" + Meghdar + "</text>";
         else
-            Text = "<text style=\"font-size:20px\" x=\"" + (x2 + 17) + "\" y=\"" + (y2 - ((distance / 2))) + "\" fill=\"blue\">" + (distance * ScaleNormal) / cm + "</text>";
+            Text = "<text style=\"font-size:20px\" x=\"" + (x2 + 17) + "\" y=\"" + (y2 - ((distance / 2))) + "\" fill=\"blue\">" + Meghdar + "</text>";
         Line = "<line x1=\"" + x1 + "\" x2=\"" + x2 + "\" y1=\"" + y1 + "\" y2=\"" + y2 + "\" style=\"stroke: rgb(0,0,0); stroke-width:0.5\" />";
-        $('#svgLines').append(Line);
-        $('#svgLines').append(Text);
+        $('#svgLines-' + PolExistingId).append(Line);
+        $('#svgLines-' + PolExistingId).append(Text);
         Line1 = "<line x1=\"" + (x1 - 2) + "\" x2=\"" + (x1 + 2) + "\" y1=\"" + (y1 + 2) + "\" y2=\"" + (y1 - 2) + "\" style=\"stroke: rgb(0,0,0); stroke-width:0.5\" />";
-        $('#svgLines').append(Line1);
+        $('#svgLines-' + PolExistingId).append(Line1);
         Line1 = "<line x1=\"" + (x2 - 2) + "\" x2=\"" + (x2 + 2) + "\" y1=\"" + (y2 + 2) + "\" y2=\"" + (y2 - 2) + "\" style=\"stroke: rgb(0,0,0); stroke-width:0.5\" />";
-        $('#svgLines').append(Line1);
-        $('#svgContainerPol').html($('#svgContainerPol').html());
+        $('#svgLines-' + PolExistingId).append(Line1);
+        $('#svgContainerPol-' + PolExistingId).html($('#svgContainerPol-' + PolExistingId).html());
     }
 }

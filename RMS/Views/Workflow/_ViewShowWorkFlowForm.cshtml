@@ -1,0 +1,454 @@
+﻿@{
+    ViewData["Title"] = "مدیریت گردش کار";
+}
+
+<link href="~/scripts/selfstyle/workflowstyle.css" rel="stylesheet" />
+
+<div class="container-fluid mt-3">
+
+    <div class="card shadow">
+
+        <div class="card-header bg-primary text-white">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <h5 class="mb-0">
+                    <i class="fa fa-project-diagram"></i>
+                    مدیریت گردش کار
+                </h5>
+
+                <button class="btn btn-light btn-sm" id="btnAddWorkflow">
+
+                    <i class="fa fa-plus"></i>
+
+                    گردش جدید
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <!-- Workflows -->
+
+                <div class="col-md-4">
+
+                    <div class="card">
+
+                        <div class="card-header">
+
+                            گردش ها
+
+                        </div>
+
+                        <div class="card-body">
+
+                            <!-- فرم گردش -->
+
+                            <div id="workflowForm" class="mb-3" style="display:none">
+
+                                <input type="hidden" id="WorkflowId" />
+
+
+                                <div class="mb-2">
+
+                                    <label class="form-label">
+                                        نام گردش
+                                    </label>
+
+                                    <input type="text"
+                                           id="WorkflowName"
+                                           class="form-control"
+                                           placeholder="نام گردش را وارد کنید" />
+
+                                </div>
+                                <div class="mb-2">
+
+                                    <label class="form-label">
+                                        نوع فرآیند
+                                    </label>
+
+                                    <select id="WorkflowProcessType"
+                                            class="form-select">
+
+                                        <option value="1">
+                                            ایجاد برآورد اولیه
+                                        </option>
+                                        <option value="2">
+                                            برآورد اولیه
+                                        </option>
+
+                                        <option value="2">
+                                            صورت وضعیت
+                                        </option>
+
+                                        <option value="3">
+                                            پیشنهاد قیمت
+                                        </option>
+
+                                    </select>
+
+                                </div>
+                                <div class="form-check">
+
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           id="WorkflowIsDefault">
+
+                                    <label class="form-check-label">
+                                        فرآیند پیش فرض
+                                    </label>
+
+                                </div>
+
+                                <div class="form-check">
+
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           id="WorkflowIsSystem">
+
+                                    <label class="form-check-label">
+                                        فرآیند سیستمی
+                                    </label>
+
+                                </div>
+
+                                <div class="form-check">
+
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           id="WorkflowAuto">
+
+                                    <label class="form-check-label">
+                                        اتوماتیک
+                                    </label>
+
+                                </div>
+
+                                <div class="form-check mb-3">
+
+                                    <input type="checkbox"
+                                           class="form-check-input"
+                                           id="WorkflowIsActive"
+                                           checked />
+
+
+                                    <label class="form-check-label">
+                                        فعال باشد
+                                    </label>
+
+                                </div>
+
+
+                                <div class="d-flex gap-2">
+
+                                    <button class="btn btn-success btn-sm"
+                                            id="btnSaveWorkflow" onclick="saveWorkflow()">
+
+                                        <i class="fa fa-save"></i>
+                                        ذخیره
+
+                                    </button>
+
+
+                                    <button class="btn btn-secondary btn-sm"
+                                            id="btnCancelWorkflow">
+
+                                        انصراف
+
+                                    </button>
+
+
+                                </div>
+                                <span id="workflowMode"
+                                      class="text-primary ms-2">
+                                </span>
+
+
+                                <hr />
+
+                            </div>
+
+
+
+                            <!-- لیست گردش ها -->
+
+                            <ul id="workflowList"
+                                class="list-group list-group-flush">
+                            </ul>
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Steps -->
+
+                <div class="col-md-8">
+
+                    <div class="card">
+
+                        <div class="card-header">
+
+                            <div class="d-flex justify-content-between">
+
+                                <span>
+
+                                    مراحل گردش
+
+                                </span>
+
+                                <button class="btn btn-success btn-sm"
+                                        id="btnAddStep"
+                                        disabled>
+
+                                    <i class="fa fa-plus"></i>
+
+                                    مرحله جدید
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        <div class="card-body">
+
+
+                            <!-- فرم مرحله -->
+
+                            <div id="stepForm" style="display:none">
+
+
+                                <input type="hidden" id="WorkflowStepId" />
+
+
+                                <input type="hidden" id="StepWorkflowId" />
+
+
+
+                                <div class="mb-2">
+
+                                    <label>
+                                        عنوان مرحله
+                                    </label>
+
+                                    <input type="text"
+                                           id="StepTitle"
+                                           class="form-control" />
+
+                                </div>
+
+
+
+                                <div class="row">
+
+
+                                    <div class="col-md-4">
+
+
+                                        <div class="form-check">
+
+                                            <input type="checkbox"
+                                                   id="StepAllowReturn"
+                                                   class="form-check-input" />
+
+                                            <label>
+                                                امکان عودت
+                                            </label>
+
+                                        </div>
+
+
+                                    </div>
+
+
+                                    <div class="col-md-4">
+
+
+                                        <div class="form-check">
+
+                                            <input type="checkbox"
+                                                   id="StepIsFinal"
+                                                   class="form-check-input" />
+
+                                            <label>
+                                                مرحله پایانی
+                                            </label>
+
+                                        </div>
+
+
+                                    </div>
+
+
+
+                                    <div class="col-md-4">
+
+
+                                        <div class="form-check">
+
+                                            <input type="checkbox"
+                                                   id="StepNeedSelectReceiver"
+                                                   class="form-check-input" />
+
+
+                                            <label>
+                                                انتخاب گیرنده هنگام ارسال
+                                            </label>
+
+
+                                        </div>
+
+
+                                    </div>
+
+
+                                </div>
+
+
+
+                                <hr />
+
+
+
+                                <div class="row">
+
+
+                                    <div class="col-md-6">
+
+                                        <label>
+                                            نقش ها
+                                        </label>
+
+
+                                        <select id="StepRoles"
+                                                class="form-control"
+                                                multiple>
+                                        </select>
+
+
+                                    </div>
+
+
+
+
+                                    <div class="col-md-6">
+
+                                        <label>
+                                            کاربران
+                                        </label>
+
+
+                                        <select id="StepUsers"
+                                                class="form-control"
+                                                multiple>
+                                        </select>
+
+
+                                    </div>
+
+
+                                </div>
+
+
+
+                                <div class="mt-3">
+
+
+                                    <button class="btn btn-success btn-sm"
+                                            id="btnSaveStep">
+
+                                        <i class="fa fa-save"></i>
+
+                                        ذخیره
+
+                                    </button>
+
+
+
+                                    <button class="btn btn-secondary btn-sm"
+                                            id="btnCancelStep">
+
+                                        انصراف
+
+                                    </button>
+
+
+                                </div>
+
+
+                                <hr />
+
+
+                            </div>
+
+
+
+                            <table class="table table-bordered table-hover table-sm mb-0">
+
+                                <thead class="table-light">
+
+                                    <tr>
+
+                                        <th style="width:60px">
+                                            ترتیب
+                                        </th>
+
+                                        <th>
+                                            عنوان مرحله
+                                        </th>
+
+                                        <th style="width:220px">
+                                            نقش ها
+                                        </th>
+
+                                        <th style="width:220px">
+                                            کاربران
+                                        </th>
+
+                                        <th style="width:90px">
+                                            عودت
+                                        </th>
+
+                                        <th style="width:90px">
+                                            پایان
+                                        </th>
+
+                                        <th style="width:130px">
+                                            انتخاب گیرنده
+                                        </th>
+
+                                        <th style="width:170px">
+                                            عملیات
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+                                <tbody id="stepList">
+                                </tbody>
+
+                            </table>
+
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<script src="~/scripts/workflow/workflow.js"></script>

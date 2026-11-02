@@ -7,9 +7,11 @@
 
     $('#HDFOperationId').val(OperationId);
     BarAvordUserId = $('#HDFBarAvordUserID').val();
+    NoeFB = parseInt($('#HDFNoeFB').val());
 
     var vardata = new Object();
     vardata.BaravordId = BarAvordUserId;
+    vardata.NoeFBId = NoeFB;
 
     $.ajax({
         type: "POST",
@@ -29,13 +31,13 @@
                 <div class="row col-12" style="margin-bottom: 10px;">
                     <div class="col-3">
                     <input type="checkbox"  class="chkBoardStand" name="" value="${index + 1}">
-                    <span id="spanBoardStand${index + 1}" class="spanBoardStandStyle">${item}</span>
+                        <span id="spanBoardStand${index + 1}" class="spanBoardStandStyle">${item}</span>
                     </div>
                     <div class="col-1" style="text-align:left">
-                    <span>تعداد: </span>
+                        <span>تعداد: </span>
                     </div>
                     <div class="col-1">
-                    <input  class="txtBoardStand form-control" style="height: 25px;text-align:center" type="number" name="" min="0" max="10000" step="1" placeholder="">
+                        <input class="txtBoardStand form-control" style="height: 25px;text-align:center" type="number" name="" min="0" max="10000" step="1" />
                     </div>
                 </div>
                 `;
@@ -94,7 +96,7 @@
 
 
             $('#ula' + OperationId).off('change', ".chkBoardStand").on('change', ".chkBoardStand", function () {
-                debugger;
+
                 let $row = $(this).closest(".row");
                 let $txt = $row.find(".txtBoardStand");
 
@@ -112,7 +114,7 @@
             });
 
             $('#ula' + OperationId).off('change', '.txtBoardStand').on('change', '.txtBoardStand', function () {
-                debugger;
+
                 let $txt = $(this);
                 let $row = $(this).closest(".row");
                 let $span = $(this).closest(".spanBoardStandStyle");
@@ -253,37 +255,37 @@ function ShowRizMetreBoardStand(lstBoardStandType) {
                         str += "<div class='col-md-12'><span style='color:#000'>" + itemGroup.itemFBShomareh + " - " + des + "</span></div>";
                         str += "</div>";
 
-                        str += "<div class=\"row col-12 styleHeaderTable\" style=\"text-align: center;background-color: #c4bfe3;\">";
+                        str += "<div class=\"row col-12 styleHeaderTable\" style=\"text-align: center;\">";
                         str += "<div class=\"col-md-1 spanStyleMitraSmall\" style=\"text-align:center\"><span id=\"spanFieldShomarehName\">ردیف</span></div>";
                         str += "<div class=\"col-md-2 spanStyleMitraSmall\">شرح</div>";
 
                         str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">تعداد</div>";
+                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">تعداد</div>";
                         str += "<div class=\"VahedStyle\">" + (ItemFields[0] != undefined ? ItemFields[0].vahed : "") + "</div>";
                         str += "</div>";
 
                         str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">طول</div>";
+                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">طول</div>";
                         str += "<div class=\"VahedStyle\">" + (ItemFields[1] != undefined ? ItemFields[1].vahed : "") + "</div>";
                         str += "</div>";
 
                         str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">عرض</div>";
+                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">عرض</div>";
                         str += "<div class=\"VahedStyle\">" + (ItemFields[2] != undefined ? ItemFields[2].vahed : "") + "</div>";
                         str += "</div>";
 
                         str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">ارتفاع</div>";
+                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">ارتفاع</div>";
                         str += "<div class=\"VahedStyle\">" + (ItemFields[3] != undefined ? ItemFields[3].vahed : "") + "</div>";
                         str += "</div>";
 
                         str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">وزن</div>";
+                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">وزن یا...</div>";
                         str += "<div class=\"VahedStyle\">" + (ItemFields[4] != undefined ? ItemFields[4].vahed : "") + "</div>";
                         str += "</div>";
 
                         str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\"><span>مقدار جزء</span></div>";
+                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\"><span>مقدار جزء</span></div>";
                         str += "<div class=\"VahedStyle\">" + (ItemFields[5] != undefined ? ItemFields[5].vahed : "") + "</div>";
                         str += "</div>";
 
@@ -312,7 +314,7 @@ function ShowRizMetreBoardStand(lstBoardStandType) {
                             let HasEditButton = row.hasEditButton;
 
                             str += "<div class='row styleRowTable'  data-boardid='" + BarAvordAddedBoardId + "' style=\"background-color:#fff\" onclick=\"RizMetreSelectClick('" + rizmetreid + "')\">";
-                            str += "<div class='col-md-1' style=\"text-align:center;color:#000\"><span>" + row.shomareh + "</span></div>";
+                            str += "<div class='col-md-1' style=\"text-align:center;color:#000\"><span class='RMRowStyle'>" + row.shomareh + "</span></div>";
 
                             str += "<div class='col-md-2'><input disabled type='text'" +
                                 " class='form-control spanStyleMitraSmall' style='direction:ltr;' id='txtSharh" + id + "' value='" + row.sharh + "' /></div > ";
@@ -333,9 +335,9 @@ function ShowRizMetreBoardStand(lstBoardStandType) {
                             str += "<div class='col-md-1'><input type='text'" + (ItemFields[4] != undefined ? ItemFields[4].isEnteringValue !== true ? "disabled='disabled'" : "" : "") +
                                 " class='form-control spanStyleMitraSmall " + (ItemFields[4] != undefined ? ItemFields[4].isEnteringValue === true ? " HasEnteringValue " : "" : "") + "' id='txtVazn" + rizmetreid + "' value='" + strVazn + "'/></div>";
 
-                            str += "<div class='col-md-1 RMMJozStyle' style='direction:ltr'><span id='MeghdarJoz" + rizmetreid + "'>" + MeghdarJoz + "</span></div>";
+                            str += "<div class='col-md-1' style='direction:ltr'><label class='RMMJozStyle' id='MeghdarJoz" + rizmetreid + "'>" + MeghdarJoz + "</label></div>";
 
-                            str += "<div class='col-md-2'><input disabled type='text' title='" + row.des + "' style='font-size:12px' class='form-control input-sm' id='txtDes" + rizmetreid + "' value='" + row.des + "'/></div>";
+                            str += "<div class='col-md-2'><input disabled type='text' title='" + row.des + "' class='form-control spanStyleMitraSmall input-sm' id='txtDes" + rizmetreid + "' value='" + row.des + "'/></div>";
                             //str += "<div class='col-md-1' style='text-align:center;'><i class='fa fa-pen' onclick=\"ViewRMUDetailsClick('" + BarAvordAddedBoardId + "')\"></i></div>";
                             //str += "<i id =\"iSave\" class=\"fa fa-save SaveRMUStyle\" onclick=\"UpdateRMUDetailsClick('" + rizmetreid + "')\" class=\"ButtonRowsSaveStyle\"></i>";
 
@@ -371,9 +373,11 @@ function ShowRizMetreBoardStand(lstBoardStandType) {
 function DeleteBoardStand(BoardStandType) {
     debugger;
     BarAvordUserId = $('#HDFBarAvordUserID').val();
+    NoeFB = parseInt($('#HDFNoeFB').val());
     var vardata = new Object();
     vardata.BaravordId = BarAvordUserId;
     vardata.BoardStandType = BoardStandType;
+    vardata.NoeFBId = NoeFB;
 
    return $.ajax({
         type: "POST",
@@ -416,6 +420,8 @@ function SaveBoardStand(Tedad, ckVal) {
 
             let arr = [parseInt(ckVal)];
             ShowRizMetreBoardStand(arr);
+
+            GetTreeForOneOperation();
         },
         error: function (response) {
             toastr.error('مشکل در ذخیره پایه تابلو انتخابی', 'خطا');

@@ -5,8 +5,10 @@ namespace RMS.Controllers.ItemFBStar.Dto;
 public class UpdateRizMetreItemStarFrmShowBarAvordDto
 {
     public int Year { get; set; }   
+    public NoeFehrestBaha NoeFB { get; set; }   
     public Guid Id { get; set; }
     public string Sharh { get; set; }
+    public string? TajmieItem { get; set; }
     public decimal? Tedad { get; set; }
     public decimal? Tool { get; set; }
     public decimal? Arz { get; set; }

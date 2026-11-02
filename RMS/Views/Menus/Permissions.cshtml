@@ -1,0 +1,50 @@
+﻿<style>
+
+    a {
+        color: #2f019b;
+        font-size: 20px;
+        font-family: 'BMitra', sans-serif;
+    }
+</style>
+@using RMS.Controllers.Menu.Dto
+@model MenuPermissionsVm
+
+<div style="margin-top:70px">
+
+<h2>مجوزهای منوی @Model.MenuTitle</h2>
+
+<form asp-action="Permissions" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="MenuId" />
+    <input type="hidden" asp-for="MenuTitle" />
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>عنوان مجوز</th>
+                <th>گروه مجوز</th>
+                <th>✔</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Items.Count; i++)
+            {
+                <tr>
+                    <td>@Model.Items[i].Title</td>
+                    <td>@Model.Items[i].Group</td>
+                    <td>
+                        <input type="hidden" asp-for="Items[@i].PermissionId" />
+                        <input type="hidden" asp-for="Items[@i].Key" />
+                        <input type="hidden" asp-for="Items[@i].Title" />
+                        <input type="hidden" asp-for="Items[@i].Group" />
+                        <input type="checkbox" asp-for="Items[@i].IsChecked" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button type="submit">ذخیره</button>
+    <a asp-action="Index">بازگشت</a>
+</form>
+</div>

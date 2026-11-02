@@ -15,6 +15,14 @@ namespace RMS.Controllers.AmalyateKhaki.Dto
         public List<KhakBardariInfoForBarAvordItemsForUpdateDto> lstItems { get; set; }
     }
 
+    public class DeleteKhakBardariInfoForBarAvordDto
+    {
+        public Guid BarAvordUserId { get; set; }
+        public Guid KMKhakBardariId { get; set; }
+        public long Year { get; set; }
+        public int KMNum { get; set; }
+    }
+
     public class KhakBardariInfoForBarAvordItemsForUpdateDto
     {
         public string DetailValue { get; set; }

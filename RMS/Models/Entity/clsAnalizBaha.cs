@@ -14,7 +14,8 @@ public class clsAnalizBaha
     public NoeFehrestBaha  NoeFB { get; set; }
     public int Year { get; set; }
     public long NiroMasalehMashinId { get; set; }
-    public long Vahed { get; set; }
+    //public long Vahed { get; set; }
+    [Column(TypeName = "decimal(18,12)")]
     public decimal MeghdarMeghias { get; set; }
     public decimal BahayeVahed { get; set; }
     public decimal bahayeKol { get;set; }

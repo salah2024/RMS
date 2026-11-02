@@ -42,27 +42,54 @@ namespace RMS.Controllers.AbnieFani
         {
             try
             {
-
                 int TedadDahaneh = request.TedadDahaneh;
                 int DahaneAbro = request.DahaneAbro;
                 decimal HadAksarErtefaKoole = request.HadAksarErtefaKoole;
 
                 var varHadAksarErtefaKoole = _context.HadAksarErtefaKooles.Where(x => x.TedadDahaneh == TedadDahaneh &&
-                x.DahaneAbro == DahaneAbro && x.HadAksarErtefaKoole == HadAksarErtefaKoole).ToList();
-                DataTable DtHadAksarErtefaKoole = clsConvert.ToDataTable(varHadAksarErtefaKoole);
+                    x.DahaneAbro == DahaneAbro).ToList();
+
+                List<decimal> lstHadAksarErtefaKoole = varHadAksarErtefaKoole.Select(x => x.HadAksarErtefaKoole).Distinct().ToList();
+
+                decimal HadAksarErtefaKooleBase = 0;
+                foreach (var item in lstHadAksarErtefaKoole)
+                {
+                    if (HadAksarErtefaKoole <= item)
+                    {
+                        HadAksarErtefaKooleBase = item;
+                        break;
+                    }
+                }
+
+                //if (HadAksarErtefaKooleBase == 0)
+                //{
+                //    HadAksarErtefaKooleBase = lstHadAksarErtefaKoole.Last();
+                //}
+
+                var varHadAksarErtefaKooleNew = varHadAksarErtefaKoole.FirstOrDefault(x => x.HadAksarErtefaKoole == HadAksarErtefaKooleBase);
+
+                //DataTable DtHadAksarErtefaKoole = clsConvert.ToDataTable(varHadAksarErtefaKoole);
                 //DataTable DtHadAksarErtefaKoole = clsHadAksarErtefaKoole.ListWithParametr("TedadDahaneh=" + TedadDahaneh
                 //    + " and DahaneAbro=" + DahaneAbro + " and HadAksarErtefaKoole=" + HadAksarErtefaKoole);
-                long lngId = long.Parse(DtHadAksarErtefaKoole.Rows[0]["ID"].ToString());
-                var varAbadeKoole = _context.AbadeKooles.Where(x => x.HadAksarErtefaKooleId == lngId).ToList();
-                DataTable DtAbadeKoole = clsConvert.ToDataTable(varAbadeKoole);
-                //DtHadAksarErtefaKoole.Columns.Remove("AbadeKooles");
-                DtAbadeKoole.Columns.Remove("HadAksarErtefaKoole");
-                //DtAbadeKoole.Columns.Remove("AbroDaliDetails1");
-                //DataTable DtAbadeKoole = clsAbadeKoole.ListWithParametr("HadAksarErtefaKooleId=" + DtHadAksarErtefaKoole.Rows[0]["Id"].ToString());
-                DataSet Ds = new DataSet();
-                DtAbadeKoole.TableName = "AbadeKoole";
-                Ds.Tables.Add(DtAbadeKoole);
-                return new JsonResult(Ds.GetXml());
+
+                if (varHadAksarErtefaKooleNew != null)
+                {
+                    long lngId = varHadAksarErtefaKoole.First(x => x.Id == varHadAksarErtefaKooleNew.Id).Id;// long.Parse(DtHadAksarErtefaKoole.Rows[0]["ID"].ToString()); //varHadAksarErtefaKoole.Select(x=>x.Id).ToList();
+
+                    var varAbadeKoole = _context.AbadeKooles.Where(x => x.HadAksarErtefaKooleId == lngId).ToList();
+
+                    DataTable DtAbadeKoole = clsConvert.ToDataTable(varAbadeKoole);
+                    //DtHadAksarErtefaKoole.Columns.Remove("AbadeKooles");
+                    DtAbadeKoole.Columns.Remove("HadAksarErtefaKoole");
+                    //DtAbadeKoole.Columns.Remove("AbroDaliDetails1");
+                    //DataTable DtAbadeKoole = clsAbadeKoole.ListWithParametr("HadAksarErtefaKooleId=" + DtHadAksarErtefaKoole.Rows[0]["Id"].ToString());
+                    DataSet Ds = new DataSet();
+                    DtAbadeKoole.TableName = "AbadeKoole";
+                    Ds.Tables.Add(DtAbadeKoole);
+                    return new JsonResult(Ds.GetXml());
+                }
+                else
+                    return new JsonResult(null);
             }
             catch (Exception)
             {

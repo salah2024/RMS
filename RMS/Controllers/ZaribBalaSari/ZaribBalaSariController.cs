@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RMS.Controllers.ZaribBalaSari.Dto;
 using RMS.Models.Common.Dto;
 using RMS.Models.Entity;
@@ -17,8 +18,14 @@ public class ZaribBalaSariController(ApplicationDbContext context) : Controller
         int Year = request.Year;
 
         clsBaravordUser? baravordUser = _context.BaravordUsers.FirstOrDefault(x => x.ID == BaravordId);
+
         if (baravordUser != null)
         {
+            if (baravordUser.Type != NoeBarAvord.BarAvord)
+            {
+                return new JsonResult("NOK");
+            }
+
             string[] NoeFBs = baravordUser.NoeFBs.Split(",");
 
             List<NoeFehrestBaha> lstNoeFBs = new List<NoeFehrestBaha>();
@@ -81,7 +88,7 @@ public class ZaribBalaSariController(ApplicationDbContext context) : Controller
                         case NoeFehrestBaha.RahoBand:
                             {
                                 Zarayeb.ZaribBalaSari = Zarib;
-                                Zarayeb.FBName = "راه، باند و فرودگاه";
+                                Zarayeb.FBName = "راه، راه‌آھن و باند فرودگاه";
                                 break;
                             }
                         case NoeFehrestBaha.Barghi:
@@ -119,12 +126,23 @@ public class ZaribBalaSariController(ApplicationDbContext context) : Controller
     }
 
     [HttpPost]
-    public JsonResult GetBaravordZaribBalasari([FromBody] GetBaravordZaribBalasariDto request)
+    public async Task<JsonResult> GetBaravordZaribBalasari([FromBody] GetBaravordZaribBalasariDto request)
     {
         Guid BaravordId = request.BaravordId;
         int Year = request.Year;
 
-        clsBaravordZaribBalaSari? BaravordZaribBalaSari = _context.BaravordZaribBalaSaris.FirstOrDefault(x => x.BaravordId == request.BaravordId);
+
+        clsBaravordUser? currentBarAvordUser = await _context.BaravordUsers.FirstOrDefaultAsync(x => x.ID == BaravordId);
+
+        if (currentBarAvordUser != null)
+        {
+            if (currentBarAvordUser.Type == NoeBarAvord.SooratVaziat)
+            {
+                BaravordId = currentBarAvordUser.ParentId != null ? currentBarAvordUser.ParentId.Value : currentBarAvordUser.ID;
+            }
+        }
+
+        clsBaravordZaribBalaSari? BaravordZaribBalaSari = _context.BaravordZaribBalaSaris.FirstOrDefault(x => x.BaravordId == BaravordId);
         if (BaravordZaribBalaSari != null)
         {
             clsBaravordUser? baravordUser = _context.BaravordUsers.FirstOrDefault(x => x.ID == BaravordId);
@@ -170,7 +188,7 @@ public class ZaribBalaSariController(ApplicationDbContext context) : Controller
                             case NoeFehrestBaha.RahoBand:
                                 {
                                     Zarayeb.ZaribBalaSari = Zarib;
-                                    Zarayeb.FBName = "راه، باند و فرودگاه";
+                                    Zarayeb.FBName = "راه، راه‌آهن و باند فرودگاه";
                                     break;
                                 }
                             case NoeFehrestBaha.Barghi:

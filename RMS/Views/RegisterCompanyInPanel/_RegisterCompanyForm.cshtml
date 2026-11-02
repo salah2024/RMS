@@ -1,0 +1,88 @@
+﻿@using RMS.Controllers.Company.Dto
+@model RegisterCompanyInPanelDto
+<link href="~/Scripts/SelfStyle/RegistraionInPanelStyle.css" rel="stylesheet">
+
+<div class="register-form-container" dir="rtl" style="margin-top:80px">
+    <form asp-controller="RegisterCompanyInPanel"
+          asp-action="Register"
+          method="post">
+
+        @Html.AntiForgeryToken()
+
+        <div class="form-group mb-3">
+            <label asp-for="CompanyType" class="form-label">نوع شرکت</label>
+            <select asp-for="CompanyType" class="form-control custom-input" style="width:100%;direction:rtl">
+                <option value="">انتخاب نوع...</option>
+                @foreach (var CompanyType in ViewBag.CompanyTypes)
+                {
+                    <option value="@CompanyType.Id">@CompanyType.Name</option>
+                }
+            </select>
+            <span asp-validation-for="CompanyType" class="text-danger small"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="CompanyName" class="form-label">نام شرکت</label>
+            <input asp-for="CompanyName" class="form-control custom-input" placeholder="نام شرکت" />
+            <span asp-validation-for="CompanyName" class="text-danger small"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="CompanyNationalCode" class="form-label">شناسه ملی</label>
+            <input asp-for="CompanyNationalCode" class="form-control custom-input" placeholder="شناسه ملی" />
+            <span asp-validation-for="CompanyNationalCode" class="text-danger small"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="ManagementFirstName" class="form-label">نام مدیر عامل</label>
+            <input asp-for="ManagementFirstName" class="form-control custom-input" placeholder="نام مدیر عامل" />
+            <span asp-validation-for="ManagementFirstName" class="text-danger small"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="ManagementLastName" class="form-label">نام خانوادگی مدیر عامل</label>
+            <input asp-for="ManagementLastName" class="form-control custom-input" placeholder="نام خانوادگی مدیر عامل" />
+            <span asp-validation-for="ManagementLastName" class="text-danger small"></span>
+        </div>
+
+
+
+        <div class="form-group mb-3">
+            <label asp-for="PhoneNumber" class="form-label">تلفن</label>
+            <input asp-for="PhoneNumber" class="form-control custom-input" placeholder="تلفن" />
+            <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="MobileNumber" class="form-label">موبایل</label>
+            <input asp-for="MobileNumber" class="form-control custom-input" placeholder="موبایل" />
+            <span asp-validation-for="MobileNumber" class="text-danger small"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="FaxNumber" class="form-label">فاکس</label>
+            <input asp-for="FaxNumber" class="form-control custom-input" placeholder="فاکس" />
+            <span asp-validation-for="FaxNumber" class="text-danger small"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="PostalCode" class="form-label">کد پستی</label>
+            <input asp-for="PostalCode" class="form-control custom-input" placeholder="کد پستی" />
+            <span asp-validation-for="PostalCode" class="text-danger small"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary px-4">ثبت‌ نام</button>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function () {
+
+
+        });
+    </script>
+}
+

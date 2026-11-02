@@ -1,5 +1,6 @@
 ﻿.form-control {
-    border: 1px solid #be94f5 !important;
-    height: 30px !important;
-    color: #4b0083 !important;
+    border: 1px solid #be94f5;
+    height: 23px !important;
+    color: #000 !important;
+    font-size: 18px;
 }

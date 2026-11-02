@@ -10,21 +10,67 @@
 
         <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
+
+        @if (Model.CompanyId != null && Model.CompanyId != new Guid())
+        {
+            var selectedCompany = ((IEnumerable<dynamic>)ViewBag.Companies)
+            .FirstOrDefault(c => c.ID == Model.CompanyId);
+
+            <div class="form-group mb-3">
+                <label class="form-label">شرکت</label>
+                <input type="text"
+                       class="form-control"
+                       value="@selectedCompany?.CompanyName"
+                       readonly />
+                <input type="hidden" asp-for="CompanyId" />
+            </div>
+        }
+        else
+        {
+            <div class="form-group mb-3">
+                <label asp-for="CompanyId" class="form-label">شرکت</label>
+                <select asp-for="CompanyId"
+                        class="form-control custom-input">
+                    <option value="">انتخاب شرکت...</option>
+                    @foreach (var company in ViewBag.Companies)
+                    {
+                        <option value="@company.ID">
+                            @company.CompanyName
+                        </option>
+                    }
+                </select>
+            </div>
+            <span asp-validation-for="CompanyId" class="text-danger small"></span>
+        }
+
+
         <div class="form-group mb-3">
-            <label asp-for="Role" class="form-label">نقش در سیستم</label>
-            <select asp-for="Role" class="form-control custom-input" style="width:100%;direction:rtl">
+            <label asp-for="FirstName" class="form-label">نام</label>
+            <input asp-for="FirstName" class="form-control custom-input" placeholder="نام" />
+            <span asp-validation-for="FirstName" class="text-danger small"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="LastName" class="form-label">نام خانوادگی</label>
+            <input asp-for="LastName" class="form-control custom-input" placeholder="نام خانوادگی" />
+            <span asp-validation-for="LastName" class="text-danger small"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="RoleId" class="form-label">نقش در سیستم</label>
+            <select asp-for="RoleId" class="form-control custom-input" style="width:100%;direction:rtl">
                 <option value="">انتخاب نقش...</option>
                 @foreach (var role in ViewBag.Roles)
                 {
                     <option value="@role.Id">@role.Name</option>
                 }
             </select>
-            <span asp-validation-for="Role" class="text-danger small"></span>
+            <span asp-validation-for="RoleId" class="text-danger small"></span>
         </div>
 
         <div class="form-group mb-3">
-            <label asp-for="NationalCode" class="form-label">شناسه ملی</label>
-            <input asp-for="NationalCode" class="form-control custom-input" placeholder="شناسه ملی" />
+            <label asp-for="NationalCode" class="form-label">شماره ملی</label>
+            <input asp-for="NationalCode" class="form-control custom-input" placeholder="شماره ملی" />
             <span asp-validation-for="NationalCode" class="text-danger small"></span>
         </div>
 
@@ -32,6 +78,18 @@
             <label asp-for="Mobile" class="form-label">شماره همراه</label>
             <input asp-for="Mobile" class="form-control custom-input" placeholder="شماره همراه" />
             <span asp-validation-for="Mobile" class="text-danger small"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="PostalCode" class="form-label">کد پستی</label>
+            <input asp-for="PostalCode" class="form-control custom-input" placeholder="کد پستی" />
+            <span asp-validation-for="PostalCode" class="text-danger small"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Address" class="form-label">آدرس</label>
+            <input asp-for="Address" class="form-control custom-input" placeholder="آدرس" />
+            <span asp-validation-for="Address" class="text-danger small"></span>
         </div>
 
         <div class="form-group mb-3">
@@ -53,7 +111,20 @@
             <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
         </div>
 
-        <button type="submit" class="btn btn-primary px-4">ثبت‌ نام</button>
+        <div class="col-12 row">
+            <div class="co-3">
+                <button type="submit" class="btn btn-primary px-4">ثبت‌ نام</button>
+            </div>
+            <div class="co-1">
+            </div>
+            <div class="co-3">
+                <a asp-controller="ViewCompany"
+                   asp-action="Index" style="background-color: red;color: #fff;"
+                   class="btn btn-outline-secondary">
+                    ← بازگشت
+                </a>
+            </div>
+        </div>
     </form>
 </div>
 

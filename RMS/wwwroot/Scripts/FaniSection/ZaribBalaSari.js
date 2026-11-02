@@ -1,4 +1,60 @@
-﻿function ShowZaribBalaSari(OperationId, event) {
+﻿
+//function GetZarayebForPaymanKar() {
+//    debugger;
+//    BarAvordId = $('#HDFBarAvordUserID').val();
+
+//    var vardata = new Object();
+//    vardata.BarAvordId = BarAvordId;
+
+//    $.ajax({
+//        type: "POST",
+//        url: "/PishnahadGhaymat/GetZarayebForPaymanKar",
+//        data: JSON.stringify(vardata),
+//        contentType: "application/json; charset=utf-8",
+//        dataType: "json",
+//        success: function (response) {
+//            debugger;
+
+//            //ضریب بالاسری
+//            str = `
+//                        <div style="margin-top:10px;">
+//                            <span style="font-weight:bold; margin-left:4px;margin-left: 4px;background-color: lightblue;padding: 0px 10px;border-radius: 5px;">ضریب بالاسری</span>
+//                            <span id="lblZaribBalasari" style="font-weight:bold;">
+//                    `;
+//            $.each(response, function () {
+//                Title = this.title;
+//                ZaribBalaSari = this.zaribBalaSari;
+
+//                str += `
+//                        <div class="col-12" style="border:1px solid #fff;margin-top: 10px;">
+//                        <div class="row">
+//                            <div class="col-6" style="text-align:left">${Title} =</div>
+//                            <div class="col-6">${ZaribBalaSari}</div>
+//                        </div>
+//                        </div>
+//                     `;
+//            });
+//            debugger;
+//            str += `
+//                          </span>
+//                      </div>
+//                   `;
+
+//            $('#divZaribBalaSari').show();
+
+//            $('#divZaribBalaSari').html(str);
+//        },
+//        error: function (response) {
+//            toastr.error('مشکل در دریافت ضرایب', 'خطا');
+//        }
+//    });
+//}
+
+
+
+function ShowZaribBalaSari(OperationId, event) {
+
+    BAType= $('#HDFBAType').val();
     if (event) {
         event.stopPropagation();
         event.preventDefault();
@@ -7,6 +63,7 @@
     debugger;
     $('#HDFOperationId').val(OperationId);
 
+    stronclick = BAType=='BarAvord'? `onclick="getZarib()"`:``;
     let str = `
 <div class="row boardRowStyle" style="direction: rtl; text-align: right;">
   <!-- گروه طرح -->
@@ -21,7 +78,8 @@
                name="planGroup" 
                id="plan1" 
                value="1"
-               onclick="getZarib()"/>
+               ${stronclick}
+               />
         <label class="form-check-label RadioLabelStyle" for="plan1">
           طرح عمرانی
         </label>
@@ -32,7 +90,8 @@
                name="planGroup" 
                id="plan2" 
                value="2"
-               onclick="getZarib()" />
+                 ${stronclick}
+               />
         <label class="form-check-label RadioLabelStyle" for="plan2">
           طرح غیر عمرانی
         </label>
@@ -48,7 +107,9 @@
                name="tenderGroup"
                id="tender3"
                value="3"
-               onclick="getZarib()"/>
+               ${stronclick}
+
+               />
         <label class="form-check-label RadioLabelStyle" for="tender3">
           مناقصه عمومی
         </label>
@@ -59,7 +120,8 @@
                name="tenderGroup"
                id="tender4"
                value="4"
-               onclick="getZarib()" />
+               ${stronclick}
+               />
         <label class="form-check-label RadioLabelStyle" for="tender4">
           عدم الزام به برگزاری مناقصه ناشی از انحصار فرآیند مناقصه (مناقصه محدود)
         </label>
@@ -70,7 +132,8 @@
                name="tenderGroup"
                id="tender5"
                value="5"
-               onclick="getZarib()" />
+               ${stronclick}
+               />
         <label class="form-check-label RadioLabelStyle" for="tender5">
           ترک تشریفات
         </label>
@@ -91,6 +154,7 @@
     $('#ula' + OperationId).html(str);
 
     GetZaribSaved();
+
 }
 
 function GetZaribSaved() {
@@ -117,15 +181,15 @@ function GetZaribSaved() {
             // انتخاب رادیوها
             //$.each(BaravordZaribBalaSari, function () {
 
-                // اگر مقدار tarh داشت (1 یا 2)
+            // اگر مقدار tarh داشت (1 یا 2)
             if (BaravordZaribBalaSari.tarh && BaravordZaribBalaSari.tarh !== 0) {
                 $(`input[type=radio][name=planGroup][value=${BaravordZaribBalaSari.tarh}]`).prop("checked", true);
-                }
+            }
 
-                // اگر مقدار monaghese داشت (3,4,5)
+            // اگر مقدار monaghese داشت (3,4,5)
             if (BaravordZaribBalaSari.monaghese && BaravordZaribBalaSari.monaghese !== 0) {
-                    $(`input[type=radio][name=tenderGroup][value=${BaravordZaribBalaSari.monaghese}]`).prop("checked", true);
-                }
+                $(`input[type=radio][name=tenderGroup][value=${BaravordZaribBalaSari.monaghese}]`).prop("checked", true);
+            }
 
             //});
             debugger;

@@ -5,12 +5,14 @@ namespace RMS.Controllers.BarAvordUser.Dto
     public class ViewUserBarAvordOutPutDto
     {
         public string ItemFbShomareh { get; set; }
+        public string ItemFbShomarehMain { get; set; }
         public string Sharh { get; set; }
         public string Vahed { get; set; }
         public string? BahayeVahed { get; set; }
         public long BahayeVahedNew { get; set; }
         public decimal Meghdar { get; set; }
         public decimal BahayeKol { get; set; }
+        public decimal? ItemZarib { get; set; }
         public Guid? FBId { get; set; }
         public List<ViewUserBarAvordOutPutRizMetreDto> RizMetre { get; set; }
         public List<ItemsFieldForUserBarAvordOutPutDto> ItemsFields { get; set; }
@@ -21,6 +23,7 @@ namespace RMS.Controllers.BarAvordUser.Dto
         public Guid Id { get; set; }
         public long Shomareh { get; set; }
         public string? ShomarehNew { get; set; }
+        public string? tajmieItem { get; set; }
         public string Sharh { get; set; }
         public decimal? Tedad { get; set; }
         public decimal? Tool { get; set; }
@@ -38,6 +41,7 @@ namespace RMS.Controllers.BarAvordUser.Dto
         public long Shomareh { get; set; }
         public string? ShomarehNew { get; set; }
         public string Sharh { get; set; }
+        public string? TajmieItem { get; set; }
         public decimal? Tedad { get; set; }
         public decimal? Tool { get; set; }
         public decimal? Arz { get; set; }

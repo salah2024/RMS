@@ -3,11 +3,12 @@
 }
 
 .table-alt {
-    background-color: rgb(255, 255, 255) !important;
+    background-color: rgb(231 216 233) !important;
 }
 
 .table td {
     padding: 5px !important;
+    border: 1px solid #d4b3d5;
 }
 
     .table td a {
@@ -15,11 +16,75 @@
         padding-right: 30px;
     }
 
-.table thead th {
+.table-fosoul thead th {
+    background-color: rgb(132 148 183);
     padding-top: 5px;
     padding-bottom: 5px;
+    border: 1px solid #d4b3d5;
 }
 
+.table-item thead th {
+    background-color: rgb(159 175 205);
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border: 1px solid #d4b3d5;
+}
+
+.table-sm thead th {
+    background-color: rgb(190 201 221);
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border: 1px solid #d4b3d5;
+}
+
+.table-fosoul {
+    transition: all .25s ease;
+}
+
+    .table-fosoul:hover {
+        background: linear-gradient(135deg, #F4F8FF, rgb(132 148 183));
+        box-shadow: 0 4px 12px rgba(111, 134, 166, .18);
+    }
+
+
+.table-item {
+    transition: all .25s ease;
+    border: 2px solid #fff;
+}
+
+    .table-item:hover {
+        background: linear-gradient(135deg, #F4F8FF, rgb(159 175 205));
+        border: 2px solid #6F86A6;
+        box-shadow: 0 4px 12px rgba(111, 134, 166, .18);
+    }
+
+
+.table-sm {
+    transition: all .25s ease;
+    border: 2px solid #fff;
+}
+
+    .table-sm:hover {
+        background: linear-gradient(135deg, #F4F8FF, rgb(190 201 221));
+        border: 2px solid #6F86A6;
+        box-shadow: 0 4px 12px rgba(111, 134, 166, .18);
+    }
+
+
+
+
+#fosoulTable tbody {
+    background-color: #fff;
+}
+
+#fosoulTable tbody:hover {
+    background-color: #d5d8ff;
+}
+
+
+.SelectTajmieItemClass:hover{
+    cursor:pointer;
+}
 
 /* جدول اصولی */
 /*#fosoulTable {

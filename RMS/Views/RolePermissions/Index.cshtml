@@ -1,0 +1,111 @@
+﻿@using RMS.Controllers.RolePermissions.Dto
+@model RolePermissionsIndexVm
+
+@{
+    ViewData["Title"] = "تعیین مجوز برای نقش ها";
+}
+
+<h2>تعیین مجوز برای نقش ها</h2>
+
+<!-- توکن AntiForgery برای POST Ajax -->
+@Html.AntiForgeryToken()
+<div class="col-12 row" style="margin-top:70px">
+<div class="col-3">
+    <select id="roleSelect">
+        <option value="">-- انتخاب نقش --</option>
+        @foreach (var r in Model.Roles)
+        {
+            <option value="@r.Id">@r.Name</option>
+        }
+    </select>
+</div>
+<div class="col-3">
+    <button id="btnSave" type="button" class="btn btn-primary" disabled>ذخیره</button>
+    <span id="statusMsg" style="margin-right:10px;"></span>
+</div>
+</div>
+
+<div id="permissionsContainer">
+    <!-- جدول permissions اینجا با Ajax میاد -->
+</div>
+
+   
+
+<script>
+    (function () {
+      const roleSelect = document.getElementById('roleSelect');
+      const container = document.getElementById('permissionsContainer');
+      const btnSave = document.getElementById('btnSave');
+      const statusMsg = document.getElementById('statusMsg');
+
+      function getAntiForgeryToken() {
+        // input hidden تولید شده توسط @Html.AntiForgeryToken()
+        const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+        return tokenInput ? tokenInput.value : '';
+      }
+
+      async function loadPermissions(roleId) {
+        btnSave.disabled = true;
+        container.innerHTML = '';
+        statusMsg.textContent = '';
+
+        if (!roleId) return;
+
+        const url = `@Url.Action("GetPermissions", "RolePermissions")?roleId=${encodeURIComponent(roleId)}`;
+        const res = await fetch(url, { method: 'GET' });
+
+        if (!res.ok) {
+          statusMsg.textContent = 'خطا در دریافت لیست دسترسی‌ها';
+          return;
+        }
+
+        const html = await res.text();
+        container.innerHTML = html;
+
+        btnSave.disabled = false;
+      }
+
+      function collectSelectedPermissionIds() {
+        const checks = container.querySelectorAll('input.permission-check[type="checkbox"]');
+        const ids = [];
+        checks.forEach(ch => {
+          if (ch.checked) ids.push(parseInt(ch.dataset.pid, 10));
+        });
+        return ids;
+      }
+
+      async function savePermissions() {
+        const roleId = roleSelect.value;
+        if (!roleId) return;
+
+        const payload = {
+          roleId: roleId,
+          permissionIds: collectSelectedPermissionIds()
+        };
+
+        btnSave.disabled = true;
+        statusMsg.textContent = 'در حال ذخیره...';
+
+        const res = await fetch(`@Url.Action("SaveAjax", "RolePermissions")`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'RequestVerificationToken': getAntiForgeryToken()
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          statusMsg.textContent = 'ذخیره ناموفق بود';
+          btnSave.disabled = false;
+          return;
+        }
+
+        statusMsg.textContent = '✅ ذخیره شد';
+        btnSave.disabled = false;
+      }
+
+      roleSelect.addEventListener('change', () => loadPermissions(roleSelect.value));
+      btnSave.addEventListener('click', savePermissions);
+    })();
+</script>

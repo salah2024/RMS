@@ -1,5 +1,8 @@
-﻿namespace RMS.Models.StoredProceduresData
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace RMS.Models.StoredProceduresData
 {
+    [NotMapped]
     public class QuesForAbnieFaniValuesDto
     {
         public Guid ID { get; set; }

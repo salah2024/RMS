@@ -39,6 +39,9 @@
 #divNewRow {
     background-color: #e9dfff;
     border-bottom: 1px solid #c4c1d0 !important;
+    padding-top: 3px;
+    border-top: 1px solid #c4c1d0 !important;
+    background-color: #ccc;
 }
 
 .modal-title{
@@ -447,7 +450,7 @@ hr {
 
 
 .table tbody tr:nth-of-type(odd) {
-    background-color: rgb(239, 245, 230);
+    background-color: rgb(255 255 255);
 }
 .table tbody tr:hover {
     background-color: #DBEFF3;
@@ -519,9 +522,10 @@ hr {
 }
 
 .spanConditionDes {
-    color: #3826cd;
-    font-size: 12px;
+    color: #0002b1;
+    font-size: 16px;
     text-decoration: underline;
+    font-family: 'BMitra';
 }
 
     .spanConditionDes:hover {
@@ -923,19 +927,20 @@ hr {
 }
 
 .styleHeaderTable {
-    background-color: #d9d9d9;
-    padding-top: 5px;
-    padding-bottom: 5px;
+    background-color: #ccc;
+    padding-top: 1px;
+    padding-bottom: 1px;
     border-top: 1px solid #fff;
-    margin-bottom: 0px;
+    margin-bottom: 3px;
     margin-left: 0px;
     margin-right: 0px;
     color: #28038e;
+    border-radius: 3px 3px 0px 0px;
 }
 
 .styleFieldTable {
-    padding-top: 5px;
-    padding-bottom: 5px;
+    padding-top: 1px;
+    padding-bottom: 1px;
     border-top: 1px solid #fff;
     margin-bottom: 0px;
     margin-left: 0px;
@@ -955,8 +960,8 @@ hr {
 .styleRowTable {
     border-bottom: 1px solid #ececec !important;
     margin-bottom: 0px;
-    padding-top: 5px;
-    padding-bottom: 5px;
+    padding-top: 0px;
+    padding-bottom: 1px;
     margin-left: 0px;
     margin-right: 0px;
     /*font-size: 13px;*/
@@ -1136,7 +1141,7 @@ hr {
     }
 
 .DelRMUStyle{
-        font-size:16px;
+        font-size:14px;
         color:red;
         padding:3px
 }
@@ -1147,7 +1152,7 @@ hr {
     }
 
 .SaveRMUStyle {
-    font-size: 16px;
+    font-size: 14px;
     color: #469233;
     padding: 3px;
 }
@@ -1156,6 +1161,17 @@ hr {
     cursor:pointer;
     color: #297515;
 }
+
+.ViewRMUStyle {
+    font-size: 14px;
+    color: #3535df;
+    padding: 3px;
+}
+
+    .ViewRMUStyle:hover {
+        cursor: pointer;
+        color: #0000fb;
+    }
 
     .RizMetreUsersAddStyle{
         padding:2px 6px;
@@ -1208,355 +1224,380 @@ hr {
     cursor:pointer;
 }
 
-.ButtonRowsSaveStyle {
+.ButtonRowsViewStyle {
     background-color: unset;
     padding: 1px 5px;
     border-radius: 3px !important;
     z-index: 1;
     float: right;
     right: 15px;
-    border:0px solid;
-    height:25px;
-}
-
-.ButtonRowsSaveStyle:focus {
-    box-shadow: 0 4px 8px 0 rgba(135, 201, 23, 0.5),0 6px 20px 0 rgba(139, 180, 27, 0.2);
-    background-color: #8ec78e;
-    cursor:pointer; 
-}
-
-.ButtonRowsEditStyle {
-    background-color: #679dd4;
-    padding: 1px 5px;
-    border-radius: 3px !important;
-    z-index: 1;
-    float: right;
-    right: 15px;
-    border:0px solid;
-}
-
-.ButtonRowsEditStyle:focus {
-    box-shadow: 0 4px 8px 0 rgba(135, 201, 23, 0.5),0 6px 20px 0 rgba(139, 180, 27, 0.2);
-    background-color: #4a85c0;
-    cursor:pointer; 
-}
-
-.spanStyleItemHasConditionDetails {
-    margin-right:10px;
-}
-
-.spanStyleItemHasConditionDetails:hover{
-    cursor:pointer;
-}
-
-.spanStyleAddedItems{
-
-}
-
-.spanStyleAddedItems:hover{
-    cursor:pointer;
-}
-.VahedStyle {
-    font-size: 10px;
-    color: #062060;
-}
-
-
-
-.spanLakeGiriStyle {
-    color: #07118c;
-    margin-right: 10px;
-}
-
-.spanLakeGiriStyle:hover {
-    cursor:pointer;
-}
-
-.PlanTableStyle{
-    border:1px solid #b7cddd;
-}
-
-.PlanTableTextBox {
-    padding: 1px;
-    height: 100%;
-    text-align: center;
-}
-
-.PlanTableActiveTab{
-    background-color: rgb(46, 112, 155);
-}
-
-.ManabeFbItems{
-
-}
-
-.ManabeFbItems:hover{
-    cursor:pointer;
-}
-
-.btnSavePlanStyle {
-    background-color: #516b92;
-    padding: 1px 5px;
-    border-radius: 3px !important;
     border: 0px solid;
-    color: #fff;
+    height: 25px;
 }
 
-.btnSavePlanStyle:hover {
-    background-color: #647c9f;
-}
+    .ButtonRowsViewStyle:focus {
+        background-color: #8f8ffb;
+        border: unset;
+    }
 
-.ExsitingPolStyle{
-    padding:0px 5px;
-    border-radius:5px !important;
-}
+    .ButtonRowsSaveStyle {
+        background-color: unset;
+        padding: 1px 5px;
+        border-radius: 3px !important;
+        z-index: 1;
+        float: right;
+        right: 15px;
+        border: 0px solid;
+        height: 25px;
+    }
 
-.ExsitingPolStyle:hover{
-    background-color:#E5E1EF;
-    color:#28069f;
-    cursor:pointer;
-}
+        .ButtonRowsSaveStyle:focus {
+            box-shadow: 0 4px 8px 0 rgba(135, 201, 23, 0.5),0 6px 20px 0 rgba(139, 180, 27, 0.2);
+            background-color: #8ec78e;
+            cursor: pointer;
+            border: 0px solid;
+        }
 
-.NewPolStyle {
-    padding: 5px 20px;
-    border-radius: 5px !important;
-    margin-right: 10px;
-    background-color: #427c00;
-    color: #fff !important;
-}
+    .ButtonRowsEditStyle {
+        background-color: #679dd4;
+        padding: 1px 5px;
+        border-radius: 3px !important;
+        z-index: 1;
+        float: right;
+        right: 15px;
+        border: 0px solid;
+    }
 
-    .NewPolStyle:hover {
-        background-color: #417704;
-        cursor: pointer;
+        .ButtonRowsEditStyle:focus {
+            box-shadow: 0 4px 8px 0 rgba(135, 201, 23, 0.5),0 6px 20px 0 rgba(139, 180, 27, 0.2);
+            background-color: #4a85c0;
+            cursor: pointer;
+        }
+
+    .spanStyleItemHasConditionDetails {
+        margin-right: 10px;
+    }
+
+        .spanStyleItemHasConditionDetails:hover {
+            cursor: pointer;
+        }
+
+    .spanStyleAddedItems {
+    }
+
+        .spanStyleAddedItems:hover {
+            cursor: pointer;
+        }
+
+    .VahedStyle {
+        font-size: 10px;
+        color: #062060;
+    }
+
+
+
+    .spanLakeGiriStyle {
+        color: #07118c;
+        margin-right: 10px;
+    }
+
+        .spanLakeGiriStyle:hover {
+            cursor: pointer;
+        }
+
+    .PlanTableStyle {
+        border: 1px solid #b7cddd;
+        padding-right: 0px;
+        padding-left: 0px;
+    }
+
+    .PlanTableTextBox {
+        padding: 1px;
+        height: 100%;
+        text-align: center;
+    }
+
+    .PlanTableActiveTab {
+        background-color: rgb(46, 112, 155);
+    }
+
+    .ManabeFbItems {
+    }
+
+        .ManabeFbItems:hover {
+            cursor: pointer;
+        }
+
+    .btnSavePlanStyle {
+        background-color: #516b92;
+        padding: 1px 5px;
+        border-radius: 3px !important;
+        border: 0px solid;
         color: #fff;
     }
 
-.NoeRahStyle {
+        .btnSavePlanStyle:hover {
+            background-color: #647c9f;
+        }
 
-}
-
-.NoeRahStyle:hover {
-    cursor:pointer;
-}
-
-.spanCheckBoxStyle {
-
-}
-
-.spanCheckBoxStyle:hover {
-    cursor:pointer;
-}
-
-.spanStyleKhakBardariItems{
-}
-
-.ViewPathInMapStyle{
-
-}
-
-.ViewPathInMapStyle:hover{
-    cursor:pointer;
-    background-color:#ccc;
-}
-
-.rowOfPathForViewHistoryStyle {
-}
-
-    .rowOfPathForViewHistoryStyle:hover {
-        cursor: pointer;
-        background-color: #e4e5ff;
-        border-bottom: 1px solid #6E6ED2;
+    .ExsitingPolStyle {
+        padding: 0px 5px;
+        border-radius: 5px !important;
     }
 
-.rowOfPathStyle{
-}
+        .ExsitingPolStyle:hover {
+            background-color: #E5E1EF;
+            color: #28069f;
+            cursor: pointer;
+        }
 
-.rowOfPathStyleActive{
+    .NewPolStyle {
+        padding: 5px 20px;
+        border-radius: 5px !important;
+        margin-right: 10px;
+        background-color: #427c00;
+        color: #fff !important;
+    }
+
+        .NewPolStyle:hover {
+            background-color: #417704;
+            cursor: pointer;
+            color: #fff;
+        }
+
+    .NoeRahStyle {
+    }
+
+        .NoeRahStyle:hover {
+            cursor: pointer;
+        }
+
+    .spanCheckBoxStyle {
+    }
+
+        .spanCheckBoxStyle:hover {
+            cursor: pointer;
+        }
+
+    .spanStyleKhakBardariItems {
+    }
+
+    .ViewPathInMapStyle {
+    }
+
+        .ViewPathInMapStyle:hover {
+            cursor: pointer;
+            background-color: #ccc;
+        }
+
+    .rowOfPathForViewHistoryStyle {
+    }
+
+        .rowOfPathForViewHistoryStyle:hover {
+            cursor: pointer;
+            background-color: #e4e5ff;
+            border-bottom: 1px solid #6E6ED2;
+        }
+
+    .rowOfPathStyle {
+    }
+
+    .rowOfPathStyleActive {
         background-color: #c5c6e0;
         border-bottom: 1px solid #e4e5ff;
-        padding:10px 0px;
-        margin-top:5px
-}
+        padding: 10px 0px;
+        margin-top: 5px
+    }
 
     .rowOfPathStyle:hover {
         cursor: pointer;
         background-color: #ecf6ff;
         border-bottom: 1px solid #6E6ED2;
-        padding:10px 0px;
-        margin-top:5px
+        padding: 10px 0px;
+        margin-top: 5px
     }
 
-    .UserBarAvordClass{}
-
-    .UserBarAvordClass:hover{
-        cursor:pointer;
+    .UserBarAvordClass {
     }
 
-.form-control {
-    display: block;
-    width: 100%;
-    height: 20px;
-    padding: 0px 8px;
-    font-size: 16px;
-    line-height: 1.42857143;
-    color: #110186;
-    background-color: #fff;
-    background-image: none;
-    border: 1px solid #e9ddee;
-    border-radius: 3px;
-    -webkit-box-shadow: unset;
-    box-shadow: unset;
-    -webkit-transition: unset;
-    -o-transition: unset;
-    transition: unset;
-    text-align:center;
-}
+        .UserBarAvordClass:hover {
+            cursor: pointer;
+        }
 
-    .form-control[disabled] {
-        background-color: #ffecec;
+    .form-control {
+        display: block;
+        width: 100%;
+        height: 20px;
+        padding: 0px 8px;
+        font-size: 16px;
+        line-height: 1.42857143;
+        color: #110186;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #deb6ef;
+        border-radius: 3px;
+        -webkit-box-shadow: unset;
+        box-shadow: unset;
+        -webkit-transition: unset;
+        -o-transition: unset;
+        transition: unset;
+        text-align: center;
     }
 
-.btn {
-  border-width: 0;
-  padding: 2px 4px;
-  font-size: 18px;
-  font-family: BMitra,tahoma;
-  background-image: none !important;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  border-radius: 4px !important;
-  box-shadow: none;
-  text-shadow: none;
-}
+        .form-control[disabled] {
+            background-color: #ffecec;
+        }
 
-.btn-default {
-  border-width: 0px;
-  padding: 2px 13px;
-}
-.btn-default:hover, .btn-default:focus, .btn-default:active, .btn-default.active {
-  color: #333333;
-  background-color: #ededed;
-  border-color: #005a0e;
-}
-.btn-primary {
-  color: white;
-  background-color: #428bca;
-  border-color: #357ebd;
-}
-.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active {
-  color: white;
-  background-color: #3379b5;
-  border-color: #2a6496;
-}
+    .btn {
+        border-width: 0;
+        padding: 2px 4px;
+        font-size: 18px;
+        font-family: BMitra,tahoma;
+        background-image: none !important;
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        border-radius: 4px !important;
+        box-shadow: none;
+        text-shadow: none;
+    }
 
+    .btn-default {
+        border-width: 0px;
+        padding: 2px 13px;
+    }
 
-.blue.btn {
-  color: white;
-  background-color: #2063d4;
-}
-.blue.btn:hover, .blue.btn:focus, .blue.btn:active, .blue.btn.active {
-  color: white;
-  background-color: #1256c9;
-}
+        .btn-default:hover, .btn-default:focus, .btn-default:active, .btn-default.active {
+            color: #333333;
+            background-color: #ededed;
+            border-color: #005a0e;
+        }
 
-/*****************/
-.parpel.btn {
-  color: white;
-  background-color: #0041ab;
-}
-.parpel.btn:hover, .parpel.btn:focus, .parpel.btn:active, .parpel.btn.active {
-  color: white;
-  background-color: #022c71;
-}
+    .btn-primary {
+        color: white;
+        background-color: #428bca;
+        border-color: #357ebd;
+    }
+
+        .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active {
+            color: white;
+            background-color: #3379b5;
+            border-color: #2a6496;
+        }
 
 
+    .blue.btn {
+        color: white;
+        background-color: #2063d4;
+    }
 
-/***********
+        .blue.btn:hover, .blue.btn:focus, .blue.btn:active, .blue.btn.active {
+            color: white;
+            background-color: #1256c9;
+        }
+    /*****************/
+    .parpel.btn {
+        color: white;
+        background-color: #0041ab;
+    }
+
+        .parpel.btn:hover, .parpel.btn:focus, .parpel.btn:active, .parpel.btn.active {
+            color: white;
+            background-color: #022c71;
+        }
+    /***********
 Red Colors
 ************/
-/***
+    /***
 Red Default
 ***/
-/* Button */
-.red.btn {
-  color: white;
-  background-color: #d84a38;
-  border-color: "";
-}
-.red.btn:hover, .red.btn:focus, .red.btn:active, .red.btn.active {
-  color: white;
-  background-color: #c63927;
-}
+    /* Button */
+    .red.btn {
+        color: white;
+        background-color: #d84a38;
+        border-color: "";
+    }
 
-.green.btn {
-  color: white;
-  background-color: #318a31;
-}
-.green.btn:hover, .green.btn:focus, .green.btn:active, .green.btn.active {
-  color: white;
-  background-color: #428d42;
-}
+        .red.btn:hover, .red.btn:focus, .red.btn:active, .red.btn.active {
+            color: white;
+            background-color: #c63927;
+        }
 
-.red-light.btn {
-    color: #7d0303;
-    background-color: #e8d4d1;
-    border-color: "";
-}
-.red-light.btn:hover, .red-light.btn:focus, .red-light.btn:active, .red-light.btn.active {
-  color: #7d0303;
-  background-color: #e0c8c4;
-}
+    .green.btn {
+        color: white;
+        background-color: #318a31;
+    }
 
-.open .red.btn.dropdown-toggle {
-  color: white;
-  background-color: #c63927;
-}
-.red.btn:active, .red.btn.active {
-  background-image: none;
-  background-color: #b03223;
-}
-.red.btn:active:hover, .red.btn.active:hover {
-  background-color: #b93524;
-}
-.open .red.btn.dropdown-toggle {
-  background-image: none;
-}
-.red.btn.disabled, .red.btn.disabled:hover, .red.btn.disabled:focus, .red.btn.disabled:active, .red.btn.disabled.active, .red.btn[disabled], .red.btn[disabled]:hover, .red.btn[disabled]:focus, .red.btn[disabled]:active, .red.btn[disabled].active, fieldset[disabled] .red.btn, fieldset[disabled] .red.btn:hover, fieldset[disabled] .red.btn:focus, fieldset[disabled] .red.btn:active, fieldset[disabled] .red.btn.active {
-  background-color: #d84a38;
-}
-.red.btn .badge {
-  color: #d84a38;
-  background-color: white;
-}
+        .green.btn:hover, .green.btn:focus, .green.btn:active, .green.btn.active {
+            color: white;
+            background-color: #428d42;
+        }
 
-.table td {
-    padding: 0.7rem !important;
-}
+    .red-light.btn {
+        color: #7d0303;
+        background-color: #e8d4d1;
+        border-color: "";
+    }
 
-.blinking {
-    animation: blink 1.5s infinite;
-    border: 2px solid red;
-}
+        .red-light.btn:hover, .red-light.btn:focus, .red-light.btn:active, .red-light.btn.active {
+            color: #7d0303;
+            background-color: #e0c8c4;
+        }
 
-@keyframes blink {
-    0%, 100% {
+    .open .red.btn.dropdown-toggle {
+        color: white;
+        background-color: #c63927;
+    }
+
+    .red.btn:active, .red.btn.active {
+        background-image: none;
+        background-color: #b03223;
+    }
+
+        .red.btn:active:hover, .red.btn.active:hover {
+            background-color: #b93524;
+        }
+
+    .open .red.btn.dropdown-toggle {
+        background-image: none;
+    }
+
+    .red.btn.disabled, .red.btn.disabled:hover, .red.btn.disabled:focus, .red.btn.disabled:active, .red.btn.disabled.active, .red.btn[disabled], .red.btn[disabled]:hover, .red.btn[disabled]:focus, .red.btn[disabled]:active, .red.btn[disabled].active, fieldset[disabled] .red.btn, fieldset[disabled] .red.btn:hover, fieldset[disabled] .red.btn:focus, fieldset[disabled] .red.btn:active, fieldset[disabled] .red.btn.active {
+        background-color: #d84a38;
+    }
+
+    .red.btn .badge {
+        color: #d84a38;
         background-color: white;
     }
 
-    50% {
-        background-color: #55eaff;
-    }
-}
-
-
-.ReturnItemsStar {
-   border:0px;
-}
-   
-    .ReturnItemsStar:hover {
-        cursor: pointer;
+    .table td {
+        padding: 0.7rem !important;
     }
 
-.form-control{
-    direction:ltr;
-}
+    .blinking {
+        animation: blink 1.5s infinite;
+        border: 2px solid red;
+    }
+
+    @keyframes blink {
+        0%, 100% {
+            background-color: white;
+        }
+
+        50% {
+            background-color: #55eaff;
+        }
+    }
+
+
+    .ReturnItemsStar {
+        border: 0px;
+    }
+
+        .ReturnItemsStar:hover {
+            cursor: pointer;
+        }
+
+    .form-control {
+        direction: ltr;
+    }

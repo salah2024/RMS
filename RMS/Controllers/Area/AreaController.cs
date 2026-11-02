@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RMS.Controllers.Area.Dto;
@@ -13,106 +14,127 @@ public class AreaController(ApplicationDbContext context) : Controller
     private readonly ApplicationDbContext _context = context;
 
     [HttpPost]
-    public JsonResult GetBaravordZaribManteghe([FromBody] GetBaravordBakhshDto request)
+    public async Task<JsonResult> GetBaravordZaribManteghe([FromBody] GetBaravordBakhshDto request)
     {
         Guid baravordId = request.BaravordId;
 
-        clsBaravordZaribManteghe? baravordZaribManteghe = _context.BaravordZaribManteghes
-            .Include(x => x.BaravordUser)
-            .FirstOrDefault(x => x.BaravordId == baravordId);
+        clsBaravordUser? baravordUser = await _context.BaravordUsers.FirstOrDefaultAsync(x => x.ID == baravordId);
 
-        // استان‌ها همیشه لود شوند
-        List<clsOstan> lstOstan = _context.Ostans.ToList();
-
-        List<clsShahr> lstShahr = new List<clsShahr>();
-        List<clsBakhsh> lstBakhsh = new List<clsBakhsh>();
-        List<ResultGetZaribMantegheDto> lstZaribManteghe = new List<ResultGetZaribMantegheDto>();
-
-        if (baravordZaribManteghe != null)
+        if (baravordUser != null)
         {
-            lstShahr = _context.Shahrs
-                .Where(x => x.OstanId == baravordZaribManteghe.OstanId)
-                .ToList();
-
-            lstBakhsh = _context.Bakhshs
-                .Where(x => x.ShahrId == baravordZaribManteghe.ShahrId)
-                .ToList();
-
-            clsBakhsh? Bakhsh = _context.Bakhshs.FirstOrDefault(x => x.Id == baravordZaribManteghe.BakhshId);
-            if (Bakhsh != null)
+            if (baravordUser.Type == NoeBarAvord.SooratVaziat)
             {
-                clsBaravordUser? baravordUser = _context.BaravordUsers.FirstOrDefault(x => x.ID == baravordId);
-                if (baravordUser != null)
+                baravordUser = await _context.BaravordUsers.FirstOrDefaultAsync(x => x.ID == baravordUser.ParentId);
+                baravordId = baravordUser != null ? baravordUser.ID : baravordId;
+            }
+
+            clsBaravordZaribManteghe? baravordZaribManteghe = await _context.BaravordZaribManteghes
+            .Include(x => x.BaravordUser)
+            .FirstOrDefaultAsync(x => x.BaravordId == baravordId);
+
+            // استان‌ها همیشه لود شوند
+            List<clsOstan> lstOstan = _context.Ostans.ToList();
+
+            List<clsShahr> lstShahr = new List<clsShahr>();
+            List<clsBakhsh> lstBakhsh = new List<clsBakhsh>();
+            List<ResultGetZaribMantegheDto> lstZaribManteghe = new List<ResultGetZaribMantegheDto>();
+
+            if (baravordZaribManteghe != null)
+            {
+                lstShahr = await _context.Shahrs
+                    .Where(x => x.OstanId == baravordZaribManteghe.OstanId)
+                    .ToListAsync();
+
+                lstBakhsh = await _context.Bakhshs
+                    .Where(x => x.ShahrId == baravordZaribManteghe.ShahrId)
+                    .ToListAsync();
+
+                clsBakhsh? Bakhsh = await _context.Bakhshs.FirstOrDefaultAsync(x => x.Id == baravordZaribManteghe.BakhshId);
+                if (Bakhsh != null)
                 {
-                    string[] NoeFBIds = baravordUser.NoeFBs.Split(',');
-                    List<NoeFehrestBaha> lstNoeFBs = new List<NoeFehrestBaha>();
-                    foreach (var item in NoeFBIds)
+                    //clsBaravordUser? baravordUser = await _context.BaravordUsers.FirstOrDefaultAsync(x => x.ID == baravordId);
+                    if (baravordUser != null)
                     {
-                        if (item != "")
+
+                        string[] NoeFBIds = baravordUser.NoeFBs.Split(',');
+                        List<NoeFehrestBaha> lstNoeFBs = new List<NoeFehrestBaha>();
+                        foreach (var item in NoeFBIds)
                         {
-                            lstNoeFBs.Add((NoeFehrestBaha)int.Parse(item));
+                            if (item != "")
+                            {
+                                lstNoeFBs.Add((NoeFehrestBaha)int.Parse(item));
+                            }
                         }
-                    }
-                    foreach (var item in lstNoeFBs)
-                    {
-                        ResultGetZaribMantegheDto zaribManteghe = new ResultGetZaribMantegheDto();
-                        switch (item)
+                        foreach (var item in lstNoeFBs)
                         {
-                            case NoeFehrestBaha.RahDari:
-                                {
-                                    zaribManteghe.ZaribManteghe = Bakhsh.ZaribRahDari.ToString("n2");
-                                    zaribManteghe.FBName = "راهداری";
+                            ResultGetZaribMantegheDto zaribManteghe = new ResultGetZaribMantegheDto();
+                            switch (item)
+                            {
+                                case NoeFehrestBaha.RahDari:
+                                    {
+                                        zaribManteghe.ZaribManteghe = Bakhsh.ZaribRahDari.ToString("n2");
+                                        zaribManteghe.FBName = "راهداری";
+                                        break;
+                                    }
+                                case NoeFehrestBaha.Abnie:
+                                    {
+                                        zaribManteghe.ZaribManteghe = Bakhsh.ZaribAbnie.ToString("n2");
+                                        zaribManteghe.FBName = "ابنیه";
+                                        break;
+                                    }
+                                case NoeFehrestBaha.RahoBand:
+                                    {
+                                        zaribManteghe.ZaribManteghe = Bakhsh.ZaribRah.ToString("n2");
+                                        zaribManteghe.FBName = "راه، راه آهن و باند فرودگاه";
+                                        break;
+                                    }
+                                case NoeFehrestBaha.Barghi:
+                                    {
+                                        zaribManteghe.ZaribManteghe = Bakhsh.ZaribBargh.ToString("n2");
+                                        zaribManteghe.FBName = "تاسیسات برقی";
+                                        break;
+                                    }
+                                case NoeFehrestBaha.Mekaniki:
+                                    {
+                                        zaribManteghe.ZaribManteghe = Bakhsh.ZaribMechanic.ToString("n2");
+                                        zaribManteghe.FBName = "تاسیسات مکانیکی";
+                                        break;
+                                    }
+                                case NoeFehrestBaha.MareMat:
+                                    {
+                                        zaribManteghe.ZaribManteghe = Bakhsh.ZaribAbnie.ToString("n2");
+                                        zaribManteghe.FBName = "مرمت بناهای تاریخی";
+                                        break;
+                                    }
+                                //case NoeFehrestBaha.MareMat:
+                                //    {
+                                //        zaribManteghe.ZaribManteghe = Bakhsh.Zari.ToString("n0");
+                                //        zaribManteghe.FBName = "تاسیسات مکانیکی";
+                                //        break;
+                                //    }
+                                default:
                                     break;
-                                }
-                            case NoeFehrestBaha.Abnie:
-                                {
-                                    zaribManteghe.ZaribManteghe = Bakhsh.ZaribAbnie.ToString("n2");
-                                    zaribManteghe.FBName = "ابنیه";
-                                    break;
-                                }
-                            case NoeFehrestBaha.RahoBand:
-                                {
-                                    zaribManteghe.ZaribManteghe = Bakhsh.ZaribRah.ToString("n2");
-                                    zaribManteghe.FBName = "راه، باند و فرودگاه";
-                                    break;
-                                }
-                            case NoeFehrestBaha.Barghi:
-                                {
-                                    zaribManteghe.ZaribManteghe = Bakhsh.ZaribBargh.ToString("n2");
-                                    zaribManteghe.FBName = "تاسیسات برقی";
-                                    break;
-                                }
-                            case NoeFehrestBaha.Mekaniki:
-                                {
-                                    zaribManteghe.ZaribManteghe = Bakhsh.ZaribMechanic.ToString("n2");
-                                    zaribManteghe.FBName = "تاسیسات مکانیکی";
-                                    break;
-                                }
-                            //case NoeFehrestBaha.MareMat:
-                            //    {
-                            //        zaribManteghe.ZaribManteghe = Bakhsh.Zari.ToString("n0");
-                            //        zaribManteghe.FBName = "تاسیسات مکانیکی";
-                            //        break;
-                            //    }
-                            default:
-                                break;
+                            }
+                            lstZaribManteghe.Add(zaribManteghe);
                         }
-                        lstZaribManteghe.Add(zaribManteghe);
                     }
                 }
+
             }
+
+            var result = new
+            {
+                lstOstan,
+                lstShahr,
+                lstBakhsh,
+                baravordZaribManteghe,
+                lstZaribManteghe
+            };
+
+            return new JsonResult(result);
         }
-
-        var result = new
-        {
-            lstOstan,
-            lstShahr,
-            lstBakhsh,
-            baravordZaribManteghe,
-            lstZaribManteghe
-        };
-
-        return new JsonResult(result);
+        else
+            return new JsonResult(null);
     }
 
 
@@ -140,6 +162,18 @@ public class AreaController(ApplicationDbContext context) : Controller
     [HttpPost]
     public JsonResult GetZaribManteghe([FromBody] GetZaribMantagheDto request)
     {
+        Guid BaravordId = request.BaravordId;
+        clsBaravordUser? baravordUser = _context.BaravordUsers.FirstOrDefault(x => x.ID == BaravordId);
+        if (baravordUser != null)
+        {
+            if (baravordUser.Type == NoeBarAvord.SooratVaziat)
+            {
+                return new JsonResult(null);
+            }
+        }
+
+
+
         long BakhshId = request.BakhshId;
 
         var Bakhsh = _context.Bakhshs.Include(x => x.Shahr).Where(x => x.Id == BakhshId).Select(x => new
@@ -167,8 +201,10 @@ public class AreaController(ApplicationDbContext context) : Controller
         ///و در صورتی که قبلا درج شده باشد، ویرایش میگردد
         if (Bakhsh != null)
         {
-            Guid BaravordId = request.BaravordId;
             clsBaravordZaribManteghe? baravordZaribManteghe = _context.BaravordZaribManteghes.Include(x => x.BaravordUser).FirstOrDefault(x => x.BaravordId == BaravordId);
+
+
+
             if (baravordZaribManteghe != null)
             {
                 _context.Entry(baravordZaribManteghe).CurrentValues.SetValues(new
@@ -193,7 +229,6 @@ public class AreaController(ApplicationDbContext context) : Controller
             _context.SaveChanges();
 
             //clsBakhsh? currentBakhsh = _context.Bakhshs.FirstOrDefault(x => x.Id == BakhshId);
-            clsBaravordUser? baravordUser = _context.BaravordUsers.FirstOrDefault(x => x.ID == BaravordId);
             if (baravordUser != null)
             {
                 string[] NoeFBs = baravordUser.NoeFBs.Split(",");
@@ -227,7 +262,7 @@ public class AreaController(ApplicationDbContext context) : Controller
                         case NoeFehrestBaha.RahoBand:
                             {
                                 zaribManteghe.ZaribManteghe = Bakhsh.ZaribRah.ToString("n2");
-                                zaribManteghe.FBName = "راه، باند و فرودگاه";
+                                zaribManteghe.FBName = "راه، راه‌آھن و باند فرودگاه";
                                 break;
                             }
                         case NoeFehrestBaha.Barghi:
@@ -240,6 +275,12 @@ public class AreaController(ApplicationDbContext context) : Controller
                             {
                                 zaribManteghe.ZaribManteghe = Bakhsh.ZaribMechanic.ToString("n2");
                                 zaribManteghe.FBName = "تاسیسات مکانیکی";
+                                break;
+                            }
+                        case NoeFehrestBaha.MareMat:
+                            {
+                                zaribManteghe.ZaribManteghe = Bakhsh.ZaribMechanic.ToString("n2");
+                                zaribManteghe.FBName = "مرمت بناهای تاریخی";
                                 break;
                             }
                         //case NoeFehrestBaha.MareMat:

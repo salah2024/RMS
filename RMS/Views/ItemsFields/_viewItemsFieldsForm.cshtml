@@ -1,0 +1,366 @@
+﻿@using RMS.Models
+@{
+    ViewData["Title"] = "مدیریت فیلدهای آیتم";
+}
+
+
+<style>
+
+    .table-body-scroll {
+        max-height: 500px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+        .table-body-scroll table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-body-scroll thead,
+        .table-body-scroll tbody tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        .table-body-scroll tbody {
+            display: block;
+            max-height: 500px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .table-body-scroll thead {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+
+
+    .table-scroll {
+        max-height: 500px;
+        overflow-y: auto;
+    }
+
+        .table-scroll table {
+            width: 100%;
+        }
+
+        .table-scroll thead th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: #8498b3;
+        }
+
+    .text-success {
+        color: #617c0d !important;
+    }
+
+</style>
+
+<div class="container-fluid" dir="rtl" style="padding-right:0px;">
+
+    <div class="card">
+
+        <div class="card-body" style="padding:0px">
+
+            <div class="card mb-4">
+
+                <div class="card-body" style="padding:0px">
+
+                    <form id="frmItemsFields">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               id="Id"
+                               name="Id"
+                               value="0" />
+
+
+                        <div class="row">
+
+
+                            <!-- ItemShomareh -->
+
+                            <div class="col-md-1">
+
+                                <label class="form-label">
+                                    شماره آیتم
+                                </label>
+
+                                <input type="text"
+                                       id="ItemShomareh"
+                                       name="ItemShomareh"
+                                       class="form-control"
+                                       required />
+
+                            </div>
+
+
+
+                            <!-- FieldType -->
+
+                            <div class="col-md-1">
+
+                                <label class="form-label">
+                                    نوع فیلد
+                                </label>
+
+                                <select id="FieldType" style="height: 22px;color: #02025e;"
+                                        name="FieldType"
+                                        class="form-control"
+                                        required>
+
+                                    <option value="">
+                                        انتخاب کنید
+                                    </option>
+
+                                    <option value="1">تعداد</option>
+                                    <option value="2">طول</option>
+                                    <option value="3">عرض</option>
+                                    <option value="4">ارتفاع</option>
+                                    <option value="5">وزن</option>
+
+                                </select>
+
+                            </div>
+
+
+                            <!-- Vahed -->
+
+                            <div class="col-md-1">
+
+                                <label class="form-label">
+                                    واحد
+                                </label>
+
+                                <input type="text"
+                                       id="Vahed"
+                                       name="Vahed"
+                                       class="form-control"
+                                       placeholder="مثلاً متر، عدد..." />
+
+                            </div>
+
+
+                            <!-- Default -->
+
+                            <div class="col-md-1">
+
+                                <label class="form-label">
+                                    مقدار پیش‌فرض
+                                </label>
+
+                                <input type="number"
+                                       step="any"
+                                       id="DefaultValue"
+                                       name="DefaultValue"
+                                       class="form-control" />
+
+                            </div>
+
+
+
+                            <!-- Min -->
+
+                            <div class="col-md-1">
+
+                                <label class="form-label">
+                                    حداقل مقدار
+                                </label>
+
+                                <input type="number"
+                                       step="any"
+                                       id="MinValue"
+                                       name="MinValue"
+                                       class="form-control" />
+
+                            </div>
+
+
+                            <!-- Max -->
+
+                            <div class="col-md-1">
+
+                                <label class="form-label">
+                                    حداکثر مقدار
+                                </label>
+
+                                <input type="number"
+                                       step="any"
+                                       id="MaxValue"
+                                       name="MaxValue"
+                                       class="form-control" />
+
+                            </div>
+
+
+                            <!-- Entering -->
+
+                            <div class="col-md-2">
+
+                                <div class="form-check mt-4">
+
+                                    <input type="checkbox"
+                                           id="IsEnteringValue"
+                                           name="IsEnteringValue"
+                                           class="form-check-input" />
+
+                                    <label class="form-check-label"
+                                           for="IsEnteringValue">
+
+                                        ورود مقدار توسط کاربر
+
+                                    </label>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Essential -->
+
+                            <div class="col-md-1">
+
+                                <div class="form-check mt-4">
+
+                                    <input type="checkbox"
+                                           id="EssentialValue"
+                                           name="EssentialValue"
+                                           class="form-check-input" />
+
+                                    <label class="form-check-label"
+                                           for="EssentialValue">
+
+                                        مقدار الزامی
+
+                                    </label>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Buttons -->
+
+                            <div class="col-md-2 d-flex align-items-end gap-2">
+
+                                <button type="button"
+                                        class="btn btn-success"
+                                        onclick="saveItem()" style="background-color: green;font-weight: 400;">
+
+                                    <i class="fa fa-save"></i>
+                                    ذخیره
+
+                                </button>
+
+
+                                <button type="button"
+                                        class="btn btn-secondary"
+                                        onclick="newItem()" style="background-color: #4a4a4a;font-weight: 400;">
+                                    انصراف
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+            <!-- ========================= -->
+            <!-- Table -->
+            <!-- ========================= -->
+
+            <div class="row">
+            <div class="col-md-3">
+                <label class="form-label">
+                    شماره آیتم
+                </label>
+
+                <input id="txtSearchItem"
+                       class="form-control"
+                       placeholder="شماره آیتم..." />
+            </div>
+
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+                    نوع فهرست‌بها
+                </label>
+
+                    <select id="cmbSearchNoeFB" style="height: 23px;color: #02025e;border: 1px solid #a7a2ff;font-size: 14px;" class="form-control">
+
+                    <option value="">
+                        همه
+                    </option>
+
+                </select>
+
+            </div>
+            </div>
+
+            <div class="table-responsive table-scroll">
+
+                <table class="table table-bordered table-striped text-center">
+
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>شماره آیتم</th>
+                            <th>فهرست‌بها</th>
+                            <th>نوع فیلد</th>
+                            <th>واحد</th>
+                            <th>ورود مقدار</th>
+                            <th>الزامی</th>
+                            <th>پیش‌فرض</th>
+                            <th>حداقل</th>
+                            <th>حداکثر</th>
+                            <th>عملیات</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="tblItemsFields">
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <div class="row mt-3">
+
+                <div class="col-md-6">
+
+                    <span id="paginationInfo"
+                          class="text-muted">
+                    </span>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <nav>
+                        <ul id="pagination"
+                            class="pagination justify-content-end">
+                        </ul>
+                    </nav>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="~/js/ItemsFields.js"></script>

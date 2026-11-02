@@ -10,7 +10,7 @@ public class clsPolVaAbroBarAvord:clsBaseEntity
     public clsBaravordUser BaravordUser { get; set; }
     public int TedadDahaneh { get; set; }
 
-    public double DahaneAbro { get; set; }
+    public decimal DahaneAbro { get; set; }
 
     public decimal HadAksarErtefaKoole { get; set; }
 

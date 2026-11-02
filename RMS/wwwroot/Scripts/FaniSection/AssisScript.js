@@ -50,16 +50,13 @@ function OpenConditionDetails(object, ConditionGroupId, ItemsFBShomareh) {
     vardata.ConditionGroupId = ConditionGroupId;
     if (object.is(':checked')) {
         $('#divConditionGroup' + newConditionGroupId).slideDown(1000);
-        debugger;
         object.attr('checked', false);
-        debugger;
     }
     else {
         $('#divConditionGroup' + newConditionGroupId + ' input[type="radio"]:checked').each(function () {
-            debugger;
             fullId = this.id;
             var ThisId = fullId.substring(2);
-            deleteItemsCondition(ThisId, ConditionGroupId, ItemsFBShomareh, 1);
+            deleteItemsCondition(ThisId, ConditionGroupId, ItemsFBShomareh, 1,false,null);
             //objectid = $(this).attr('id');
             //id = objectid.substring(2, objectid.length);
             //$.ajax({
@@ -86,8 +83,10 @@ function OpenConditionDetails(object, ConditionGroupId, ItemsFBShomareh) {
     }
 }
 
-function deleteItemsCondition(Id, ConditionGroupId, ItemsFBShomareh, LevelNumber) {
+function deleteItemsCondition(Id, ConditionGroupId, ItemsFBShomareh, LevelNumber, hasRelated, ObjRelated) {
 
+
+    debugger;
     BarAvordUserId = $('#HDFBarAvordUserID').val();
     OperationId = $('#HDFOperationId').val();
     Year = $('#HDFYear').val();
@@ -109,12 +108,58 @@ function deleteItemsCondition(Id, ConditionGroupId, ItemsFBShomareh, LevelNumber
         dataType: "json",
         success: function (response) {
             info = response.split('_');
-            if (info[0] == "OK") {
-                GetRizMetreWithFBId(LevelNumber);
-                GetItemsAddedAndRelForRizMetre(LevelNumber);
-                $('#divShowRizMetre' + Id).slideUp(500);
 
-                toastr.success('اضافه بهای آیتم انتخابی حذف گردید', 'موفقیت');
+            if (info[0] == "OK") {
+
+                debugger;
+                if (hasRelated) {
+
+                    ConditionGroupId = ObjRelated.attr('data-conditiongroup');
+
+                    var vardata1 = new Object();
+                    vardata1.BarAvordId = BarAvordUserId;
+                    vardata1.strFBShomareh = ItemsFBShomareh;
+                    vardata1.ConditionGroupId = ConditionGroupId;
+                    vardata1.LevelNumber = LevelNumber;
+                    vardata1.Year = Year;
+                    vardata1.NoeFB = NoeFB;
+
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/ItemsHasConditionAddedToFB/DeleteItemsHasConditionAddedToFBAndRizMetre",
+                        data: JSON.stringify(vardata1),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response1) {
+                            debugger;
+
+                            info = response1.split('_');
+                            if (info[0] == "OK") {
+
+                                ObjRelated.attr('checked', false);
+
+                                ObjRelated.removeAttr('disabled');
+
+                                var id = $(ObjRelated).attr('id');
+                                $('#loading_' + id).remove();
+                                CheckCC(Id, ItemsFBShomareh, LevelNumber);
+                            }
+                            else
+                                toastr.error('مشکل در حذف اضافه بها', 'خطا');
+                        },
+                        error: function (response) {
+                            toastr.error('مشکل در حذف اضافه بها', 'خطا');
+                        }
+                    });
+                }
+                else {
+                    CheckCC(Id, ItemsFBShomareh, LevelNumber);
+
+                }
+
+
+
             }
             else
                 toastr.error('مشکل در حذف اضافه بها', 'خطا');
@@ -125,11 +170,226 @@ function deleteItemsCondition(Id, ConditionGroupId, ItemsFBShomareh, LevelNumber
     });
 }
 
-function CheckedOnChange(object, Id, ConditionGroupId, ItemsFBShomareh, LevelNumber) {
+function PreChechedOnChange(object, Id, ConditionGroupId, ItemsFBShomareh, LevelNumber) {
+
+
+    debugger;
+
+    var $obj = $(object);
+
+    // غیرفعال کردن
+    $obj.prop('disabled', true);
+
+    // اضافه کردن waiting
+    var $loading = $('<span>', {
+        id: 'loading_' + $obj.attr('id'),
+        class: 'my-loading'
+    });
+
+    $obj.after($loading);
+
+
+    BarAvordUserId = $('#HDFBarAvordUserID').val();
+    OperationId = $('#HDFOperationId').val();
+    Year = $('#HDFYear').val();
+    NoeFB = parseInt($('#HDFNoeFB').val());
+
+    var vardata = new Object();
+    vardata.Id = Id;
+    vardata.NoeFB = NoeFB;
+
+    $.ajax({
+        type: "POST",
+        url: "/ConditionContext/CheckItemHasConditionContext",
+        data: JSON.stringify(vardata),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (response) {
+            debugger;
+            if (response != null) {
+
+                IHC_CC_Related = response.ihC_CC_Related;
+                ItemRelated = response.itemRelated;
+
+                objChecked = $obj.prop('checked');
+                if (!objChecked) {
+                    if (IHC_CC_Related != '') {
+                        ObjRelated = $('#CK' + IHC_CC_Related);
+                        ///////
+                        ///////
+                        CheckedOnChange(
+                            object,
+                            Id,
+                            ConditionGroupId,
+                            ItemsFBShomareh,
+                            LevelNumber,
+                            true,
+                            ObjRelated
+                        );
+                    }
+                    else {
+                        CheckedOnChange(
+                            object,
+                            Id,
+                            ConditionGroupId,
+                            ItemsFBShomareh,
+                            LevelNumber,
+                            false,
+                            null
+                        );
+                    }
+                }
+                else {
+
+                    Status = false;
+
+                    if (ItemRelated.length != 0) {
+
+                        // بررسی وجود علامت & در حداقل یکی از مقادیر
+                        var hasAnd = ItemRelated.some(function (item) {
+                            return String(item).includes('&');
+                        });
+
+                        // اگر & وجود داشته باشد، همه باید تیک داشته باشند
+                        // در غیر این صورت، تیک داشتن یکی کافی است
+                        if (hasAnd) {
+                            Status = ItemRelated.every(function (item) {
+
+                                var currentId1 = String(item).split('&');
+
+                                return $('#CK' + currentId1[0]).prop('checked') === true;
+                            });
+                        }
+                        else {
+                            Status = ItemRelated.some(function (item) {
+
+                                var currentId1 = String(item).split('&');
+
+                                return $('#CK' + currentId1[0]).prop('checked') === true;
+                            });
+                        }
+
+                        if (Status) {
+
+                            CheckedOnChange(
+                                object,
+                                Id,
+                                ConditionGroupId,
+                                ItemsFBShomareh,
+                                LevelNumber,
+                                false,
+                                null
+                            );
+
+                        }
+                        else {
+
+                            object.removeAttr('disabled');
+
+                            var id = $(object).attr('id');
+                            $('#loading_' + id).remove();
+
+                            object.prop('checked', false);
+
+                            toastr.info(
+                                'ابتدا آیتم های پیش نیاز را انتخاب نمایید',
+                                'اطلاع'
+                            );
+                        }
+                    }
+                    else {
+
+                        CheckedOnChange(
+                            object,
+                            Id,
+                            ConditionGroupId,
+                            ItemsFBShomareh,
+                            LevelNumber,
+                            false,
+                            null
+                        );
+                    }
+                }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                // Status = false;
+                // if (response.length != 0) {
+
+                //     for (var i = 0; i < response.length; i++) {
+
+                //         debugger;
+
+                //         currentId = response[i];
+                //         currentId1 = String(currentId).split('&');
+
+                //         currentStatus = $('#CK' + currentId1[0]).prop('checked');
+                //         ///بررسی اینکه کلیه شروطی که این شرط بدانها وابسته است آیا دارای تیک هستند یا خیر
+                //         if (currentStatus) {
+                //             Status = true;
+                //             break;
+                //         }
+                //     }
+
+                //     //در صورتی یکی از شروطی که این شرط بدانها وابسته است دارای تیک بود
+                //     //پس این شرط نیز اعمال میشود 
+                //     if (Status) {
+                //         CheckedOnChange(object, Id, ConditionGroupId, ItemsFBShomareh, LevelNumber);
+                //     }
+                //     else {
+                //         object.removeAttr('disabled');
+
+                //         var id = $(object).attr('id');
+                //         $('#loading_' + id).remove();
+
+                //         object.attr('checked', false);
+                //         toastr.info('ابتدا آیتم های پیش نیاز را انتخاب نمایید', 'اطلاع');
+
+                //     }
+                // }
+                // else
+                // {
+                //     CheckedOnChange(object, Id, ConditionGroupId, ItemsFBShomareh, LevelNumber);
+                // }
+            }
+            else
+                toastr.error('مشکل در بررسی', 'خطا');
+        },
+        error: function (response) {
+            toastr.error('مشکل در بررسی', 'خطا');
+        }
+    });
+}
+
+
+function CheckedOnChange(object, Id, ConditionGroupId, ItemsFBShomareh, LevelNumber,hasRelated,ObjRelated) {
+
+    debugger;
 
     if (object.is(':checked')) {
         $('#FormShow').find('#CK' + Id).attr('checked', true);
-        debugger;
         blnFindText = false;
         obj = $('#FormShow').find('#txtMeghdar' + Id);
         if (obj.length != 0) {
@@ -144,75 +404,36 @@ function CheckedOnChange(object, Id, ConditionGroupId, ItemsFBShomareh, LevelNum
         }
     }
     else {
-        deleteItemsCondition(Id, ConditionGroupId, ItemsFBShomareh, LevelNumber);
 
-        //objectid = $(this).attr('id');
-        //id = object.attr('id').substring(2, object.attr('id').length);
-        //BarAvordUserId = $('#HDFBarAvordUserID').val();
-        //OperationId = $('#HDFOperationId').val();
-        //var vardata = new Object();
-        //vardata.BarAvordId = BarAvordUserId;
-        //vardata.strFBShomareh = ItemsFBShomareh;
-        //vardata.ConditionGroupId = ConditionGroupId;
-        //vardata.LevelNumber = LevelNumber;
-        //$.ajax({
-        //    type: "POST",
-        //    url: "/ItemsHasConditionAddedToFB/DeleteItemsHasConditionAddedToFBAndRizMetre",
-        //    //data: '{intBarAvordId:'+BarAvordID+',strFBShomareh:' + "'" + ItemsFBShomareh + "'" +
-        //    //    ',ConditionGroupId:' + ConditionGroupId + '}',
-        //    data: JSON.stringify(vardata),
-        //    contentType: "application/json; charset=utf-8",
-        //    dataType: "json",
-        //    success: function (response) {
-        //        info = response.split('_');
-        //        if (info[0] == "OK") {
-        //            //RefreshEzafehBaha(OperationId);
-        //            GetRizMetreWithFBId(LevelNumber);
-        //            GetItemsAddedAndRelForRizMetre(LevelNumber);
-        //            $('#divShowRizMetre' + Id).slideUp(500);
+        object.removeAttr('disabled');
 
-        //            toastr.success('اضافه بهای آیتم انتخابی حذف گردید', 'موفقیت');
-        //        }
-        //        else
-        //            toastr.error('مشکل در حذف اضافه بها', 'خطا');
-        //    },
-        //    error: function (response) {
-        //        toastr.error('مشکل در حذف اضافه بها', 'خطا');
-        //    }
-        //});
+        var id = $(object).attr('id');
+        $('#loading_' + id).remove();
+
+        deleteItemsCondition(Id, ConditionGroupId, ItemsFBShomareh, LevelNumber, hasRelated, ObjRelated);
+
     }
 }
 
 function ConfirmItemsCondition(object, Id, ConditionGroupId, LevelNumber) {
-    debugger;
-    //GroupNum = 1;
-    //divGroup = 'divConditionGroup' + ConditionGroupId;
+
     Meghdar = 0;
-    //RBId = 0;
+
     RBCode = '';
-    //$('#'+divGroup+' input:checked').each(function () {
-    //    RBId = $(this).attr('id');
-    //    RBName = $(this).attr('name');
-    //    RBCode += RBId.substring(2, RBId.length);
+
     IdSplit = Id.split('_');
     RBCode += IdSplit[0];
-    //object = $('#CK' + IdSplit[0]);
+
     txtMeghdarId = "txtMeghdar" + IdSplit[0];
     AllText = $('[id^=' + txtMeghdarId + ']');
-    //obj = $('#txtMeghdar' + Id);
-    //object.parent().parent().find('input:text').each(function () {
-    //    if (Id == $(this).attr('id').substring(10, $(this).attr('id').length)) {
-    //        Meghdar = $(this).val();
-    //        RBCode += '_' + Meghdar;
-    //    }
-    //});
+
     AllText.each(function () {
         Meghdar = $(this).val();
         RBCode += '_' + Meghdar;
     });
 
     RBCode += ',';
-    //});
+
     OperationId = $('#HDFOperationId').val();
     BarAvordUserId = $('#HDFBarAvordUserID').val();
     NoeFBId = parseInt($('#HDFNoeFB').val());
@@ -231,10 +452,15 @@ function ConfirmItemsCondition(object, Id, ConditionGroupId, LevelNumber) {
         data: JSON.stringify(vardata),
         contentType: "application/json; charset=utf-8",
         success: function (data) {
+            object.removeAttr('disabled');
+
+            var id = $(object).attr('id');
+            $('#loading_' + id).remove();
+
             var info = data.split('_');
             if (info[0] == "OK") {
                 toastr.success('اطلاعات انتخاب شده بدرستی ثبت گردید', 'موفقیت');
-                //obj.removeClass('blinking');
+
                 AllText.each(function () {
                     $(this).removeClass('blinking');
                 });
@@ -270,8 +496,6 @@ function ConfirmItemsCondition(object, Id, ConditionGroupId, LevelNumber) {
                     .first()
                     .find('input[type="checkbox"]')
                     .prop('checked', true);
-                debugger;
-
 
 
                 textMeghdar = object.closest('div[id^="divConditionGroup"]')
@@ -306,24 +530,19 @@ function ConfirmItemsCondition(object, Id, ConditionGroupId, LevelNumber) {
                 IdSplit = Id.split('_');
                 $('#divShowRizMetre' + IdSplit[0]).slideDown(500);
 
-                //$('#FormShow').find('.Open').slideUp(1000);
-                //$('#FormShow').find('.Open').removeClass('Open');
-                //$('#FormShow').find('#divAlert').html(info[1]);
-                //RefreshEzafehBaha(OperationId);
-                //$('#btnCancelItemsCondition').click();
-                //GetRizMetreUsers(LevelNumber);
-                //RutinCheck();
             }
             else if (info[0] == "NOK") {
                 toastr.error(info[1], 'عدد وارده بایستی در بازه تعریف شده باشد');
-                //RefreshEzafehBaha(OperationId);
-                //GetRizMetreUsers(LevelNumber);
+                object.attr('checked', false);
+            }
+            else if (info[0] == "NOOK") {
+                toastr.error(info[1]);
+                object.attr('checked', false);
             }
             else if (info[0] == "CI") {
                 toastr.warning('مقدار را در محدوده متعارف وارد نمایید', 'توجه');
                 object.attr('checked', false);
-                debugger;
-                //obj.addClass('blinking');
+
                 AllText.each(function () {
                     $(this).addClass('blinking');
                 });
@@ -336,7 +555,6 @@ function ConfirmItemsCondition(object, Id, ConditionGroupId, LevelNumber) {
                     .first()
                     .find('input[type="checkbox"]')
                     .prop('checked', false);
-                debugger;
 
                 checkbox = object.parent().find('input[type="checkbox"]')
                 if (checkbox != undefined) {
@@ -344,7 +562,6 @@ function ConfirmItemsCondition(object, Id, ConditionGroupId, LevelNumber) {
                 }
                 else
                     object.parent().parent().find('input[type="checkbox"]').prop('checked', false);
-                debugger;
 
                 AllInputs = object.closest('div[id^="divConditionGroup"]').first().find('input[type="number"]');
 
@@ -356,22 +573,42 @@ function ConfirmItemsCondition(object, Id, ConditionGroupId, LevelNumber) {
                 else {
                     object.prop('value', object.attr('defaultvalue'));
                 }
-                //axa = object.closest('div[id^="divConditionGroup"]')
-                //    .first()
-                //    .find('input[type="number"]')
-                //    .attr('defaultvalue');
 
-                //if (axa === undefined) {
-
-                //    object.prop('value', object.attr('defaultvalue'));
-                //}
-                //object.closest('div[id^="divConditionGroup"]')
-                //    .first()
-                //    .find('input[type="number"]')
-                //    .prop('value', axa);
             }
         },
         error: function (msg) {
+            var id = $(object).attr('id');
+            $('#loading_' + id).remove();
+
+            object.closest('div[id^="divConditionGroup"]')
+                .prevAll('div')
+                .first()
+                .find('input[type="checkbox"]')
+                .prop('checked', false);
+
+            checkbox = object.parent().find('input[type="checkbox"]')
+            if (checkbox != undefined) {
+                checkbox.prop('checked', false);
+            }
+            else
+                object.parent().parent().find('input[type="checkbox"]').prop('checked', false);
+
+            AllInputs = object.closest('div[id^="divConditionGroup"]').first().find('input[type="number"]');
+
+            if (AllInputs.length > 0) {
+                AllInputs.each(function () {
+                    $(this).prop('value', $(this).attr('defaultvalue'));
+                });
+            }
+            else {
+                object.prop('value', object.attr('defaultvalue'));
+            }
+
+            var $obj = $(object);
+
+            // غیرفعال کردن
+            $obj.removeAttr('disabled');
+
             toastr.error('خطا در درج اطلاعات', 'خطا');
         }
     });
@@ -401,11 +638,25 @@ function textMeghdarOnChange(object, ConditionGroupId, LevelNumber) {
     //    return;
     //}
 
-    Id = object.attr('id').substring(10, object.attr('id').length);
-    $('#CK' + Id).prop('checked', true);
     debugger;
+    var $obj = $(object);
+    // غیرفعال کردن
+    $obj.prop('disabled', true);
+    // اضافه کردن waiting
+    var $loading = $('<span>', {
+        id: 'loading_' + $obj.attr('id'),
+        class: 'my-loading'
+    });
+    $obj.before($loading);
+
+    Id = object.attr('id').substring(10, object.attr('id').length);
+
+    $('#CK' + Id).prop('checked', true);
+
     $("div[id^='divShowRizMetre']").not('#divShowRizMetre' + Id).slideUp(500);
+
     ConfirmItemsCondition(object, Id, ConditionGroupId, LevelNumber);
+
 }
 //////////////
 function AddRizMetre() {
@@ -471,8 +722,7 @@ function AddRizMetre() {
 //    });
 //}
 
-function KhakRiziClick(OpId,event) {
-    debugger;
+function KhakRiziClick(OpId, event) {
     if (event) {
         event.stopPropagation();
         event.preventDefault();
@@ -509,7 +759,6 @@ function spanOnClick(Id, ConditionGroupId) {
     } else {
         $('#CK' + Id).click();
         checkbox.prop('checked', true);
-        debugger;
     }
 
 }
@@ -518,7 +767,11 @@ function spanOnClick(Id, ConditionGroupId) {
 function OpenConditionDetailsOnly(ConditionGroupId) {
     $('#divConditionGroup' + ConditionGroupId).toggle(1000);
 }
-function OperationClick(Operation, showAddedRecord, event) {
+function OperationClick(Operation, showAddedRecord, event, TypePayKani) {
+    debugger;
+
+
+    $('#HDFPayKani').val(TypePayKani);
     if (event) {
         event.stopPropagation();
         event.preventDefault();
@@ -543,7 +796,7 @@ function OperationClick(Operation, showAddedRecord, event) {
         vardata.FBId = FBId;
         vardata.NoeFBId = NoeFBId;
 
-        if (!$('#a' + Operation).hasClass('OpenMenu')) {
+        //if (!$('#a' + Operation).hasClass('OpenMenu')) {
             $.ajax({
                 type: "POST",
                 url: "/Operation_ItemsFB/GetOperation_ItemsFB",
@@ -555,20 +808,23 @@ function OperationClick(Operation, showAddedRecord, event) {
                     result = response.result;
                     if (result == "OK") {
                         lstItemsFields = response.lstItemsFields;
+                        lstItemsFieldEssentialValue = response.lstItemsFieldEssentialValue;
+                        lstDefaultMaxMin = response.lstDefaultMaxMin;
                         ItemsFBShomareh = response.itemsFBShomareh;
                         str = response.str;
                         FBId = response.fbId;
 
                         $('#a' + Operation).addClass('OpenMenu');
                         $('#HDFFBID').val(FBId);
+                        //alert($('#HDFFBID').val());
                         $('#HDFItemsFBShomareh').val(ItemsFBShomareh);
                         $('#uldiva' + Operation).html(str);
                         $('#ula' + Operation).show();
                         $('#HDFOperationId').val(Operation);
 
                         if (showAddedRecord) {
-                         AddRizMetreUsers(Operation, FBId, lstItemsFields, 1, ItemsFBShomareh);
-                       }
+                            AddRizMetreUsers(Operation, FBId, lstItemsFields, lstItemsFieldEssentialValue, lstDefaultMaxMin, 1, ItemsFBShomareh);
+                        }
 
                         GetRizMetreWithFBId(1);
                         //$('#divShowRizMetre').html($('#uldiva' + Operation).html());
@@ -581,15 +837,13 @@ function OperationClick(Operation, showAddedRecord, event) {
                     toastr.error('مشکل در محاسبه جمع کل فصل انتخابی', 'خطا');
                 }
             });
-        }
-        else
-            $('#a' + Operation).removeClass('OpenMenu');
+        //}
+        //else
+           // $('#a' + Operation).removeClass('OpenMenu');
     }
 }
 ///////////////
 function OperationClickSecondLevel(Operation) {
-
-
     Type = 0;
     $('#HDFOperationId').val(Operation);
     ItemsFBShomareh = $('#HDFItemsFBShomareh').val();
@@ -918,7 +1172,6 @@ function ShowEzafeBahaAndLakeGiriOnly(object, ItemsFBShomareh, ConditionGroupId,
         //$('#CK' + Id).click();
         checkbox.trigger('click');
         checkbox.prop('checked', true);
-        debugger;
     }
 }
 
@@ -986,26 +1239,196 @@ function CheckInfoRizMetre() {
     if (!($.isNumeric(Vazn))) return 6;
     return 0;
 }
-function AddRizMetreUsers(OperationId, FBId, Array, LevelNumber, ItemsFBShomareh) {
+function AddRizMetreUsers(OperationId, FBId, Array, lstItemsFieldEssentialValue, lstDefaultMaxMin, LevelNumber, ItemsFBShomareh) {
 
+    debugger;
     ArraySplit = Array.split(',');
+    EssentialSplit = lstItemsFieldEssentialValue.split(',');
+
     $('#HDFOperationId').val(OperationId);
     $('#HDFFBID').val(FBId);
     $('#HDFIsFromAddedOperation').val('false');
     $('.NoRizMetre').addClass('displayNone');
-    var str = '';
-    str += "<div id=\"divNewRow\" class=\"row styleRowTable\"><div class=\"col-md-1\"><i class=\"fa fa-plus SaveRMUStyle\"></i></div>";
-    str += "<div class=\"col-md-2\"><input type=\"text\"  class=\"form-control spanStyleMitraSmall\" id=\"txtSharh" + OperationId + "\ value=\"\"/></div>";
-    str += "<div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[0] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtTedad" + OperationId + "\ value=\"\"/></div>";
-    str += " <div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[1] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtTool" + OperationId + "\ value=\"\"/></div>";
-    str += "<div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[2] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtArz" + OperationId + "\ value=\"\"/></div>";
-    str += "<div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[3] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtErtefa" + OperationId + "\ value=\"\"/></div>";
-    str += "<div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[4] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtVazn" + OperationId + "\ value=\"\"/></div>";
-    str += "<div class=\"col-md-1\">0</div>";
-    str += "<div class=\"col-md-2\"><input type=\"text\" class=\"form-control spanStyleMitraSmall\" id=\"txtDes" + OperationId + "\ value=\"\"/></div>";
-    str += "<div class=\"col-md-1\"><button type=\"button\" onclick=\"SaveRMUClick($(this),'" + FBId + "','false','" + OperationId + "'," + LevelNumber + ")\" class=\"ButtonRowsSaveStyle\"><i id=\"iSave\" class=\"fa fa-save SaveRMUStyle\"></i></button></div></div>";
+    //var str = '';
+    //str += "<div id=\"divNewRow\" class=\"row styleRowTable\"><div class=\"col-md-1\"><i class=\"fa fa-plus SaveRMUStyle\"></i></div>";
+    //str += "<div class=\"col-md-2\"><input type=\"text\"  class=\"form-control spanStyleMitraSmall\" id=\"txtSharh" + OperationId + "\ value=\"\"/></div>";
+    //str += "<div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[0] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtTedad" + OperationId + "\ value=\"\"/></div>";
+    //str += " <div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[1] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtTool" + OperationId + "\ value=\"\"/></div>";
+    //str += "<div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[2] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtArz" + OperationId + "\ value=\"\"/></div>";
+    //str += "<div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[3] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtErtefa" + OperationId + "\ value=\"\"/></div>";
+    //str += "<div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[4] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtVazn" + OperationId + "\ value=\"\"/></div>";
+    //str += "<div class=\"col-md-1\">0</div>";
+    //str += "<div class=\"col-md-2\"><input type=\"text\" class=\"form-control spanStyleMitraSmall\" id=\"txtDes" + OperationId + "\ value=\"\"/></div>";
+    //str += "<div class=\"col-md-1\"><button type=\"button\" onclick=\"SaveRMUClick($(this),'" + FBId + "','false','" + OperationId + "'," + LevelNumber + ")\" class=\"ButtonRowsSaveStyle\"><i id=\"iSave\" class=\"fa fa-save SaveRMUStyle\"></i></button></div></div>";
+
+    let Essential0 = EssentialSplit[0] == "True" ? " Essential " : "";
+    let Essential1 = EssentialSplit[1] == "True" ? " Essential " : "";
+    let Essential2 = EssentialSplit[2] == "True" ? " Essential " : "";
+    let Essential3 = EssentialSplit[3] == "True" ? " Essential " : "";
+    let Essential4 = EssentialSplit[4] == "True" ? " Essential " : "";
+
+    let DefaultTedad = "";
+    let MinTedad = "";
+    let MaxTedad = "";
+
+    let DefaultTool = "";
+    let MinTool = "";
+    let MaxTool = "";
+
+    let DefaultArz = "";
+    let MinArz = "";
+    let MaxArz = "";
+
+    let DefaultErtefa = "";
+    let MinErtefa = "";
+    let MaxErtefa = "";
+
+    let DefaultVazn = "";
+    let MinVazn = "";
+    let MaxVazn = "";
+
+    let DefaultMaxMinSplit = (lstDefaultMaxMin || "").split(",");
+
+    // تابع برای جلوگیری از خطا
+    function GetDefaultMinMax(index) {
+
+        if (index >= DefaultMaxMinSplit.length)
+            return ["", "", ""];
+
+        let value = (DefaultMaxMinSplit[index] || "").trim();
+
+        if (value === "")
+            return ["", "", ""];
+
+        let split = value.split("_");
+
+        return [
+            split[0] || "",
+            split[1] || "",
+            split[2] || ""
+        ];
+    }
+
+    // تعداد
+    let Tedad = GetDefaultMinMax(0);
+    DefaultTedad = RemoveExtraDecimalZeros(Tedad[0]);
+    MinTedad = RemoveExtraDecimalZeros(Tedad[1]);
+    MaxTedad = RemoveExtraDecimalZeros(Tedad[2]);
+
+    // طول
+    let Tool = GetDefaultMinMax(1);
+    DefaultTool = RemoveExtraDecimalZeros(Tool[0]);
+    MinTool = RemoveExtraDecimalZeros(Tool[1]);
+    MaxTool = RemoveExtraDecimalZeros(Tool[2]);
+
+    // عرض
+    let Arz = GetDefaultMinMax(2);
+    DefaultArz = RemoveExtraDecimalZeros(Arz[0]);
+    MinArz = RemoveExtraDecimalZeros(Arz[1]);
+    MaxArz = RemoveExtraDecimalZeros(Arz[2]);
+
+    // ارتفاع
+    let Ertefa = GetDefaultMinMax(3);
+    DefaultErtefa = RemoveExtraDecimalZeros(Ertefa[0]);
+    MinErtefa = RemoveExtraDecimalZeros(Ertefa[1]);
+    MaxErtefa = RemoveExtraDecimalZeros(Ertefa[2]);
+
+    // وزن
+    let Vazn = GetDefaultMinMax(4);
+    DefaultVazn = RemoveExtraDecimalZeros(Vazn[0]);
+    MinVazn = RemoveExtraDecimalZeros(Vazn[1]);
+    MaxVazn = RemoveExtraDecimalZeros(Vazn[2]);
+
+
+
+    let str = `
+<div id="divNewRow" class="row styleRowTable">
+    <div class="col-md-1">
+        <i class="fa fa-plus SaveRMUStyle"></i>
+    </div>
+
+    <div class="col-md-2">
+        <input type="text" class="form-control spanStyleMitraSmall"
+               id="txtSharh${OperationId}" value="" />
+    </div>
+
+    <div class="col-md-1">
+        <input type="text"
+            ${ArraySplit[0] != "True"
+            ? `disabled="disabled" class="form-control spanStyleMitraSmall ${Essential0}"`
+            : `class="form-control spanStyleMitraSmall HasEnteringValue ${Essential0}"`}
+            id="txtTedad${OperationId}"
+            value="${DefaultTedad}" 
+            data-min="${MinTedad}"
+            data-max="${MaxTedad}" />
+    </div>
+
+    <div class="col-md-1">
+        <input type="text"
+            ${ArraySplit[1] != "True"
+            ? `disabled="disabled" class="form-control spanStyleMitraSmall ${Essential1}"`
+            : `class="form-control spanStyleMitraSmall HasEnteringValue ${Essential1}"`}
+            id="txtTool${OperationId}"
+            value="${DefaultTool}"
+            data-min="${MinTool}"
+            data-max="${MaxTool}"/>
+    </div>
+
+    <div class="col-md-1">
+        <input type="text"
+            ${ArraySplit[2] != "True"
+            ? `disabled="disabled" class="form-control spanStyleMitraSmall ${Essential2}"`
+            : `class="form-control spanStyleMitraSmall HasEnteringValue ${Essential2}"`}
+            id="txtArz${OperationId}"
+            value="${DefaultArz}"
+            data-min="${MinArz}"
+            data-max="${MaxArz}"/>
+    </div>
+
+    <div class="col-md-1">
+        <input type="text"
+            ${ArraySplit[3] != "True"
+            ? `disabled="disabled" class="form-control spanStyleMitraSmall ${Essential3}"`
+            : `class="form-control spanStyleMitraSmall HasEnteringValue ${Essential3}"`}
+            id="txtErtefa${OperationId}"
+            value="${DefaultErtefa}"
+            data-min="${MinErtefa}"
+            data-max="${MaxErtefa}"/>
+    </div>
+
+    <div class="col-md-1">
+        <input type="text"
+            ${ArraySplit[4] != "True"
+            ? `disabled="disabled" class="form-control spanStyleMitraSmall ${Essential4}"`
+            : `class="form-control spanStyleMitraSmall HasEnteringValue ${Essential4}"`}
+            id="txtVazn${OperationId}"
+            value="${DefaultVazn}"
+            data-min="${MinVazn}"
+            data-max="${MaxVazn}"/>
+    </div>
+
+    <div class="col-md-1">0</div>
+
+    <div class="col-md-2">
+        <input type="text" class="form-control spanStyleMitraSmall"
+               id="txtDes${OperationId}" value="" />
+    </div>
+
+    <div class="col-md-1">
+        <button type="button"
+            onclick="SaveRMUClick($(this),'${FBId}','false','${OperationId}',${LevelNumber})"
+            class="ButtonRowsSaveStyle">
+            <i id="iSave" class="fa fa-save SaveRMUStyle"></i>
+        </button>
+    </div>
+</div>
+`;
+
+    debugger;
+    NoeFBId = parseInt($('#HDFNoeFB').val());
+
     if (LevelNumber == 1) {
-        $('#Grid' + ItemsFBShomareh).append(str);
+        $('#Grid' + NoeFBId + "_" + ItemsFBShomareh).append(str);
 
 
         $('#uldiva' + OperationId + ' #divNewRow').find('input[type=text]').each(function () {
@@ -1046,7 +1469,7 @@ function AddRizMetreUsers(OperationId, FBId, Array, LevelNumber, ItemsFBShomareh
         })
     }
     else if (LevelNumber == 2) {
-        $('#PopupViewNextRutinTreeView').find('#Grid' + ItemsFBShomareh).append(str);
+        $('#PopupViewNextRutinTreeView').find('#Grid' + NoeFBId + "_" + ItemsFBShomareh).append(str);
 
         $('#PopupViewNextRutinTreeView').find('#uldiva' + OperationId + ' #divNewRow').find('input[type=text]').each(function () {
             $(this).click(function () {
@@ -1080,122 +1503,483 @@ function AddRizMetreUsers(OperationId, FBId, Array, LevelNumber, ItemsFBShomareh
     }
 }
 
+
+
+function ValidateMinMax(inputId, fieldName) {
+
+    let input = $("#" + inputId);
+
+    if (input.length === 0 || input.prop("disabled"))
+        return true;
+
+    let value = input.val()?.toString().trim();
+
+    // اگر خالی باشد، اینجا بررسی نمی‌کنیم
+    if (value === "")
+        return true;
+
+    let min = input.data("min");
+    let max = input.data("max");
+
+    // اگر Min یا Max تعریف نشده باشد
+    if (min === undefined || min === "" || min === null)
+        min = null;
+
+    if (max === undefined || max === "" || max === null)
+        max = null;
+
+    let number = parseFloat(value);
+
+    // عدد معتبر نیست
+    if (isNaN(number)) {
+        toastr.info(`مقدار وارد شده برای ${fieldName} معتبر نیست.`);
+        input.focus();
+        return false;
+    }
+
+    // بررسی حداقل
+    if (min !== null && number < parseFloat(min)) {
+        toastr.info(`مقدار ${fieldName} نباید کمتر از ${min} باشد.`);
+        input.focus();
+        return false;
+    }
+
+    // بررسی حداکثر
+    if (max !== null && number > parseFloat(max)) {
+        toastr.info(`مقدار ${fieldName} نباید بیشتر از ${max} باشد.`);
+        input.focus();
+        return false;
+    }
+
+    return true;
+}
+
+
+
 function SaveRMUClick(object, FBId, IsFromAddedOperation, OperationId, LevelNumber) {
+
     object.prop('disabled', true);
+
     $('#HDFIsFromAddedOperation').val(IsFromAddedOperation);
     $('#HDFFBID').val(FBId);
+
     Year = $('#HDFYear').val();
     NoeFB = parseInt($('#HDFNoeFB').val());
-    object.parent().parent().find('input[type=text]').each(function () {
-        $(this).removeClass('ErrorValueStyle');
+
+    var $row = object.parent().parent();
+
+    // حذف خطاهای قبلی
+    $row.find('input[type=text]').each(function () {
+        $(this).removeClass('ErrorValueStyle blinking');
     });
-    var Sharh, Tedad, Tool, Arz, Ertefa, Vazn, Des, Check = true;
+
+    var Sharh,
+        Tedad,
+        Tool,
+        Arz,
+        Ertefa,
+        Vazn,
+        Des,
+        Check = true;
+
     firstObjectHasFocus = null;
-    object.parent().parent().find('input[type=text]').each(function () {
-        if ($(this).attr('id').startsWith('txtSharh'))
-            debugger;
-        Sharh = $(this).val();
-        if ($(this).attr('id').startsWith('txtTedad')) {
-            if ($(this).hasClass('HasEnteringValue')) {
-                if ($.isNumeric(parseFloat($(this).val()))) {
-                    Tedad = $(this).val().replace(/\,/g, '');
-                    $(this).removeClass('ErrorValueStyle');
-                }
-                else {
-                    $(this).addClass('ErrorValueStyle');
-                    $(this).removeClass('TextEdit');
-                    Check = false;
+
+    $row.find('input[type=text]').each(function () {
+
+        var $input = $(this);
+        var id = $input.attr('id');
+        var value = $input.val();
+
+        // -------------------------
+        // شرح
+        // -------------------------
+        if (id.startsWith('txtSharh')) {
+
+            Sharh = value;
+
+        }
+
+        // -------------------------
+        // تابع بررسی Min / Max
+        // -------------------------
+        function CheckMinMax($input, fieldName) {
+
+            var value = $input.val();
+
+            // اگر خالی است
+            if (value === undefined || value === null || value.trim() === '') {
+
+                // اگر Essential نیست، مشکلی ندارد
+                if (!$input.hasClass('Essential'))
+                    return true;
+
+                return false;
+            }
+
+            // حذف کاما
+            value = value.replace(/\,/g, '');
+
+            // بررسی عدد بودن
+            if (!$.isNumeric(parseFloat(value)))
+                return false;
+
+            var numberValue = parseFloat(value);
+
+            var min = $input.attr('data-min');
+            var max = $input.attr('data-max');
+
+            // -------------------------
+            // بررسی Min
+            // -------------------------
+            if (min !== undefined &&
+                min !== null &&
+                min !== '' &&
+                $.isNumeric(parseFloat(min))) {
+
+                if (numberValue < parseFloat(min)) {
+
+                    $input.addClass('ErrorValueStyle');
+
+                    if (firstObjectHasFocus == null)
+                        firstObjectHasFocus = $input;
+
+                    toastr.warning(
+                        `مقدار ${fieldName} نباید کمتر از ${min} باشد`,
+                        'هشدار'
+                    );
+
+                    return false;
                 }
             }
-            else Tedad = undefined;
-        }
-        else if ($(this).attr('id').startsWith('txtTool')) {
-            if ($(this).hasClass('HasEnteringValue')) {
-                if ($.isNumeric(parseFloat($(this).val()))) {
-                    Tool = $(this).val().replace(/\,/g, '');
-                    $(this).removeClass('ErrorValueStyle');
+
+            // -------------------------
+            // بررسی Max
+            // -------------------------
+            if (max !== undefined &&
+                max !== null &&
+                max !== '' &&
+                $.isNumeric(parseFloat(max))) {
+
+                if (numberValue > parseFloat(max)) {
+
+                    $input.addClass('ErrorValueStyle');
+
+                    if (firstObjectHasFocus == null)
+                        firstObjectHasFocus = $input;
+
+                    toastr.warning(
+                        `مقدار ${fieldName} نباید بیشتر از ${max} باشد`,
+                        'هشدار'
+                    );
+
+                    return false;
                 }
-                else {
-                    $(this).addClass('ErrorValueStyle');
-                    $(this).removeClass('TextEdit');
-                    if (firstObjectHasFocus == null) {
-                        firstObjectHasFocus = $(this);
+            }
+
+            return true;
+        }
+
+
+        // -------------------------
+        // تعداد
+        // -------------------------
+        if (id.startsWith('txtTedad')) {
+
+            var valueTedad = value ? value.replace(/\,/g, '') : '';
+
+            if ($input.hasClass('Essential')) {
+
+                if ($.isNumeric(parseFloat(valueTedad))) {
+
+                    if (CheckMinMax($input, 'تعداد')) {
+
+                        Tedad = valueTedad;
+                        $input.removeClass('blinking');
                     }
-                    Check = false;
-                }
-            }
-            else Tool = undefined;
-        }
-        else if ($(this).attr('id').startsWith('txtArz')) {
-            if ($(this).hasClass('HasEnteringValue')) {
-                if ($.isNumeric(parseFloat($(this).val()))) {
-                    Arz = $(this).val().replace(/\,/g, '');
-                    $(this).removeClass('ErrorValueStyle');
+                    else {
+                        $input.addClass('ErrorValueStyle');
+                        Check = false;
+                    }
+
                 }
                 else {
-                    $(this).addClass('ErrorValueStyle');
-                    $(this).removeClass('TextEdit');
-                    if (firstObjectHasFocus == null) {
-                        firstObjectHasFocus = $(this);
-                    }
+
+                    $input.addClass('blinking');
+                    $input.removeClass('TextEdit');
+
+                    if (firstObjectHasFocus == null)
+                        firstObjectHasFocus = $input;
+
                     Check = false;
                 }
+
             }
-            else Arz = undefined;
-        }
-        else if ($(this).attr('id').startsWith('txtErtefa')) {
-            if ($(this).hasClass('HasEnteringValue')) {
-                if ($.isNumeric(parseFloat($(this).val()))) {
-                    Ertefa = $(this).val().replace(/\,/g, '');
-                    $(this).removeClass('ErrorValueStyle');
+            else {
+
+                if ($.isNumeric(parseFloat(valueTedad))) {
+
+                    if (CheckMinMax($input, 'تعداد'))
+                        Tedad = valueTedad;
+                    else
+                        Check = false;
+
                 }
                 else {
-                    $(this).addClass('ErrorValueStyle');
-                    $(this).removeClass('TextEdit');
-                    if (firstObjectHasFocus == null) {
-                        firstObjectHasFocus = $(this);
-                    }
-                    Check = false;
+
+                    Tedad = undefined;
+
                 }
             }
-            else Ertefa = undefined;
         }
-        else if ($(this).attr('id').startsWith('txtVazn')) {
-            if ($(this).hasClass('HasEnteringValue')) {
-                if ($.isNumeric(parseFloat($(this).val()))) {
-                    Vazn = $(this).val().replace(/\,/g, '');
-                    $(this).removeClass('ErrorValueStyle');
+
+        // -------------------------
+        // طول
+        // -------------------------
+        else if (id.startsWith('txtTool')) {
+
+            var valueTool = value ? value.replace(/\,/g, '') : '';
+
+            if ($input.hasClass('Essential')) {
+
+                if ($.isNumeric(parseFloat(valueTool))) {
+
+                    if (CheckMinMax($input, 'طول')) {
+
+                        Tool = valueTool;
+                        $input.removeClass('ErrorValueStyle');
+
+                    }
+                    else {
+
+                        Check = false;
+
+                    }
+
                 }
                 else {
-                    $(this).addClass('ErrorValueStyle');
-                    $(this).removeClass('TextEdit');
-                    if (firstObjectHasFocus == null) {
-                        firstObjectHasFocus = $(this);
-                    }
+
+                    $input.addClass('ErrorValueStyle');
+                    $input.removeClass('TextEdit');
+
+                    if (firstObjectHasFocus == null)
+                        firstObjectHasFocus = $input;
+
                     Check = false;
                 }
+
             }
-            else Vazn = undefined;
+            else {
+
+                if ($.isNumeric(parseFloat(valueTool))) {
+
+                    if (CheckMinMax($input, 'طول'))
+                        Tool = valueTool;
+                    else
+                        Check = false;
+
+                }
+                else {
+
+                    Tool = undefined;
+
+                }
+            }
         }
-        else if ($(this).attr('id').startsWith('txtDes'))
-            Des = $(this).val();
+
+        // -------------------------
+        // عرض
+        // -------------------------
+        else if (id.startsWith('txtArz')) {
+
+            var valueArz = value ? value.replace(/\,/g, '') : '';
+
+            if ($input.hasClass('Essential')) {
+
+                if ($.isNumeric(parseFloat(valueArz))) {
+
+                    if (CheckMinMax($input, 'عرض')) {
+
+                        Arz = valueArz;
+                        $input.removeClass('ErrorValueStyle');
+
+                    }
+                    else {
+
+                        Check = false;
+
+                    }
+
+                }
+                else {
+
+                    $input.addClass('ErrorValueStyle');
+                    $input.removeClass('TextEdit');
+
+                    if (firstObjectHasFocus == null)
+                        firstObjectHasFocus = $input;
+
+                    Check = false;
+                }
+
+            }
+            else {
+
+                if ($.isNumeric(parseFloat(valueArz))) {
+
+                    if (CheckMinMax($input, 'عرض'))
+                        Arz = valueArz;
+                    else
+                        Check = false;
+
+                }
+                else {
+
+                    Arz = undefined;
+
+                }
+            }
+        }
+
+        // -------------------------
+        // ارتفاع
+        // -------------------------
+        else if (id.startsWith('txtErtefa')) {
+
+            var valueErtefa = value ? value.replace(/\,/g, '') : '';
+
+            if ($input.hasClass('Essential')) {
+
+                if ($.isNumeric(parseFloat(valueErtefa))) {
+
+                    if (CheckMinMax($input, 'ارتفاع')) {
+
+                        Ertefa = valueErtefa;
+                        $input.removeClass('ErrorValueStyle');
+
+                    }
+                    else {
+
+                        Check = false;
+
+                    }
+
+                }
+                else {
+
+                    $input.addClass('ErrorValueStyle');
+                    $input.removeClass('TextEdit');
+
+                    if (firstObjectHasFocus == null)
+                        firstObjectHasFocus = $input;
+
+                    Check = false;
+                }
+
+            }
+            else {
+
+                if ($.isNumeric(parseFloat(valueErtefa))) {
+
+                    if (CheckMinMax($input, 'ارتفاع'))
+                        Ertefa = valueErtefa;
+                    else
+                        Check = false;
+
+                }
+                else {
+
+                    Ertefa = undefined;
+
+                }
+            }
+        }
+
+        // -------------------------
+        // وزن
+        // -------------------------
+        else if (id.startsWith('txtVazn')) {
+
+            var valueVazn = value ? value.replace(/\,/g, '') : '';
+
+            if ($input.hasClass('Essential')) {
+
+                if ($.isNumeric(parseFloat(valueVazn))) {
+
+                    if (CheckMinMax($input, 'وزن')) {
+
+                        Vazn = valueVazn;
+                        $input.removeClass('ErrorValueStyle');
+
+                    }
+                    else {
+
+                        Check = false;
+
+                    }
+
+                }
+                else {
+
+                    $input.addClass('ErrorValueStyle');
+                    $input.removeClass('TextEdit');
+
+                    if (firstObjectHasFocus == null)
+                        firstObjectHasFocus = $input;
+
+                    Check = false;
+                }
+
+            }
+            else {
+
+                if ($.isNumeric(parseFloat(valueVazn))) {
+
+                    if (CheckMinMax($input, 'وزن'))
+                        Vazn = valueVazn;
+                    else
+                        Check = false;
+
+                }
+                else {
+
+                    Vazn = undefined;
+
+                }
+            }
+        }
+
+        // -------------------------
+        // توضیحات
+        // -------------------------
+        else if (id.startsWith('txtDes')) {
+
+            Des = value;
+
+        }
 
     });
+
+
+    // Focus روی اولین فیلد خطادار
     if (firstObjectHasFocus != null)
         firstObjectHasFocus.focus();
 
+
     ForItem = '';
+
     if (IsFromAddedOperation == 'true')
         ForItem = $('#HDFItemsFBShomareh').val();
 
 
+    // -------------------------
+    // اگر خطایی وجود نداشت
+    // -------------------------
     if (Check) {
-
-        debugger;
 
         BarAvordUserId = $('#HDFBarAvordUserID').val();
 
         var vardata11 = new Object();
+
         vardata11.Sharh = Sharh;
         vardata11.Tedad = Tedad === undefined ? null : Tedad;
         vardata11.Tool = Tool === undefined ? null : Tool;
@@ -1203,6 +1987,7 @@ function SaveRMUClick(object, FBId, IsFromAddedOperation, OperationId, LevelNumb
         vardata11.Ertefa = Ertefa === undefined ? null : Ertefa;
         vardata11.Vazn = Vazn === undefined ? null : Vazn;
         vardata11.Des = Des;
+
         vardata11.FBId = FBId;
         vardata11.BarAvordUserId = BarAvordUserId;
         vardata11.OperationId = OperationId;
@@ -1211,55 +1996,320 @@ function SaveRMUClick(object, FBId, IsFromAddedOperation, OperationId, LevelNumb
         vardata11.NoeFB = NoeFB;
         vardata11.LevelNumber = LevelNumber;
 
+
         $.ajax({
+
             type: "POST",
+
             url: '/RizMetreUser/ConfirmRizMetreUsers',
+
             dataType: "json",
+
             data: JSON.stringify(vardata11),
+
             contentType: "application/json; charset=utf-8",
+
             success: function (data) {
+
+                debugger;
 
                 object.removeAttr('disabled');
 
+                //$loading.remove();
+
                 var info = data.split('_');
+
                 if (info[0] == "OK") {
 
-                    debugger;
                     ClearInput(object);
+
                     GetRizMetreWithFBId(LevelNumber);
-                    $("#divItemsAddedAndRel" + info[1] + " div[id^='divShowRizMetre']").each(function () {
+
+                    $("#divItemsAddedAndRel" + NoeFB + "_" + info[1] + " div[id^='divShowRizMetre']").each(function () {
+
                         if ($(this).css("display") === "block") {
 
                             $(this).slideUp();
 
-                            //thisId= this.id.substring(15, this.id.length);
-                            //// پیدا کردن نزدیک‌ترین span با کلاس spanStyleMitraSmall
-                            //var $span = $("#CK" + thisId).find("span.spanLakeGiriStyle").first();
-                            //if ($span.length === 0) {
-                            //    $span = $(this).closest("div").find("span .spanLakeGiriStyle").first();
-                            //}
-                            //if ($span.length > 0) {
-                            //    $span.click();
-                            //}
                         }
+
                     });
 
-                    //CheckOperationHasExistActiveCondition(OperationId);
-                    toastr.success('ریزه متره جدید بدرستی درج گردید', 'موفقیت');
+                    toastr.success(
+                        'ریزه متره جدید بدرستی درج گردید',
+                        'موفقیت'
+                    );
+
                 }
-                else
-                    toastr.info('مشکل در درج ریزه متره جدید', 'اطلاع');
+                else {
+
+                    toastr.info(
+                        'مشکل در درج ریزه متره جدید',
+                        'اطلاع'
+                    );
+                }
+
             },
+
             error: function (msg) {
-                toastr.error('مشکل در درج ریزه متره جدید', 'خطا');
+
+                toastr.error(
+                    'مشکل در درج ریزه متره جدید',
+                    'خطا'
+                );
+
             }
+
         });
+
     }
     else {
+
         object.removeAttr('disabled');
-        toastr.warning('مقادیر مشخص شده را وارد نمایید', 'هشدار');
+
+        //$loading.remove();
+
+        // فقط اگر خطای Min/Max قبلاً پیام نداده باشد،
+        // پیام کلی نمایش داده شود
+        if (firstObjectHasFocus == null) {
+
+            toastr.warning(
+                'مقادیر مشخص شده را وارد نمایید',
+                'هشدار'
+            );
+
+        }
+
     }
 }
+
+
+
+
+
+
+
+
+
+
+// function SaveRMUClick(object, FBId, IsFromAddedOperation, OperationId, LevelNumber) {
+//     object.prop('disabled', true);
+//     $('#HDFIsFromAddedOperation').val(IsFromAddedOperation);
+//     $('#HDFFBID').val(FBId);
+//     Year = $('#HDFYear').val();
+//     NoeFB = parseInt($('#HDFNoeFB').val());
+//     object.parent().parent().find('input[type=text]').each(function () {
+//         $(this).removeClass('ErrorValueStyle');
+//     });
+//     var Sharh, Tedad, Tool, Arz, Ertefa, Vazn, Des, Check = true;
+//     firstObjectHasFocus = null;
+//     object.parent().parent().find('input[type=text]').each(function () {
+//         if ($(this).attr('id').startsWith('txtSharh'))
+//             Sharh = $(this).val();
+//         if ($(this).attr('id').startsWith('txtTedad')) {
+//             if ($(this).hasClass('Essential')) {
+//                 if ($.isNumeric(parseFloat($(this).val()))) {
+//                     Tedad = $(this).val().replace(/\,/g, '');
+//                     $(this).removeClass('blinking');
+//                 }
+//                 else {
+//                     $(this).addClass('blinking');
+//                     $(this).removeClass('TextEdit');
+//                     Check = false;
+//                 }
+//             }
+//             else {
+//                 if ($.isNumeric(parseFloat($(this).val()))) {
+//                     Tedad = $(this).val().replace(/\,/g, '');
+//                     $(this).removeClass('blinking');
+//                 }
+//                 else
+//                     Tedad = undefined;
+//             }
+//         }
+//         else if ($(this).attr('id').startsWith('txtTool')) {
+//             if ($(this).hasClass('Essential')) {
+//                 if ($.isNumeric(parseFloat($(this).val()))) {
+//                     Tool = $(this).val().replace(/\,/g, '');
+//                     $(this).removeClass('ErrorValueStyle');
+//                 }
+//                 else {
+//                     $(this).addClass('ErrorValueStyle');
+//                     $(this).removeClass('TextEdit');
+//                     if (firstObjectHasFocus == null) {
+//                         firstObjectHasFocus = $(this);
+//                     }
+//                     Check = false;
+//                 }
+//             }
+//             else {
+//                 if ($.isNumeric(parseFloat($(this).val()))) {
+//                     Tool = $(this).val().replace(/\,/g, '');
+//                     $(this).removeClass('ErrorValueStyle');
+//                 }
+//                 else
+//                     Tool = undefined;
+//             }
+//         }
+//         else if ($(this).attr('id').startsWith('txtArz')) {
+//             if ($(this).hasClass('Essential')) {
+//                 if ($.isNumeric(parseFloat($(this).val()))) {
+//                     Arz = $(this).val().replace(/\,/g, '');
+//                     $(this).removeClass('ErrorValueStyle');
+//                 }
+//                 else {
+//                     $(this).addClass('ErrorValueStyle');
+//                     $(this).removeClass('TextEdit');
+//                     if (firstObjectHasFocus == null) {
+//                         firstObjectHasFocus = $(this);
+//                     }
+//                     Check = false;
+//                 }
+//             }
+//             else {
+//                 if ($.isNumeric(parseFloat($(this).val()))) {
+//                     Arz = $(this).val().replace(/\,/g, '');
+//                     $(this).removeClass('ErrorValueStyle');
+//                 }
+//                 else
+//                     Arz = undefined;
+//             }
+//         }
+//         else if ($(this).attr('id').startsWith('txtErtefa')) {
+//             if ($(this).hasClass('Essential')) {
+//                 if ($.isNumeric(parseFloat($(this).val()))) {
+//                     Ertefa = $(this).val().replace(/\,/g, '');
+//                     $(this).removeClass('ErrorValueStyle');
+//                 }
+//                 else {
+//                     $(this).addClass('ErrorValueStyle');
+//                     $(this).removeClass('TextEdit');
+//                     if (firstObjectHasFocus == null) {
+//                         firstObjectHasFocus = $(this);
+//                     }
+//                     Check = false;
+//                 }
+//             }
+//             else {
+//                 if ($.isNumeric(parseFloat($(this).val()))) {
+//                     Ertefa = $(this).val().replace(/\,/g, '');
+//                     $(this).removeClass('ErrorValueStyle');
+//                 }
+//                 else
+//                     Ertefa = undefined;
+//             }
+//         }
+//         else if ($(this).attr('id').startsWith('txtVazn')) {
+//             if ($(this).hasClass('Essential')) {
+//                 if ($.isNumeric(parseFloat($(this).val()))) {
+//                     Vazn = $(this).val().replace(/\,/g, '');
+//                     $(this).removeClass('ErrorValueStyle');
+//                 }
+//                 else {
+//                     $(this).addClass('ErrorValueStyle');
+//                     $(this).removeClass('TextEdit');
+//                     if (firstObjectHasFocus == null) {
+//                         firstObjectHasFocus = $(this);
+//                     }
+//                     Check = false;
+//                 }
+//             }
+//             else {
+//                 if ($.isNumeric(parseFloat($(this).val()))) {
+//                     Vazn = $(this).val().replace(/\,/g, '');
+//                     $(this).removeClass('ErrorValueStyle');
+//                 }
+//                 else
+//                     Vazn = undefined;
+//             }
+//         }
+//         else if ($(this).attr('id').startsWith('txtDes'))
+//             Des = $(this).val();
+
+//     });
+
+
+//     if (firstObjectHasFocus != null)
+//         firstObjectHasFocus.focus();
+
+//     ForItem = '';
+//     if (IsFromAddedOperation == 'true')
+//         ForItem = $('#HDFItemsFBShomareh').val();
+
+
+//     if (Check) {
+//         BarAvordUserId = $('#HDFBarAvordUserID').val();
+
+//         var vardata11 = new Object();
+//         vardata11.Sharh = Sharh;
+//         vardata11.Tedad = Tedad === undefined ? null : Tedad;
+//         vardata11.Tool = Tool === undefined ? null : Tool;
+//         vardata11.Arz = Arz === undefined ? null : Arz;
+//         vardata11.Ertefa = Ertefa === undefined ? null : Ertefa;
+//         vardata11.Vazn = Vazn === undefined ? null : Vazn;
+//         vardata11.Des = Des;
+//         vardata11.FBId = FBId;
+//         vardata11.BarAvordUserId = BarAvordUserId;
+//         vardata11.OperationId = OperationId;
+//         vardata11.ForItem = ForItem;
+//         vardata11.Year = Year;
+//         vardata11.NoeFB = NoeFB;
+//         vardata11.LevelNumber = LevelNumber;
+
+//         $.ajax({
+//             type: "POST",
+//             url: '/RizMetreUser/ConfirmRizMetreUsers',
+//             dataType: "json",
+//             data: JSON.stringify(vardata11),
+//             contentType: "application/json; charset=utf-8",
+//             success: function (data) {
+
+
+//                 debugger;
+
+//                 object.removeAttr('disabled');
+//                 $loading.remove();
+
+//                 var info = data.split('_');
+//                 if (info[0] == "OK") {
+
+//                     ClearInput(object);
+//                     GetRizMetreWithFBId(LevelNumber);
+//                     $("#divItemsAddedAndRel" + NoeFB + "_" + info[1] + " div[id^='divShowRizMetre']").each(function () {
+//                         if ($(this).css("display") === "block") {
+
+//                             $(this).slideUp();
+
+//                             //thisId= this.id.substring(15, this.id.length);
+//                             //// پیدا کردن نزدیک‌ترین span با کلاس spanStyleMitraSmall
+//                             //var $span = $("#CK" + thisId).find("span.spanLakeGiriStyle").first();
+//                             //if ($span.length === 0) {
+//                             //    $span = $(this).closest("div").find("span .spanLakeGiriStyle").first();
+//                             //}
+//                             //if ($span.length > 0) {
+//                             //    $span.click();
+//                             //}
+//                         }
+//                     });
+
+//                     //CheckOperationHasExistActiveCondition(OperationId);
+//                     toastr.success('ریزه متره جدید بدرستی درج گردید', 'موفقیت');
+//                 }
+//                 else
+//                     toastr.info('مشکل در درج ریزه متره جدید', 'اطلاع');
+//             },
+//             error: function (msg) {
+//                 toastr.error('مشکل در درج ریزه متره جدید', 'خطا');
+//             }
+//         });
+//     }
+//     else {
+//         object.removeAttr('disabled');
+//         $loading.remove();
+
+//         toastr.warning('مقادیر مشخص شده را وارد نمایید', 'هشدار');
+//     }
+// }
 
 function ClearInput(object) {
     object.parent().parent().find('input[type=text]').each(function () {
@@ -1367,7 +2417,6 @@ function GetRizMetreUsers(LevelNumber) {
 
 function CheckOperationHasAddedOperationsOnly(object, AddedOperationId, ItemsFBShomareh, Type, LatinName, LevelNumber) {
     object.parent().find('input').prop("checked", true);
-    debugger;
     $('#HDFOperationHasAddedOperations').val(Type);
     $('#HDFItemsFBShomareh').val(ItemsFBShomareh);
     Year = $('#HDFYear').val();
@@ -1731,7 +2780,7 @@ function UpdateRMUClick(Id) {
 
                 var info = data.split('_');
                 if (info[0] == "OK") {
-                    $("#divItemsAddedAndRel" + info[1] + " div[id^='divShowRizMetre']").each(function () {
+                    $("#divItemsAddedAndRel" + NoeFB + "_" + info[1] + " div[id^='divShowRizMetre']").each(function () {
                         if ($(this).css("display") === "block") {
                             $(this).slideUp();
                         }
@@ -1907,10 +2956,10 @@ function GetRizMetreN(FBId) {
             strOp += '<div class="col-md-1 spanStyleMitraSmall">شماره</div>';
             strOp += '<div class="col-md-2 spanStyleMitraSmall">شرح</div>';
 
-            var headers = ['تعداد', 'طول', 'عرض', 'ارتفاع', 'وزن', 'مقدار جزء'];
+            var headers = ['تعداد', 'طول', 'عرض', 'ارتفاع', 'وزن یا...', 'مقدار جزء'];
             for (var i = 0; i < headers.length; i++) {
                 strOp += '<div class="col-md-1 spanStyleMitraSmall">';
-                strOp += '<div style="padding-bottom:3px;border-bottom:1px solid #84d4e6">' + headers[i] + '</div>';
+                strOp += '<div style="padding-bottom:3px;border-bottom:1px solid #fff">' + headers[i] + '</div>';
                 //strOp += '<div class="VahedStyle">' + $.trim(DtItemsFields[i].Vahed) + '</div>';
                 strOp += '</div>';
             }
@@ -1925,14 +2974,14 @@ function GetRizMetreN(FBId) {
                 var id = row.id;
 
                 strOp += '<div class="row styleRowTable" onclick="RizMetreSelectClick(\'' + id + '\')">';
-                strOp += '<div class="col-md-1">' + row.shomareh + '</div>';
+                strOp += '<div class="col-md-1"><span class="RMRowStyle">' + row.shomareh + '</span></div>';
                 strOp += '<div class="col-md-2"><input type="text" class="form-control TextEdit spanStyleMitraSmall" id="txtSharh' + id + '" value="' + row.sharh + '"/></div>';
                 strOp += '<div class="col-md-1"><input type="text" class="form-control TextEdit spanStyleMitraSmall" id="txtTedad' + id + '" value="' + row.tedad + '"/></div>';
                 strOp += '<div class="col-md-1"><input type="text" class="form-control TextEdit spanStyleMitraSmall" id="txtTool' + id + '" value="' + row.tool + '"/></div>';
                 strOp += '<div class="col-md-1"><input type="text" class="form-control TextEdit spanStyleMitraSmall" id="txtArz' + id + '" value="' + row.arz + '"/></div>';
                 strOp += '<div class="col-md-1"><input type="text" class="form-control TextEdit spanStyleMitraSmall" id="txtErtefa' + id + '" value="' + row.ertefa + '"/></div>';
                 strOp += '<div class="col-md-1"><input type="text" class="form-control TextEdit spanStyleMitraSmall" id="txtVazn' + id + '" value="' + row.vazn + '"/></div>';
-                strOp += '<div class="col-md-1 RMMJozStyle">' + (row.meghdarJoz === 0 ? "" : Math.round(row.meghdarJoz * 100) / 100) + '</div>';
+                strOp += '<div class="col-md-1 "><label class="RMMJozStyle">' + (row.meghdarJoz === 0 ? "" : Math.round(row.meghdarJoz * 100) / 100) + '</label></div>';
                 strOp += '<div class="col-md-2"><input type="text" class="form-control TextEdit spanStyleMitraSmall" id="txtDes' + id + '" value="' + row.des + '"/></div>';
                 strOp += '<div class="col-md-1">';
                 //strOp += '<i class="fa fa-edit EditRMUStyle displayNone" id="iEdit' + id + '" onclick="EditNRMUClick(\'' + id + '\', \'' + OperationId + '\', \'' + FBId + '\', \'' + lstItemsFields + '\')"></i>';
@@ -1985,7 +3034,7 @@ function DeleteRMUClick(id) {
             if (info[0] == "OK") {
                 toastr.success('ریز متره بدرستی حذف گردید', 'موفقیت');
 
-                $("#divItemsAddedAndRel" + info[1] + " div[id^='divShowRizMetre']").each(function () {
+                $("#divItemsAddedAndRel" + NoeFB + "_" + info[1] + " div[id^='divShowRizMetre']").each(function () {
 
                     if ($(this).css("display") === "block") {
 
@@ -2115,6 +3164,7 @@ function EditNRMUClick(id, OperationId, FBId, Array) {
                 var idx = inputs.index(this);
 
                 if (idx == inputs.length - 1) {
+                    inputs[0].focus()
                     inputs[0].select()
                 } else {
                     inputs[idx + 1].focus(); //  handles submit buttons
@@ -2150,59 +3200,59 @@ function EditRutinCall() {
     });
 }
 
-function AddRizMetreUsersN(OperationId, FBId, Array, LevelNumber) {
-    ArraySplit = Array.split(',');
-    $('#HDFOperationIdN').val(OperationId);
-    $('#HDFFBID').val(FBId);
-    $('#HDFFBID').val(FBId);
-    $('#HDFIsFromAddedOperation').val('true');
-    $('.NoRizMetre').addClass('displayNone');
-    var str = '';
-    str += "<div id=\"divNewRow\" class=\"row styleRowTable\"><div class=\"col-md-1\"><i class=\"fa fa-plus SaveRMUStyle\"></i></div>";
-    str += "<div class=\"col-md-2\"><input type=\"text\" autofocus class=\"form-control spanStyleMitraSmall\"  id=\"txtSharh\" value=\"\"/></div>";
-    str += "<div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[0] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtTedad\" value=\"\"/></div>";
-    str += " <div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[1] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtTool\" value=\"\"/></div>";
-    str += "<div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[2] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtArz\" value=\"\"/></div>";
-    str += "<div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[3] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtErtefa\" value=\"\"/></div>";
-    str += "<div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[4] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtVazn\" value=\"\"/></div>";
-    str += "<div class=\"col-md-1\">0</div>";
-    str += "<div class=\"col-md-2\"><input type=\"text\" class=\"form-control spanStyleMitraSmall\" id=\"txtDes\" value=\"\"/></div>";
-    str += "<div class=\"col-md-1\"><button type=\"button\" onclick=\"SaveRMUClick($(this),'" + FBId + "','true','" + OperationId + "'," + LevelNumber + ")\" class=\"ButtonRowsSaveStyle\"><i id=\"iSave\" class=\"fa fa-save SaveRMUStyle\"></i></button></div></div>";
-    $('#nuldivna' + OperationId).append(str);
+//function AddRizMetreUsersN(OperationId, FBId, Array, LevelNumber) {
+//    ArraySplit = Array.split(',');
+//    $('#HDFOperationIdN').val(OperationId);
+//    $('#HDFFBID').val(FBId);
+//    $('#HDFFBID').val(FBId);
+//    $('#HDFIsFromAddedOperation').val('true');
+//    $('.NoRizMetre').addClass('displayNone');
+//    var str = '';
+//    str += "<div id=\"divNewRow\" class=\"row styleRowTable\"><div class=\"col-md-1\"><i class=\"fa fa-plus SaveRMUStyle\"></i></div>";
+//    str += "<div class=\"col-md-2\"><input type=\"text\" autofocus class=\"form-control spanStyleMitraSmall\"  id=\"txtSharh\" value=\"\"/></div>";
+//    str += "<div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[0] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtTedad\" value=\"\"/></div>";
+//    str += " <div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[1] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtTool\" value=\"\"/></div>";
+//    str += "<div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[2] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtArz\" value=\"\"/></div>";
+//    str += "<div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[3] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtErtefa\" value=\"\"/></div>";
+//    str += "<div class=\"col-md-1\"><input type=\"text\"" + (ArraySplit[4] != "True" ? "disabled=\"disabled\" class=\"form-control spanStyleMitraSmall\"" : " class=\"form-control spanStyleMitraSmall HasEnteringValue\"") + " id=\"txtVazn\" value=\"\"/></div>";
+//    str += "<div class=\"col-md-1\">0</div>";
+//    str += "<div class=\"col-md-2\"><input type=\"text\" class=\"form-control spanStyleMitraSmall\" id=\"txtDes\" value=\"\"/></div>";
+//    str += "<div class=\"col-md-1\"><button type=\"button\" onclick=\"SaveRMUClick($(this),'" + FBId + "','true','" + OperationId + "'," + LevelNumber + ")\" class=\"ButtonRowsSaveStyle\"><i id=\"iSave\" class=\"fa fa-save SaveRMUStyle\"></i></button></div></div>";
+//    $('#nuldivna' + OperationId).append(str);
 
-    $('#nuldivna' + OperationId + ' #divNewRow').find('input[type=text]').each(function () {
-        $(this).addClass('TextEdit');
+//    $('#nuldivna' + OperationId + ' #divNewRow').find('input[type=text]').each(function () {
+//        $(this).addClass('TextEdit');
 
-        $(this).click(function () {
-            if (!($(this).is(':focus')))
-                $(this).select();
-        });
+//        $(this).click(function () {
+//            if (!($(this).is(':focus')))
+//                $(this).select();
+//        });
 
-        $(this).focus(function () {
-            $(this).select();
-        });
+//        $(this).focus(function () {
+//            $(this).select();
+//        });
 
-        $(this).on("keypress", function (e) {
-            /* ENTER PRESSED*/
-            if (e.keyCode == 13) {
-                /* FOCUS ELEMENT */
-                var inputs = $(this).parent().parent().find("input[Type=text],button");
-                var idx = inputs.index(this);
-                if (idx == inputs.length - 1) {
-                    inputs[0].focus();
-                    inputs[0].select();
-                } else {
-                    while (inputs[idx + 1].disabled == true) {
-                        idx++;
-                    }
-                    inputs[idx + 1].focus(); //  handles submit buttons
-                    inputs[idx + 1].select();
-                }
-                return false;
-            }
-        });
-    })
-}
+//        $(this).on("keypress", function (e) {
+//            /* ENTER PRESSED*/
+//            if (e.keyCode == 13) {
+//                /* FOCUS ELEMENT */
+//                var inputs = $(this).parent().parent().find("input[Type=text],button");
+//                var idx = inputs.index(this);
+//                if (idx == inputs.length - 1) {
+//                    inputs[0].focus();
+//                    inputs[0].select();
+//                } else {
+//                    while (inputs[idx + 1].disabled == true) {
+//                        idx++;
+//                    }
+//                    inputs[idx + 1].focus(); //  handles submit buttons
+//                    inputs[idx + 1].select();
+//                }
+//                return false;
+//            }
+//        });
+//    })
+//}
 
 function ShowForms(divName, OPId, LevelNumber) {
 
@@ -2245,605 +3295,6 @@ function ShowForms(divName, OPId, LevelNumber) {
 }
 
 
-function AbnieFaniClick(OpId) {
-    clearTimeout(timerAddPol);
-    BarAvordUserID = $('#HDFBarAvordUserID').val();
-    AbnieFaniWithBarAvordIdClick(OpId, BarAvordUserID);
-}
-
-
-function PolInfoInsert() {
-    StatePolSaveOrEdit = $('#HDFStatePolSaveOrEdit').val();
-    BarAvordUserID = $('#HDFBarAvordUserID').val();
-    TedadDahaneh = $('#drdTedadDahaneh').val();
-    DahaneAbro = $('#drdDahaneAbro').val();
-    HadeAksarErtefa = $('#drdHadeAksarErtefa').val();
-    ErtefaKhakriz = $('#drdErtefaKhakriz').val();
-    NoeBanaii = $('#drdNoeBanaii').val();
-    NahveEjraDal = $('#drdNahveEjraDal').val();
-    w1 = $('#w1').val();
-    w2 = $('#w2').val();
-    w3 = $('#w3').val();
-    w4 = $('#w4').val();
-    alfaw1 = $('#alfaw1').val();
-    alfaw2 = $('#alfaw2').val();
-    alfaw3 = $('#alfaw3').val();
-    alfaw4 = $('#alfaw4').val();
-    hMinw1 = $('#hMinw1').val();
-    hMinw2 = $('#hMinw2').val();
-    hMinw3 = $('#hMinw3').val();
-    hMinw4 = $('#hMinw4').val();
-    alfa = $('#alfa').val();
-    LAbro = $('#LAbro').val();
-    SAbroX = $('#SAbroX').val();
-    SAbroY = $('#SAbroY').val();
-    if (StatePolSaveOrEdit == 'Add') {
-        var vardata = new Object();
-        vardata.BarAvordId = BarAvordUserID;
-        vardata.TedadDahaneh = TedadDahaneh;
-        vardata.DahaneAbro = DahaneAbro;
-        vardata.HadeAksarErtefa = HadeAksarErtefa;
-        vardata.ErtefaKhakriz = ErtefaKhakriz;
-        vardata.NoeBanaii = NoeBanaii;
-        vardata.NahveEjraDal = NahveEjraDal;
-        vardata.w1 = w1;
-        vardata.w2 = w2;
-        vardata.w3 = w3;
-        vardata.w4 = w4;
-        vardata.alfaw1 = alfaw1;
-        vardata.alfaw2 = alfaw2;
-        vardata.alfaw3 = alfaw3;
-        vardata.alfaw4 = alfaw4;
-        vardata.hMinw1 = hMinw1;
-        vardata.hMinw2 = hMinw2;
-        vardata.hMinw3 = hMinw3;
-        vardata.hMinw4 = hMinw4;
-        vardata.alfa = alfa;
-        vardata.LAbro = LAbro;
-        vardata.SAbroX = SAbroX;
-        vardata.SAbroY = SAbroY;
-        $.ajax({
-            type: "POST",
-            url: "/PolVaAbroBarAvord/SaveAbroInfo",
-            //data: '{BarAvordId:' + BarAvordID + ',TedadDahaneh:' + "'" + TedadDahaneh + "'"
-            //    + ',DahaneAbro:' + "'" + DahaneAbro + "'" + ',HadeAksarErtefa:' + "'" + HadeAksarErtefa + "'"
-            //    + ',ErtefaKhakriz:' + "'" + ErtefaKhakriz + "'" + ',NoeBanaii:' + "'" + NoeBanaii + "'"
-            //    + ',NahveEjraDal:' + "'" + NahveEjraDal + "'" + ',w1:' + "'" + w1 + "'"
-            //    + ',w2:' + "'" + w2 + "'" + ',w3:' + "'" + w3 + "'" + ',w4:' + "'" + w4 + "'"
-            //    + ',alfaw1:' + "'" + alfaw1 + "'" + ',alfaw2:' + "'" + alfaw2 + "'" + ',alfaw3:' + "'" + alfaw3 + "'"
-            //    + ',alfaw4:' + "'" + alfaw4 + "'" + ',hMinw1:' + "'" + hMinw1 + "'" + ',hMinw2:' + "'" + hMinw2 + "'"
-            //    + ',hMinw3:' + "'" + hMinw3 + "'" + ',hMinw4:' + "'" + hMinw4 + "'" + ',alfa:' + "'" + alfa + "'"
-            //    + ',LAbro:' + "'" + LAbro + "'" + ',SAbroX:' + "'" + SAbroX + "'" + ',SAbroY:' + "'" + SAbroY + "'"
-            //    + '}',
-            data: JSON.stringify(vardata),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (response) {
-                info = response.split('_');
-                if (info[0] == "OK") {
-                    $('#HDFPolIdForEdit').val(info[1]);
-                    $('#HDFPolNum').val(info[2]);
-                    $('#HDFStatePolSaveOrEdit').val('Edit');
-                    toastr.success('اطلاعات آبرو بدرستی ثبت گردید', 'موفقیت');
-                    ShowQuestionPol();
-                }
-            },
-            error: function (response) {
-                toastr.error('مشکل در ذخیره سازی اطلاعات آبرو', 'خطا');
-            }
-        });
-    }
-    else {
-        PolIdForEdit = $('#HDFPolIdForEdit').val();
-        var vardata = new Object();
-        vardata.PolId = PolIdForEdit;
-        vardata.TedadDahaneh = TedadDahaneh;
-        vardata.DahaneAbro = DahaneAbro;
-        vardata.HadeAksarErtefa = HadeAksarErtefa;
-        vardata.ErtefaKhakriz = ErtefaKhakriz;
-        vardata.NoeBanaii = NoeBanaii;
-        vardata.NahveEjraDal = NahveEjraDal;
-        vardata.w1 = w1;
-        vardata.w2 = w2;
-        vardata.w3 = w3;
-        vardata.w4 = w4;
-        vardata.alfaw1 = alfaw1;
-        vardata.alfaw2 = alfaw2;
-        vardata.alfaw3 = alfaw3;
-        vardata.alfaw4 = alfaw4;
-        vardata.hMinw1 = hMinw1;
-        vardata.hMinw2 = hMinw2;
-        vardata.hMinw3 = hMinw3;
-        vardata.hMinw4 = hMinw4;
-        vardata.alfa = alfa;
-        vardata.LAbro = LAbro;
-        vardata.SAbroX = SAbroX;
-        vardata.SAbroY = SAbroY;
-        $.ajax({
-            type: "POST",
-            url: "/PolVaAbroBarAvord/UpdateAbroInfo",
-            //data: '{PolId:' + PolIdForEdit + ',TedadDahaneh:' + "'" + TedadDahaneh + "'"
-            //    + ',DahaneAbro:' + "'" + DahaneAbro + "'" + ',HadeAksarErtefa:' + "'" + HadeAksarErtefa + "'"
-            //    + ',ErtefaKhakriz:' + "'" + ErtefaKhakriz + "'" + ',NoeBanaii:' + "'" + NoeBanaii + "'"
-            //    + ',NahveEjraDal:' + "'" + NahveEjraDal + "'" + ',w1:' + "'" + w1 + "'"
-            //    + ',w2:' + "'" + w2 + "'" + ',w3:' + "'" + w3 + "'" + ',w4:' + "'" + w4 + "'"
-            //    + ',alfaw1:' + "'" + alfaw1 + "'" + ',alfaw2:' + "'" + alfaw2 + "'" + ',alfaw3:' + "'" + alfaw3 + "'"
-            //    + ',alfaw4:' + "'" + alfaw4 + "'" + ',hMinw1:' + "'" + hMinw1 + "'" + ',hMinw2:' + "'" + hMinw2 + "'"
-            //    + ',hMinw3:' + "'" + hMinw3 + "'" + ',hMinw4:' + "'" + hMinw4 + "'" + ',alfa:' + "'" + alfa + "'"
-            //    + ',LAbro:' + "'" + LAbro + "'" + ',SAbroX:' + "'" + SAbroX + "'" + ',SAbroY:' + "'" + SAbroY + "'"
-            //    + '}',
-            data: JSON.stringify(vardata),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (response) {
-                info = response.split('_');
-                if (info[0] == "OK") {
-                    //ConfirmAbnieFani292(info[1]);
-                    //clearTimeout(timerAddPol);
-                    $('#btnAddEditPol').css('background-color', '#516b92');
-                    toastr.success('اطلاعات آبرو بدرستی ویرایش گردید', 'موفقیت');
-                    ShowQuestionPol();
-                }
-            },
-            error: function (response) {
-                toastr.error('مشکل در ویرایش اطلاعات آبرو', 'خطا');
-            }
-        });
-    }
-}
-
-
-
-function ShowQuestionPol() {
-    Year = $('#HDFYear').val();
-    NoeFB = parseInt($('#HDFNoeFB').val());
-    BarAvordUserID = $('#HDFBarAvordUserID').val();
-    PolVaAbroId = $('#HDFPolIdForEdit').val();
-    strQuestionPol = '';
-    var vardata = new Object();
-    vardata.PolVaAbroId = PolVaAbroId;
-    vardata.Year = Year;
-    vardata.NoeFB = NoeFB;
-    $.ajax({
-        type: "POST",
-        url: '/QuesForAbnieFani/GetQuestionForAbnieFani',
-        dataType: "json",
-        //data: '{PolVaAbroId:' + PolVaAbroId + ',year:' + Year + ',NoeFB:' + NoeFB + '}',
-        data: JSON.stringify(vardata),
-        contentType: "application/json; charset=utf-8",
-        success: function (data) {
-            var xmlDoc = $.parseXML(data);
-            var xml = $(xmlDoc);
-            tblAbnieFaniQueries = xml.find("tblAbnieFaniQueries");
-            var tblShomarehFBForQuesForAbnieFani = xml.find("tblShomarehFBForQuesForAbnieFani");
-            var tblQuesForAbnieFaniValues = xml.find("tblQuesForAbnieFaniValues");
-
-            strQuestionPol = '<div class=\'col-md-12\'>';
-            count = 1;
-            $.each(tblAbnieFaniQueries, function () {
-
-                Id = $(this).find("Id").text().trim();
-                Question = $(this).find("Question").text().trim();
-                HasGetValue = $(this).find("HasGetValue").text().trim();
-                DefaultValue = $(this).find("DefaultValue").text().trim();
-                ObjectType = $(this).find("ObjectType").text().trim();
-
-                CountShomareh = 1;
-                if (ObjectType == '1') {
-                    strQuestionPol += '<div class=\'col-md-12\' style=\'padding: 10px;border: 1px solid #ffeeec;border-radius: 10px !important;\'>';
-                    strQuestionPol += '<div class=\'col-md-5\'><span>' + count + ' - ' + Question + '</span></div>';
-                    if (HasGetValue == 'true') {
-                        strQuestionPol += '<div class=\'col-md-1\'><input style=\'text-align:center;padding: 1px;\' id=\'qu' + Id + '\' value=\'' + DefaultValue + '\' type=\'text\' class=\'form-control input-sm\'/></div>';
-                    }
-                    strQuestionPol += '<div class=\'col-md-12\' style=\'padding: 10px;\'>';
-                    $.each(tblShomarehFBForQuesForAbnieFani, function () {
-
-                        strQuestionPol += '<div class=\'col-md-12\'>';
-                        QuesForAbnieFaniId = $(this).find("QuesForAbnieFaniId").text().trim();
-                        ShomarehFBForQuesId = $(this).find("Id").text().trim();
-                        Shomareh = $(this).find("Shomareh").text().trim();
-                        Sharh = $(this).find("Sharh").text().trim();
-                        if (QuesForAbnieFaniId == Id) {
-                            if (CountShomareh == 1)
-                                strQuestionPol += '<div class=\'col-md-1\'><input id=\'rd' + ShomarehFBForQuesId + '\' type=\'radio\' checked=\'checked\' name=\'group' + Id + '\'/></div>';
-                            else
-                                strQuestionPol += '<div class=\'col-md-1\'><input id=\'rd' + ShomarehFBForQuesId + '\' type=\'radio\' name=\'group' + Id + '\'/></div>';
-                            strQuestionPol += '<div class=\'col-md-10\'><span onclick=\"$(\'#rd' + ShomarehFBForQuesId + '\').click()\">' + Shomareh + ' - ' + Sharh + '</span></div>';
-                        }
-                        strQuestionPol += '</div>';
-                        CountShomareh++;
-                    });
-                    strQuestionPol += '</div>';
-                    strQuestionPol += '</div>';
-                }
-                else {
-                    strQuestionPol += '<div class=\'col-md-12\' style=\'padding: 10px;\'>';
-                    $.each(tblShomarehFBForQuesForAbnieFani, function () {
-                        QuesForAbnieFaniId = $(this).find("QuestionForAbnieFaniId").text().trim();
-                        if (QuesForAbnieFaniId == Id) {
-                            strQuestionPol += '<div class=\'col-md-12\' style=\'border: 1px solid #e7ebed;padding: 5px;border-radius: 5px !important;\'>';
-                            ShomarehFBForQuesId = $(this).find("Id").text().trim();
-                            Shomareh = $(this).find("Shomareh").text().trim();
-                            Sharh = $(this).find("Sharh").text().trim();
-                            strQuestionPol += '<div class=\'row\'><div class=\'col-md-11\'><span>' + count + ' - </span>';
-                            strQuestionPol += '<input id=\'rd' + ShomarehFBForQuesId + '\' type=\'checkbox\' name=\'group' + Id + '\'/>';
-                            strQuestionPol += '<span onclick=\"$(\'#rd' + ShomarehFBForQuesId + '\').click()\">' + Shomareh + ' - ' + Sharh + '</span></div></div>';
-                            if (HasGetValue == 'true') {
-                                strQuestionPol += '<div class=\'row\'><div class=\'col-md-4\'>' + Question + '</div>';
-                                strQuestionPol += '<div class=\'col-md-1\'><input style=\'text-align:center\' id=\'qu' + Id + '\' value=\'' + DefaultValue + '\' type=\'text\' class=\'form-control input-sm\'/></div>';
-                                str += '</div>';
-                            }
-                            strQuestionPol += '</div>';
-                        }
-                        CountShomareh++;
-                    });
-                }
-                count++;
-            });
-            strQuestionPol += '</div>';
-            $('#divFirstQuestionPol').html(strQuestionPol);
-            ///////////////////
-            value = 0;
-            $.each(tblQuesForAbnieFaniValues, function () {
-                QForAFId = $(this).find("QuestionForAbnieFaniId").text().trim();
-                ShomarehFBSelectedId = $(this).find("ShomarehFBSelectedId").text().trim();
-                value = $(this).find("Value").text().trim();
-                if (value != 0) {
-                    $('#rd' + ShomarehFBSelectedId).attr('checked', true);
-                    debugger;
-                    $('#qu' + QForAFId).val(parseFloat(value).toFixed(2));
-                }
-            });
-            //////////
-            $('#aFirstQuestionPol').click();
-        },
-        error: function (msg) {
-            toastr.error('مشکل در بارگزاری شرایط پل/آبرو', 'خطا');
-        }
-    });
-}
-
-
-function ConfirmFirstQuestionPol() {
-    PolVaAbroId = $('#HDFPolIdForEdit').val();
-    strQuesVal = '';
-    $.each(tblAbnieFaniQueries, function () {
-
-        Id = $(this).find("Id").text().trim();
-        HasGetValue = $(this).find("HasGetValue").text().trim();
-        Type = $(this).find("Type").text().trim();
-        strQuesVal += "id" + Id;
-        blnCheckQues = false;
-        blnCheckRadio = false;
-        blnCheckInvalidNum = false;
-        if (Type == 1) {
-            $('#divFirstQuestionPol input').each(function () {
-                IdFS = $(this).attr('id').substring(0, 2);
-                IdSS = $(this).attr('id').substring(2, $(this).attr('id').length);
-                if (IdFS == 'qu' && IdSS == Id) {
-                    if ($(this).val() != '' && $(this).val() != '0') {
-                        if ($.isNumeric($(this).val())) {
-                            strQuesVal += '_vl' + $(this).val();
-                            blnCheckQues = true;
-                        }
-                        else
-                            blnCheckInvalidNum = true;
-                    }
-                }
-
-                if ($(this).attr('type') == 'checkbox' || $(this).attr('type') == 'radio') {
-                    nameSS = $(this).attr('name').substring(5, $(this).attr('name').length);
-                    if (IdFS == 'rd' && nameSS == Id) {
-                        if ($(this).is(':checked')) {
-                            strQuesVal += '_qu' + IdSS;
-                            blnCheckRadio = true;
-                        }
-                    }
-                }
-            });
-            strQuesVal += ',';
-        }
-        else {
-            blnCheckRadio = true;
-            if ($('#rd' + Id).is(':checked')) {
-                $('#divFirstQuestionPol input').each(function () {
-                    IdFS = $(this).attr('id').substring(0, 2);
-                    IdSS = $(this).attr('id').substring(2, $(this).attr('id').length);
-                    if (IdFS == 'qu' && IdSS == Id) {
-                        if ($(this).val() != '' && $(this).val() != '0') {
-                            if ($.isNumeric($(this).val())) {
-                                strQuesVal += '_vl' + $(this).val();
-                                blnCheckQues = true;
-                            }
-                            else
-                                blnCheckInvalidNum = true;
-                        }
-                    }
-
-                    if ($(this).attr('type') == 'checkbox' || $(this).attr('type') == 'radio') {
-                        nameSS = $(this).attr('name').substring(5, $(this).attr('name').length);
-                        if (IdFS == 'rd' && nameSS == Id) {
-                            if ($(this).is(':checked')) {
-                                strQuesVal += '_qu' + IdSS;
-                                blnCheckRadio = true;
-                            }
-                        }
-                    }
-                });
-                strQuesVal += ',';
-            }
-            else {
-                blnCheckQues = true;
-            }
-        }
-
-        blnFinalCheck = true;
-        if (blnCheckInvalidNum) {
-            toastr.info('مقادیر وارد شده نامعتبر میباشد', 'اطلاع');
-            blnFinalCheck = false;
-        }
-        else {
-            if (HasGetValue == 'true') {
-                if (!blnCheckQues) {
-                    toastr.info('هیچکدام از مقادیر مشخص شده نبایستی خالی باشد', 'اطلاع');
-                    blnFinalCheck = false;
-                }
-
-            }
-            if (!blnCheckRadio) {
-                toastr.info('لطفا موارد انتخاب شونده را انتخاب نمایید', 'اطلاع');
-                blnFinalCheck = false;
-            }
-        }
-    });
-    BarAvordUserID = $('#HDFBarAvordUserID').val();
-    if (blnFinalCheck) {
-        var vardata = new Object();
-        vardata.PolVaAbroId = PolVaAbroId;
-        vardata.QuesVal = strQuesVal;
-        $.ajax({
-            type: "POST",
-            url: '/QuesForAbnieFaniValues/ConfirmQuesForAbnieFaniValues',
-            dataType: "json",
-            //data: '{PolVaAbroId:' + PolVaAbroId + ',QuesVal:' + "'" + strQuesVal + "'" + '}',
-            data: JSON.stringify(vardata),
-            contentType: "application/json; charset=utf-8",
-            success: function (data) {
-                var info = data.split('_');
-                if (info[0] == "OK") {
-                    toastr.success('اطلاعات آبرو/پل بدرستی ثبت گردید', 'موفقیت');
-                    $('#btnCloseFirstQuestionPol').click();
-                    ConfirmAbnieFani292(PolVaAbroId)
-                }
-                else
-                    toastr.info('مشکل در درج اطلاعات آبرو/پل جدید', 'اطلاع');
-            },
-            error: function (msg) {
-                toastr.error('مشکل در درج اطلاعات آبرو/پل جدید', 'خطا');
-            }
-        });
-    }
-}
-
-
-function ConfirmAbnieFani292(PolId) {
-    LAbro = $('#LAbro').val();
-    LAbroWithBie = $('#LAbroWithBie').val();
-    w1 = $('#w1').val();
-    w2 = $('#w2').val();
-    w3 = $('#w3').val();
-    w4 = $('#w4').val();
-    f = $('#HDFPolf').val();
-    m = $('#HDFPolm').val();
-    n = $('#HDFPoln').val();
-    k = $('#HDFPolk').val();
-    h = $('#drdHadeAksarErtefa').val();
-    t = $('#HDFPolt').val();
-    b1 = $('#HDFPolb1').val();
-    b2 = $('#HDFPolb2').val();
-    c1 = $('#HDFPolc1').val();
-    c2 = $('#HDFPolc2').val();
-    j = $('#HDFPolj').val();
-    p1 = $('#HDFPolp1').val();
-    p2 = $('#HDFPolp2').val();
-    D = $('#drdDahaneAbro').val();
-    NoeBanaii = $('#drdNoeBanaii').val();
-    Hs = $('#drdErtefaKhakriz').val();
-    NahveEjraDal = $('#drdNahveEjraDal').val();
-    TedadDahaneh = $('#drdTedadDahaneh').val();
-    LPayeMoarab = $('#HDFLPayeMoarab').val();
-    LKooleMoarab = $('#HDFLKooleMoarab').val();
-
-    LW1j = $('#HDFLW1j').val();
-    LW1p = $('#HDFLW1p').val();
-    LB1W1 = $('#HDFLB1W1').val();
-    LB2W1 = $('#HDFLB2W1').val();
-    LW2j = $('#HDFLW2j').val();
-    LW2p = $('#HDFLW2p').val();
-    LB1W2 = $('#HDFLB1W2').val();
-    LB2W2 = $('#HDFLB2W2').val();
-    LW3j = $('#HDFLW3j').val();
-    LW3p = $('#HDFLW3p').val();
-    LB1W3 = $('#HDFLB1W3').val();
-    LB2W3 = $('#HDFLB2W3').val();
-    LW4j = $('#HDFLW4j').val();
-    LW4p = $('#HDFLW4p').val();
-    LB1W4 = $('#HDFLB1W4').val();
-    LB2W4 = $('#HDFLB2W4').val();
-
-    hMinw1 = $('#hMinw1').val();
-    hMinw2 = $('#hMinw2').val();
-    hMinw3 = $('#hMinw3').val();
-    hMinw4 = $('#hMinw4').val();
-
-    PolNum = $('#HDFPolNum').val();
-    BarAvordUserID = $('#HDFBarAvordUserID').val();
-
-    var vardata = new Object();
-    vardata.PolVaAbroId = PolId;
-    vardata.PolNum = parseInt(PolNum);
-    vardata.BarAvordId = BarAvordUserID;
-    vardata.LAbro = LAbroWithBie;
-    vardata.w1 = w1; vardata.w2 = w2; vardata.w3 = w3; vardata.w4 = w4;
-    vardata.f = f; vardata.m = m; vardata.n = n; vardata.k = k;
-    vardata.h = h; vardata.t = t;
-    vardata.b1 = b1; vardata.b2 = b2;
-    vardata.c1 = c1; vardata.c2 = c2;
-    vardata.j = j;
-    vardata.p1 = p1; vardata.p2 = p2;
-    vardata.D = D;
-    vardata.Hs = Hs;
-    vardata.TedadDahaneh = TedadDahaneh;
-    vardata.NahveEjraDal = NahveEjraDal;
-    vardata.LPayeMoarab = LPayeMoarab;
-    vardata.LKooleMoarab = LKooleMoarab;
-    vardata.NoeBanaii = NoeBanaii;
-    vardata.LW1j = LW1j; vardata.LW1p = LW1p;
-    vardata.LB1W1 = LB1W1; vardata.LB2W1 = LB2W1;
-    vardata.LW2j = LW2j; vardata.LW2p = LW2p;
-    vardata.LB1W2 = LB1W2; vardata.LB2W2 = LB2W2;
-    vardata.LW3j = LW3j; vardata.LW3p = LW3p;
-    vardata.LB1W3 = LB1W3; vardata.LB2W3 = LB2W3;
-    vardata.LW4j = LW4j; vardata.LW4p = LW4p;
-    vardata.LB1W4 = LB1W4; vardata.LB2W4 = LB2W4;
-    vardata.hMinw1 = hMinw1; vardata.hMinw2 = hMinw2;
-    vardata.hMinw3 = hMinw3; vardata.hMinw4 = hMinw4;
-
-    $.ajax({
-        type: "POST",
-        url: '/RizMetreUser/ConfirmRizMetreUsersForAbnieFani',
-        dataType: "json",
-        //data: '{PolVaAbroId:' + PolId + ',PolNum:' + PolNum + ',BarAvordID:' + BarAvordID + ',LAbro:' + "'" + LAbroWithBie + "'"
-        //    + ',w1:' + "'" + w1 + "'" + ',w2:' + "'" + w2 + "'" + ',w3:' + "'" + w3 + "'" + ',w4:' + "'" + w4 + "'"
-        //    + ',f:' + "'" + f + "'" + ',m:' + "'" + m + "'" + ',n:' + "'" + n + "'"
-        //    + ',k: ' + "'" + k + "'" + ',h:' + "'" + h + "'" + ',t:' + "'" + t + "'" + ',b1:' + "'" + b1 + "'"
-        //    + ',b2:' + "'" + b2 + "'" + ',c1:' + "'" + c1 + "'" + ',c2:' + "'" + c2 + "'" + ',j:' + "'" + j + "'"
-        //    + ',p1:' + "'" + p1 + "'" + ',p2:' + "'" + p2 + "'" + ',D:' + "'" + D + "'" + ',Hs:' + "'" + Hs + "'"
-        //    + ',TedadDahaneh:' + "'" + TedadDahaneh + "'" + ',NahveEjraDal:' + "'" + NahveEjraDal + "'"
-        //    + ',LPayeMoarab:' + "'" + LPayeMoarab + "'" + ',LKooleMoarab:' + "'" + LKooleMoarab + "'"
-        //    + ',NoeBanaii:' + "'" + NoeBanaii + "'"
-        //    + ',LW1j:' + "'" + LW1j + "'" + ',LW1p:' + "'" + LW1p + "'" + ',LB1W1:' + "'" + LB1W1 + "'" + ',LB2W1:' + "'" + LB2W1 + "'"
-        //    + ',LW2j:' + "'" + LW2j + "'" + ',LW2p:' + "'" + LW2p + "'" + ',LB1W2:' + "'" + LB1W2 + "'" + ',LB2W2:' + "'" + LB2W2 + "'"
-        //    + ',LW3j:' + "'" + LW3j + "'" + ',LW3p:' + "'" + LW3p + "'" + ',LB1W3:' + "'" + LB1W3 + "'" + ',LB2W3:' + "'" + LB2W3 + "'"
-        //    + ',LW4j:' + "'" + LW4j + "'" + ',LW4p:' + "'" + LW4p + "'" + ',LB1W4:' + "'" + LB1W4 + "'" + ',LB2W4:' + "'" + LB2W4 + "'"
-        //    + ',hMinw1:' + "'" + hMinw1 + "'" + ',hMinw2:' + "'" + hMinw2 + "'" + ',hMinw3:' + "'" + hMinw3 + "'" + ',hMinw4:' + "'" + hMinw4 + "'"
-        //    + '}',
-        data: JSON.stringify(vardata),
-        contentType: "application/json; charset=utf-8",
-        success: function (data) {
-            var info = data.split('_');
-            if (info[0] == "OK") {
-                clearTimeout(timerAddPol);
-                $('#btnAddEditPol').css('background-color', '#516b92');
-                toastr.success('آیتم های فهرست بهایی آبرو/پل بدرستی ثبت گردید', 'موفقیت');
-            }
-            else
-                toastr.info('مشکل در درج آیتم های فهرست بهایی آبرو/پل جدید', 'اطلاع');
-        },
-        error: function (msg) {
-            toastr.error('مشکل در درج آیتم های فهرست بهایی آبرو/پل جدید', 'خطا');
-        }
-    });
-}
-
-
-function SaveEzafeBahaForAbnieFaniPol(strItemsForAdd, QuestionForAbnieFaniId) {
-    ItemFBForAdd = $('#spanShomareh' + QuestionForAbnieFaniId).html();
-    PolVaAbroId = $('#HDFPolIdForEdit').val();
-    PolNum = $('#HDFPolNum').val();
-    BarAvordUserID = $('#HDFBarAvordUserID').val();
-    var vardata = new Object();
-    vardata.PolVaAbroId = PolVaAbroId
-    vardata.PolNum = PolNum;
-    vardata.BarAvordUserID = BarAvordUserID;
-    vardata.QuestionForAbnieFaniId = QuestionForAbnieFaniId;
-    vardata.ItemsForAdd = strItemsForAdd;
-    vardata.ItemFBForAdd = ItemFBForAdd;
-    vardata.LevelNumber = 1;
-    $.ajax({
-        type: "POST",
-        url: "/RizMetreUser/SaveEzafeBahaForAbnieFaniPol",
-        //data: '{PolVaAbroId:' + PolVaAbroId + ',PolNum:' + PolNum + ',BarAvordUserID:' + BarAvordUserID + ',QuestionForAbnieFaniId:' + QuestionForAbnieFaniId
-        //    + ',ItemsForAdd:' + "'" + strItemsForAdd + "'" + ',ItemFBForAdd:' + "'" + ItemFBForAdd + "'" + '}',
-        data: JSON.stringify(vardata),
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: function (response) {
-            info = response.split('_');
-            if (info[0] == "OK") {
-                toastr.success('اضافه بها با مقادیر پیش فرض ثبت گردید', 'موفقیت');
-                ShowFormsAddedItemsAbnieFaniPol(BarAvordUserID);
-            }
-        },
-        error: function (response) {
-            toastr.error('مشکل در ثبت اضافه بها پل', 'خطا');
-        }
-    });
-}
-
-function UpdateEzafeBahaAbnieFaniPol(Id, ItemShomareh, Hajm, Meghdar) {
-    ItemFBForUpdate = $('#spanShomareh' + Id).html();
-    PolVaAbroId = $('#HDFPolIdForEdit').val();
-    PolNum = $('#HDFPolNum').val();
-    BarAvordUserID = $('#HDFBarAvordUserID').val();
-    var vardata = new Object();
-    vardata.BarAvordUserID = BarAvordUserID;
-    vardata.PolVaAbroId = PolVaAbroId;
-    vardata.PolNum = PolNum;
-    vardata.ItemFBForUpdate = ItemFBForUpdate;
-    vardata.ItemShomareh = ItemShomareh;
-    vardata.Hajm = Hajm;
-    vardata.Meghdar = Meghdar;
-    $.ajax({
-        type: "POST",
-        url: "/RizMetreUser/UpdateEzafeBahaForAbnieFaniPol",
-        //data: '{BarAvordUserID:' + BarAvordUserID + ',PolVaAbroId:' + PolVaAbroId + ',PolNum:' + PolNum + ',ItemFBForUpdate:' + "'" + ItemFBForUpdate + "'"
-        //     + ',ItemShomareh:' + "'" + ItemShomareh + "'" + ',Hajm:' + "'" + Hajm + "'"
-        //     + ',Meghdar:' + "'" + Meghdar + "'" + '}',
-        data: JSON.stringify(vardata),
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: function (response) {
-            info = response.split('_');
-            if (info[0] == "OK") {
-                toastr.success('اضافه بها انتخابی بدرستی ویرایش گردید', 'موفقیت');
-            }
-        },
-        error: function (response) {
-            toastr.error('مشکل در ویرایش اضافه بها انتخابی', 'خطا');
-        }
-    });
-}
-
-function DeleteEzafeBahaForAbnieFaniPolForItem(strItemsForAdd, QuestionId) {
-    PolVaAbroId = $('#HDFPolIdForEdit').val();
-    BarAvordUserID = $('#HDFBarAvordUserID').val();
-    var vardata = new Object();
-    vardata.BarAvordUserID = BarAvordUserID;
-    vardata.PolVaAbroId = PolVaAbroId;
-    vardata.QuestionId = QuestionId;
-    vardata.ItemFBForDel = "120701";
-
-    $.ajax({
-        type: "POST",
-        url: "/QuesForAbnieFaniValues/DeleteEzafeBahaForAbnieFaniPol",
-        data: JSON.stringify(vardata),
-        //data: '{BarAvordID:' + BarAvordID + ',PolVaAbroId:' + PolVaAbroId
-        //    + ',QuestionId:' + QuestionId + ',ItemFBForDel:' + "'120701'" + '}',
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: function (response) {
-            info = response.split('_');
-            if (info[0] == "OK") {
-                $('#divSubEzafeBahaAbnieFaniPol' + Id).hide();
-                toastr.success('اضافه بها با بدرستی حذف گردید', 'موفقیت');
-            }
-        },
-        error: function (response) {
-            toastr.error('مشکل در حذف اضافه بها پل', 'خطا');
-        }
-    });
-}
 
 function RizeshBardariClick(OpId) {
     BarAvordUserID = $('#HDFBarAvordUserID').val();

@@ -1,0 +1,30 @@
+﻿@using RMS.Controllers.Menu.Dto
+@model List<SidebarMenuItemVm>
+
+
+<div class="modern-ribbon navbar navbar-top navbar-expand-md navbar-dark" style="margin-top: 50px;background-color:#fff;border-bottom: 2px solid #a6a1ad;height: 60px;">
+
+    @foreach (var m in Model)
+    {
+        if (!string.IsNullOrWhiteSpace(m.Url))
+        {
+            <a class="modern-ribbon-item ajax-link" href="@m.Url">
+                @* <i class="@m.Icon"></i> *@
+                <img src="~/assets/img/menuicon/@m.Icon" style="width:35px;" />
+                <span>@m.Title</span>
+            </a>
+        }
+        else
+        {
+            foreach (var c in m.Children)
+            {
+                <a class="modern-ribbon-item ajax-link" href="@c.Url">
+                    @* <i class="@m.Icon"></i> *@
+                    <img src="~/assets/img/menuicon/@c.Icon" style="width:35px;" />
+                    <span>@c.Title</span>
+                </a>
+            }
+        }
+    }
+
+</div>

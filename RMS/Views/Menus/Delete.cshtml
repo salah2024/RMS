@@ -1,0 +1,20 @@
+﻿@using RMS.Models.Entity
+@model clsMenuItem
+
+<div style="margin-top:70px">
+
+<h2>حذف منو</h2>
+
+<p>آیا مطمئن هستید؟</p>
+<ul>
+    <li><b>Title:</b> @Model.Title</li>
+    <li><b>Url:</b> @Model.Url</li>
+</ul>
+
+<form asp-action="DeleteConfirmed" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="id" value="@Model.Id" />
+    <button type="submit">حذف</button>
+    <a asp-action="Index">انصراف</a>
+</form>
+</div>

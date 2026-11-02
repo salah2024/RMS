@@ -1,5 +1,4 @@
-﻿using System.Numerics;
-using Azure;
+﻿using Azure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +7,9 @@ using RMS.Controllers.Operation.Dto;
 using RMS.Models.Common;
 using RMS.Models.Dto.ItemsFieldsDto;
 using RMS.Models.Entity;
+using System.Numerics;
 using static RMS.Models.Common.EnumForEntity;
+using static Stimulsoft.Report.StiRecentConnections;
 
 namespace RMS.Controllers.Operation;
 
@@ -32,136 +33,207 @@ public class OperationController(ApplicationDbContext context) : Controller
 
     public JsonResult GetTree([FromBody] GetTreeInputDto request)
     {
-        NoeFehrestBaha NoeFBId = request.NoeFBId;
-        var ShomarehItems = (from op_Item in _context.Operation_ItemsFBs
-                             join FB in _context.FehrestBahas
-                             on op_Item.ItemsFBShomareh.Substring(0, 6) equals FB.Shomareh.Trim()
-                             select new
-                             {
-                                 ItemsFBShomareh = op_Item.ItemsFBShomareh,
-                                 OperationId = op_Item.OperationId,
-                                 Sharh = FB.Sharh,
-                                 Year = FB.Sal,
-                                 NoeFB = FB.NoeFB,
-                                 Vahed = FB.Vahed,
-                                 BahayeVahed = FB.BahayeVahed,
-                             }).Where(x => x.Year == request.Year && x.NoeFB == NoeFBId);
-
-        //List<AllOperationDto> operation = (from op in _context.Operations
-        //                                   join OperationDetail in _context.OperationDetails
-        //                                   on op.Id equals OperationDetail.OperationId
-        //                                   join Sh_Items in ShomarehItems
-        //                                   on op.Id equals Sh_Items.OperationId
-        //                                   into joinTable
-        //                                   from jT in joinTable.DefaultIfEmpty()
-        //                                   where op.Year == request.Year
-        //                                   select new AllOperationDto
-        //                                   {
-        //                                       ID = op.Id,
-        //                                       order = op.Order,
-        //                                       ParentId = op.ParentId,
-        //                                       OperationName = op.OperationName,
-        //                                       FunctionCall = op.FunctionCall == null ? "" : op.FunctionCall,
-        //                                       Sharh = jT.Sharh,
-        //                                       ItemsFBShomareh = jT.ItemsFBShomareh == null ? "" : jT.ItemsFBShomareh,
-        //                                       Year = op.Year,
-        //                                       CheckData = OperationDetail.CheckData,
-        //                                       HasEnteringValue = OperationDetail.HasEnteringValue
-        //                                   })
-        //                 .OrderBy(x => x.order)
-        //                 .ThenBy(x => x.ID)
-        //                 .ToList();
-
-
-        // فرض: در AllOperationDto => public bool? HasEnteringValue { get; set; }
-        // نوع CheckData را هم نال‌پذیر بگیرید (مثلاً string? یا هر نوع واقعی آن به صورت ?)
-
-        // 1) بخش دیتابیسی را بگیرید
-        var baseRows = (
-            from op in _context.Operations
-            where op.Year == request.Year
-            join od in _context.OperationDetails
-                on op.Id equals od.OperationId into odGroup
-            from od in odGroup.DefaultIfEmpty()
-            select new { op, od }
-        ).ToList();
-
-        // 2) لاکاپ کمکی از ShomarehItems در حافظه
-        var siLookup = ShomarehItems.ToLookup(s => s.OperationId);
-
-        // 3) جوین سمت کلاینت + نگاشت به DTO
-        var operation = baseRows
-            .SelectMany(x => siLookup[x.op.Id].DefaultIfEmpty(),
-                (x, si) => new AllOperationDto
-                {
-                    ID = x.op.Id,
-                    order = x.op.Order,                       // در DTO nullable باشد اگر در DB nullable است
-                    ParentId = x.op.ParentId,                 // ترجیحاً nullable
-                    Year = x.op.Year,
-                    OperationName = x.op.OperationName ?? "",
-                    LatinName = x.op.LatinName ?? "",
-                    FunctionCall = x.op.FunctionCall ?? "",
-                    Sharh = si?.Sharh ?? "",
-                    ItemsFBShomareh = si?.ItemsFBShomareh ?? "",
-                    CheckData = x.od?.CheckData,
-                    HasEnteringValue = x.od?.HasEnteringValue,
-                    MaxValue = x.od?.MaxValue,
-                    MinValue = x.od?.MinValue,
-                    Description = x.od?.Description,
-                    CheckNecessary = null
-                })
-            .OrderBy(x => x.order)
-            .ThenBy(x => x.ID)
-            .ToList();
-
-        List<AllOperationDto> NewOperation = new List<AllOperationDto>();
-
-        //decimal dOperationDefaultValue = 0;
-
-        foreach (var item in operation)
+        clsBaravordUser? baravordUser = _context.BaravordUsers.FirstOrDefault(x => x.ID == request.BarAvordUserId);
+        if (baravordUser == null)
         {
-            if (item.LatinName != null)
-            {
-                if (item.LatinName.Trim().ToLower() == "transport")
-                {
-                    clsBarAvordHamlNecessaryLimit? barAvordHamlNecessaryLimit = _context.BarAvordHamlNecessaryLimits.FirstOrDefault(x => x.BarAvordId == request.BarAvordUserId && x.NoeFBId == NoeFBId);
-                    if (barAvordHamlNecessaryLimit != null)
-                    {
-                        item.CheckNecessary = true;
-                    }
-                    else
-                        item.CheckNecessary = false;
-                }
-            }
-            if (item.CheckData != null)
-            {
-                if (item.CheckData.Value)
-                {
-                    clsBarAvordHaml? barAvordHaml = _context.BarAvordHamls.FirstOrDefault(x => x.BarAvordId == request.BarAvordUserId && x.NoeFBId == NoeFBId && x.FBShomarehHaml == item.ItemsFBShomareh.Trim());
-
-                    if (barAvordHaml != null)
-                    {
-                        item.OperationDefaultValue = barAvordHaml?.Value;
-                    }
-
-                    long RMCount = _context.RizMetreUserses.Include(x => x.FB).Where(x => x.FB.BarAvordId == request.BarAvordUserId && x.FB.Shomareh == item.ItemsFBShomareh).Count();
-                    if (RMCount != 0)
-                    {
-                        NewOperation.Add(item);
-                    }
-
-                    item.ItemsFBShomareh = item.ItemsFBShomareh.Trim() == "" ? "" : item.ItemsFBShomareh.Substring(0, 6);
-                }
-            }
-            else
-                NewOperation.Add(item);
+            return new JsonResult("NOK");
         }
+        else
+        {
 
-        return new JsonResult(NewOperation);
+            List<AllOperationDto> operation1 = new List<AllOperationDto>();
+
+            ////////////////////////////////////////////////////////
+            ////ابتدا ضرایب با نوع فهرست بها برابر با نال اد میشود
+            ////////////////////////////////////////////////////////
+
+            List<AllOperationDto> operationNull = _context.Operations
+                    .Where(x => x.Year == request.Year && x.NoeFB == null)
+                    .Select(x => new AllOperationDto
+                    {
+                        ID = x.Id,
+                        order = x.Order,
+                        ParentId = x.ParentId,
+                        Year = x.Year,
+                        OperationName = x.OperationName ?? "",
+                        LatinName = x.LatinName ?? "",
+                        FunctionCall = x.FunctionCall ?? "",
+                        Sharh = "",
+                        ItemsFBShomareh = "",
+                        CheckData = null,
+                        HasEnteringValue = null,
+                        MaxValue = null,
+                        MinValue = null,
+                        Description = null,
+                        NoeFB = null,
+                        CheckNecessary = null
+                    }).ToList();
+
+
+            operation1.AddRange(operationNull);
+
+
+            ///////////////
+            /////////////
+            /////////////
+
+
+            string[] NoeFBs = baravordUser.NoeFBs.Split(',');
+
+            //NoeFehrestBaha NoeFBId = request.NoeFBId;
+
+            foreach (var item in NoeFBs)
+            {
+                int NoeItem = int.Parse(item);
+                var ShomarehItems = (from op_Item in _context.Operation_ItemsFBs
+                                     join FB in _context.FehrestBahas
+                                     on op_Item.ItemsFBShomareh.Substring(0, 6) equals FB.Shomareh.Trim()
+                                     select new
+                                     {
+                                         ItemsFBShomareh = op_Item.ItemsFBShomareh,
+                                         ItemsFBShomarehMain = op_Item.ItemsFBShomareh,
+                                         OperationId = op_Item.OperationId,
+                                         Sharh = FB.Sharh,
+                                         Year = FB.Sal,
+                                         NoeFB = FB.NoeFB,
+                                         Vahed = FB.Vahed,
+                                         BahayeVahed = FB.BahayeVahed,
+                                     }).Where(x => x.Year == request.Year && x.NoeFB == (NoeFehrestBaha)NoeItem);
+
+                var baseRows = (
+                    from op in _context.Operations
+                    where op.Year == request.Year && op.NoeFB == (NoeFehrestBaha)NoeItem
+                    join od in _context.OperationDetails
+                        on op.Id equals od.OperationId into odGroup
+                    from od in odGroup.DefaultIfEmpty()
+                    select new { op, od }
+                ).ToList();
+
+                var siLookup = ShomarehItems.ToLookup(s => s.OperationId);
+
+                List<AllOperationDto> operation = baseRows
+                    .SelectMany(x => siLookup[x.op.Id].DefaultIfEmpty(),
+                        (x, si) => new AllOperationDto
+                        {
+                            ID = x.op.Id,
+                            order = x.op.Order,
+                            ParentId = x.op.ParentId,
+                            Year = x.op.Year,
+                            OperationName = x.op.OperationName ?? "",
+                            LatinName = x.op.LatinName ?? "",
+                            FunctionCall = x.op.FunctionCall ?? "",
+                            Sharh = si?.Sharh ?? "",
+                            ItemsFBShomareh = si?.ItemsFBShomareh ?? "",
+                            ItemsFBShomarehMain = si?.ItemsFBShomarehMain ?? "",
+                            CheckData = x.od?.CheckData,
+                            HasEnteringValue = x.od?.HasEnteringValue,
+                            MaxValue = x.od?.MaxValue,
+                            MinValue = x.od?.MinValue,
+                            Description = x.od?.Description,
+                            NoeFB = x.op.NoeFB,
+                            CheckNecessary = null,
+                            SumVazn = null,
+                        })
+                    .OrderBy(x => x.order)
+                    .ThenBy(x => x.ID)
+                    .ToList();
+
+                operation1.AddRange(operation);
+            }
+
+            List<AllOperationDto> NewOperation = new List<AllOperationDto>();
+
+
+            List<string> lstShomareh = operation1.Where(x => x.CheckData == true).Select(x => x.ItemsFBShomarehMain).ToList();
+
+            List<string> lstShomareh1 = new List<string>();
+            foreach (var item in lstShomareh)
+            {
+                if (item.Trim() != "")
+                {
+                    lstShomareh1.Add(item.Trim().Substring(0, 6));
+                }
+            }
+            List<clsItemsFields> lstItemsFields = _context.ItemsFieldses.Where(x => lstShomareh1.Contains(x.ItemShomareh)).ToList();
+
+            foreach (var item in operation1)
+            {
+                if (item.LatinName != null)
+                {
+                    if (item.LatinName.Trim().ToLower() == "sharh")
+                    {
+                        clsBarAvordHamlNecessaryLimit? barAvordHamlNecessaryLimit = _context.BarAvordHamlNecessaryLimits.FirstOrDefault(x => x.BarAvordId == request.BarAvordUserId && x.NoeFBId == item.NoeFB);
+                        if (barAvordHamlNecessaryLimit != null)
+                        {
+                            item.CheckNecessary = true;
+                        }
+                        else
+                            item.CheckNecessary = false;
+                    }
+                }
+                if (item.CheckData != null)
+                {
+                    if (item.CheckData.Value)
+                    {
+                        clsBarAvordHaml? barAvordHaml = _context.BarAvordHamls.FirstOrDefault(x => x.BarAvordId == request.BarAvordUserId && x.NoeFBId == item.NoeFB && x.FBShomarehHaml == item.ItemsFBShomareh.Trim());
+
+                        if (barAvordHaml != null)
+                        {
+                            item.OperationDefaultValue = barAvordHaml?.ValueBase == null ? 0 : barAvordHaml.ValueBase;
+                            item.Value = barAvordHaml?.Value == null ? 0 : barAvordHaml.Value;
+                        }
+
+                        List<clsRizMetreUsers> lstRizMetreUsers =
+                            _context.RizMetreUserses.Include(x => x.FB).Where(x => x.FB.BarAvordId == request.BarAvordUserId && x.FB.Shomareh == item.ItemsFBShomareh && x.FB.NoeFBId == item.NoeFB).ToList();
+
+
+                        string strItemFBShomareh = "";
+                        if (item.ItemsFBShomareh != "")
+                        {
+                            strItemFBShomareh = item.ItemsFBShomareh.Substring(0, 6);
+                        }
+
+                        clsItemsFields? currentItemsField = lstItemsFields.FirstOrDefault(x => x.ItemShomareh == strItemFBShomareh && x.NoeFB == item.NoeFB && x.FieldType == ItemFieldType.Vazn);
+
+                        if (currentItemsField != null)
+                        {
+                            item.Vahed = currentItemsField.Vahed;
+                        }
+
+                        decimal? dSumVazn = 0;
+
+                        foreach (var RM in lstRizMetreUsers)
+                        {
+                            dSumVazn += (RM.Tool != null ? RM.Tool : 1) * (RM.Arz != null ? RM.Arz : 1) * (RM.Ertefa != null ? RM.Ertefa : 1) * (RM.Vazn != null ? RM.Vazn : 1);
+                        }
+
+
+                        long RMCount = lstRizMetreUsers.Count();
+                        if (RMCount != 0)
+                        {
+                            item.SumVazn = dSumVazn;
+                            NewOperation.Add(item);
+                        }
+
+                        item.ItemsFBShomareh = item.ItemsFBShomareh.Trim() == "" ? "" : item.ItemsFBShomareh.Substring(0, 6);
+                    }
+                }
+                else
+                    NewOperation.Add(item);
+            }
+
+            var Result = new
+            {
+                NewOperation,
+                BaravordType = baravordUser.Type
+            };
+
+            return new JsonResult(Result);
+        }
     }
 
 
-    public JsonResult GetTreeForOneOperation([FromBody] GetTreeInputDto request)
+    public JsonResult GetTreeForOneOperation([FromBody] GetTreeInputForOneDto request)
     {
         NoeFehrestBaha NoeFBId = request.NoeFBId;
 
@@ -290,14 +362,29 @@ public class OperationController(ApplicationDbContext context) : Controller
         }
         else
             return null;
+
     }
 
     public ActionResult ChangeBarAvordHamlNecessaryLimit([FromBody] ChangeBarAvordHamlNecessaryLimitDto request)
     {
         //try
         //{
-        List<clsBarAvordHaml> lstBarAvordHaml = _context.BarAvordHamls.Where(x => x.BarAvordId == request.BarAvordId).ToList();
-        List<string> lstBarAvordHamlShomarehHamls = lstBarAvordHaml.Select(x => x.FBShomarehHaml).ToList();
+        //List<BHForChangeBarAvordHamlNL> 
+
+        List<clsBarAvordHaml> lstBarAvordHaml = _context.BarAvordHamls.Where(x => x.BarAvordId == request.BarAvordId && x.NoeFBId == request.NoeFBId).ToList();
+
+        //    .Select(x => new clsBarAvordHaml
+        //{
+        //    ID = x.ID,
+        //    BarAvordId = x.BarAvordId,
+        //    FBShomareh = x.FBShomareh,
+        //    FBShomarehHaml = x.FBShomarehHaml,
+        //    NoeFBId = x.NoeFBId,
+        //    Value = x.Value,
+        //    ValueBase = x.ValueBase,
+        //}).ToList();
+
+        List<string> lstBarAvordHamlShomarehHamls = lstBarAvordHaml.Select(x => x.FBShomarehHaml.Substring(0, 6)).ToList();
         List<Guid> lstBarAvordHamlIds = lstBarAvordHaml.Select(x => x.ID).ToList();
         List<clsOperation_ItemsFB> lstOperation_ItemsFB = _context.Operation_ItemsFBs.Where(x => lstBarAvordHamlShomarehHamls.Contains(x.ItemsFBShomareh.Substring(0, 6))).ToList();
         List<long> lstOperationDetailIds = lstOperation_ItemsFB.Select(x => x.OperationId).ToList();
@@ -329,21 +416,27 @@ public class OperationController(ApplicationDbContext context) : Controller
                         decimal? dValue = item.ValueBase;
                         decimal? dFinaValue = 0;
 
+                        if (dValue < operationDetail.MinValue)
+                            dValue = operationDetail.MinValue;
+
                         dFinaValue = dValue - (operationDetail.MinValue == null ? 0 : operationDetail.MinValue.Value);
 
                         item.Value = dFinaValue;
-                        item.ValueBase = dValue;
+                        item.ValueBase = item.ValueBase;
 
-                        clsBarAvordHamlRizMetre barAvordHamlRizMetre = lstBarAvordHamlRizMetre.First(x => x.BarAvordHamlId == item.ID);
+                        List<clsBarAvordHamlRizMetre> BarAvordHamlRizMetres = lstBarAvordHamlRizMetre.Where(x => x.BarAvordHamlId == item.ID).ToList();
 
-                        List<clsRizMetreUsers> lstRizMetreUsers = _context.RizMetreUserses.Where(x => x.ID == barAvordHamlRizMetre.RizMetreId).ToList();
-                        foreach (var RizMetreUser in lstRizMetreUsers)
+                        foreach (var barAvordHamlRizMetre in BarAvordHamlRizMetres)
                         {
-                            _context.Entry(RizMetreUser).CurrentValues.SetValues(new
+                            List<clsRizMetreUsers> lstRizMetreUsers = _context.RizMetreUserses.Where(x => x.ID == barAvordHamlRizMetre.RizMetreId).ToList();
+                            foreach (var RizMetreUser in lstRizMetreUsers)
                             {
-                                Tedad = dFinaValue,
-                                MeghdarJoz = dFinaValue * RizMetreUser.Vazn
-                            });
+                                _context.Entry(RizMetreUser).CurrentValues.SetValues(new
+                                {
+                                    Tedad = dFinaValue,
+                                    MeghdarJoz = dFinaValue * RizMetreUser.Vazn
+                                });
+                            }
                         }
                     }
                 }
@@ -363,31 +456,38 @@ public class OperationController(ApplicationDbContext context) : Controller
                     clsOperation_ItemsFB? operation_ItemsFB = lstOperation_ItemsFB.FirstOrDefault(x => x.ItemsFBShomareh == item.FBShomarehHaml);
                     if (operation_ItemsFB != null)
                     {
-
                         clsOperationDetail? operationDetail = _context.OperationDetails.FirstOrDefault(x => x.OperationId == operation_ItemsFB.OperationId);
                         if (operationDetail != null)
                         {
-                            clsBarAvordHamlRizMetre barAvordHamlRizMetre = lstBarAvordHamlRizMetre.First(x => x.BarAvordHamlId == item.ID);
 
-                            List<clsRizMetreUsers> lstRizMetreUsers = _context.RizMetreUserses.Where(x => x.ID == barAvordHamlRizMetre.RizMetreId).ToList();
-                            foreach (var RizMetreUser in lstRizMetreUsers)
+                            decimal? dValue = item.ValueBase;
+                            decimal? dFinaValue = 0;
+
+                            if (dValue < operationDetail.MinValue)
+                                dValue = operationDetail.MinValue;
+
+                            if (dValue > operationDetail.MaxValue)
+                                dValue = operationDetail.MaxValue;
+
+                            dFinaValue = (operationDetail.MaxValue == null ? item.ValueBase : dValue) - (operationDetail.MinValue == null ? 0 : operationDetail.MinValue.Value);
+
+                            item.Value = dFinaValue;
+                            item.ValueBase = item.ValueBase;
+
+                            List<clsBarAvordHamlRizMetre> BarAvordHamlRizMetres = lstBarAvordHamlRizMetre.Where(x => x.BarAvordHamlId == item.ID).ToList();
+
+                            foreach (var barAvordHamlRizMetre in BarAvordHamlRizMetres)
                             {
-                                decimal? dValue = 0;
-                                decimal? dFinaValue = 0;
-                                if (item.ValueBase > operationDetail.MaxValue)
-                                    dValue = operationDetail.MaxValue;
-                                else
-                                    dValue = item.ValueBase;
+                                List<clsRizMetreUsers> lstRizMetreUsers = _context.RizMetreUserses.Where(x => x.ID == barAvordHamlRizMetre.RizMetreId).ToList();
 
-                                dFinaValue = dValue - (operationDetail.MinValue == null ? 0 : operationDetail.MinValue.Value);
-
-                                item.Value = dFinaValue;
-
-                                _context.Entry(RizMetreUser).CurrentValues.SetValues(new
+                                foreach (var RizMetreUser in lstRizMetreUsers)
                                 {
-                                    Tedad = dFinaValue,
-                                    MeghdarJoz = dFinaValue * RizMetreUser.Vazn
-                                });
+                                    _context.Entry(RizMetreUser).CurrentValues.SetValues(new
+                                    {
+                                        Tedad = dFinaValue,
+                                        MeghdarJoz = dFinaValue * RizMetreUser.Vazn
+                                    });
+                                }
                             }
                         }
                     }
@@ -395,29 +495,40 @@ public class OperationController(ApplicationDbContext context) : Controller
             }
         }
         _context.SaveChanges();
-        return new JsonResult("OK");
+        return new JsonResult(lstBarAvordHaml);
         //}
         //catch (Exception)
         //{
         //    return new JsonResult("NOK");
         //}
     }
-    public ActionResult SaveHamlValue([FromBody] SaveHamlValueDto request)
+    public async Task<ActionResult> SaveHamlValue([FromBody] SaveHamlValueDto request)
     {
+        Guid BarAvordId = request.BarAvordId;
+
+        clsBaravordUser? baravordUser = await _context.BaravordUsers.FirstOrDefaultAsync(x => x.ID == BarAvordId);
+        if (baravordUser != null)
+        {
+            if (baravordUser.Type != NoeBarAvord.BarAvord)
+            {
+                return new JsonResult("NOK");
+            }
+        }
+
         NoeFehrestBaha NoeFBId = request.NoeFBId;
-        clsOperation_ItemsFB? operation_ItemsFB = _context.Operation_ItemsFBs.FirstOrDefault(x => x.OperationId == request.OperationId);
+        clsOperation_ItemsFB? operation_ItemsFB = await _context.Operation_ItemsFBs.FirstOrDefaultAsync(x => x.OperationId == request.OperationId);
+        decimal dFinaValue = 0;
         if (operation_ItemsFB != null)
         {
             string ItemsFBShomareh = operation_ItemsFB.ItemsFBShomareh;
-            Guid BarAvordId = request.BarAvordId;
-            List<clsBarAvordHaml> lstBarAvordHaml = _context.BarAvordHamls.Where(x => x.BarAvordId == BarAvordId && x.NoeFBId == NoeFBId && x.FBShomarehHaml == ItemsFBShomareh).ToList();
+            List<clsBarAvordHaml> lstBarAvordHaml = await _context.BarAvordHamls.Where(x => x.BarAvordId == BarAvordId && x.NoeFBId == NoeFBId && x.FBShomarehHaml == ItemsFBShomareh).ToListAsync();
             if (lstBarAvordHaml.Count != 0)
             {
                 foreach (var barAvordHaml in lstBarAvordHaml)
                 {
                     decimal dValue = 0;
-                    decimal dFinaValue = 0;
-                    clsOperationDetail? operationDetail = _context.OperationDetails.FirstOrDefault(x => x.OperationId == request.OperationId);
+                    dFinaValue = 0;
+                    clsOperationDetail? operationDetail = await _context.OperationDetails.FirstOrDefaultAsync(x => x.OperationId == request.OperationId);
                     if (operationDetail != null)
                     {
                         if (operationDetail.UseMinForInsert)
@@ -441,13 +552,11 @@ public class OperationController(ApplicationDbContext context) : Controller
                             decimal? MaxValue = operationDetail.MaxValue;
                             if (MaxValue != null)
                             {
-                                clsBarAvordHamlNecessaryLimit? barAvordHamlNecessaryLimit = _context.BarAvordHamlNecessaryLimits.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.NoeFBId == NoeFBId);
+                                clsBarAvordHamlNecessaryLimit? barAvordHamlNecessaryLimit = await _context.BarAvordHamlNecessaryLimits.FirstOrDefaultAsync(x => x.BarAvordId == BarAvordId && x.NoeFBId == NoeFBId);
                                 if (barAvordHamlNecessaryLimit == null)
                                 {
-                                    if (request.Value > MaxValue.Value)
+                                    if (dValue > MaxValue.Value)
                                         dValue = MaxValue.Value;
-                                    else
-                                        dValue = request.Value;
                                 }
                             }
                             dFinaValue = dValue - (operationDetail.MinValue == null ? 0 : operationDetail.MinValue.Value);
@@ -462,8 +571,8 @@ public class OperationController(ApplicationDbContext context) : Controller
                         });
 
 
-                    List<clsBarAvordHamlRizMetre> lstBaravordHaml = _context.BarAvordHamlRizMetres.Where(x => x.BarAvordHamlId == barAvordHaml.ID).ToList();
-                    List<clsRizMetreUsers> lstRizMetre = _context.RizMetreUserses.Where(x => lstBaravordHaml.Select(x => x.RizMetreId).Contains(x.ID)).ToList();
+                    List<clsBarAvordHamlRizMetre> lstBaravordHaml = await _context.BarAvordHamlRizMetres.Where(x => x.BarAvordHamlId == barAvordHaml.ID).ToListAsync();
+                    List<clsRizMetreUsers> lstRizMetre = await _context.RizMetreUserses.Where(x => lstBaravordHaml.Select(x => x.RizMetreId).Contains(x.ID)).ToListAsync();
 
                     foreach (var item in lstRizMetre)
                     {
@@ -476,10 +585,10 @@ public class OperationController(ApplicationDbContext context) : Controller
                         });
                     }
                 }
-                _context.SaveChanges();
+               await _context.SaveChangesAsync();
             }
         }
-        return new JsonResult("OK");
+        return new JsonResult("OK_" + dFinaValue);
     }
 
 

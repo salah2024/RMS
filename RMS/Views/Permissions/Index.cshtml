@@ -1,0 +1,48 @@
+﻿<style>
+
+    a {
+        color: #2f019b;
+        font-size: 20px;
+        font-family: 'BMitra', sans-serif;
+    }
+</style>
+
+@using RMS.Models.Entity
+@model List<clsPermission>
+
+<div style="margin-top:70px">
+
+    <h2>مجوزها (وظایف)</h2>
+
+    <form method="get" class="mb-3">
+        <a asp-action="Create">ایجاد مجوز جدید</a>
+        <input name="q" value="@ViewBag.Q" placeholder="جستجو:" />
+        <button class="btn-blue" type="submit">جستجو</button>
+    </form>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>عنوان مجوز</th>
+                <th>گروه مجوز</th>
+                <th>فعال/غیرفعال</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model)
+            {
+                var strActive = p.IsActive ? "فعال" : "غیرفعال";
+                <tr>
+                    <td>@p.Title</td>
+                    <td>@p.Group</td>
+                    <td>@strActive</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@p.Id">ویرایش</a> |
+                        <a asp-action="Delete" asp-route-id="@p.Id">حذف</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

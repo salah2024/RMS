@@ -11,6 +11,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="Views\Report\ReportRizMetreAndItems.cshtml" />
+    <Content Remove="Views\Shared\__Layout.cshtml" />
+    <Content Remove="wwwroot\Scripts\FaniSection\ChanelKaniOld.js" />
+    <Content Remove="wwwroot\Scripts\FaniSection\PayKaniOld.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Views\Shared\__Layout.cshtml.css" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.3" />
@@ -27,6 +38,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="QuestPDF" Version="2026.5.0" />
+    <PackageReference Include="RazorLight" Version="2.3.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,6 +47,52 @@
     <Folder Include="Content\Style\js\" />
     <Folder Include="Controllers\RegisterInPanel\" />
     <Folder Include="Models\RegisterInPanel\" />
+    <Folder Include="ViewModels\Inbox\" />
+    <Folder Include="ViewModels\History\" />
+    <Folder Include="wwwroot\Reports\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Stimulsoft.Base">
+      <HintPath>..\..\..\software\.NET stimul\Stimulsoft.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Stimulsoft.Client.Designer">
+      <HintPath>..\..\..\software\.NET stimul\Stimulsoft.Client.Designer.dll</HintPath>
+    </Reference>
+    <Reference Include="Stimulsoft.Dashboard.Viewer">
+      <HintPath>..\..\..\software\.NET stimul\Stimulsoft.Dashboard.Viewer.dll</HintPath>
+    </Reference>
+    <Reference Include="Stimulsoft.Data">
+      <HintPath>C:\Users\Administrator\Downloads\Stimulsoft Ultimate Edition v2024.3.2 (13 Jun 2024) for .NET + License Key &amp; CRACK_SourceBaran.Com\.NET8.0\Stimulsoft.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Stimulsoft.Report">
+      <HintPath>..\..\..\software\.NET stimul\Stimulsoft.Report.dll</HintPath>
+    </Reference>
+    <Reference Include="Stimulsoft.Report.Design">
+      <HintPath>C:\Users\Administrator\Downloads\Stimulsoft Ultimate Edition v2024.3.2 (13 Jun 2024) for .NET + License Key &amp; CRACK_SourceBaran.Com\.NET8.0\Stimulsoft.Report.Design.dll</HintPath>
+    </Reference>
+    <Reference Include="Stimulsoft.Report.Design.WebViewer">
+      <HintPath>..\..\..\software\.NET stimul\Stimulsoft.Report.Design.WebViewer.dll</HintPath>
+    </Reference>
+    <Reference Include="Stimulsoft.Report.Mvc">
+      <HintPath>..\..\..\software\.NET stimul\Stimulsoft.Report.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="Stimulsoft.Report.Web">
+      <HintPath>..\..\..\software\.NET stimul\Stimulsoft.Report.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="Stimulsoft.Report.WebDesign">
+      <HintPath>..\..\..\software\.NET stimul\Stimulsoft.Report.WebDesign.dll</HintPath>
+    </Reference>
+    <Reference Include="Stimulsoft.Report.Win">
+      <HintPath>..\..\..\software\.NET stimul\Stimulsoft.Report.Win.dll</HintPath>
+    </Reference>
+    <Reference Include="Stimulsoft.Report.Wpf">
+      <HintPath>..\..\..\software\.NET stimul\Stimulsoft.Report.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="Stimulsoft.Report.WpfDesign">
+      <HintPath>..\..\..\software\.NET stimul\Stimulsoft.Report.WpfDesign.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 
 </Project>

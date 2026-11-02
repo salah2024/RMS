@@ -1,0 +1,29 @@
+﻿@using RMS.Controllers.Menu.Dto
+@model List<SidebarMenuItemVm>
+
+<ul>
+    @foreach (var c in Model)
+    {
+        <li>
+            @if (!string.IsNullOrWhiteSpace(c.Url))
+            {
+                <a href="@c.Url">
+                    @if (!string.IsNullOrWhiteSpace(c.Icon))
+                    {
+                        <i class="@c.Icon"></i>
+                    }
+                    <span>@c.Title</span>
+                </a>
+            }
+            else
+            {
+                <span>@c.Title</span>
+            }
+
+            @if (c.Children.Any())
+            {
+                <partial name="_SidebarChildren" model="c.Children" />
+            }
+        </li>
+    }
+</ul>

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RMS.Models.Entity;
 using static RMS.Models.Common.EnumForEntity;
 
@@ -28,6 +29,7 @@ public class RegisterInPanelController : Controller
         _context = context;
     }
 
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Register(RegisterInPanelDto model)
@@ -35,12 +37,28 @@ public class RegisterInPanelController : Controller
         if (!ModelState.IsValid)
         {
             ViewBag.Roles = _roleManager.Roles.ToList();
+            ViewBag.Companies = _context.Companies.ToList();
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-            {
-                // درخواست از طریق ajax-link → فقط فرم
                 return PartialView("_RegisterForm", model);
-            }
+
+            return View("Index", model);
+        }
+
+        // بررسی وجود Role با RoleId
+        var roleExists = await _roleManager.Roles
+            .AnyAsync(r => r.Id == model.RoleId);
+
+        if (!roleExists)
+        {
+            ModelState.AddModelError("", "نقش انتخاب شده معتبر نیست.");
+
+            ViewBag.Roles = _roleManager.Roles.ToList();
+            ViewBag.Companies = _context.Companies.ToList();
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                return PartialView("_RegisterForm", model);
+
             return View("Index", model);
         }
 
@@ -48,7 +66,7 @@ public class RegisterInPanelController : Controller
         {
             UserName = model.UserName,
             PhoneNumber = model.Mobile,
-            FullName = "",
+            FullName = model.FirstName + " " + model.LastName,
             RegisterDate = DateTime.UtcNow
         };
 
@@ -56,39 +74,51 @@ public class RegisterInPanelController : Controller
 
         if (result.Succeeded)
         {
-            if (!await _roleManager.RoleExistsAsync(model.Role))
+            // ثبت مستقیم نقش با RoleId
+            var userRole = new IdentityUserRole<string>
             {
-                await _roleManager.CreateAsync(new IdentityRole(model.Role));
-            }
+                UserId = user.Id,
+                RoleId = model.RoleId
+            };
 
-            await _userManager.AddToRoleAsync(user, model.Role);
+            _context.UserRoles.Add(userRole);
 
+            // ثبت اطلاعات تکمیلی
             clsUserDetail userDetail = new clsUserDetail
             {
                 NationalCode = model.NationalCode,
                 UserId = user.Id,
-                userType = UserType.Legal,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Address = model.Address,
+                PostalCode = model.PostalCode,
+                CompanyId = model.CompanyId,
             };
+
             _context.UserDetails.Add(userDetail);
+
             await _context.SaveChangesAsync();
 
-            // ساخت JWT
-            //var jwtToken = await _tokenService.CreateTokenAsync(user);
-
-            return RedirectToAction("Index", "ViewCompany");
-
+            return RedirectToAction(
+                "UserList",
+                "Users",
+                new { companyId = model.CompanyId });
         }
+
         foreach (var error in result.Errors)
         {
             ModelState.AddModelError(string.Empty, error.Description);
         }
 
         ViewBag.Roles = _roleManager.Roles.ToList();
+        ViewBag.Companies = _context.Companies.ToList();
 
         if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             return PartialView("_RegisterForm", model);
+
         return View("Index", model);
     }
+
 
     [HttpGet]
     public async Task<IActionResult> CheckUserName(string userName)
@@ -101,10 +131,16 @@ public class RegisterInPanelController : Controller
         return Json(new { exists = user != null });
     }
 
-    public IActionResult Index()
+    public IActionResult Index(Guid? companyId)
     {
+
         ViewBag.Roles = _roleManager.Roles.ToList();
+        ViewBag.Companies = _context.Companies.ToList();
+
         var model = new RegisterInPanelDto();
+
+        if (companyId.HasValue)
+            model.CompanyId = companyId.Value;   // 🔥 ست کردن خودکار شرکت
 
         if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             return PartialView("_RegisterForm", model);

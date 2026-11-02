@@ -1,9 +1,10 @@
-﻿function ShowPayKaniEzafeBaha() {
+﻿function ShowPayKaniEzafeBaha(Type) {
     BarAvordUserId = $('#HDFBarAvordUserID').val();
     debugger;
 
     var vardata = new Object();
     vardata.BarAvordUserId = BarAvordUserId;
+    vardata.Type = Type;
 
     $.ajax({
         type: "POST",
@@ -12,11 +13,13 @@
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (response) {
+            debugger;
+
             lstNoePayKaniEzafeBaha = response.lstNoePayKaniEzafeBaha;
             lstPKForBEB = response.lstPKForBEB;
 
-
             $container = $('#ViewPayKaniEzafeBaha');
+            //$container.html('');
 
             var preselectedIds = [];
 
@@ -56,7 +59,7 @@
 
                 // div مخفی زیر گروه
                 const $hiddenDiv = $("<div/>", {
-                    id: `ViewAKhBEzafeBahaRizMetre${item.id}`,
+                    id: `ViewPayKaniBEzafeBahaRizMetre${item.id}`,
                     class: "hidden-div row",
                     css: { display: "none", marginTop: "4px" }
                 });
@@ -68,9 +71,9 @@
                 $checkbox.on("change", function () {
                     debugger;
                     if ($(this).is(":checked")) {
-                        SaveKhEzafeBaha(item.id);
+                        SavePayKaniEzafeBaha(item.id,Type);
                     } else {
-                        DeleteKhEzafeBaha(item.id);
+                        DeletePayKaniEzafeBaha(item.id, Type);
                     }
                 });
 
@@ -80,13 +83,13 @@
                         e.preventDefault();
 
                         if ($checkbox.is(":checked")) {
-                            const $div = $(`#ViewAKhBEzafeBahaRizMetre${item.id}`);
+                            const $div = $(`#ViewPayKaniBEzafeBahaRizMetre${item.id}`);
 
                             if ($div.is(":visible")) {
                                 $div.slideUp();
                             } else {
-                                $("[id^='ViewAKhBEzafeBahaRizMetre']").slideUp();
-                                ShowEzafeBahaRizMetre(item.id);
+                                $("[id^='ViewPayKaniBEzafeBahaRizMetre']").slideUp();
+                                ShowEzafeBahaRizMetrePayKani(item.id,Type);
                                 $div.slideDown();
                             }
                         } else {
@@ -104,28 +107,29 @@
     });
 }
 
-function DeleteKhEzafeBaha(EzafeBahaId, KMExistingId) {
-    debugger;
+function DeletePayKaniEzafeBaha(EzafeBahaId, Type) {
     BarAvordUserId = $('#HDFBarAvordUserID').val();
     Year = $('#HDFYear').val();
+    NoeFB = parseInt($('#HDFNoeFB').val());
 
     var vardata = new Object();
     vardata.NoeKhakBardariEzafeBahaId = EzafeBahaId;
-    vardata.AmalyateKhakiInfoForBarAvordId = KMExistingId;
     vardata.BarAvordUserId = BarAvordUserId;
     vardata.Year = Year;
+    vardata.NoeFBId = NoeFB;
+    vardata.Type = Type;
 
     $.ajax({
         type: "POST",
-        url: "/AmalyateKhakiInfoForBarAvords/DeleteEzafeBahaAKh",
+        url: "/PayKaniInfoForBarAvords/DeleteEzafeBahaPK",
         data: JSON.stringify(vardata),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (response) {
             toastr.success('حذف اضافه بها بدرستی صورت گرفت', 'موفقیت');
 
-            //ShowEzafeBahaRizMetre(EzafeBahaId, KMExistingId);
-            $('#ViewAKhBEzafeBahaRizMetre' + EzafeBahaId).slideUp();
+            ShowEzafeBahaRizMetrePayKani(EzafeBahaId,Type);
+            //$('#ViewPayKaniBEzafeBahaRizMetre' + EzafeBahaId).slideUp();
         },
         error: function (response) {
             toastr.error('مشکل در درج اضافه بها', 'خطا');
@@ -133,7 +137,7 @@ function DeleteKhEzafeBaha(EzafeBahaId, KMExistingId) {
     });
 }
 
-function ShowEzafeBahaRizMetre(EzafeBahaId) {
+function ShowEzafeBahaRizMetrePayKani(EzafeBahaId, Type) {
     debugger;
     BarAvordUserId = $('#HDFBarAvordUserID').val();
     Year = $('#HDFYear').val();
@@ -144,6 +148,7 @@ function ShowEzafeBahaRizMetre(EzafeBahaId) {
     vardata.BarAvordId = BarAvordUserId;
     vardata.Year = Year;
     vardata.NoeFB = NoeFB;
+    vardata.Type = Type;
 
     $.ajax({
         type: "POST",
@@ -152,18 +157,19 @@ function ShowEzafeBahaRizMetre(EzafeBahaId) {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (response) {
-            lstAKhInfoRizMetre = response.lstAKhInfoRizMetre;
+            debugger;
+            lstPKInfoRizMetre = response.lstPKInfoRizMetre;
             lstItemFBShomarehForGet = response.lstItemFBShomarehForGet;
 
             var str = '';
             let groupedData = {};
-            lstAKhInfoRizMetre.forEach(function (row) {
+            lstPKInfoRizMetre.forEach(function (row) {
                 if (!groupedData[row.itemFBShomareh]) {
                     groupedData[row.itemFBShomareh] = [];
                 }
                 groupedData[row.itemFBShomareh].push(row);
             });
-            if (lstAKhInfoRizMetre.length != 0) {
+            if (lstPKInfoRizMetre.length != 0) {
 
                 lstItemFBShomarehForGet.forEach(function (itemGroup) {
 
@@ -171,42 +177,44 @@ function ShowEzafeBahaRizMetre(EzafeBahaId) {
                     let des = itemGroup.des;
                     let ItemFields = itemGroup.itemFields;
 
+                    debugger;
+
                     let rows = groupedData[itemFBShomareh] || [];
                     if (rows.length != 0) {
                         // نمایش توضیح گروه
-                        str += "<div class='col-12'><span style='color:#000'>" + itemGroup.itemFBShomareh + " - " + des + "</span></div>";
+                        str += "<div class='row col-12'><span style='color:#000'>" + itemGroup.itemFBShomareh + " - " + des + "</span></div>";
 
-                        str += "<div class=\"row col-12 styleHeaderTable\" style=\"text-align: center;background-color: #c4bfe3;\">";
+                        str += "<div class=\"row col-12 styleHeaderTable\" style=\"text-align: center;\">";
                         str += "<div class=\"col-md-1 spanStyleMitraSmall\" style=\"text-align:center\"><span id=\"spanFieldShomarehName\">ردیف</span></div>";
                         str += "<div class=\"col-md-2 spanStyleMitraSmall\">شرح</div>";
 
                         str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">تعداد</div>";
+                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">تعداد</div>";
                         str += "<div class=\"VahedStyle\">" + (ItemFields[0] != undefined ? ItemFields[0].vahed : "") + "</div>";
                         str += "</div>";
 
                         str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">طول</div>";
+                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">طول</div>";
                         str += "<div class=\"VahedStyle\">" + (ItemFields[1] != undefined ? ItemFields[1].vahed : "") + "</div>";
                         str += "</div>";
 
                         str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">عرض</div>";
+                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">عرض</div>";
                         str += "<div class=\"VahedStyle\">" + (ItemFields[2] != undefined ? ItemFields[2].vahed : "") + "</div>";
                         str += "</div>";
 
                         str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">ارتفاع</div>";
+                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">ارتفاع</div>";
                         str += "<div class=\"VahedStyle\">" + (ItemFields[3] != undefined ? ItemFields[3].vahed : "") + "</div>";
                         str += "</div>";
 
                         str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">وزن</div>";
+                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">وزن یا...</div>";
                         str += "<div class=\"VahedStyle\">" + (ItemFields[4] != undefined ? ItemFields[4].vahed : "") + "</div>";
                         str += "</div>";
 
                         str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\"><span>مقدار جزء</span></div>";
+                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\"><span>مقدار جزء</span></div>";
                         str += "<div class=\"VahedStyle\">" + (ItemFields[5] != undefined ? ItemFields[5].vahed : "") + "</div>";
                         str += "</div>";
 
@@ -229,40 +237,38 @@ function ShowEzafeBahaRizMetre(EzafeBahaId) {
                             let strVazn = parseFloat(row.vazn) === 0 ? "0" : isNaN(parseFloat(row.vazn)) ? "" : parseFloat(row.vazn).toString();
                             let MeghdarJoz = parseFloat(row.meghdarJoz) === 0 ? "0" : isNaN(parseFloat(row.meghdarJoz)) ? "" : parseFloat(row.meghdarJoz).toString();
 
-                            debugger;
-
                             let HasDelButton = row.hasDelButton;
                             let HasEditButton = row.hasEditButton;
 
                             str += "<div class='row styleRowTable' style=\"background-color:#fff\" onclick=\"RizMetreSelectClick('" + id + "')\">";
-                            str += "<div class='col-md-1' style=\"text-align:center;color:#000\"><span>" + row.shomareh + "</span></div>";
+                            str += "<div class='col-md-1' style=\"text-align:center;color:#000\"><span class=\"RMRowStyle\">" + row.shomareh + "</span></div>";
 
                             str += "<div class='col-md-2'><input  type='text'" +
                                 " class='form-control spanStyleMitraSmall' id='txtSharh_" + id + "' value='" + row.sharh + "' /></div > ";
 
                             str += "<div class='col-md-1'><input  type='text'" + (ItemFields[0] != undefined ? ItemFields[0].isEnteringValue !== true ? " disabled='disabled'" : "" : "") +
-                                " class='form-control spanStyleMitraSmall " + (ItemFields[0] != undefined ? ItemFields[0].isEnteringValue === true ? " HasEnteringValue " : "" : "") + "' id='txtTedad_" + id + "' value = '" + strTedad + "' /></div > ";
+                                " class='form-control spanStyleMitraSmall " + (ItemFields[0] != undefined ? ItemFields[0].essentialValue === true ? " HasEnteringValue " : "" : "") + "' id='txtTedad_" + id + "' value = '" + strTedad + "' /></div > ";
 
                             str += "<div class='col-md-1'><input  type='text'" + (ItemFields[1] != undefined ? ItemFields[1].isEnteringValue !== true ? " disabled='disabled'" : "" : "") +
-                                " class='form-control spanStyleMitraSmall " + (ItemFields[1] != undefined ? ItemFields[1].isEnteringValue === true ? " HasEnteringValue " : "" : "") + "' id='txtTool_" + id + "' value='" + strTool + "'/></div>";
+                                " class='form-control spanStyleMitraSmall " + (ItemFields[1] != undefined ? ItemFields[1].essentialValue === true ? " HasEnteringValue " : "" : "") + "' id='txtTool_" + id + "' value='" + strTool + "'/></div>";
 
                             str += "<div class='col-md-1'><input  type='text'" + (ItemFields[2] != undefined ? ItemFields[2].isEnteringValue !== true ? " disabled='disabled'" : "" : "") +
-                                " class='form-control spanStyleMitraSmall " + (ItemFields[2] != undefined ? ItemFields[2].isEnteringValue === true ? " HasEnteringValue " : "" : "") + "' id='txtArz_" + id + "' value='" + strArz + "'/></div>";
+                                " class='form-control spanStyleMitraSmall " + (ItemFields[2] != undefined ? ItemFields[2].essentialValue === true ? " HasEnteringValue " : "" : "") + "' id='txtArz_" + id + "' value='" + strArz + "'/></div>";
 
                             str += "<div class='col-md-1'><input  type='text'" + (ItemFields[3] != undefined ? ItemFields[3].isEnteringValue !== true ? "disabled='disabled'" : "" : "") +
-                                " class='form-control spanStyleMitraSmall " + (ItemFields[3] != undefined ? ItemFields[3].isEnteringValue === true ? " HasEnteringValue " : "" : "") + "' id='txtErtefa_" + id + "' value='" + strErtefa + "'/></div>";
+                                " class='form-control spanStyleMitraSmall " + (ItemFields[3] != undefined ? ItemFields[3].essentialValue === true ? " HasEnteringValue " : "" : "") + "' id='txtErtefa_" + id + "' value='" + strErtefa + "'/></div>";
 
                             str += "<div class='col-md-1'><input type='text'" + (ItemFields[4] != undefined ? ItemFields[4].isEnteringValue !== true ? "disabled='disabled'" : "" : "") +
-                                " class='form-control spanStyleMitraSmall " + (ItemFields[4] != undefined ? ItemFields[4].isEnteringValue === true ? " HasEnteringValue " : "" : "") + "' id='txtVazn_" + id + "' value='" + strVazn + "'/></div>";
+                                " class='form-control spanStyleMitraSmall " + (ItemFields[4] != undefined ? ItemFields[4].essentialValue === true ? " HasEnteringValue " : "" : "") + "' id='txtVazn_" + id + "' value='" + strVazn + "'/></div>";
 
-                            str += "<div class='col-md-1 RMMJozStyle'><span id='spanMeghdarJoz" + id + "'>" + MeghdarJoz + "</div>";
+                            str += "<div class='col-md-1'><label class='RMMJozStyle' id='spanMeghdarJoz" + id + "'>" + MeghdarJoz + "</label></div>";
 
-                            str += "<div class='col-md-2'><input  type='text' title='" + row.des + "' style='font-size:12px' class='form-control input-sm' id='txtDes_" + id + "' value='" + row.des + "'/></div>";
+                            str += "<div class='col-md-2'><input  type='text' title='" + row.des + "' class='form-control spanStyleMitraSmall input-sm' id='txtDes_" + id + "' value='" + row.des + "'/></div>";
                             if (HasDelButton)
                                 str += "<div class='col-md-1' style='text-align:center;'><i class='fa fa-trash DelRMUStyle' onclick=\"DeleteRMUAddedItemsClick('" + id + "')\"></i></div>";
                             if (HasEditButton)
                                 str += "<div class='col-md-1' style='text-align:center;'><button type='button' id='iUpdate" + id
-                                    + "' onclick=\"UpdateAKhBRMEzafeBahaClick(this,'" + id + "')\" class=\"ButtonRowsSaveStyle\"><i id=\"iSave\" class=\"fa fa-save SaveRMUStyle\"></i></button></div>";
+                                    + "' onclick=\"UpdatePayKaniBRMEzafeBahaClick(this,'" + id + "')\" class=\"ButtonRowsSaveStyle\"><i id=\"iSave\" class=\"fa fa-save SaveRMUStyle\"></i></button></div>";
 
                             str += "</div>";
                         });
@@ -273,13 +279,13 @@ function ShowEzafeBahaRizMetre(EzafeBahaId) {
 
                 debugger;
 
-                $targetDivAKhBEzafeBahaRizMetreKH = $('#ViewAKhBEzafeBahaRizMetre' + EzafeBahaId);
+                $targetDivPayKaniBEzafeBahaRizMetreKH = $('#ViewPayKaniBEzafeBahaRizMetre' + EzafeBahaId);
 
-                $targetDivAKhBEzafeBahaRizMetreKH.html(str);
+                $targetDivPayKaniBEzafeBahaRizMetreKH.html(str);
 
-                $targetDivAKhBEzafeBahaRizMetreKH.slideDown();
+                $targetDivPayKaniBEzafeBahaRizMetreKH.slideDown();
 
-                $targetDivAKhBEzafeBahaRizMetreKH.find("input[type='text'].HasEnteringValue")
+                $targetDivPayKaniBEzafeBahaRizMetreKH.find("input[type='text'].HasEnteringValue")
                     .filter(function () {
                         return $(this).val().trim() === "";
                     })
@@ -288,14 +294,14 @@ function ShowEzafeBahaRizMetre(EzafeBahaId) {
                     .focus();
 
 
-                $targetDivAKhBEzafeBahaRizMetreKH.on("change", "input[type='text'].HasEnteringValue", function () {
+                $targetDivPayKaniBEzafeBahaRizMetreKH.on("change", "input[type='text'].HasEnteringValue", function () {
                     if ($(this).val().trim() !== "") {
                         $(this).removeClass("blinking");
                     }
                 });
 
 
-                $targetDivAKhBEzafeBahaRizMetreKH.on("keypress", "input[type='text'].HasEnteringValue", function (e) {
+                $targetDivPayKaniBEzafeBahaRizMetreKH.on("keypress", "input[type='text'].HasEnteringValue", function (e) {
                     /* ENTER PRESSED */
                     if (e.keyCode == 13) {
                         /* FOCUS ELEMENT */
@@ -315,22 +321,22 @@ function ShowEzafeBahaRizMetre(EzafeBahaId) {
                     }
                 });
             }
-            //    else {
-            //        ItemHasConditionIdSplit = ItemHasConditionId.split('_');
-            //        var $targetDiv = $("#divShowRizMetre" + ItemHasConditionIdSplit[0]);
-            //        $targetDiv.slideUp(500);
-            //        $targetDiv.html('');
-            //        $('#CK' + ItemHasConditionId).prop('checked', false);
-            //    }
+            else {
+                toastr.info('آیتم انتخابی برای هیچ یک از احجام قابل قبول نیست', 'هشدار');
+                var $targetDiv = $('#ViewPayKaniBEzafeBahaRizMetre' + EzafeBahaId);
+                $('#chk-khak-' + EzafeBahaId).prop('checked',false);
+                $targetDiv.slideUp(500);
+                $targetDiv.html('');
+            }
         },
         error: function (response) {
-            toastr.error('مشکل در درج اضافه بها', 'خطا');
+            toastr.error('مشکل در حذف اضافه بها', 'خطا');
         }
     });
 
 }
 
-function UpdateAKhBRMEzafeBahaClick(obj, RMId) {
+function UpdatePayKaniBRMEzafeBahaClick(obj, RMId) {
 
     debugger;
     var row1 = $(obj).closest(".row");
@@ -395,7 +401,7 @@ function UpdateAKhBRMEzafeBahaClick(obj, RMId) {
 
     $.ajax({
         type: "POST",
-        url: '/AmalyateKhakiInfoForBarAvords/UpdateRizMetreAKhEzafeBaha',
+        url: '/AmalyateKhakiInfoForBarAvords/UpdateRizMetrePayKaniEzafeBaha',
         dataType: "json",
         data: JSON.stringify(vardata),
         contentType: "application/json; charset=utf-8",
@@ -405,7 +411,7 @@ function UpdateAKhBRMEzafeBahaClick(obj, RMId) {
             var info = data.split('_');
             if (info[0] == "OK") {
                 toastr.success('ریزه متره انتخابی بدرستی ویرایش گردید', 'موفقیت');
-                MeghdarJoz.html(Tool*Arz);
+                MeghdarJoz.html(Tool * Arz);
             }
             else
                 toastr.info('مشکل در ویرایش ریزه متره انتخابی', 'اطلاع');
@@ -418,7 +424,7 @@ function UpdateAKhBRMEzafeBahaClick(obj, RMId) {
 }
 
 
-function SaveKhEzafeBaha(EzafeBahaId) {
+function SavePayKaniEzafeBaha(EzafeBahaId, Type) {
 
     debugger;
     BarAvordUserId = $('#HDFBarAvordUserID').val();
@@ -430,6 +436,7 @@ function SaveKhEzafeBaha(EzafeBahaId) {
     vardata.BarAvordUserId = BarAvordUserId;
     vardata.Year = Year;
     vardata.NoeFBId = NoeFBId;
+    vardata.Type = Type;
 
     $.ajax({
         type: "POST",
@@ -439,7 +446,7 @@ function SaveKhEzafeBaha(EzafeBahaId) {
         dataType: "json",
         success: function (response) {
             if (response == "OK") {
-                ShowEzafeBahaRizMetre(EzafeBahaId);
+                ShowEzafeBahaRizMetrePayKani(EzafeBahaId,Type);
             }
         },
         error: function (response) {

@@ -1,24 +1,37 @@
 ﻿var lstVaheds;
 function GetFosoul() {
+    debugger;
     BarAvordUserId = $('#HDFBarAvordUserID').val();
     NoeFBId = parseInt($('#HDFNoeFB').val());
     Year = parseInt($('#HDFYear').val());
+    BAType = $('#HDFBAType').val();
+    strUrl = '/BaseInfo/GetFosoulForBarAvord';
+    if (BAType != 'BarAvord')
+        strUrl = '/BaseInfo/GetFosoulForSooratVaziat';
+
 
     var vardata = new Object();
     vardata.NoeFBId = NoeFBId;
     vardata.Year = Year;
     vardata.BarAvordUserId = BarAvordUserId;
+    vardata.Code = "";
     $.ajax({
         type: "post",
-        url: "/BaseInfo/GetFosoul",
+        url: strUrl,
         data: JSON.stringify(vardata),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (response) {
             Fosoul = response.fosoul;
             lstVaheds = response.lstVaheds;
-            renderTableFosoul(Fosoul);
-            GetJamBarAvordAll();
+            renderTableFosoul(response);
+
+            debugger;
+            if (BAType != 'BarAvord') {
+            }
+            else {
+                GetJamBarAvordAll();
+            }
 
         },
         error: function (response) {
@@ -27,7 +40,63 @@ function GetFosoul() {
     });
 }
 
+
+function GetSumAllFBForSooratVaziat() {
+    debugger;
+    BarAvordUserId = $('#HDFBarAvordUserID').val();
+    NoeFBId = parseInt($('#HDFNoeFB').val());
+    Year = parseInt($('#HDFYear').val());
+
+    strUrl = '/BaseInfo/GetSumAllFBForSooratVaziat';
+
+    var vardata = new Object();
+    vardata.NoeFBId = NoeFBId;
+    vardata.Year = Year;
+    vardata.BarAvordUserId = BarAvordUserId;
+    $.ajax({
+        type: "post",
+        url: strUrl,
+        data: JSON.stringify(vardata),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (response) {
+            $('#tdJamBarAvordKolWithZarib').html(formatNumber(response.toFixed(0)));
+        },
+        error: function (response) {
+            toastr.error('خطا', 'خطا');
+        }
+    });
+}
+
+function GetSumAllFosoulForSooratVaziat() {
+    debugger;
+    BarAvordUserId = $('#HDFBarAvordUserID').val();
+    NoeFBId = parseInt($('#HDFNoeFB').val());
+    Year = parseInt($('#HDFYear').val());
+
+    strUrl = '/BaseInfo/GetSumAllFosoulForSooratVaziat';
+
+    var vardata = new Object();
+    vardata.NoeFBId = NoeFBId;
+    vardata.Year = Year;
+    vardata.BarAvordUserId = BarAvordUserId;
+    $.ajax({
+        type: "post",
+        url: strUrl,
+        data: JSON.stringify(vardata),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (response) {
+            $('#tdjameFaslAllBaZarib-102').html(formatNumber(response.toFixed(0)));
+        },
+        error: function (response) {
+            toastr.error('خطا', 'خطا');
+        }
+    });
+}
+
 function GetJamBarAvordAll() {
+    debugger;
     BarAvordId = $('#HDFBarAvordUserID').val();
     Year = parseInt($('#HDFYear').val());
 
@@ -41,17 +110,20 @@ function GetJamBarAvordAll() {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (response) {
+
+            debugger;
+
             jameFasl = response.jameFasl;
             jameFaslStar = response.jameFaslStar;
             jameFaslKol = response.jameFaslKol;
             jameFaslInZarib = response.jameFaslInZarib;
             jameFaslStarInZarib = response.jameFaslStarInZarib;
             jameFaslKolInZarib = response.jameFaslKolInZarib;
-            $('#tdJamBarAvordBase').html(formatNumber(jameFasl.toFixed(0)));
-            $('#tdJamBarAvordStar').html(formatNumber(jameFaslStar.toFixed(0)));
-            $('#tdJamBarAvordKol').html(formatNumber(jameFaslKol.toFixed(0)));
-            $('#tdJamBarAvordBaseWithZarib').html(formatNumber(jameFaslInZarib.toFixed(0)));
-            $('#tdJamBarAvordStarWithZarib').html(formatNumber(jameFaslStarInZarib.toFixed(0)));
+            //$('#tdJamBarAvordBase').html(formatNumber(jameFasl.toFixed(0)));
+            //$('#tdJamBarAvordStar').html(formatNumber(jameFaslStar.toFixed(0)));
+            //$('#tdJamBarAvordKol').html(formatNumber(jameFaslKol.toFixed(0)));
+            //$('#tdJamBarAvordBaseWithZarib').html(formatNumber(jameFaslInZarib.toFixed(0)));
+            //$('#tdJamBarAvordStarWithZarib').html(formatNumber(jameFaslStarInZarib.toFixed(0)));
             $('#tdJamBarAvordKolWithZarib').html(formatNumber(jameFaslKolInZarib.toFixed(0)));
         },
         error: function (response) {
@@ -61,7 +133,6 @@ function GetJamBarAvordAll() {
 }
 
 function GetJamFosoulAll() {
-    debugger;
     BarAvordId = $('#HDFBarAvordUserID').val();
     NoeFBId = parseInt($('#HDFNoeFB').val());
     Year = parseInt($('#HDFYear').val());
@@ -91,15 +162,15 @@ function GetJamFosoulAll() {
             check = response.check;
 
             $('#tdjameFasl-101').html(formatNumber(jameFaslWithOutTajhiz.toFixed(0)));
-            $('#tdjameFasl-102').html(formatNumber(jameFasl.toFixed(0)));
+            //$('#tdjameFasl-102').html(formatNumber(jameFasl.toFixed(0)));
             $('#tdjameFaslStar-101').html(formatNumber(jameFaslStar.toFixed(0)));
-            $('#tdjameFaslStar-102').html(formatNumber(jameFaslStar.toFixed(0)));
+            //$('#tdjameFaslStar-102').html(formatNumber(jameFaslStar.toFixed(0)));
             $('#tdjameFaslAll-101').html(formatNumber(jameFaslKolWithOutTajhiz.toFixed(0)));
-            $('#tdjameFaslAll-102').html(formatNumber(jameFaslKol.toFixed(0)));
+            //$('#tdjameFaslAll-102').html(formatNumber(jameFaslKol.toFixed(0)));
             $('#tdjameFaslBaZarib-101').html(formatNumber(jameFaslWithOutTajhizInZarib.toFixed(0)));
-            $('#tdjameFaslBaZarib-102').html(formatNumber(jameFaslInZarib.toFixed(0)));
+            //$('#tdjameFaslBaZarib-102').html(formatNumber(jameFaslInZarib.toFixed(0)));
             $('#tdjameFaslStarBaZarib-101').html(formatNumber(jameFaslStarInZarib.toFixed(0)));
-            $('#tdjameFaslStarBaZarib-102').html(formatNumber(jameFaslStarInZarib.toFixed(0)));
+            //$('#tdjameFaslStarBaZarib-102').html(formatNumber(jameFaslStarInZarib.toFixed(0)));
             $('#tdjameFaslAllBaZarib-101').html(formatNumber(jameFaslKolWithOutTajhizInZarib.toFixed(0)));
             $('#tdjameFaslAllBaZarib-102').html(formatNumber(jameFaslKolInZarib.toFixed(0)));
 
@@ -115,7 +186,88 @@ function GetJamFosoulAll() {
                 </div>
                 `;
 
-                toastr.info('هشدار', str);
+                toastr.info(str, 'هشدار');
+            }
+
+
+            LoadDarsadTajhizKargah();
+        },
+        error: function (response) {
+            toastr.error('خطا', 'خطا');
+        }
+    });
+}
+
+function chkDarsadTajhizClick(Obj) {
+
+    IdSplit = Obj.id.split('-');
+    Id = IdSplit[1];
+
+    chkDarsadTajhiz = $('#chkDarsadTajhiz-' + Id).prop('checked');
+    if (chkDarsadTajhiz == true) {
+        $('#txtDarsadTajhiz-' + Id).focus();
+        $('#txtDarsadTajhiz-' + Id).addClass('blinking');
+        $('#' + Id).slideUp(500);
+    }
+    else {
+
+        curentMeghdar = $('#tdjameFasl-' + Id);
+        curentMeghdar.html('');
+        $('#tdjameFaslStar-' + Id).html('');
+        $('#tdjameFaslAll-' + Id).html('');
+        $('#tdjameFaslBaZarib-' + Id).html('');
+        $('#tdjameFaslStarBaZarib-' + Id).html('');
+        $('#tdjameFaslAllBaZarib-' + Id).html('');
+        DeleteTajhizKargahDarsad();
+
+
+        $('#txtDarsadTajhiz-' + Id).removeClass('blinking');
+        $('#txtDarsadTajhiz-' + Id).val('');
+    }
+}
+
+function LoadDarsadTajhizKargah() {
+    BarAvordId = $('#HDFBarAvordUserID').val();
+    NoeFBId = parseInt($('#HDFNoeFB').val());
+    Year = parseInt($('#HDFYear').val());
+    debugger;
+    var vardata = new Object();
+    vardata.NoeFB = NoeFBId;
+    vardata.BarAvordUserId = BarAvordId;
+    vardata.Year = Year;
+
+    $.ajax({
+        type: "post",
+        url: "/TajhizKargahDarsad/GetCurrentTajhizKargahDarsad",
+        data: JSON.stringify(vardata),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (response) {
+
+            if (response != "NOK") {
+                TajhizKargahDarsad = response.tajhizKargahDarsad;
+                Zarayeb = response.zarayeb;
+
+                Darsad = TajhizKargahDarsad.darsad;
+                Meghdar = TajhizKargahDarsad.meghdar;
+
+                zaribBalaSari = Zarayeb.zaribBalaSari;
+                zaribManteghe = Zarayeb.zaribManteghe;
+
+                //MeghdarInZarib = Meghdar * zaribBalaSari * zaribManteghe;
+
+                $('#txtDarsadTajhiz-99').val(Darsad);
+                //$('#tdjameFaslStar-99').html(formatNumber(Meghdar.toFixed(0)));
+
+                $('#chkDarsadTajhiz-99').prop('checked', true);
+
+                //$('#tdjameFaslAll-99').html(formatNumber(Meghdar.toFixed(0)));
+
+                //$('#tdjameFaslStarBaZarib-99').html(formatNumber(Meghdar.toFixed(0)));
+
+
+                $('#tdjameFaslAllBaZarib-99').html(formatNumber(Meghdar.toFixed(0)));
+
             }
         },
         error: function (response) {
@@ -126,74 +278,104 @@ function GetJamFosoulAll() {
 
 
 function renderTableFosoul(data) {
+
+    Fosoul = data.fosoul;
+
     const tbody = $('#fosoulTable tbody');
     tbody.empty();
-    data.forEach((item, index) => {
-        debugger;
+    Fosoul.forEach((item, index) => {
         const rowClass = index % 2 === 0 ? '' : 'table-alt';
+
+        FaslAsli = item.faslAsli;
         let style = '';
-        let tagA = `<a href="#" onclick="event.stopPropagation();DescriptionShow(${item.id})">${item.faslName}</a>`;
+        let tagA = `<a href="#">${item.faslName}</a>`;
         if (item.code == '101' || item.code == '102') {
             style = 'background-color:#d4d0ff !important;';
             tagA = `<span style="font-size:15px;padding-right: 30px;">${item.faslName}</span>`;
         }
+
+        Id = item.id;
+
+        Label1 = item.code == '99' ? `
+        <label>
+          <input type="checkbox" id="chkDarsadTajhiz-${item.code}" onclick="event.stopPropagation();chkDarsadTajhizClick(this)" onchange="event.stopPropagation();" style="margin-right: 5px;" />
+            درصدی از جمع فصول         
+        </label>
+           <input style="width:60px;text-align:center" type="number" id="txtDarsadTajhiz-${item.code}" calss="form-control form-control-sm" onclick="event.stopPropagation();" onchange="txtChangeTajhiz()" />
+          <span> درصد </span>
+                    `: '';
+
+
         const mainRow = $(`
-		<tr  class="${rowClass}" style="${style}">
-		<td style="display:none">${item.code}</td>
-		<td style=\"text-align:right\">${tagA}</td>
-		<td style=\"text-align:center\">
+		<tr class="${rowClass}" style="${style}">
+        <td style="display:none" id="tdFaslAli-${item.id}">${FaslAsli}</td>
+		<td style="display:none">${item.id}</td>
+		<td style="text-align:right;width: 40%;">
+
+        <a onclick="event.stopPropagation();DescriptionShow(${item.id})"><i class="fa fa-book" style="color:#f656ff"></i></a>
+
+                ${tagA} ${Label1}
+        </td>
+		<td style="text-align:center">
             <span id="tdjameFasl-${item.code}">
 			    ${formatNumber(item.jameFasl.toFixed(0))}
             </span>
 		</td>
-		<td style=\"text-align:center\">
+		<td style="text-align:center">
             <span id="tdjameFaslStar-${item.code}">
-			    ${formatNumber(item.jameFaslStar.toFixed(0))}
+			    ${item.code != '99' ? formatNumber(item.jameFaslStar.toFixed(0)) : ''}
             </span>
 		</td>
-        <td style=\"text-align:center\">
+        <td style="text-align:center">
             <span id="tdjameFaslAll-${item.code}">
-			    ${formatNumber(item.jameFaslAll.toFixed(0))}
+			    ${item.code != '99' ? formatNumber(item.jameFaslAll.toFixed(0)) : ''}
             </span>
 		</td>
-        <td style=\"text-align:center\">
+        <td style="text-align:center">
             <span id="tdjameFaslBaZarib-${item.code}">
 			    ${formatNumber(item.jameFaslWithZarib.toFixed(0))}
             </span>
         </td>
-		<td style=\"text-align:center\">
+		<td style="text-align:center">
             <span id="tdjameFaslStarBaZarib-${item.code}">
-			    ${formatNumber(item.jameFaslStarWithZarib.toFixed(0))}
+			    ${item.code != '99' ? formatNumber(item.jameFaslStarWithZarib.toFixed(0)) : ''}
             </span>
         </td>
-        <td style=\"text-align:center\">
+        <td style="text-align:center">
             <span id="tdjameFaslAllBaZarib-${item.code}">
 			    ${formatNumber(item.jameFaslWithZaribAll.toFixed(0))}
             </span>
         </td>
         </tr>
-		<tr id="${item.code}" style="display:none">
+		<tr id="${item.id}" style="display:none">
 			<td colspan="7">
-				<div id="barAvordContainer-${item.code}" style="overflow:auto;max-height:400px;">
+				<div id="barAvordContainer-${item.id}" style="overflow:auto;">
                     
                 </div>
 			</td>
 		</tr>
 		`);
-        convertNumbersInPage();
+        //convertNumbersInPage();
 
         mainRow.on('click', function (e) {
-            debugger;
+
             if ($(e.target).closest('[id^="barAvordContainer-"]').length > 0) {
                 return;
             }
-            if (item.code == '_' || item.code == '101') {
+            if (item.code == '_' || item.code == '101' || item.code == '102') {
                 return 0;
+            }
+            else if (item.code == '99') {
+                chkDarsadTajhiz = $('#chkDarsadTajhiz-' + item.code).prop('checked');
+                if (chkDarsadTajhiz == true) {
+                    return 0;
+                }
             }
             e.stopPropagation();
 
-            const rowId = item.code;
+            const rowId = item.id;
             const detailRow = $(`#${rowId}`);
+            var faslAsli = item.faslAsli;
 
             // اگر باز است → ببند
             if (detailRow.is(':visible')) {
@@ -205,57 +387,247 @@ function renderTableFosoul(data) {
                 // باز کردن ردیف انتخاب‌شده
                 detailRow.show();
 
-                GetBarAvord(item.code, item.faslName);
+                debugger;
+                GetBarAvord(item.id, item.code, item.faslName, faslAsli);
             }
         });
 
         $('#chkNonZeroMeghdarFasl').off('change').on('change', function () {
+
+            isOneRowFilled = false;
+            debugger;
             const showOnlyNonZero = $(this).is(':checked');
             // همه‌ی ردیف‌های اصلی (نه ردیف دوم مربوط به barAvordContainer)
             $('#fosoulTable tbody tr').each(function () {
-                debugger;
-                const $row = $(this);
-                const tdjameFasl = $row.find('[id^="tdjameFasl-"]');
-                const tdjameFaslStar = $row.find('[id^="tdjameFaslStar-"]');
 
-                if (tdjameFasl.length > 0 || tdjameFaslStar.length > 0) {
-                    let meghdarTextjameFasl = tdjameFasl.text().replace(/\s+/g, '').replace(/[٬,]/g, '');
-                    let meghdarTextjameFaslStar = tdjameFaslStar.text().replace(/\s+/g, '').replace(/[٬,]/g, '');
-                    let EnNumjameFasl = convertPersianToEnglish(meghdarTextjameFasl);
-                    let EnNumjameFaslStar = convertPersianToEnglish(meghdarTextjameFaslStar);
-                    const meghdarjameFasl = EnNumjameFasl != "" ? parseFloat(EnNumjameFasl) : 0;
-                    const meghdarjameFaslStar = EnNumjameFaslStar != "" ? parseFloat(EnNumjameFaslStar) : 0;
+                debugger;
+
+                const $row = $(this);
+
+                const tdjameFaslAllBaZarib = $row.find('[id^="tdjameFaslAllBaZarib-"]');
+
+                if (tdjameFaslAllBaZarib.length > 0) {
+
+                    let jameFaslAllBaZarib = tdjameFaslAllBaZarib.text().replace(/\s+/g, '').replace(/[٬,]/g, '');
+
+                    let EnNumjameFaslAllBaZarib = convertPersianToEnglish(jameFaslAllBaZarib);
+
+                    const jameFaslAllBaZarib1 = EnNumjameFaslAllBaZarib != "" ? parseFloat(EnNumjameFaslAllBaZarib) : 0;
 
                     if (showOnlyNonZero) {
-                        if (meghdarjameFasl === 0 && meghdarjameFaslStar === 0) {
+
+                        if (jameFaslAllBaZarib1 === 0) {
                             $row.hide(); // مخفی‌سازی ردیف اصلی
-                            //$row.next('tr').hide(); // مخفی‌سازی ردیف barAvordContainer مربوطه
+
                         } else {
                             $row.show();
-                            //$row.next('tr').show();
+                            isOneRowFilled = true;
                         }
                     } else {
                         $row.show();
-                        //$row.next('tr').show();
+
                     }
                 }
             });
+
+            if (!isOneRowFilled) {
+                $('#fosoulTable tbody tr').each(function () {
+
+                    debugger;
+
+                    const $row = $(this);
+
+                    const tdjameFaslAllBaZarib = $row.find('[id^="tdjameFaslAllBaZarib-"]');
+
+                    if (tdjameFaslAllBaZarib.length > 0) {
+
+                        let jameFaslAllBaZarib = tdjameFaslAllBaZarib.text().replace(/\s+/g, '').replace(/[٬,]/g, '');
+
+                        let EnNumjameFaslAllBaZarib = convertPersianToEnglish(jameFaslAllBaZarib);
+
+                        const jameFaslAllBaZarib1 = EnNumjameFaslAllBaZarib != "" ? parseFloat(EnNumjameFaslAllBaZarib) : 0;
+
+                        $row.show();
+                        
+                    }
+                });
+            }
         });
+
         tbody.append(mainRow);
+
     });
 
+    BAType = $('#HDFBAType').val();
+    debugger;
 
-    GetJamFosoulAll();
+    if (BAType != 'BarAvord') {
+        SumFosoulForSooratVaziat = data.sumFosoulForSooratVaziat;
+
+        jameFasl = SumFosoulForSooratVaziat.dJameFasl;
+        jameFaslAll = SumFosoulForSooratVaziat.dJameFaslAll;
+        jameFaslStar = SumFosoulForSooratVaziat.dJameFaslStar;
+        jameFaslStarInZarib = SumFosoulForSooratVaziat.dJameFaslStarWithZarib;
+        jameFaslWithZarib = SumFosoulForSooratVaziat.dJameFaslWithZarib;
+        jameFaslWithZaribAll = SumFosoulForSooratVaziat.dJameFaslWithZaribAll;
+
+        jameFaslWithTajhizWithZarib = SumFosoulForSooratVaziat.dJameFaslWithTajhizWithZarib;
+        //jameTajhiz = SumFosoulForSooratVaziat.dJameTajhiz;
+
+        $('#tdjameFasl-101').html(formatNumber(jameFasl.toFixed(0)));
+        $('#tdjameFaslStar-101').html(formatNumber(jameFaslStar.toFixed(0)));
+        $('#tdjameFaslAll-101').html(formatNumber(jameFaslAll.toFixed(0)));//jameFaslKolWithOutTajhiz.toFixed(0)));
+        $('#tdjameFaslBaZarib-101').html(formatNumber(jameFaslWithZarib.toFixed(0)));
+        $('#tdjameFaslStarBaZarib-101').html(formatNumber(jameFaslStarInZarib.toFixed(0)));
+        $('#tdjameFaslAllBaZarib-101').html(formatNumber(jameFaslWithZaribAll.toFixed(0)));
+
+        $('#tdjameFaslAllBaZarib-102').html(formatNumber(jameFaslWithTajhizWithZarib.toFixed(0)));
+
+        //$('#tdjameFaslAllBaZarib-99').html(formatNumber(jameTajhiz.toFixed(0)));
+
+        GetSumAllFBForSooratVaziat();
+
+        LoadDarsadTajhizKargah();
+    }
+    else
+        GetJamFosoulAll();
+
+    $('#chkNonZeroMeghdarFasl').click();
+
 
 }
 
+function txtChangeTajhiz() {
 
-function GetBarAvord(Code, faslName) {
+    Obj = $('#txtDarsadTajhiz-99')[0];
+    debugger;
+    IdSplit = Obj.id.split('-');
+    Id = IdSplit[1];
+
+    jameFaslBaZaribAll = $('#tdjameFaslAllBaZarib-101').html();
+    JamFaslAdad = parseFloat(convertPersianToEnglish(jameFaslBaZaribAll.replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
+    thisVal = parseFloat(Obj.value);
+    MeghdarNew = thisVal * JamFaslAdad;
+    curentMeghdar = $(Obj).parent().parent().find('[id^="tdjameFaslAllBaZarib-"]')
+    MeghdarPercent = MeghdarNew / 100;
+    dMeghdarPercent = formatNumber(MeghdarPercent.toFixed(0));
+
+    if (isNaN(MeghdarPercent)) {
+        $(Obj).val('');
+        $('#chkDarsadTajhiz-' + Id).prop('checked', false);
+        curentMeghdar.html('');
+        toastr.warning('هشدار', 'مقدار برآورد خالی میباشد');
+    }
+    else {
+        $('#chkDarsadTajhiz-' + Id).prop('checked', true);
+        $('#' + Id).slideUp(500);
+        SaveTajhizKargahDarsad(Obj, thisVal, MeghdarPercent.toFixed(0));
+    }
+}
+
+function SaveTajhizKargahDarsad(Obj, Darsad, MeghdarPercent) {
+
+    //curentMeghdar = $(Obj).parent().parent().find('[id^="tdjameFasl-"]')
+    //curentMeghdar.html(dMeghdarPercent);
+
     debugger;
     BarAvordUserId = $('#HDFBarAvordUserID').val();
     NoeFB = parseInt($('#HDFNoeFB').val());
     Year = parseInt($('#HDFYear').val());
+
     var vardata = new Object();
+    vardata.BarAvordUserId = BarAvordUserId;
+    vardata.NoeFB = NoeFB;
+    vardata.Darsad = Darsad;
+    vardata.Meghdar = MeghdarPercent;
+    vardata.Year = Year;
+    $.ajax({
+        type: "post",
+        url: "/TajhizKargahDarsad/TajhizKargahDarsadSave",
+        data: JSON.stringify(vardata),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (response) {
+            zaribBalaSari = response.zaribBalaSari;
+            zaribManteghe = response.zaribManteghe;
+
+            MeghdarInZarib = MeghdarPercent * zaribBalaSari * zaribManteghe;
+
+            //curentMeghdarInZarib = $(Obj).parent().parent().find('[id^="tdjameFaslBaZarib-"]')
+            //curentMeghdarInZarib.html(formatNumber(MeghdarInZarib.toFixed(0)));
+
+            //curentjameFaslAll = $(Obj).parent().parent().find('[id^="tdjameFaslAll-"]')
+            //curentjameFaslAll.html(dMeghdarPercent);
+
+            //curentjameFaslAllBaZarib = $(Obj).parent().parent().find('[id^="tdjameFaslAllBaZarib-"]')
+            //curentjameFaslAllBaZarib.html(formatNumber(MeghdarInZarib.toFixed(0)));
+
+            BAType = $('#HDFBAType').val();
+
+            if (BAType != 'BarAvord') {
+
+
+                GetSumAllFBForSooratVaziat();
+                GetSumAllFosoulForSooratVaziat();
+
+                LoadDarsadTajhizKargah();
+            }
+            else {
+                GetJamBarAvordAll();
+                GetJamFosoulAll();
+            }
+        },
+        error: function (response) {
+            toastr.error('خطا', 'خطا');
+        }
+    });
+}
+
+function DeleteTajhizKargahDarsad() {
+    BarAvordUserId = $('#HDFBarAvordUserID').val();
+    NoeFB = parseInt($('#HDFNoeFB').val());
+    Year = parseInt($('#HDFYear').val());
+
+    var vardata = new Object();
+    vardata.BarAvordUserId = BarAvordUserId;
+    vardata.NoeFB = NoeFB;
+    vardata.Year = Year;
+    $.ajax({
+        type: "post",
+        url: "/TajhizKargahDarsad/TajhizKargahDarsadDelete",
+        data: JSON.stringify(vardata),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (response) {
+            if (response == "OK") {
+                toastr.success('حذف درصد تجهیزکارگاه بدرستی صورت گرفت', 'موفقیت');
+
+                BAType = $('#HDFBAType').val();
+
+                if (BAType != 'BarAvord') {
+                    GetSumAllFBForSooratVaziat();
+                    GetSumAllFosoulForSooratVaziat();
+                    //LoadDarsadTajhizKargah();
+                }
+                else {
+                    GetJamBarAvordAll();
+                    GetJamFosoulAll();
+                }
+            }
+        },
+        error: function (response) {
+            toastr.error('مشکل در حذف درصد تجهیزکارگاه', 'خطا');
+        }
+    });
+}
+
+
+function GetBarAvord(ItemId, Code, faslName, faslAsli) {
+    BarAvordUserId = $('#HDFBarAvordUserID').val();
+    NoeFB = parseInt($('#HDFNoeFB').val());
+    Year = parseInt($('#HDFYear').val());
+    var vardata = new Object();
+    vardata.Id = ItemId;
     vardata.NoeFBId = NoeFBId;
     vardata.Year = Year;
     vardata.BarAvordUserId = BarAvordUserId;
@@ -269,10 +641,9 @@ function GetBarAvord(Code, faslName) {
         success: function (response) {
             userBarAvordOutPut = response.userBarAvordOutPut;
             lstItemFBStars = response.lstItemFBStars;
-            debugger;
             //$('#aView').click();
             //$('#ModalTitle').text('فصل  ' + Code +'  -  '+faslName);
-            renderTable(userBarAvordOutPut, lstItemFBStars, Code);
+            renderTable(userBarAvordOutPut, lstItemFBStars, Code, ItemId, faslAsli);
         },
         error: function (response) {
             toastr.error('خطا', 'خطا');
@@ -292,7 +663,7 @@ function DescriptionShow(Id) {
         dataType: "json",
         success: function (response) {
             $('#ShowDes').html(response.description);
-            $('#ModalTitle').html(response.title);
+            //$('#ModalTitle').html(response.title);
             $('#aViewDes').click();
             $('#PopupViewDes').on('shown.bs.modal', function () {
                 var modalBody = $(this).find('.modal-body');
@@ -307,28 +678,17 @@ function DescriptionShow(Id) {
 function formatNumber(num) {
     if (num == null) return '';
     if (num == 0) return '';
+    if (isNaN(num)) return '';
     return Number(num).toLocaleString('fa-IR'); // یا 'en-US' برای کاما
 }
-function toPersianDigits(num) {
-    if (num == null) return '';
-    return num.toString().replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
-}
 
-function convertNumbersInPage() {
-    $('*').each(function () {
-        if (this.children.length === 0 && this.nodeType === 1) {
-            const originalText = $(this).text();
-            const convertedText = toPersianDigits(originalText);
-            if (originalText !== convertedText) {
-                $(this).text(convertedText);
-            }
-        }
-    });
-}
+
+
 
 
 
 function BahayeVahedNewMeghdarChange($input, FBId, itemFbShomareh) {
+
 
     var newValue = $input.value;
     if (!$.isNumeric(newValue)) {
@@ -359,12 +719,208 @@ function BahayeVahedNewMeghdarChange($input, FBId, itemFbShomareh) {
         var bahayeKol = floatValEn * meghdar;
         $row.find('#bahayeKolFasl').text(formatNumber(bahayeKol.toFixed(0)));
     }
+    debugger;
+
+    $input.value = formatNumber(floatValEn.toFixed(0));
 
     strStar1 = `<div class="row"><span style="font-size:25px">*</span><input style="font-size:20px" class="ReturnItemsStar" type="submit" value="🔄" onclick="StarReturn(this,'${FBId}','${itemFbShomareh}')"/></div>`
 
     $('#span' + itemFbShomareh).html(strStar1);
     BahayeVahedNewSave($input, floatValEn, FBId, itemFbShomareh);
 }
+
+function ItemZaribChange($input, FBId, itemFbShomareh) {
+
+    debugger;
+    var newValue = $input.value;
+    if (!$.isNumeric(newValue)) {
+        toastr.error('مقدار وارد شده نامعتبر میباشد', 'خطا');
+        $input.addClass('blinking');
+        return;
+    }
+    var floatVal = convertPersianToEnglish(newValue);
+    if (parseFloat(newValue) > 1 || parseFloat(newValue) < 0) {
+        toastr.info('مقدار نمیتواند بزرگتر از 1 یا کوچکتر از 0 باشد', 'هشدار');
+        $input.value = 1;
+        floatVal = "1";
+    }
+
+    var floatValEn = parseFloat(floatVal.replace(/٬/g, '').replace(/,/g, ''));
+
+    // پیدا کردن ردیف والد
+    const $row = $($input).closest('tr');
+
+    // گرفتن مقدار موجود در ستون مقدار (meghdarFasl)
+    var meghdarText = $row.find('#meghdarFasl_' + itemFbShomareh).text().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.');
+    var MeghdarEn = convertPersianToEnglish(meghdarText);
+    var meghdar = parseFloat(MeghdarEn);
+
+    // گرفتن مقدار موجود در ستون مقدار (BahayeVahed)
+    var bahayeVahedText = $row.find('[id^="txtBahayeVahed-"]').val().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.');
+    var bahayeVahedEn = convertPersianToEnglish(bahayeVahedText);
+    var bahayeVahed = parseFloat(bahayeVahedEn);
+
+    // // مدیریت کلاس blinking
+    // if (meghdar > 0 && (!floatValEn || floatValEn === 0)) {
+    //     $($input).addClass('blinking');
+    // } else {
+    //     $($input).removeClass('blinking');
+    // }
+
+    // // به‌روزرسانی بهای کل
+    if (!isNaN(meghdar) && !isNaN(floatValEn) && !isNaN(bahayeVahedEn)) {
+        var bahayeKol = floatValEn * meghdar * bahayeVahedEn;
+        $row.find('#bahayeKolFasl_' + itemFbShomareh).text(formatNumber(bahayeKol.toFixed(0)));
+    }
+    debugger;
+
+    $input.value = formatNumber(floatValEn.toFixed(3));
+
+    ItemZaribSave($input, floatValEn, FBId, itemFbShomareh);
+}
+
+function ItemZaribStarChange($input, ItemStarId, itemFbShomareh) {
+
+    debugger;
+    var newValue = $input.value;
+    if (!$.isNumeric(newValue)) {
+        toastr.error('مقدار وارد شده نامعتبر میباشد', 'خطا');
+        $input.addClass('blinking');
+        return;
+    }
+    var floatVal = convertPersianToEnglish(newValue);
+    if (parseFloat(newValue) > 1 || parseFloat(newValue) < 0) {
+        toastr.info('مقدار نمیتواند بزرگتر از 1 یا کوچکتر از 0 باشد', 'هشدار');
+        $input.value = 1;
+        floatVal = "1";
+    }
+
+    var floatValEn = parseFloat(floatVal.replace(/٬/g, '').replace(/,/g, ''));
+
+    // پیدا کردن ردیف والد
+    const $row = $($input).closest('tr');
+
+    // گرفتن مقدار موجود در ستون مقدار (meghdarFasl)
+    var meghdarText = $row.find('#meghdarFaslStar_' + itemFbShomareh).text().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.');
+    var MeghdarEn = convertPersianToEnglish(meghdarText);
+    var meghdar = parseFloat(MeghdarEn);
+
+    // گرفتن مقدار موجود در ستون مقدار (BahayeVahed)
+    var bahayeVahedText = $row.find('#bahayeVahedFaslStar_' + itemFbShomareh).text().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.');
+    var bahayeVahedEn = convertPersianToEnglish(bahayeVahedText);
+    var bahayeVahed = parseFloat(bahayeVahedEn);
+    debugger;
+    // // مدیریت کلاس blinking
+    // if (meghdar > 0 && (!floatValEn || floatValEn === 0)) {
+    //     $($input).addClass('blinking');
+    // } else {
+    //     $($input).removeClass('blinking');
+    // }
+
+    // // به‌روزرسانی بهای کل
+    if (!isNaN(meghdar) && !isNaN(floatValEn) && !isNaN(bahayeVahedEn)) {
+        var bahayeKol = floatValEn * meghdar * bahayeVahedEn;
+        $row.find('#bahayeKolFaslStar_' + itemFbShomareh).text(formatNumber(bahayeKol.toFixed(0)));
+    }
+    debugger;
+
+    $input.value = formatNumber(floatValEn.toFixed(3));
+
+    ItemZaribStarSave($input, floatValEn, ItemStarId, itemFbShomareh);
+}
+
+function ItemZaribStarSave(element, ItemZarib, ItemStarId, itemFbShomareh) {
+
+    var vardata = new Object();
+    vardata.ItemStarId = ItemStarId;
+    vardata.ItemZarib = ItemZarib;
+
+    $.ajax({
+        type: "POST",
+        url: '/BaravordUser/ConfirmItemZaribStar',
+        dataType: "json",
+        data: JSON.stringify(vardata),
+        contentType: "application/json; charset=utf-8",
+        success: function (data) {
+            var info = data.split('_');
+            if (info[0] == "OK") {
+
+                ///////////////
+
+                Code = itemFbShomareh.substring(0, 2);
+                debugger;
+                refreshBaseItem(element, itemFbShomareh, Code);
+                GetJamBarAvordAll();
+                GetJamFosoulAll();
+                //////////////////
+
+                toastr.success('ضریب آیتم بدرستی درج گردید', 'موفقیت');
+            }
+            else
+                toastr.info('مشکل در درج ضریب آیتم', 'اطلاع');
+        },
+        error: function (msg) {
+            toastr.error('مشکل در درج ضریب آیتم', 'خطا');
+        }
+    });
+}
+
+
+function ItemZaribSave(element, ItemZarib, FBId, itemFbShomareh) {
+    BarAvordUserId = $('#HDFBarAvordUserID').val();
+    NoeFBId = parseInt($('#HDFNoeFB').val());
+    Year = parseInt($('#HDFYear').val());
+
+    var vardata = new Object();
+    vardata.BarAvordUserId = BarAvordUserId;
+    vardata.FBId = FBId == "null" ? '00000000-0000-0000-0000-000000000000' : FBId;
+    vardata.ItemZarib = ItemZarib;
+    vardata.itemFbShomareh = itemFbShomareh;
+    vardata.NoeFBId = NoeFBId;
+    vardata.Year = Year;
+
+    $.ajax({
+        type: "POST",
+        url: '/BaravordUser/ConfirmItemZarib',
+        dataType: "json",
+        data: JSON.stringify(vardata),
+        contentType: "application/json; charset=utf-8",
+        success: function (data) {
+            var info = data.split('_');
+            if (info[0] == "OK") {
+
+                //const mainRow = element.closest('tr');
+                //if (!mainRow) return;
+
+                //txtmeghdarFasl = mainRow.querySelector('#meghdarFasl_' + itemFbShomareh);
+                //bahayeKolFasl = mainRow.querySelector('#bahayeKolFasl_' + itemFbShomareh);
+
+                //meghdarFasl = parseFloat(convertPersianToEnglish(txtmeghdarFasl.innerHTML.replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
+                //BahayeVahedNew1 = parseFloat(BahayeVahedNew);
+
+                //bahayeKolFasl = mainRow.querySelector('#bahayeKolFasl_' + itemFbShomareh);
+                //bahayeKolFasl.innerHTML = toPersianDigits(formatNumber(isNaN(meghdarFasl) ? 0 : meghdarFasl * BahayeVahedNew1));
+
+                ///////////////
+
+                Code = itemFbShomareh.substring(0, 2);
+                debugger;
+                refreshBaseItem(element, itemFbShomareh, Code);
+                GetJamBarAvordAll();
+                GetJamFosoulAll();
+                //////////////////
+
+                toastr.success('ضریب آیتم بدرستی درج گردید', 'موفقیت');
+            }
+            else
+                toastr.info('مشکل در درج ضریب آیتم', 'اطلاع');
+        },
+        error: function (msg) {
+            toastr.error('مشکل در درج ضریب آیتم', 'خطا');
+        }
+    });
+}
+
 
 function BahayeVahedNewSave(element, BahayeVahedNew, FBId, itemFbShomareh) {
     BarAvordUserId = $('#HDFBarAvordUserID').val();
@@ -388,9 +944,6 @@ function BahayeVahedNewSave(element, BahayeVahedNew, FBId, itemFbShomareh) {
             var info = data.split('_');
             if (info[0] == "OK") {
 
-
-                debugger;
-
                 const mainRow = element.closest('tr');
                 if (!mainRow) return;
 
@@ -407,12 +960,14 @@ function BahayeVahedNewSave(element, BahayeVahedNew, FBId, itemFbShomareh) {
                 bahayeKolFasl = mainRow.querySelector('#bahayeKolFasl_' + itemFbShomareh);
                 bahayeKolFasl.innerHTML = toPersianDigits(formatNumber(isNaN(meghdarFasl) ? 0 : meghdarFasl * BahayeVahedNew1));
 
+                mainRow.click();
 
                 ///////////////
                 ///////////////
 
-                refreshBaseItemNewBV(element, info[2], info[3], info[1], itemFbShomareh, BahayeVahedNew);
-
+                //refreshBaseItemNewBV(element, info[2], info[3], info[1], itemFbShomareh, BahayeVahedNew);
+                Code = itemFbShomareh.substring(0, 2);
+                refreshBaseItem(element, itemFbShomareh, Code);
                 GetJamBarAvordAll();
                 GetJamFosoulAll();
                 //////////////////
@@ -442,9 +997,16 @@ function BahayeVahedNewSave(element, BahayeVahedNew, FBId, itemFbShomareh) {
 
 
 function StarReturn(element, FBId, itemFbShomareh) {
+
+    FBId = FBId == 'null' ? '' : FBId;
     Year = parseInt($('#HDFYear').val());
+    BarAvordId = $('#HDFBarAvordUserID').val();
+    NoeFB = parseInt($('#HDFNoeFB').val());
+
     var vardata = new Object();
     vardata.FBId = FBId;
+    vardata.BarAvordId = BarAvordId;
+    vardata.NoeFB = NoeFB;
     vardata.itemFbShomareh = itemFbShomareh;
     vardata.Year = Year;
     $.ajax({
@@ -464,8 +1026,6 @@ function StarReturn(element, FBId, itemFbShomareh) {
 
                 meghdarFasl = parseFloat(convertPersianToEnglish(txtmeghdarFasl.innerHTML.replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
                 bahayeKol = parseFloat(info[1]);
-
-                debugger;
 
                 if (isNaN(bahayeKol)) {
                     bahayeKol = 0;
@@ -490,9 +1050,10 @@ function StarReturn(element, FBId, itemFbShomareh) {
 
                 Code = itemFbShomareh.substring(0, 2);
 
-                refreshBaseItemNewBV(element, info[3], info[4], Code, itemFbShomareh, info[1]);
                 GetJamBarAvordAll();
                 GetJamFosoulAll();
+                refreshBaseItem(element, itemFbShomareh, Code);
+                //refreshBaseItemNewBV(element, info[3], info[4], Code, itemFbShomareh, info[1]);
 
                 toastr.success('بهای واحد بازنشانی گردید', 'موفقیت');
             }
@@ -505,32 +1066,80 @@ function StarReturn(element, FBId, itemFbShomareh) {
     });
 }
 
+function ShowSelectTajmie(ItemFBShomareh) {
 
-function renderTable(data, Stars, Code) {
-    const container = $(`#barAvordContainer-${Code}`);
+    noeFB = parseInt($('#HDFNoeFB').val());
+
+    $.ajax({
+        url: '/TajmieFosoul/GetTajmieTree',
+        type: 'GET',
+        data: { noeFB: noeFB },
+        success: function (result) {
+
+            if ($('#treeItems').jstree(true)) {
+                $('#treeItems').jstree("destroy");
+            }
+
+            $('#treeItems').jstree({
+                core: {
+                    data: result,
+                    themes: {
+                        responsive: true
+                    }
+                },
+                plugins: ["wholerow"]
+            });
+
+            // حذف Event قبلی
+            $('#treeItems').off('select_node.jstree');
+
+            // ثبت Event جدید
+            $('#treeItems').on('select_node.jstree', function (e, data) {
+
+                if (data.node.parent == "#")
+                    return;
+
+                var itemCode = data.node.data.itemCode;
+
+                $("#txtTajmieItem-" + ItemFBShomareh).val(itemCode);
+
+                $("#PopupShowSelectTajmie").modal("hide");
+            });
+
+            $("#ModalTitle").text("انتخاب آیتم تجمیعی");
+            $("#PopupShowSelectTajmie").modal("show");
+        }
+    });
+}
+
+function renderTable(data, Stars, Code, ItemId, faslAsli) {
+
+    const container = $(`#barAvordContainer-${ItemId}`);
     container.empty();
 
     const table = $(`
-		<table class="table table-bordered fixed-table mb-2">
+		<table class="table table-item table-bordered fixed-table mb-2">
 			<thead>
 				<tr style="background-color: #aa87ff;">
 					<th style="width: 5🔄%;text-align:center;color: #3a007a;font-size: 12px;">*</th>
 					<th style="width: 7%;text-align:center;color: #3a007a;font-size: 12px;">شماره فهرست بها</th>
-					<th style="width: 52%;color: #3a007a;font-size: 16px;">شرح فهرست بها</th>
-					<th style="width: 7%;text-align:center;color: #3a007a;font-size: 12px;">واحد</th>
+					<th style="width: 46%;color: #3a007a;font-size: 16px;">شرح فهرست بها</th>
+					<th style="width: 8%;text-align:center;color: #3a007a;font-size: 12px;">واحد</th>
 					<th style="width: 7%;text-align:center;color: #3a007a;font-size: 12px;">بهای واحد</th>
-					<th style="width: 9%;text-align:center;color: #3a007a;font-size: 12px;">
-                    مقدار
-                    <label class="ShowNoneZeroClass" style="font-size: 9px;">
-                    <input type="checkbox" id="chkNonZeroMeghdar-${Code}" style="margin-right: 5px;" />
-                     مقادیر غیر صفر         
+					<th style="width: 10%;text-align:center;color: #3a007a;font-size: 12px;">
+                    <label class="ShowNoneZeroClass" style="font-size: 9px;margin-bottom: 0px;">
+                    <input type="checkbox" id="chkNonZeroMeghdar-${Code}" style="margin-right: 5px;"/>
+                      <span style="font-size:12px">
+                            مقدار < > 0 
+                      </span>      
                     </label>
                     </th>
+                    <th style="width: 4%;text-align:center;color: #3a007a;font-size: 12px;">ضریب</th>
 					<th style="width: 10%;text-align:center;color: #3a007a;font-size: 12px;">بهای کل</th>
 					<th style="width: 3%;text-align:center;color: #3a007a;font-size: 12px;">عملیات</th>
 				</tr>
 			</thead>
-			<tbody></tbody>
+			<tbody class="tbodyFosoul"></tbody>
 		</table>
 	`);
 
@@ -547,40 +1156,66 @@ function renderTable(data, Stars, Code) {
         var Field4 = item.itemsFields[4] == undefined ? "" : item.itemsFields[4].vahed;
         var Field5 = item.itemsFields[5] == undefined ? "" : item.itemsFields[5].vahed;
 
-        const rizId = `riz-${Code}-${index}`;
+        const rizId = `riz-${ItemId}-${index}`;
         const clickableClass = 'clickable-row table-active';
         const BahayeKol = parseFloat(item.bahayeKol);
         const BahayeKolFix = BahayeKol.toFixed(0);
         BahayeVahedNew = item.bahayeVahedNew;
         bahayeVahedSetEn = item.bahayeVahed;
+        ItemZaribSetEn = item.itemZarib;
         strStar = '';
         if (BahayeVahedNew != 0) {
             bahayeVahedSetEn = BahayeVahedNew;
             strStar += `<div class="col-12" id="span${item.itemFbShomareh}">
-                        <div class="row"><span style="font-size:25px">*</span><input  style="font-size:20px" class="ReturnItemsStar" type="submit" value="🔄" title="بازنشانی" onclick="StarReturn(this,'${item.fbId}','${item.itemFbShomareh}')"/></div>
+                        <div class="row"><span style="font-size:25px">*</span><input  style="font-size:20px" class="ReturnItemsStar" type="submit" value="🔄" title="بازنشانی"
+                        onclick="StarReturn(this,'${item.fbId}','${item.itemFbShomareh}')"/></div>
                         </div>`;
         }
         else
             strStar += `<div class="col-12" id="span${item.itemFbShomareh}"></div>`;
 
         bahayeVahedSet = toPersianDigits(formatNumber(bahayeVahedSetEn));
+        ItemZaribSet = toPersianDigits(formatNumber(ItemZaribSetEn));
 
         const isBlinking = item.meghdar > 0 && (!bahayeVahedSet || parseFloat(bahayeVahedSetEn) === 0);
         const bahayeVahedInput = `
             <input id="txtBahayeVahed-${rizId}" onchange="BahayeVahedNewMeghdarChange(this,'${item.fbId}','${item.itemFbShomareh}')" type="text" class="form-control form-control-sm ${isBlinking ? 'blinking' : ''}" 
                 value="${bahayeVahedSet ?? ''}" 
-                style="text-align:center;" />
+                style="text-align:center;border:unset" />
             `;
+
+        const ItemZaribInput = `
+            <input id="txtItemZarib-${rizId}" onchange="ItemZaribChange(this,'${item.fbId}','${item.itemFbShomareh}')" type="text" class="form-control form-control-sm"
+                value="${ItemZaribSet ?? ''}" 
+                style="text-align:center;border:unset" />
+            `;
+
+        var stritemFbShomareh = '';
+        if (faslAsli) {
+            stritemFbShomareh = `
+            <span>
+                ${toPersianDigits(item.itemFbShomareh)}
+            </span>
+            `;
+        }
+        else {
+            stritemFbShomareh = `
+            <span>
+                ${toPersianDigits(item.itemFbShomarehMain)}
+            </span>
+            `;
+        }
 
         const mainRow = $(`
         <tr id="rowFasl-${rizId}" class="main-row ${clickableClass}" data-riz-id="${rizId}" style="cursor: pointer;">
-        <td style="text-align:center">${strStar}</td>
-        <td style="text-align:center">${item.itemFbShomareh}</td>
-        <td style="word-break: break-word; white-space: normal;text-align:right">${item.sharh}</td>
-        <td style="text-align:center">${item.vahed}</td>
-        <td style="text-align:center">${bahayeVahedInput}</td>
-        <td style="text-align:center"><span id="meghdarFasl_${item.itemFbShomareh}">${formatNumber(item.meghdar)}</span></td>
-        <td style="text-align:center"><span id="bahayeKolFasl_${item.itemFbShomareh}">${formatNumber(BahayeKolFix)}</span></td>
+        <td style="text-align:center;width:5%">${strStar}</td>
+        <td style="text-align:center;width:7%">  ${stritemFbShomareh}</td>
+        <td style="word-break: break-word; white-space: normal;text-align:right;width:46%">${toPersianDigits(item.sharh)}</td>
+        <td style="text-align:center;width:8%">${item.vahed}</td>
+        <td style="text-align:center;width:7%;padding:0px">${bahayeVahedInput}</td>
+        <td style="text-align:center;width:10%"><span id="meghdarFasl_${item.itemFbShomareh}">${formatNumber(item.meghdar)}</span></td>
+        <td style="text-align:center;width:4%;padding:0px">${ItemZaribInput}</td>
+        <td style="text-align:center;width:10%"><span id="bahayeKolFasl_${item.itemFbShomareh}">${formatNumber(BahayeKolFix)}</span></td>
         <td style="text-align:center;display:none"><span id="bahayeVahedFasl_${item.bahayeVahed}">${item.bahayeVahed}</span></td>
         <td></td>
         </tr>
@@ -593,23 +1228,26 @@ function renderTable(data, Stars, Code) {
         if (Array.isArray(item.rizMetre) && item.rizMetre.length > 0) {
             rizRowsHtml += item.rizMetre.map(riz =>
                 `
-		<tr class="riz-row-data" style="direction:ltr" data-id="${riz.id}" data-itemsFields='${JSON.stringify(item.itemsFields).replace(/"/g, '&quot;')}'
-        onclick="EditRizMetreRow(this,'${riz.id}','${item.itemFbShomareh}','${rizId}','${item.fbId}','${Code}')" style="cursor:pointer;">
-		<td style="text-align:center">${riz.shomarehNew == null ? '' : riz.shomarehNew}</td>
-		<td><span>${riz.sharh}</span></td>
-		<td style="text-align:center"><span>${riz.tedad == null ? '' : riz.tedad}</span></td>
-		<td style="text-align:center"><span>${riz.tool == null ? '' : riz.tool}</span></td>
-		<td style="text-align:center"><span>${riz.arz == null ? '' : riz.arz}</span></td>
-		<td style="text-align:center"><span>${riz.ertefa == null ? '' : riz.ertefa}</span></td>
-		<td style="text-align:center"><span>${riz.vazn == null ? '' : riz.vazn}</span></td>
-		<td style="text-align:center"><span id="spanMeghdarJoz">${riz.meghdarJoz == null ? '' : riz.meghdarJoz}</span></td>
-		<td><span>${riz.des ?? ''}</span></td>
-		<td style="text-align:center">
+		<tr class="riz-row-data" data-id="${riz.id}" data-itemsFields='${JSON.stringify(item.itemsFields).replace(/"/g, '&quot;')}'
+                onclick="EditRizMetreRow(this,'${riz.id}','${item.itemFbShomareh}','${rizId}','${item.fbId}','${Code}')" style="cursor:pointer;">
+		<td style="text-align:center;width:4%">${riz.shomarehNew == null ? '' : toPersianDigits(riz.shomarehNew)}</td>
+        <td style="text-align:center;width:6%"><span>${toPersianDigits(riz.tajmieItem)}</span></td>
+		<td style="width:22%"><span>${toPersianDigits(riz.sharh)}</span></td>
+		<td style="text-align:center;width:7%"><span>${riz.tedad == null ? '' : toPersianDigits(riz.tedad)}</span></td>
+		<td style="text-align:center;width:7%"><span>${riz.tool == null ? '' : toPersianDigits(riz.tool)}</span></td>
+		<td style="text-align:center;width:7%"><span>${riz.arz == null ? '' : toPersianDigits(riz.arz)}</span></td>
+		<td style="text-align:center;width:7%"><span>${riz.ertefa == null ? '' : toPersianDigits(riz.ertefa)}</span></td>
+		<td style="text-align:center;width:7%"><span>${riz.vazn == null ? '' : toPersianDigits(riz.vazn)}</span></td>
+		<td style="text-align:center;width:7%"><span id="spanMeghdarJoz">${riz.meghdarJoz == null ? '' : toPersianDigits(riz.meghdarJoz)}</span></td>
+		<td style="width:20%"><span>${toPersianDigits(riz.des ?? '')}</span></td>
+		<td style="text-align:center;width:7%">
 			<i class="fa fa-trash DelRMUStyle" onclick="event.stopPropagation();DeleteRizMetre(this,'${riz.id}','${item.itemFbShomareh}','${rizId}','${item.fbId}','${Code}')"></i>
 		</td>
 		</tr>
 		`).join('');
         }
+
+        debugger;
 
 
         field = item.itemsFields;
@@ -625,38 +1263,49 @@ function renderTable(data, Stars, Code) {
 
         rizRowsHtml += `
 <tr class="riz-input-row">
-  <td style="text-align:center"></td>
-  <td><input id="txtSharh" class="form-control form-control-sm" type="text" /></td>
+  <td style="text-align:center;width:4%"></td>
+  <td style="text-align:center;width:6%">
 
-  <td style="text-align:center">
+  <div class="d-flex align-items-center gap-2">
+            <i class="fa fa-info SaveRMUStyle SelectTajmieItemClass" style="padding-left: 15px;" onclick="ShowSelectTajmie('${item.itemFbShomareh}-New')"></i>
+        
+            <input id="txtTajmieItem-${item.itemFbShomareh}-New" class="form-control form-control-sm" type="text" onchange="TajmieItemChange(this)" />
+       
+    </div>
+  </td>
+  <td style="width:22%">
+    <input id="txtSharh" class="form-control form-control-sm" type="text" />
+  </td>
+
+  <td style="text-align:center;width:7%">
     <input id="txtTedad" class="${getInputClass(f0)}" type="text" ${getDisabledAttr(f0)} />
   </td>
 
-  <td style="text-align:center">
+  <td style="text-align:center;width:7%">
     <input id="txtTool" class="${getInputClass(f1)}" type="text" ${getDisabledAttr(f1)} />
   </td>
 
-  <td style="text-align:center">
+  <td style="text-align:center;width:7%">
     <input id="txtArz" class="${getInputClass(f2)}" type="text" ${getDisabledAttr(f2)} />
   </td>
 
-  <td style="text-align:center">
+  <td style="text-align:center;width:7%">
     <input id="txtErtefa" class="${getInputClass(f3)}" type="text" ${getDisabledAttr(f3)} />
   </td>
 
-  <td style="text-align:center">
+  <td style="text-align:center;width:7%">
     <input id="txtVazn" class="${getInputClass(f4)}" type="text" ${getDisabledAttr(f4)} />
   </td>
 
-  <td style="text-align:center">
+  <td style="text-align:center;width:7%">
     <input id="txtMeghdarJoz" class="form-control form-control-sm" type="text" disabled />
   </td>
 
-  <td>
+  <td style="width:20%">
     <input id="txtDes" class="form-control form-control-sm" type="text" />
   </td>
 
-  <td style="text-align:center">
+  <td style="text-align:center;width:7%">
     <button type="button"
       onclick="SaveRMUClick($(this),'${item.itemFbShomareh}','${rizId}','${Code}')"
       class="ButtonRowsSaveStyle">
@@ -685,17 +1334,17 @@ function renderTable(data, Stars, Code) {
         //		</td>
         //	</tr>
         //`;
-        debugger;
 
 
         const detailRow = $(`
 			<tr id="${rizId}" class="riz-row" style="display: none;">
 				<td colspan="8">
 					<table class="table table-sm table-bordered mb-0">
-						<thead>
+						<thead style="width:100%">
 							<tr style="background-color: #c1b9e7;">
-								<th style="width: 7%;text-align: center;vertical-align: top;">ردیف</th>
-								<th style="width: 25%;text-align: center;vertical-align: top;">شرح ریزه متره</th>
+								<th style="width: 4%;text-align: center;vertical-align: top;">ردیف</th>
+								<th style="width: 6%;text-align: center;vertical-align: top;">فعالیت</th>
+								<th style="width: 22%;text-align: center;vertical-align: top;">شرح ریزه متره</th>
 								<th style="width: 7%;text-align: center;vertical-align: top;">
                                    <span>تعداد</span>   
                                     <hr/>
@@ -732,7 +1381,7 @@ function renderTable(data, Stars, Code) {
                                 </th>
 								<th style="width: 7%;text-align: center;vertical-align: top;">                               
                                     <span>
-                                    وزن
+                                    وزن یا...
                                     </span>
                                     <hr/>
                                     <span style="font-size:10px">
@@ -772,16 +1421,26 @@ function renderTable(data, Stars, Code) {
 
 
     Stars.forEach((item) => {
-        const rizId = `riz-${Code}-${index}`;
+        debugger;
 
         currentId = item.id;
+
+        const rizId = `riz-${currentId}-${index}`;
+
+        const ItemZaribStarSet = item.itemZaribStar;
+
+        const ItemZaribStarInput = `
+            <input id="txtItemZaribStar-${rizId}" onchange="ItemZaribStarChange(this,'${currentId}','${item.shomareh}')" type="text" class="form-control form-control-sm"
+                value="${ItemZaribStarSet ?? ''}" 
+                style="text-align:center;border:unset" />
+            `;
 
         KharidTajhizat = item.blnKharidTajhizat == null ? false : item.blnKharidTajhizat;
         strKharidTajhizat = KharidTajhizat == true ? "ت" : "";
         checked = KharidTajhizat == true ? "checked" : "";
         const mainRowStar = $(`
         <tr id="rowFasl-${rizId}" class="main-row clickable-row" data-riz-id="${rizId}" style="cursor: pointer;">
-        <td style="text-align:center;">
+        <td style="text-align:center;width:5%">
         <span>
             ${strKharidTajhizat}
         </span>
@@ -789,8 +1448,8 @@ function renderTable(data, Stars, Code) {
             * 
         </span>
         </td>
-        <td style="text-align:center">${item.shomareh}</td>
-        <td style="word-break: break-word; white-space: normal;text-align:right">
+        <td style="text-align:center;width:7%">${toPersianDigits(item.shomareh)}</td>
+        <td style="word-break: break-word; white-space: normal;text-align:right;width:46%">
             <div class="row">
              <div class="col-10">
                 ${item.sharh}
@@ -801,12 +1460,13 @@ function renderTable(data, Stars, Code) {
              </div>
             </div>
         </td>
-        <td style="text-align:center">${item.vahedName}</td>
-        <td style="text-align:center" id="bahayeVahedFaslStar_${item.shomareh}">${item.bahayeVahed}</td>
-        <td style="text-align:center" id="meghdarFaslStar_${item.shomareh}">${formatNumber(item.meghdar)}</td>
-        <td style="text-align:center" id="bahayeKolFaslStar_${item.shomareh}">${formatNumber(item.bahayeKol)}</td>
+        <td style="text-align:center;width:8%">${item.vahedName}</td>
+        <td style="text-align:center;width:7%" id="bahayeVahedFaslStar_${item.shomareh}">${toPersianDigits(item.bahayeVahed)}</td>
+        <td style="text-align:center;width:10%" id="meghdarFaslStar_${item.shomareh}">${toPersianDigits(formatNumber(item.meghdar))}</td>
+        <td style="width:4%">${ItemZaribStarInput}</td>
+        <td style="text-align:center;width:10%" id="bahayeKolFaslStar_${item.shomareh}">${formatNumber(item.bahayeKol)}</td>
         <td>
-            <i id="iDelete_${currentId}_${item.shomareh}" onclick="DeleteItemFB(this,'${item.shomareh}','${Code}')" class="fa fa-trash DelRMUStyle" ></i>
+            <i id="iDelete_${currentId}_${item.shomareh}" onclick="event.stopPropagation();DeleteItemFB(this,'${item.shomareh}','${Code}',${ItemId})" class="fa fa-trash DelRMUStyle" ></i>
         </td>
         </tr>
         `);
@@ -817,18 +1477,21 @@ function renderTable(data, Stars, Code) {
         if (Array.isArray(item.rizMetre) && item.rizMetre.length > 0) {
             rizRowsHtmlStar += item.rizMetre.map(riz =>
                 `
-		<tr class="riz-row-data" style="direction:ltr" data-id="${riz.id}" data-itemsFields='${JSON.stringify(item.itemsFields).replace(/"/g, '&quot;')}'
+		<tr class="riz-row-data" data-id="${riz.id}" data-itemsFields='${JSON.stringify(item.itemsFields).replace(/"/g, '&quot;')}'
         onclick="EditRizMetreRowStar(this,'${riz.id}','${item.shomareh}','${rizId}','${Code}')" style="cursor:pointer;">
-		<td style="text-align:center">${riz.shomarehNew == null ? '' : riz.shomarehNew}</td>
-		<td><span>${riz.sharh}</span></td>
-		<td style="text-align:center"><span>${riz.tedad == null ? '' : riz.tedad}</span></td>
-		<td style="text-align:center"><span>${riz.tool == null ? '' : riz.tool}</span></td>
-		<td style="text-align:center"><span>${riz.arz == null ? '' : riz.arz}</span></td>
-		<td style="text-align:center"><span>${riz.ertefa == null ? '' : riz.ertefa}</span></td>
-		<td style="text-align:center"><span>${riz.vazn == null ? '' : riz.vazn}</span></td>
-		<td style="text-align:center"><span id="spanMeghdarJozStar">${riz.meghdarJoz == null ? '' : riz.meghdarJoz}</span></td>
-		<td><span>${riz.des ?? ''}</span></td>
-		<td style="text-align:center">
+		<td style="text-align:center;width:4%">${riz.shomarehNew == null ? '' : toPersianDigits(riz.shomarehNew)}</td>
+		<td style="text-align:center;width:6%">
+            <span>${riz.tajmieItem == null ? '' : toPersianDigits(riz.tajmieItem)}</span>
+        </td>
+		<td style="width:22%"><span>${toPersianDigits(riz.sharh)}</span></td>
+		<td style="text-align:center;width:7%"><span>${riz.tedad == null ? '' : toPersianDigits(riz.tedad)}</span></td>
+		<td style="text-align:center;width:7%"><span>${riz.tool == null ? '' : toPersianDigits(riz.tool)}</span></td>
+		<td style="text-align:center;width:7%"><span>${riz.arz == null ? '' : toPersianDigits(riz.arz)}</span></td>
+		<td style="text-align:center;width:7%"><span>${riz.ertefa == null ? '' : toPersianDigits(riz.ertefa)}</span></td>
+		<td style="text-align:center;width:7%"><span>${riz.vazn == null ? '' : toPersianDigits(riz.vazn)}</span></td>
+		<td style="text-align:center;width:7%"><span id="spanMeghdarJozStar">${riz.meghdarJoz == null ? '' : toPersianDigits(riz.meghdarJoz)}</span></td>
+		<td style="width:20%"><span>${toPersianDigits(riz.des ?? '')}</span></td>
+		<td style="text-align:center;width:7%">
 			<i class="fa fa-trash DelRMUStyle" onclick="event.stopPropagation();DeleteRizMetreStar($(this),'${riz.id}','${item.shomareh}','${rizId}','${Code}')"></i>
 		</td>
 		</tr>
@@ -837,38 +1500,49 @@ function renderTable(data, Stars, Code) {
 
         rizRowsHtmlStar += `
 <tr class="riz-input-row">
-  <td style="text-align:center"></td>
-  <td><input id="txtSharh" class="form-control form-control-sm" type="text" /></td>
+  <td style="text-align:center;width:4%"></td>
+  <td style="text-align:center;width:6%">
 
-  <td style="text-align:center">
-    <input id="txtTedad" class="" type="text"/>
+   <div class="d-flex align-items-center gap-2">
+            <i class="fa fa-info SaveRMUStyle SelectTajmieItemClass" style="padding-left: 15px;" onclick="ShowSelectTajmie('Star-${Code}-New')"></i>
+        
+            <input id="txtTajmieItem-Star-${Code}-New" class="form-control form-control-sm" type="text" onchange="TajmieItemChange(this)" />
+       
+    </div>
+  </td>
+  <td style="width:22%">
+    <input id="txtSharh-${Code}" class="form-control form-control-sm" type="text" />
   </td>
 
-  <td style="text-align:center">
-    <input id="txtTool" class="" type="text"/>
+  <td style="text-align:center;width:7%">
+    <input id="txtTedad-${Code}" class="form-control form-control-sm" type="text"/>
   </td>
 
-  <td style="text-align:center">
-    <input id="txtArz" class="" type="text"/>
+  <td style="text-align:center;width:7%">
+    <input id="txtTool-${Code}" class="form-control form-control-sm" type="text"/>
   </td>
 
-  <td style="text-align:center">
-    <input id="txtErtefa" class="" type="text"/>
+  <td style="text-align:center;width:7%">
+    <input id="txtArz-${Code}" class="form-control form-control-sm" type="text"/>
   </td>
 
-  <td style="text-align:center">
-    <input id="txtVazn" class="" type="text"/>
+  <td style="text-align:center;width:7%">
+    <input id="txtErtefa-${Code}" class="form-control form-control-sm" type="text"/>
   </td>
 
-  <td style="text-align:center">
-    <input id="txtMeghdarJoz" class="form-control form-control-sm" type="text" disabled />
+  <td style="text-align:center;width:7%">
+    <input id="txtVazn-${Code}" class="form-control form-control-sm" type="text"/>
   </td>
 
-  <td>
-    <input id="txtDes" class="form-control form-control-sm" type="text" />
+  <td style="text-align:center;width:7%">
+    <input id="txtMeghdarJoz-${Code}" class="form-control form-control-sm" type="text" disabled />
   </td>
 
-  <td style="text-align:center">
+  <td style="width:20%">
+    <input id="txtDes-${Code}" class="form-control form-control-sm" type="text" />
+  </td>
+
+  <td style="text-align:center;width:7%">
     <button type="button"
       onclick="SaveRMUStarClick($(this),'${item.shomareh}','${rizId}','${Code}')"
       class="ButtonRowsSaveStyle">
@@ -884,16 +1558,17 @@ function renderTable(data, Stars, Code) {
 					<table class="table table-sm table-bordered mb-0">
 						<thead>
 							<tr style="background-color: #c1b9e7;">
-								<th style="width: 7%;text-align:center">ردیف</th>
-								<th style="width: 25%;">شرح ریزه متره</th>
+								<th style="width: 4%;text-align:center">ردیف</th>
+								<th style="width: 6%;text-align:center">فعالیت</th>
+								<th style="width: 22%;">شرح ریزه متره</th>
 								<th style="width: 7%;text-align:center">تعداد</th>
 								<th style="width: 7%;text-align:center">طول</th>
 								<th style="width: 7%;text-align:center">عرض</th>
 								<th style="width: 7%;text-align:center">ارتفاع</th>
-								<th style="width: 7%;text-align:center">وزن</th>
+								<th style="width: 7%;text-align:center">وزن یا...</th>
 								<th style="width: 7%;text-align:center">مقدار جزء</th>
 								<th style="width: 20%;">توضیحات</th>
-								<th style="width: 7%;text-align:center">عملیات</th>
+								<th style="width: 6%;text-align:center">عملیات</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -911,38 +1586,46 @@ function renderTable(data, Stars, Code) {
 
     });
 
+    var RowNew = '';
 
-    const RowNew = $(`
-        <tr id="rowFaslNew-${Code}" class="main-row" data-riz-code="${Code}" style="cursor: pointer;background-color: #cbedcb;">
-        <td style="text-align:center"><div class=\"col-md-1\"><i class=\"fa fa-plus SaveRMUStyle\"></i></div></td>
-        <td style="text-align:center"><input id="inputFBShomareh-${Code}" type="text" class="form-control"/></td>
-        <td style="text-align:center">
+    debugger;
+    if (faslAsli) {
+
+        RowNew = $(`
+        <tr id="rowFaslNew-${ItemId}" class="main-row" data-riz-code="${Code}" style="cursor: pointer;background-color: #cbedcb;">
+        <td style="text-align:center;width:5%"><div class=\"col-md-1\"><i class=\"fa fa-plus SaveRMUStyle\"></i></div></td>
+        <td style="text-align:center;width:7%"><input id="inputFBShomareh-${ItemId}" type="text" class="form-control"/></td>
+        <td style="text-align:center;width:46%">
            <div class="row">
-            <div class="col-10"><input id="inputSharh-${Code}" type="text" class="form-control"/></div>
-            <div class="col-2"><input id="ckKharidTajhizat-${Code}" type="checkbox" /><label>خرید تجهیزات</label></div>
+            <div class="col-10"><input id="inputSharh-${ItemId}" type="text" class="form-control"/></div>
+            <div class="col-2"><input id="ckKharidTajhizat-${ItemId}" type="checkbox" /><label>خرید تجهیزات</label></div>
            </div>
         </td>
-        <td style="text-align:center"><select style="width: 100%;" id="selectVahed-${Code}"></select></td>
-        <td style="text-align:center"><input id="inputBahayeVahed-${Code}" type="text" class="form-control"/></td>
-        <td style="text-align:center" id="meghdarFasl-${Code}"></td>
-        <td></td>
+        <td style="text-align:center;width:8%"><select style="width: 100%;" id="selectVahed-${ItemId}"></select></td>
+        <td style="text-align:center;width:7%"><input id="inputBahayeVahed-${ItemId}" type="text" class="form-control"/></td>
+        <td style="text-align:center;width:10%" id="meghdarFasl-${ItemId}"></td>
+        <td style="width:4%">
+            <input id="txtItemZaribStar-${ItemId}" type="text" class="form-control form-control-sm"
+                value="" style="text-align:center;border:unset" />
+        </td>
+        <td style="width:10%"></td>
         <td><button type=\"button\" onclick=\"SaveNewRMUClick($(this))\" class=\"ButtonRowsSaveStyle\"><i id=\"iSave\" class=\"fa fa-save SaveRMUStyle\"></i></button></td>
         </tr>
         `);
+        var strOption = '';
+        $.each(lstVaheds, function () {
+            strOption += `<option value="${this.id}">${this.name}</option>`;
+        });
 
+        RowNew.find('select').append(strOption)
 
-    var strOption = '';
-    $.each(lstVaheds, function () {
-        strOption += `<option value="${this.id}">${this.name}</option>`;
-    });
-
-    RowNew.find('select').append(strOption)
-
-    tbody.append(RowNew);
+        tbody.append(RowNew);
+    }
 
     container.append(table);
 
     container.on('keydown', '.riz-row-data input,.riz-input-row input', function (e) {
+
         if (e.key === 'Enter') {
             e.preventDefault();
 
@@ -974,9 +1657,10 @@ function renderTable(data, Stars, Code) {
     });
 
 
-    $(`#${Code}`).slideDown(200);
+    $(`#${ItemId}`).slideDown(200);
 
     $('.clickable-row').off('click').on('click', function (e) {
+
         e.stopPropagation();
 
         if ($(e.target).is('input, button, textarea')) {
@@ -986,11 +1670,16 @@ function renderTable(data, Stars, Code) {
         const rizId = $(this).data('riz-id');
         const rizRow = $(`#${rizId}`);
 
+
+
         // بسته کردن بقیه
         $('.riz-row').not(rizRow).slideUp(200);
 
         // باز یا بسته کردن این یکی
         rizRow.slideToggle(200);
+
+        txtSharh = rizRow.find('#txtSharh');
+        txtSharh.focus();
 
         setTimeout(() => {
             const container = rizRow.closest('[id^="barAvordContainer-"]');
@@ -1048,14 +1737,14 @@ function renderTable(data, Stars, Code) {
         inputs.val('');
     });
 
-    convertNumbersInPage();
+    //convertNumbersInPage();
 
     $('[id^="chkNonZeroMeghdar-"]').off('change').on('change', function () {
-        debugger;
 
         const showOnlyNonZero = $(this).is(':checked');
-        $(`#barAvordContainer-${Code} .main-row`).each(function () {
-            debugger;
+            isOneRowFilledRizMetre = false;
+        $(`#barAvordContainer-${ItemId} .main-row`).each(function () {
+
             const meghdarText = $(this).find('[id^="meghdarFasl_"], [id^="meghdarFaslStar_"]').text().replace(/,/g, '');
             const EnNum = meghdarText != "" ? convertPersianToEnglish(meghdarText) : "0";
             const meghdar = parseFloat(EnNum);
@@ -1066,19 +1755,34 @@ function renderTable(data, Stars, Code) {
                     $(`#${$(this).data('riz-id')}`).hide(); // مخفی‌سازی ردیف ریز مربوطه
                 } else {
                     $(this).show();
+                    isOneRowFilledRizMetre = true;
                 }
             } else {
                 $(this).show();
             }
         });
 
-        $('#rowFaslNew-' + Code).show();
+        if (!isOneRowFilledRizMetre) {
+            $(`#barAvordContainer-${ItemId} .main-row`).each(function () {
+
+                isOneRowFilledRizMetre = false;
+                const meghdarText = $(this).find('[id^="meghdarFasl_"], [id^="meghdarFaslStar_"]').text().replace(/,/g, '');
+                const EnNum = meghdarText != "" ? convertPersianToEnglish(meghdarText) : "0";
+                const meghdar = parseFloat(EnNum);
+                if (showOnlyNonZero) {
+                   $(this).show();
+                } else {
+                    $(this).show();
+                }
+            });
+        }
+
+        $('#rowFaslNew-' + ItemId).show();
     });
     //function KharidTajhizatChange(Id, blnKharidTajhizat, code)
 
 
     $('[id^="KharidTajhizat_"]').off('change').on('change', function () {
-        debugger;
         thisId = this.id.split('_');
         Shomareh = thisId[2];
         Year = parseInt($('#HDFYear').val());
@@ -1097,47 +1801,57 @@ function renderTable(data, Stars, Code) {
             success: function (data) {
                 info = data.split('_');
                 if (info[0] == "OK") {
-                    debugger;
+
+                    //const row = $(this).closest('tr');
+                    //const tdJameFaslStar = $('#tdjameFaslStar-' + Code);
+                    //const tdJameFasl = $('#tdjameFasl-' + Code);
+                    //const tdJameFaslAll = $('#tdjameFaslAll-' + Code);
+                    //const tdJameFaslStarBaZarib = $('#tdjameFaslStarBaZarib-' + Code);
+                    //const tdJameFaslBaZarib = $('#tdjameFaslBaZarib-' + Code);
+                    //const tdJameFaslAllBaZarib = $('#tdjameFaslAllBaZarib-' + Code);
+
+                    //const MeghdarJoz = row.find('#spanMeghdarJozStar');
+
+                    //var meghdarFasl = $('#meghdarFaslStar_' + Shomareh);
+                    //var bahayeKolFasl = $('#bahayeKolFaslStar_' + Shomareh);
+                    //var bahayeVahedFasl = $('#bahayeVahedFaslStar_' + Shomareh);
+
+                    //let num = parseFloat(info[1]);
+
+                    ////let bahayeVahedFasl1 = parseFloat(convertPersianToEnglish(bahayeVahedFasl.text() == "" ? "0" : bahayeVahedFasl.text()));
+
+                    ////let txtBahayeVahed1 = parseFloat(convertPersianToEnglish(bahayeVahedFasl.text().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
+
+                    //meghdarFasl.html(formatNumber(info[1]));
+                    //bahayeKolFasl.html(formatNumber(txtBahayeVahed1 * info[1]));
+                    //MeghdarJoz.html(num);
+                    //tdJameFaslStar.html(formatNumber(parseFloat(info[2]).toFixed(0)));
+                    //tdJameFaslStarBaZarib.html(formatNumber(parseFloat(info[3]).toFixed(0)));
 
 
-                    const row = $(this).closest('tr');
-                    const tdJameFaslStar = $('#tdjameFaslStar-' + Code);
-                    const tdJameFasl = $('#tdjameFasl-' + Code);
-                    const tdJameFaslAll = $('#tdjameFaslAll-' + Code);
-                    const tdJameFaslStarBaZarib = $('#tdjameFaslStarBaZarib-' + Code);
-                    const tdJameFaslBaZarib = $('#tdjameFaslBaZarib-' + Code);
-                    const tdJameFaslAllBaZarib = $('#tdjameFaslAllBaZarib-' + Code);
+                    //JameFasl = parseFloat(convertPersianToEnglish(tdJameFasl.html().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
+                    //dJameFaslAll = parseFloat(info[2]) + isNaN(JameFasl) ? 0 : JameFasl;
+                    //tdJameFaslAll.html(formatNumber(dJameFaslAll.toFixed(0)));
 
-                    const MeghdarJoz = row.find('#spanMeghdarJozStar');
+                    //JameFaslBaZarib = parseFloat(convertPersianToEnglish(tdJameFaslBaZarib.html().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
+                    //dJameFaslAllBaZarib = parseFloat(info[3]) + isNaN(JameFaslBaZarib) ? 0 : JameFaslBaZarib;
+                    //tdJameFaslAllBaZarib.html(formatNumber(dJameFaslAllBaZarib.toFixed(0)));
 
-                    var meghdarFasl = $('#meghdarFaslStar_' + Shomareh);
-                    var bahayeKolFasl = $('#bahayeKolFaslStar_' + Shomareh);
-                    var bahayeVahedFasl = $('#bahayeVahedFaslStar_' + Shomareh);
 
                     let num = parseFloat(info[1]);
+                    bahayeKolFasl = $('#bahayeKolFaslStar_' + Shomareh);
 
-                    let bahayeVahedFasl1 = parseFloat(convertPersianToEnglish(bahayeVahedFasl.text() == "" ? "0" : bahayeVahedFasl.text()));
+                    var meghdarFasl = $('#meghdarFaslStar_' + Shomareh);
+                    meghdarFasl.html(formatNumber(parseFloat(info[1]).toFixed(0)));
+                    bahayeKolFasl.html(formatNumber(parseFloat(info[2]).toFixed(0)));
 
-                    let txtBahayeVahed1 = parseFloat(convertPersianToEnglish(bahayeVahedFasl.text().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
-
-                    meghdarFasl.html(formatNumber(info[1]));
-                    bahayeKolFasl.html(formatNumber(txtBahayeVahed1 * info[1]));
-                    MeghdarJoz.html(num);
-                    tdJameFaslStar.html(formatNumber(parseFloat(info[2]).toFixed(0)));
-                    tdJameFaslStarBaZarib.html(formatNumber(parseFloat(info[3]).toFixed(0)));
-
-
-                    JameFasl = parseFloat(convertPersianToEnglish(tdJameFasl.html().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
-                    dJameFaslAll = parseFloat(info[2]) + isNaN(JameFasl) ? 0 : JameFasl;
-                    tdJameFaslAll.html(formatNumber(dJameFaslAll.toFixed(0)));
-
-                    JameFaslBaZarib = parseFloat(convertPersianToEnglish(tdJameFaslBaZarib.html().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
-                    dJameFaslAllBaZarib = parseFloat(info[3]) + isNaN(JameFaslBaZarib) ? 0 : JameFaslBaZarib;
-                    tdJameFaslAllBaZarib.html(formatNumber(dJameFaslAllBaZarib.toFixed(0)));
-
+                    Code = Shomareh.substring(0, 2);
+                    refreshBaseItem(this, Shomareh, Code);
 
                     toastr.success('اطلاعات با موفقیت ویرایش شد.', 'موفق');
-                    GetBarAvord(Code, "");
+
+                    //GetBarAvord(thisId[1], Code, "", true);
+
                     GetJamBarAvordAll();
                     GetJamFosoulAll();
                 }
@@ -1147,13 +1861,16 @@ function renderTable(data, Stars, Code) {
             }
         });
     });
+
     initRowEvents(RowNew);
+
+    $(`#chkNonZeroMeghdar-${Code}`).click();
+
 }
 
-function DeleteItemFB(obj, Shomareh, Code) {
+function DeleteItemFB(obj, Shomareh, Code, ItemId) {
 
-    debugger;
-    Year = pareseInt($('#HDFYear').val());
+    Year = parseInt($('#HDFYear').val());
 
     thisId = obj.id.split('_');
     var vardata = new Object();
@@ -1170,39 +1887,60 @@ function DeleteItemFB(obj, Shomareh, Code) {
             info = data.split('_');
             if (info[0] == "OK") {
 
-                debugger;
+                //GetBarAvord(ItemId, Code, "");
 
-                GetBarAvord(Code, "");
-                Shomareh = thisId[2];
+                $(obj).parent().parent().remove();
+                closestTr = $(obj).closest('tr');
+                dataId = closestTr.attr('data-riz-id');
 
-                var meghdarFasl = $('#meghdarFaslStar_' + Shomareh);
-                var bahayeKolFasl = $('#bahayeKolFaslStar_' + Shomareh);
-                var bahayeVahedFasl = $('#bahayeVahedFaslStar_' + Shomareh);
+                $('#' + dataId).slideUp(500);
+                //Shomareh = thisId[2];
 
-                const tdJameFaslStar = $('#tdjameFaslStar-' + Code);
-                const tdJameFaslStarBaZarib = $('#tdjameFaslStarBaZarib-' + Code);
-                const tdJameFaslAll = $('#tdjameFaslAll-' + Code);
-                const tdJameFaslAllBaZarib = $('#tdjameFaslAllBaZarib-' + Code);
+                //var meghdarFasl = $('#meghdarFaslStar_' + Shomareh);
+                //var bahayeKolFasl = $('#bahayeKolFaslStar_' + Shomareh);
+                //var bahayeVahedFasl = $('#bahayeVahedFaslStar_' + Shomareh);
 
-                let txtBahayeVahed1 = parseFloat(convertPersianToEnglish(bahayeVahedFasl.text().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
-                bahayeKolFasl.html(formatNumber(txtBahayeVahed1 * parseFloat(info[1])));
+                //const tdJameFasl = $('#tdjameFasl-' + Code);
+                //const tdJameFaslBaZarib = $('#tdJameFaslBaZarib-' + Code);
+                //const tdJameFaslStar = $('#tdjameFaslStar-' + Code);
+                //const tdJameFaslStarBaZarib = $('#tdjameFaslStarBaZarib-' + Code);
+                //const tdJameFaslAll = $('#tdjameFaslAll-' + Code);
+                //const tdJameFaslAllBaZarib = $('#tdjameFaslAllBaZarib-' + Code);
 
-                meghdarFasl.html(formatNumber(info[1]));
-                bahayeKolFasl.html(formatNumber(txtBahayeVahed1 * parseFloat(info[1])));
-                //MeghdarJoz.html(num);
-                tdJameFaslStar.html(formatNumber(parseFloat(info[2]).toFixed(0)));
-                tdJameFaslStarBaZarib.html(formatNumber(parseFloat(info[3]).toFixed(0)));
+                //let txtBahayeVahed1 = parseFloat(convertPersianToEnglish(bahayeVahedFasl.text().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
+                //bahayeKolFasl.html(formatNumber(txtBahayeVahed1 * parseFloat(info[1])));
 
-                JameFasl = parseFloat(convertPersianToEnglish(tdJameFasl.html().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
-                dJameFaslAll = parseFloat(info[2]) + JameFasl;
-                tdJameFaslAll.html(dJameFaslAll.toFixed(0));
+                //meghdarFasl.html(formatNumber(info[1]));
+                //bahayeKolFasl.html(formatNumber(txtBahayeVahed1 * parseFloat(info[1])));
+                ////MeghdarJoz.html(num);
+                //tdJameFaslStar.html(formatNumber(parseFloat(info[2]).toFixed(0)));
+                //tdJameFaslStarBaZarib.html(formatNumber(parseFloat(info[3]).toFixed(0)));
 
-                JameFaslBaZarib = parseFloat(convertPersianToEnglish(tdJameFaslBaZarib.html().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
-                dJameFaslAllBaZarib = parseFloat(info[3]) + JameFaslBaZarib;
-                tdJameFaslAllBaZarib.html(dJameFaslAllBaZarib.toFixed(0));
+                //JameFasl = parseFloat(convertPersianToEnglish(tdJameFasl.html().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
+                //dJameFaslAll = parseFloat(info[2]) + JameFasl;
+                //tdJameFaslAll.html(dJameFaslAll.toFixed(0));
+
+                //JameFaslBaZarib = parseFloat(convertPersianToEnglish(tdJameFaslBaZarib.html().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
+                //dJameFaslAllBaZarib = parseFloat(info[3]) + JameFaslBaZarib;
+                //tdJameFaslAllBaZarib.html(dJameFaslAllBaZarib.toFixed(0));
 
 
+                //GetCurrentRizMetreItemFBStar(Shomareh, thisId[1], Code);
+
+                //let num = parseFloat(info[1]);
+                //bahayeKolFasl = $('#bahayeKolFaslStar_' + Shomareh);
+
+                //var meghdarFasl = $('#meghdarFaslStar_' + Shomareh);
+                //meghdarFasl.html(parseFloat(info[1]).toFixed(0));
+                //bahayeKolFasl.html(formatNumber(parseFloat(info[2]).toFixed(0)));
+
+                //Code = Shomareh.substring(0, 2);
+                refreshBaseItem(obj, Shomareh, Code);
+
+                GetJamBarAvordAll();
+                GetJamFosoulAll();
                 toastr.success('اطلاعات با موفقیت حذف شد.', 'موفق');
+
             }
         },
         error: function (msg) {
@@ -1272,14 +2010,28 @@ function EditRizMetreRow(rowEl, rizMetreId, Shomareh, rizId, FBId, Code) {
     $row.addClass('editing');
 
     $row.find('td').each(function (index) {
+        debugger;
 
         const $td = $(this);
         const text = $td.find('span').html();
 
-        if (index === 0 || index === 7) return;
+        if (index === 0 || index === 8) return;
 
-        if (index === 2 || index === 3 || index === 4 || index === 5 || index === 6) {
-            const field = itemsFields.find(f => f.fieldType === (index - 1));
+        if (index === 1) {
+
+            let inputHtml =
+            `<div class="d-flex align-items-center gap-2">
+                <i class="fa fa-info SaveRMUStyle SelectTajmieItemClass" style="padding-left: 15px;" onclick="event.stopPropagation();ShowSelectTajmie('${Shomareh}-${rizMetreId}')"></i>
+
+                <input id="txtTajmieItem-${Shomareh}-${rizMetreId}" class="form-control form-control-sm" type="text" onclick="event.stopPropagation()" value="${text}">
+
+            </div>`;
+            $td.html(inputHtml);
+
+        }
+
+        else if (index === 3 || index === 4 || index === 5 || index === 6 || index === 7) {
+            const field = itemsFields.find(f => f.fieldType === (index - 2));
 
             // ساخت input با تنظیمات پیش‌فرض
             let inputHtml = `<input class="form-control form-control-sm" type="text" onclick="event.stopPropagation()" value="${text}"`;
@@ -1307,7 +2059,7 @@ function EditRizMetreRow(rowEl, rizMetreId, Shomareh, rizId, FBId, Code) {
     });
 
     // جایگزینی آیکن عملیات با دکمه ذخیره
-    const $actionCell = $row.find('td').eq(9);
+    const $actionCell = $row.find('td').eq(10);
     $actionCell.html(`
     <button type="button"
       onclick="event.stopPropagation();UpdateRizMetreFromRow($(this),'${rizMetreId}','${Shomareh}','${rizId}','${FBId}','${Code}')"
@@ -1316,23 +2068,41 @@ function EditRizMetreRow(rowEl, rizMetreId, Shomareh, rizId, FBId, Code) {
     </button>
 	`);
 
-    $row.find('td').eq(1).find('input').focus().select();
+    $row.find('td').eq(2).find('input').focus().select();
 }
 
 
 function cancelEditRow(row, rizMetreId, Shomareh, rizId1, FBId) {
-    debugger;
     //row.removeClass('editing');
     row.find('td').each(function (index) {
-        if (index === 0 || index === row.children('td').length - 1) return;
 
-        const input = $(this).find('input');
-        if (input.length > 0) {
-            const value = input.val();
-            input.replaceWith(`<span>${value}</span>`);
+        debugger;
+        if (index === 0 || index === row.children('td').length - 1) {
+            return;
+        }
+
+        else if (index === 2 || index === 9) {
+            const input = $(this).find('input');
+            if (input.length > 0) {
+                const value = input.val();
+                input.replaceWith(`<span>${value}</span>`);
+            }
+        }
+        else {
+
+            const input = $(this).find('input');
+            if (input.length > 0) {
+                const value = input.val();
+                input.replaceWith(`<span>${formatNumber(parseFloat(convertPersianToEnglish(value)))}</span>`);
+            }
+
+            const i = $(this).find('i');
+            if (i.length > 0) {
+                i.replaceWith(``);
+            }
         }
     });
-    convertNumbersInPage();
+    //convertNumbersInPage();
     const actionCell1 = row.find('td:last-child');
     actionCell1.empty();
     if (actionCell1.find('.fa-trash').length === 0) {
@@ -1342,20 +2112,6 @@ function cancelEditRow(row, rizMetreId, Shomareh, rizId1, FBId) {
     }
 }
 
-function convertPersianToEnglish(str) {
-    if (!str) return str;
-    // تبدیل ارقام فارسی و عربی به انگلیسی
-    const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
-    const arabicDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
-    let result = str;
-    for (let i = 0; i < 10; i++) {
-        result = result.replace(new RegExp(persianDigits[i], 'g'), i)
-            .replace(new RegExp(arabicDigits[i], 'g'), i);
-    }
-    // تبدیل جداکننده اعشار فارسی یا عربی به "."
-    result = result.replace(/[٫٬]/g, '.');
-    return result;
-}
 
 
 function UpdateRizMetreFromRow(el, rizMetreId, Shomareh, rizId1, FBId, Code) {
@@ -1392,16 +2148,17 @@ function UpdateRizMetreFromRow(el, rizMetreId, Shomareh, rizId1, FBId, Code) {
         BarAvordUserId = $('#HDFBarAvordUserID').val();
         NoeFBId = parseInt($('#HDFNoeFB').val());
         Year = parseInt($('#HDFYear').val());
-
+        debugger;
         var vardata = new Object();
         vardata.Id = rizId;
-        vardata.Sharh = values[0];
-        vardata.Tedad = values[1] != "" ? values[1] : null;
-        vardata.Tool = values[2] != "" ? values[2] : null;
-        vardata.Arz = values[3] != "" ? values[3] : null;
-        vardata.Ertefa = values[4] != "" ? values[4] : null;
-        vardata.Vazn = values[5] != "" ? values[5] : null;
-        vardata.Des = values[6];
+        vardata.TajmieItem = values[0] != "" ? values[0] : null;
+        vardata.Sharh = values[1];
+        vardata.Tedad = values[2] != "" ? values[2] : null;
+        vardata.Tool = values[3] != "" ? values[3] : null;
+        vardata.Arz = values[4] != "" ? values[4] : null;
+        vardata.Ertefa = values[5] != "" ? values[5] : null;
+        vardata.Vazn = values[6] != "" ? values[6] : null;
+        vardata.Des = values[7];
         vardata.NoeFBId = NoeFBId;
         vardata.Year = Year;
         vardata.BarAvordUserId = BarAvordUserId;
@@ -1417,13 +2174,18 @@ function UpdateRizMetreFromRow(el, rizMetreId, Shomareh, rizId1, FBId, Code) {
                 var info = data.split('_');
                 if (info[0] == "OK") {
                     row.removeClass('editing');
-                    debugger;
-                    //let num = parseFloat(info[1]);
+                    let num = parseFloat(info[1]);
                     //let bahayeVahedFasl1 = parseFloat(convertPersianToEnglish(bahayeVahedFasl.text()));
 
-                    refreshBaseItem(el, info[1], info[2], info[3], info[4], Code, Shomareh, rizId1);
+                    el.parent().parent().find('#spanMeghdarJoz').html(formatNumber(parseFloat(num).toFixed(2)));
 
-                    //meghdarFasl.html(formatNumber(info[2]));
+                    var meghdarFasl = $('#meghdarFasl_' + Shomareh);
+                    meghdarFasl.html(formatNumber(parseFloat(info[2]).toFixed(3)));
+
+                    dBahayeItem = info[3];
+                    var bahayeKolFasl = $('#bahayeKolFasl_' + Shomareh);
+                    bahayeKolFasl.html(formatNumber(parseFloat(dBahayeItem).toFixed(0)));
+
                     //bahayeKolFasl.html(formatNumber((bahayeVahedFasl1 * info[2]).toFixed(0)));
                     //MeghdarJoz.html(parseFloat(num.toFixed(2)));
 
@@ -1432,8 +2194,12 @@ function UpdateRizMetreFromRow(el, rizMetreId, Shomareh, rizId1, FBId, Code) {
                     //GetRizMetreUsers();
                     toastr.success('ریزه متره انتخابی بدرستی ویرایش گردید', 'موفقیت');
                     cancelEditRow(row, rizMetreId, Shomareh, rizId1, FBId);
+                    refreshBaseItem(el, Shomareh, Code);
                     GetJamBarAvordAll();
                     GetJamFosoulAll();
+                }
+                else if (info[0] == "NOK") {
+                    toastr.info('فصل تجمیعی انتخابی وجود ندارد', 'اطلاع');
                 }
                 else
                     toastr.info('مشکل در ویرایش ریزه متره انتخابی', 'اطلاع');
@@ -1453,14 +2219,18 @@ function UpdateRizMetreFromRow(el, rizMetreId, Shomareh, rizId1, FBId, Code) {
 }
 
 function SaveNewRMUClick($btn) {
+
     var $button = $btn instanceof jQuery ? $btn : $($btn);
     var $row = $button.closest('tr');
     var code = ($row.data('riz-code') || '').toString(); // مثلا "12"
+
+    itemId = $row.attr('id').split('-')[1];
 
     var $fbShomareh = $row.find('input[id^="inputFBShomareh-"]');
     var $sharh = $row.find('input[id^="inputSharh-"]');
     var $vahed = $row.find('select[id^="selectVahed-"]');
     var $bahayeVahed = $row.find('input[id^="inputBahayeVahed-"]');
+    var $itemZaribStar = $row.find('input[id^="txtItemZaribStar-"]');
     var $kharidTajhizat = $row.find('input[id^="ckKharidTajhizat-"]');
 
     // پاک کردن خطاهای قبلی
@@ -1483,7 +2253,7 @@ function SaveNewRMUClick($btn) {
     var sharhVal = ($sharh.val() || '').trim();
     var vahedVal = ($vahed.val() || '').trim();
     var bahayeVal = ($bahayeVahed.val() || '').trim();
-    debugger;
+
     var kharidTajhizat = $kharidTajhizat.prop("checked");
 
     // 1) خالی نبودن فیلدها
@@ -1533,6 +2303,8 @@ function SaveNewRMUClick($btn) {
     NoeFBId = parseInt($('#HDFNoeFB').val());
     Year = parseInt($('#HDFYear').val());
 
+    debugger;
+    ItemZaribStar = $itemZaribStar == undefined ? null : $itemZaribStar.val().trim() == "" ? null : $itemZaribStar.val();
 
     var vardata = new Object();
 
@@ -1542,10 +2314,10 @@ function SaveNewRMUClick($btn) {
     vardata.VahedId = parseInt(vahedVal);
     vardata.BahayeVahed = parseFloat(bahayeVal);
     vardata.kharidTajhizat = kharidTajhizat;
+    vardata.itemZaribStar = ItemZaribStar;
     vardata.NoeFBId = NoeFBId;
     vardata.Year = Year;
 
-    debugger;
 
     $.ajax({
         type: "POST",
@@ -1555,7 +2327,8 @@ function SaveNewRMUClick($btn) {
         contentType: "application/json; charset=utf-8",
         success: function (data) {
             if (data == "OK") {
-                GetBarAvord(code, "")
+
+                GetBarAvord(itemId, code, "", true);
                 toastr.success('اطلاعات با موفقیت ذخیره شد.', 'موفق');
             }
             else if (data == "repeat") {
@@ -1570,18 +2343,26 @@ function SaveNewRMUClick($btn) {
 }
 
 function SaveRMUClick(object, Shomareh, rizId, Code) {
+
+    object.attr('disabled', true);
+
     object.parent().parent().find('input[type=text]').each(function () {
         $(this).removeClass('ErrorValueStyle');
     });
 
 
-    debugger;
-    var Sharh, Tedad, Tool, Arz, Ertefa, Vazn, Des, Check = true;
+
+    var Sharh, TajmieItem, Tedad, Tool, Arz, Ertefa, Vazn, Des, Check = true;
     firstObj = null;
     findFirstObj = false;
     object.parent().parent().find('input[type=text]').each(function () {
+
+        debugger;
+
         if ($(this).attr('id') == 'txtSharh')
             Sharh = $(this).val();
+        else if ($(this).attr('id').startsWith('txtTajmieItem-'))
+            TajmieItem = $(this).val();
         else if ($(this).attr('id') == 'txtTedad') {
             if ($(this).hasClass('essentialValue')) {
                 if ($.isNumeric(parseFloat($(this).val()))) {
@@ -1594,6 +2375,22 @@ function SaveRMUClick(object, Shomareh, rizId, Code) {
                     if (!findFirstObj) {
                         firstObj = $(this);
                         findFirstObj = true;
+                    }
+                }
+            }
+            else {
+                if ($(this).val().trim() != '') {
+                    if ($.isNumeric(parseFloat($(this).val()))) {
+                        Tedad = $(this).val().replace(/\,/g, '');
+                        $(this).removeClass('blinking');
+                    }
+                    else {
+                        $(this).addClass('blinking');
+                        Check = false;
+                        if (!findFirstObj) {
+                            firstObj = $(this);
+                            findFirstObj = true;
+                        }
                     }
                 }
             }
@@ -1614,6 +2411,12 @@ function SaveRMUClick(object, Shomareh, rizId, Code) {
                     }
                 }
             }
+            else
+            {
+                if ($.isNumeric(parseFloat($(this).val()))) {
+                    Tool = $(this).val().replace(/\,/g, '');
+                }
+            }
         }
         else if ($(this).attr('id') == 'txtArz') {
             if ($(this).hasClass('essentialValue')) {
@@ -1629,6 +2432,11 @@ function SaveRMUClick(object, Shomareh, rizId, Code) {
                         firstObj = $(this);
                         findFirstObj = true;
                     }
+                }
+            }
+            else {
+                if ($.isNumeric(parseFloat($(this).val()))) {
+                    Arz = $(this).val().replace(/\,/g, '');
                 }
             }
         }
@@ -1648,6 +2456,12 @@ function SaveRMUClick(object, Shomareh, rizId, Code) {
                     }
                 }
             }
+            else
+            {
+                if ($.isNumeric(parseFloat($(this).val()))) {
+                    Ertefa = $(this).val().replace(/\,/g, '');
+                }
+            }
         }
         else if ($(this).attr('id') == 'txtVazn') {
             if ($(this).hasClass('essentialValue')) {
@@ -1664,10 +2478,17 @@ function SaveRMUClick(object, Shomareh, rizId, Code) {
                     }
                 }
             }
+            else {
+                if ($.isNumeric(parseFloat($(this).val()))) {
+                    Vazn = $(this).val().replace(/\,/g, '');
+                }
+            }
         }
         else if ($(this).attr('id') == 'txtDes')
             Des = $(this).val();
     });
+
+    debugger;
 
     if (Check) {
         BarAvordUserId = $('#HDFBarAvordUserID').val();
@@ -1676,6 +2497,7 @@ function SaveRMUClick(object, Shomareh, rizId, Code) {
 
         var vardata = new Object();
         vardata.Sharh = Sharh;
+        vardata.TajmieItem = TajmieItem === undefined ? null : TajmieItem;
         vardata.Tedad = Tedad === undefined ? null : Tedad;
         vardata.Tool = Tool === undefined ? null : Tool;
         vardata.Arz = Arz === undefined ? null : Arz;
@@ -1700,84 +2522,249 @@ function SaveRMUClick(object, Shomareh, rizId, Code) {
                     ///////////////
                     ///////////////
 
-                    refreshBaseItem(object, info[1], info[2], info[3], info[4], Code, Shomareh, rizId);
+                    debugger;
+                    //dMeghdarJoz = data.dMeghdarJoz;
+                    //SumMeghdarJoz = data.sumMeghdarJoz;
+                    //JameFasl = data.jameFasl;
+                    //JameFaslInZarib = data.jameFaslInZarib;
+                    //JameFalsKol = data.jameFalsKol;
+                    //JameFalsKolWithoutBahaVahedWithZarib = data.jameFalsKolWithoutBahaVahedWithZarib
+                    //JameFaslWithoutBahaVahed = data.jameFaslWithoutBahaVahed;
+                    //JameFaslWithoutBahaVahedWithZarib = data.jameFaslWithoutBahaVahedWithZarib;
+                    SumMeghdarJoz = info[2];
+                    dBahayeItem = info[3];
+                    FBId = info[4];
 
+                    var meghdarFasl = $('#meghdarFasl_' + Shomareh);
+                    meghdarFasl.html(formatNumber(parseFloat(SumMeghdarJoz).toFixed(3)));
+
+                    var bahayeKolFasl = $('#bahayeKolFasl_' + Shomareh);
+                    bahayeKolFasl.html(formatNumber(parseFloat(dBahayeItem).toFixed(0)));
+                    refreshBaseItem(object, Shomareh, Code);
+
+                    GetCurrentRizMetreUsers(Shomareh, rizId, FBId, Code);
                     //////////////////
                     //////////////////
-
-                    inputBahayeVahed = $('#txtBahayeVahed-' + rizId);
-                    const val = parseFloat(inputBahayeVahed.val().replace(/,/g, '')); // حذف کاما و تبدیل به عدد
-                    if (val === 0) {
-                        inputBahayeVahed.addClass('blinking');
-                    } else {
-                        inputBahayeVahed.removeClass('blinking'); // اگر نمی‌خواهید در غیر صفر بودن کلاس باقی بماند
-                    }
-
-                    GetCurrentRizMetreUsers(Shomareh, rizId, info[5], Code);
-
                     GetJamBarAvordAll();
                     GetJamFosoulAll();
                     toastr.success('ریزه متره جدید بدرستی درج گردید', 'موفقیت');
+
+
+                    //inputBahayeVahed = $('#txtBahayeVahed-' + rizId);
+                    //const val = parseFloat(inputBahayeVahed.val().replace(/,/g, '')); // حذف کاما و تبدیل به عدد
+                    //if (val === 0) {
+                    //    inputBahayeVahed.addClass('blinking');
+                    //} else {
+                    //    inputBahayeVahed.removeClass('blinking'); // اگر نمی‌خواهید در غیر صفر بودن کلاس باقی بماند
+                    //}
+                    debugger;
+
                 }
-                else
+                else if (info[0] == "NOK") {
+                    object.removeAttr('disabled');
+                    toastr.info('فصل تجمیعی انتخابی وجود ندارد', 'اطلاع');
+                }
+                else if (info[0] == "NOOK") {
+                    object.removeAttr('disabled');
+                    toastr.warning('مقداری جهت درج وجود ندارد', 'اطلاع');
+                }
+                else {
+                    object.removeAttr('disabled');
                     toastr.info('مشکل در درج ریزه متره جدید', 'اطلاع');
+                }
             },
             error: function (msg) {
+                object.removeAttr('disabled');
+
                 toastr.error('مشکل در درج ریزه متره جدید', 'خطا');
             }
         });
     }
     else {
         firstObj.focus().select();
+        object.removeAttr('disabled');
         toastr.warning('مقادیر مشخص شده را وارد نمایید', 'هشدار');
     }
 }
 
-function refreshBaseItem(object, dMeghdarJoz, SumMeghdarJoz, JameFasl, JameFaslInZarib, Code, Shomareh, rizId) {
+function refreshBaseItem(object, Shomareh, Code) {
 
-    debugger;
-    const row = $(object).closest('tr');
-    const tdJameFasl = $('#tdjameFasl-' + Code);
-    const tdJameFaslBaZarib = $('#tdjameFaslBaZarib-' + Code);
+    BarAvordUserId = $('#HDFBarAvordUserID').val();
+    Year = parseInt($('#HDFYear').val());
+    NoeFBId = parseInt($('#HDFNoeFB').val());
 
-    const tdJameFaslAll = $('#tdjameFaslAll-' + Code);
-    const tdJameFaslAllBaZarib = $('#tdjameFaslAllBaZarib-' + Code);
+    BAType = $('#HDFBAType').val();
 
-    const tdJameFaslStar = $('#tdjameFaslStar-' + Code);
-    const tdJameFaslStarBaZarib = $('#tdjameFaslStarBaZarib-' + Code);
 
-    const MeghdarJoz = row.find('#spanMeghdarJoz');
+    var vardata = new Object();
+    vardata.BarAvordUserId = BarAvordUserId;
+    vardata.Shomareh = Shomareh;
+    vardata.Year = Year;
+    vardata.NoeFBId = NoeFBId;
+    vardata.Code = Code;
 
-    var meghdarFasl = $('#meghdarFasl_' + Shomareh);
-    var bahayeKolFasl = $('#bahayeKolFasl_' + Shomareh);
-    var bahayeVahedFasl = $('#bahayeVahedFasl_' + Shomareh);
+    if (BAType != 'BarAvord') {
+        strUrl = '/BaseInfo/GetFosoulForSooratVaziat';
 
-    var txtBahayeVahed = $('#txtBahayeVahed-' + rizId);
+        $.ajax({
+            type: "POST",
+            url: strUrl,//'/RizMetreUserFromShowBarAvord/GetJameCurrentFasl',
+            dataType: "json",
+            data: JSON.stringify(vardata),
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
 
-    let num = parseFloat(dMeghdarJoz);
-    let bahayeVahedFasl1 = parseFloat(convertPersianToEnglish(bahayeVahedFasl.text() == "" ? "0" : bahayeVahedFasl.text()));
+                debugger;
 
-    let txtBahayeVahed1 = parseFloat(convertPersianToEnglish(txtBahayeVahed.val().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
+                ///////////////
+                ///////////////
 
-    meghdarFasl.html(formatNumber(SumMeghdarJoz));
-    bahayeKolFasl.html(formatNumber(txtBahayeVahed1 * SumMeghdarJoz));
-    MeghdarJoz.html(num);
-    tdJameFasl.html(formatNumber(parseFloat(JameFasl).toFixed(0)));
-    tdJameFaslBaZarib.html(formatNumber(parseFloat(JameFaslInZarib).toFixed(0)));
+                //dMeghdarJoz = data.dMeghdarJoz;
+                //SumMeghdarJoz = data.sumMeghdarJoz;
 
-    JameFaslStar = parseFloat(convertPersianToEnglish(tdJameFaslStar.html().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
-    dJameFaslAll = parseFloat(JameFasl) + (JameFaslStar === NaN ? JameFaslStar : 0);
-    tdJameFaslAll.html(formatNumber(dJameFaslAll.toFixed(0)));
+                JameFasl = data.currentFasl.jameFasl;
+                JameFaslAll = data.currentFasl.jameFaslAll;
 
-    JameFaslStarBaZarib = parseFloat(convertPersianToEnglish(tdJameFaslStarBaZarib.html().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
-    dJameFaslAllBaZarib = parseFloat(JameFaslInZarib) + (JameFaslStarBaZarib === NaN ? JameFaslStarBaZarib : 0);
-    tdJameFaslAllBaZarib.html(formatNumber(dJameFaslAllBaZarib.toFixed(0)));
+                JameFaslWithZarib = data.currentFasl.jameFaslWithZarib;
+                JameFaslWithZaribAll = data.currentFasl.jameFaslWithZaribAll;
+
+                JameFaslAllWithZarib101 = data.sumFosoulForSooratVaziat.dJameFaslWithZaribAll;
+                jameFaslBaZarib101 = data.sumFosoulForSooratVaziat.dJameFaslWithZarib;
+
+                JameFasl101 = data.sumFosoulForSooratVaziat.dJameFasl;
+                JameFaslAll101 = data.sumFosoulForSooratVaziat.dJameFaslAll;
+                // JameFaslInZarib = data.jameFaslInZarib;
+                // JameFalsKol = data.jameFalsKol;
+                // JameFalsKolWithoutBahaVahedWithZarib = data.jameFalsKolWithoutBahaVahedWithZarib
+                // JameFaslWithoutBahaVahed = data.jameFaslWithoutBahaVahed;
+                // JameFaslWithoutBahaVahedWithZarib = data.jameFaslWithoutBahaVahedWithZarib;
+                // FBId = data.fbId;
+
+
+                //const row = $(object).closest('tr');
+
+                const tdJameFasl = $('#tdjameFasl-' + Code);
+                const tdjameFaslAll = $('#tdjameFaslAll-' + Code);
+
+                const tdjameFaslBaZarib = $('#tdjameFaslBaZarib-' + Code);
+                const tdjameFaslAllBaZarib = $('#tdjameFaslAllBaZarib-' + Code);
+
+                tdJameFasl.html(formatNumber(JameFasl.toFixed(0)));
+                tdjameFaslAll.html(formatNumber(JameFaslAll.toFixed(0)));
+
+                tdjameFaslBaZarib.html(formatNumber(JameFaslWithZarib.toFixed(0)));
+                tdjameFaslAllBaZarib.html(formatNumber(JameFaslWithZaribAll.toFixed(0)));
+
+                const tdJameFasl101 = $('#tdjameFasl-101');
+                const tdjameFaslAll101 = $('#tdjameFaslAll-101');
+
+                const tdjameFaslBaZarib101 = $('#tdjameFaslBaZarib-101');
+                const tdJameFaslAllBaZarib101 = $('#tdjameFaslAllBaZarib-101');
+
+
+                tdJameFasl101.html(formatNumber(JameFasl101.toFixed(0)));
+                tdjameFaslAll101.html(formatNumber(JameFaslAll101.toFixed(0)));
+
+                tdjameFaslBaZarib101.html(formatNumber(jameFaslBaZarib101.toFixed(0)));
+                tdJameFaslAllBaZarib101.html(formatNumber(JameFaslAllWithZarib101.toFixed(0)));
+
+                GetSumAllFBForSooratVaziat();
+                GetSumAllFosoulForSooratVaziat();
+                //const tdjameFaslAllBaZarib = $('#tdjameFaslAllBaZarib-' + Code);
+            },
+            error: function (msg) {
+                object.removeAttr('disabled');
+
+                toastr.error('مشکل در بارگذاری جمع مقادیر', 'خطا');
+            }
+        });
+    }
+    else {
+        strUrl = '/RizMetreUserFromShowBarAvord/GetJameCurrentFasl';
+
+        $.ajax({
+            type: "POST",
+            url: strUrl,//'/RizMetreUserFromShowBarAvord/GetJameCurrentFasl',
+            dataType: "json",
+            data: JSON.stringify(vardata),
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+
+                debugger;
+
+                ///////////////
+                ///////////////
+
+                //dMeghdarJoz = data.dMeghdarJoz;
+                //SumMeghdarJoz = data.sumMeghdarJoz;
+                JameFasl = data.jameFasl;
+                JameFaslInZarib = data.jameFaslInZarib;
+                JameFalsKol = data.jameFalsKol;
+                JameFalsKolWithoutBahaVahedWithZarib = data.jameFalsKolWithoutBahaVahedWithZarib
+                JameFaslWithoutBahaVahed = data.jameFaslWithoutBahaVahed;
+                JameFaslWithoutBahaVahedWithZarib = data.jameFaslWithoutBahaVahedWithZarib;
+                FBId = data.fbId;
+
+
+                const row = $(object).closest('tr');
+                const tdJameFasl = $('#tdjameFasl-' + Code);
+                const tdJameFaslBaZarib = $('#tdjameFaslBaZarib-' + Code);
+                const tdjameFaslAll = $('#tdjameFaslAll-' + Code);
+                const tdjameFaslAllBaZarib = $('#tdjameFaslAllBaZarib-' + Code);
+
+
+                //const tdJameFaslAll = $('#tdjameFaslAll-' + Code);
+                //const tdJameFaslAllBaZarib = $('#tdjameFaslAllBaZarib-' + Code);
+
+                const tdJameFaslStar = $('#tdjameFaslStar-' + Code);
+                const tdJameFaslStarBaZarib = $('#tdjameFaslStarBaZarib-' + Code);
+
+                //const MeghdarJoz = row.find('#spanMeghdarJoz');
+
+                //var meghdarFasl = $('#meghdarFasl_' + Shomareh);
+                //var bahayeKolFasl = $('#bahayeKolFasl_' + Shomareh);
+                var bahayeVahedFasl = $('#bahayeVahedFasl_' + Shomareh);
+
+                //var txtBahayeVahed = $('#txtBahayeVahed-' + rizId);
+
+                //let num = parseFloat(dMeghdarJoz);
+                let bahayeVahedFasl1 = parseFloat(convertPersianToEnglish(bahayeVahedFasl.text() == "" ? "0" : bahayeVahedFasl.text()));
+
+                //let txtBahayeVahed1 = parseFloat(convertPersianToEnglish(txtBahayeVahed.val().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
+
+                //meghdarFasl.html(formatNumber(SumMeghdarJoz.toFixed(0)));
+                //bahayeKolFasl.html(formatNumber(JameFasl.toFixed(0)));//(formatNumber(txtBahayeVahed1 * SumMeghdarJoz));
+                //MeghdarJoz.html(num);
+                tdJameFasl.html(formatNumber(parseFloat(JameFasl).toFixed(0)));
+                tdJameFaslBaZarib.html(formatNumber(parseFloat(JameFaslInZarib).toFixed(0)));
+
+                //JameFaslStar = parseFloat(convertPersianToEnglish(tdJameFaslStar.html().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
+                //dJameFaslAll = parseFloat(JameFasl) + (JameFaslStar === NaN ? JameFaslStar : 0);
+                //tdJameFaslAll.html(formatNumber(dJameFaslAll.toFixed(0)));
+
+                if (Code != '99') {
+                    tdJameFaslStar.html(formatNumber(JameFaslWithoutBahaVahed.toFixed(0)));
+                    tdJameFaslStarBaZarib.html(formatNumber(JameFaslWithoutBahaVahedWithZarib.toFixed(0)));
+
+                    tdjameFaslAll.html(formatNumber(JameFalsKol.toFixed(0)));
+                }
+                tdjameFaslAllBaZarib.html(formatNumber(JameFalsKolWithoutBahaVahedWithZarib.toFixed(0)));
+
+                //JameFaslStarBaZarib = parseFloat(convertPersianToEnglish(tdJameFaslStarBaZarib.html().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.')));
+                //dJameFaslAllBaZarib = parseFloat(JameFaslInZarib) + (JameFaslStarBaZarib === NaN ? JameFaslStarBaZarib : 0);
+                //tdJameFaslAllBaZarib.html(formatNumber(dJameFaslAllBaZarib.toFixed(0)));
+            },
+            error: function (msg) {
+                object.removeAttr('disabled');
+
+                toastr.error('مشکل در بارگذاری جمع مقادیر', 'خطا');
+            }
+        });
+    }
+
 }
-
-
 function refreshBaseItemNewBV(object, JameFasl, JameFaslInZarib, Code, Shomareh, BahayeVahedNew) {
 
-    debugger;
     const row = $(object).closest('tr');
     const tdJameFasl = $('#tdjameFasl-' + Code);
     const tdJameFaslBaZarib = $('#tdjameFaslBaZarib-' + Code);
@@ -1816,9 +2803,16 @@ function refreshBaseItemNewBV(object, JameFasl, JameFaslInZarib, Code, Shomareh,
 
 //ریزه متره های عادی
 function GetCurrentRizMetreUsers(Shomareh, rizId, FBId, Code) {
+
+    NoeFBId = parseInt($('#HDFNoeFB').val());
+    Year = parseInt($('#HDFYear').val());
+
     var vardata = new Object();
     vardata.FBId = FBId;
     vardata.ItemFBShomareh = Shomareh;
+    vardata.NoeFB = NoeFBId;
+    vardata.Year = Year;
+
     $.ajax({
         url: "/RizMetreUserFromShowBarAvord/GetCurrentRizMetreUsersForShowBarAvord",
         method: "POST",
@@ -1829,7 +2823,6 @@ function GetCurrentRizMetreUsers(Shomareh, rizId, FBId, Code) {
 
             rizMetreUsers = response.rizMetreUsers;
             lstItemsFields = response.lstItemsFields;
-            debugger;
             const rizRow = $(`#${rizId}`);
             const tbody = rizRow.find('tbody');
             tbody.empty(); // پاک‌کردن محتوای قدیمی
@@ -1839,16 +2832,17 @@ function GetCurrentRizMetreUsers(Shomareh, rizId, FBId, Code) {
             if (Array.isArray(rizMetreUsers) && rizMetreUsers.length > 0) {
                 rizRowsHtml += rizMetreUsers.map(riz => `
                     <tr class="riz-row-data" data-id="${riz.id}" data-itemsFields='${JSON.stringify(lstItemsFields).replace(/"/g, '&quot;')}' onclick="EditRizMetreRow(this,'${riz.id}','${Shomareh}','${rizId}','${FBId}','${Code}')" style="cursor:pointer;">
-					<td style="text-align:center">${riz.shomarehNew}</td>
-					<td><span>${riz.sharh}</span></td>
-					<td style="text-align:center"><span>${riz.tedad == null ? '' : riz.tedad}</span></td>
-					<td style="text-align:center"><span>${riz.tool == null ? '' : riz.tool}</span></td>
-					<td style="text-align:center"><span>${riz.arz == null ? '' : riz.arz}</span></td>
-					<td style="text-align:center"><span>${riz.ertefa == null ? '' : riz.ertefa}</span></td>
-					<td style="text-align:center"><span>${riz.vazn == null ? '' : riz.vazn}</span></td>
-					<td style="text-align:center"><span id="spanMeghdarJoz">${riz.meghdarJoz == null ? '' : riz.meghdarJoz}</span></td>
-					<td><span>${riz.des ?? ''}</span></td>
-                    <td style="text-align:center"><i class="fa fa-trash DelRMUStyle" onclick="event.stopPropagation();DeleteRizMetre(this,'${riz.id}','${Shomareh}','${rizId}','${FBId}','${Code}')"></i></td>
+					<td style="text-align:center;width:4%">${toPersianDigits(riz.shomarehNew)}</td>
+					<td style="width:6%"><span>${toPersianDigits(riz.tajmieItem)}</span></td>
+					<td style="width:22%"><span>${toPersianDigits(riz.sharh)}</span></td>
+					<td style="text-align:center;width:7%"><span>${riz.tedad == null ? '' : toPersianDigits(riz.tedad)}</span></td>
+					<td style="text-align:center;width:7%"><span>${riz.tool == null ? '' : toPersianDigits(riz.tool)}</span></td>
+					<td style="text-align:center;width:7%"><span>${riz.arz == null ? '' : toPersianDigits(riz.arz)}</span></td>
+					<td style="text-align:center;width:7%"><span>${riz.ertefa == null ? '' : toPersianDigits(riz.ertefa)}</span></td>
+					<td style="text-align:center;width:7%"><span>${riz.vazn == null ? '' : toPersianDigits(riz.vazn)}</span></td>
+					<td style="text-align:center;width:7%"><span id="spanMeghdarJoz">${riz.meghdarJoz == null ? '' : toPersianDigits(riz.meghdarJoz)}</span></td>
+					<td style="width:20%"><span>${toPersianDigits(riz.des ?? '')}</span></td>
+                    <td style="text-align:center;width:7%"><i class="fa fa-trash DelRMUStyle" onclick="event.stopPropagation();DeleteRizMetre(this,'${riz.id}','${Shomareh}','${rizId}','${FBId}','${Code}')"></i></td>
                     </tr>
                 `).join('');
             }
@@ -1869,38 +2863,48 @@ function GetCurrentRizMetreUsers(Shomareh, rizId, FBId, Code) {
 
             rizRowsHtml += `
 <tr class="riz-input-row">
-  <td style="text-align:center"></td>
-  <td><input id="txtSharh" class="form-control form-control-sm" type="text" /></td>
+  <td style="text-align:center;width:4%"></td>
+  <td style="text-align:center;width:6%">
+    <div class="d-flex align-items-center gap-2">
+            <i class="fa fa-info SaveRMUStyle SelectTajmieItemClass" style="padding-left: 15px;" onclick="ShowSelectTajmie('${Shomareh}-New')"></i>
+        
+            <input id="txtTajmieItem-${Shomareh}-New" class="form-control form-control-sm" type="text" onchange="TajmieItemChange(this)"/>
+       
+    </div>
+  </td>
+  <td style="width:22%">
+    <input id="txtSharh" class="form-control form-control-sm" type="text" />
+  </td>
 
-  <td style="text-align:center">
+  <td style="text-align:center;width:7%">
     <input id="txtTedad" class="${getInputClass(f0)}" type="text" ${getDisabledAttr(f0)} />
   </td>
 
-  <td style="text-align:center">
+  <td style="text-align:center;width:7%">
     <input id="txtTool" class="${getInputClass(f1)}" type="text" ${getDisabledAttr(f1)} />
   </td>
 
-  <td style="text-align:center">
+  <td style="text-align:center;width:7%">
     <input id="txtArz" class="${getInputClass(f2)}" type="text" ${getDisabledAttr(f2)} />
   </td>
 
-  <td style="text-align:center">
+  <td style="text-align:center;width:7%">
     <input id="txtErtefa" class="${getInputClass(f3)}" type="text" ${getDisabledAttr(f3)} />
   </td>
 
-  <td style="text-align:center">
+  <td style="text-align:center;width:7%">
     <input id="txtVazn" class="${getInputClass(f4)}" type="text" ${getDisabledAttr(f4)} />
   </td>
 
-  <td style="text-align:center">
+  <td style="text-align:center;width:7%">
     <input id="txtMeghdarJoz" class="form-control form-control-sm" type="text" disabled />
   </td>
 
-  <td>
+  <td style="width:20%">
     <input id="txtDes" class="form-control form-control-sm" type="text" />
   </td>
 
-  <td style="text-align:center">
+  <td style="text-align:center;;width:7%">
     <button type="button"
       onclick="SaveRMUClick($(this),'${Shomareh}','${rizId}','${Code}')"
       class="ButtonRowsSaveStyle">
@@ -1932,16 +2936,59 @@ function GetCurrentRizMetreUsers(Shomareh, rizId, FBId, Code) {
 
             tbody.html(rizRowsHtml);
 
+            tbody.find('.riz-input-row #txtSharh').focus()
+            //aaa= tbody.find('.riz-input-row');
             // دوباره Bind کردن دکمه حذف
             $('.btn-delete-riz').off('click').on('click', function () {
                 $(this).closest('tr').remove();
             });
 
-            convertNumbersInPage();
+            //convertNumbersInPage();
         },
         error: function () {
             toastr.error('خطا در دریافت اطلاعات ریزمتره!', 'خطا');
         }
+    });
+}
+
+function TajmieItemChange(Obj) {
+
+    debugger;
+
+    TajmieItemVal = $(Obj).val();
+    NoeFBId = parseInt($('#HDFNoeFB').val());
+
+    $.ajax({
+
+        url: "/TajmieFosoul/CheckItemInTajmie",
+
+        type: "GET",
+
+        data: {
+
+            itemTajmieValue: TajmieItemVal,
+            noeFB: NoeFBId,
+        },
+
+        success: function (data) {
+            debugger;
+           
+        },
+         error: function (xhr) {
+
+            if (xhr.status == 400) {
+
+                toastr.warning(xhr.responseJSON.message);
+
+            }
+            else {
+
+                toastr.warning("این فصل تجمیعی تعریف نشده است");
+
+            }
+
+        }
+
     });
 }
 
@@ -1965,11 +3012,19 @@ function DeleteRizMetre(object, RizMetreId, Shomareh, rizId, FBId, Code) {
         success: function (response) {
             info = response.split('_');
             if (info[0] == "OK") {
+                SumMeghdarJoz = info[2];
+                dBahayeItem = info[3];
+
+                var meghdarFasl = $('#meghdarFasl_' + Shomareh);
+                meghdarFasl.html(formatNumber(parseFloat(SumMeghdarJoz).toFixed(3)));
+
+                var bahayeKolFasl = $('#bahayeKolFasl_' + Shomareh);
+                bahayeKolFasl.html(formatNumber(parseFloat(dBahayeItem).toFixed(0)));
                 toastr.success('ریز متره بدرستی حذف گردید', 'موفقیت');
                 GetCurrentRizMetreUsers(Shomareh, rizId, FBId, Code);
                 GetJamBarAvordAll();
                 GetJamFosoulAll();
-                refreshBaseItem(object, info[1], info[2], info[3], info[4], Code, Shomareh, rizId);
+                refreshBaseItem(object, Shomareh, Code);
             }
         },
         error: function () {

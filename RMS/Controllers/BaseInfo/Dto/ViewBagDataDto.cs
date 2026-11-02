@@ -2,6 +2,7 @@
 public class ViewBagDataDto
 {
     public string BAId { get; set; }
+    public string BAType { get; set; }
     public string Year { get; set; }
     public string BarAvordName { get; set; }
 }

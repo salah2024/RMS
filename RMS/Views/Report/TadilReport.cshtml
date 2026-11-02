@@ -1,0 +1,245 @@
+﻿@using RMS.Controllers.PaymanKar.Dto
+@model TadilReportVm
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>گزارش تعدیل</title>
+    <link href="~/scripts/selfstyle/tadilreportstyle.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/assets/plugins/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/assets/css/bootstrap-rtl.min.css">
+
+    <script src="~/assets/js/mathjax.js"></script>
+
+
+</head>
+<body>
+
+@functions {
+    public static string ToPersianDigits(string input)
+{
+    if (string.IsNullOrEmpty(input))
+        return input;
+
+    char[] persianDigits =
+    {
+        '۰','۱','۲','۳','۴',
+        '۵','۶','۷','۸','۹'
+    };
+
+    return new string(input.Select(c =>
+        char.IsDigit(c)
+            ? persianDigits[c - '0']
+            : c).ToArray());
+}
+}
+
+
+@foreach (var page in Model.Pages)
+{
+    var TadilIndex = page.TadilIndex;
+
+    <div class="a4-page report-page">
+
+        <div class="header">
+
+            <div class="row" style="text-align: right;">
+
+                <div class="col-4" style="font-weight:600">
+                    پروژه:
+                    @Model.Report.ProjectName
+                </div>
+
+                <div class="col-3" style="text-align: right;font-weight:600">
+                    تعدیل:
+                    @ToPersianDigits(Model.Report.Title)
+                </div>
+
+                <div class="col-2" style="text-align: right;font-weight:600">
+                    از تاریخ:
+                    @ToPersianDigits(Model.Report.FromDate)
+                </div>
+
+                <div class="col-2" style="text-align: right;font-weight:600">
+                    تا تاریخ:
+                    @ToPersianDigits(Model.Report.ToDate)
+                </div>
+
+            </div>
+
+            <div class="row" style="margin-top:10px;text-align: right;">
+
+                <div class="col-4" style="font-weight:600">
+                    فهرست بها:
+                    @TadilIndex.NoeFBName
+                </div>
+
+                <div class="col-4" style="font-weight:600">
+                    دوره مبنای پیمان:
+                    @ToPersianDigits(TadilIndex.MabnaIndexTitle)
+                </div>
+
+            </div>
+
+        </div>
+
+        <table style="margin-top:20px">
+
+            <thead>
+
+                <tr style="text-align:center">
+                    <th>سال</th>
+                    <th>دوره</th>
+                    <th>فصل</th>
+                    <th>مبلغ صورت وضعیت فعلی</th>
+                    <th>مبلغ صورت وضعیت قبلی</th>
+                    <th>مابه التفاوت دو صورت وضعیت </th>
+                    <th>نسبت مدت کارکرد در دوره بمدت کارکرد</th>
+                    <th>مبلغ کارکرد در دوره</th>
+                    <th>شاخص مبنا</th>
+                    <th>شاخص دوره کارکرد</th>
+                    <th>ضریب تعدیل</th>
+                    <th>مبلغ تعدیل</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                @foreach (var row in page.Rows)
+                {
+                    var fasl = row.Fasl;
+                    var item = row.Item;
+
+                    string dore = item.CourseCode switch
+                    {
+                        1 => "بهار",
+                        2 => "تابستان",
+                        3 => "پاییز",
+                        4 => "زمستان",
+                        _ => ""
+                    };
+
+                    <tr style="direction:ltr">
+
+                        <td>
+                            @ToPersianDigits(item.Year.ToString())
+                        </td>
+
+                        <td>
+                            @dore
+                        </td>
+
+                        <td>
+                            @ToPersianDigits(fasl.FaslCode)
+                        </td>
+
+                        <td>
+                            @ToPersianDigits(fasl.BahayeKolInZarib.ToString("N0"))
+                        </td>
+
+                        <td>
+                            @ToPersianDigits(fasl.BahayeKolInZaribPrev.ToString("N0"))
+                        </td>
+
+                        <td>
+                            @ToPersianDigits(fasl.Deff.ToString("N0"))
+                        </td>
+
+                        <td>
+                            \[
+                            \frac{@ToPersianDigits(item.Days.ToString())}
+                            {@ToPersianDigits("715")}
+                            \]
+                        </td>
+
+                        <td>
+                            @ToPersianDigits(item.MablaghKarkardDoreh.ToString("N0"))
+                        </td>
+
+                        <td>
+                            @ToPersianDigits(item.PGHIndexValue?.ToString("N1"))
+                        </td>
+
+                        <td>
+                            @ToPersianDigits(item.IndexValue.ToString("N1"))
+                        </td>
+
+                        <td>
+                            @ToPersianDigits(item.ZaribTadil.ToString("N3"))
+                        </td>
+
+                        <td>
+                            @ToPersianDigits(item.MablaghTadil.ToString("N0"))
+                        </td>
+
+                    </tr>
+                }
+
+                @{
+                    bool isLastPageOfCurrentNoeFB =
+                        !Model.Pages.Any(x =>
+                            x.PageNo > page.PageNo &&
+                            x.TadilIndex.NoeFB == page.TadilIndex.NoeFB);
+                }
+
+                @if (isLastPageOfCurrentNoeFB)
+                {
+                    <tr class="sumRow">
+
+                        <td colspan="3"></td>
+
+                        <td>
+                            @ToPersianDigits(TadilIndex.SumBahayeKolInZarib.ToString("N0"))
+                        </td>
+
+                        <td>
+                            @ToPersianDigits(TadilIndex.SumBahayeKolInZaribPrev.ToString("N0"))
+                        </td>
+
+                        <td>
+                            @ToPersianDigits(TadilIndex.SumDeff.ToString("N0"))
+                        </td>
+
+                        <td></td>
+
+                        <td>
+                            @ToPersianDigits(TadilIndex.SumMablaghKarkardDoreh.ToString("N0"))
+                        </td>
+
+                        <td colspan="3">
+                            جمع مبلغ تعدیل
+                        </td>
+
+                        <td>
+                            @ToPersianDigits(TadilIndex.SumMablaghTadil.ToString("N0"))
+                        </td>
+
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+
+        <div class="footer">
+
+            صفحه
+            @ToPersianDigits(page.PageNo.ToString())
+
+            از
+
+            @ToPersianDigits(Model.Pages.Count.ToString())
+
+        </div>
+
+    </div>
+}
+</body>
+</html>

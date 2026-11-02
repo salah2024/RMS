@@ -15,12 +15,49 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'BMitra';
+    src: url('../Fonts/PersianFonts/BMitra.ttf');
+    font-weight: bold;
+    font-style: normal;
+}
+
 a {
-    font-family: 'bZar';
-    font-size: 22px;
+    font-family: 'BMitra';
+    font-size: 21px;
     color: #1e27b5;
     text-decoration: none;
 }
 a:hover{
         text-decoration:none;
+}
+
+
+.KMEnterClass {
+    background-color: #e6d6e9;
+    border-radius: 0px;
+}
+
+
+.my-loading {
+    position: absolute;
+    right: 15px;
+    top: 49%;
+    width: 17px;
+    height: 17px;
+    border: 2px solid #ccc;
+    border-top-color: #0d6efd;
+    border-radius: 50%;
+    z-index: 10;
+    animation: my-loading-spin 0.7s linear infinite;
+}
+
+@keyframes my-loading-spin {
+    from {
+        transform: translateY(-50%) rotate(0deg);
+    }
+
+    to {
+        transform: translateY(-50%) rotate(360deg);
+    }
 }

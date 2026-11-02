@@ -43,7 +43,6 @@ public class clsBakhsh
     public decimal ZaribTahteFeshar { get; set; }
     [Column(TypeName = "decimal(18,4)")]
     public decimal ZaribAbKhizDari { get; set; }
-    public int Year { get; set; }
-    public NoeFehrestBaha NoeFBId { get; set; }
+    //public int Year { get; set; }
 
 }

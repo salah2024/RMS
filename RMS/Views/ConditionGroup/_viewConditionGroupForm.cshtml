@@ -1,0 +1,174 @@
+﻿
+<link href="~/css/ConditionGroup.css" rel="stylesheet" />
+
+<div class="container-fluid">
+
+    <!-- فرم -->
+
+    <div class="card shadow-sm mb-3">
+
+        <div class="card-header bg-primary text-white">
+
+            <i class="fa fa-layer-group"></i>
+
+            گروه بندی شرایط
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <div class="col-md-5 mb-3">
+
+                    <label>نام گروه</label>
+
+                    <input id="txtConditionGroupName"
+                           class="form-control" />
+
+                </div>
+
+                <div class="col-md-2 mb-3">
+
+                    <label>ترتیب</label>
+
+                    <input id="txtOrder"
+                           type="number"
+                           class="form-control" />
+
+                </div>
+
+                <div class="col-md-3 mb-3">
+
+                    <label>نوع فهرست بها</label>
+
+                    <select id="cmbNoeFB"
+                            class="form-control">
+
+                        <option value="232" selected>راهداری</option>
+                        <option value="233">ابنیه</option>
+                        <option value="234">راه و باند</option>
+                        <option value="235">برقی</option>
+                        <option value="236">مکانیکی</option>
+                        <option value="237">مرمت</option>
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-2 d-flex align-items-end">
+
+                    <button id="btnSave"
+                            type="button"
+                            class="btn btn-success w-100">
+
+                        <i class="fa fa-save"></i>
+
+                        ثبت
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- جدول -->
+
+    <div class="card shadow-sm">
+
+        <div class="card-header">
+
+            <div class="row">
+
+                <div class="col-md-6">
+
+                    <strong>
+
+                        لیست گروه ها
+
+                    </strong>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <input id="txtSearch"
+                           class="form-control"
+                           placeholder="جستجو..." />
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="card-body p-0">
+
+            <div class="table-container">
+
+                <table id="tblConditionGroup"
+                       class="table table-bordered table-hover mb-0">
+
+                    <thead>
+
+                        <tr>
+
+                            <th width="60">
+                                ردیف
+                            </th>
+
+                            <th>
+                                نام گروه
+                            </th>
+
+                            <th width="120">
+                                ترتیب
+                            </th>
+
+                            <th width="170">
+                                فهرست بها
+                            </th>
+
+                            <th width="170">
+                                عملیات
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tblBody">
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+        <div class="card-footer">
+
+            <nav>
+
+                <ul id="pagination"
+                    class="pagination justify-content-center mb-0">
+                </ul>
+
+            </nav>
+
+        </div>
+
+    </div>
+
+</div>
+
+<input id="hfId"
+       type="hidden"
+       value="0" />
+
+
+    <script src="~/js/ConditionGroup.js"></script>

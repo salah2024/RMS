@@ -1,5 +1,5 @@
 ﻿function DrawPlan(alfa, D, L, w1, w2, w3, w4, b2, c1, c2, j, alfaw1, alfaw2, alfaw3, alfaw4, StartPointX, StartPointY, Scale, Meyar) {
-    debugger
+    debugger;
     D *= Scale; L *= Scale; w1 *= Scale; w2 *= Scale; w3 *= Scale; w4 *= Scale;
     b2 *= Scale; c1 *= Scale; c2 *= Scale;
     Tool = D + ((2 * c1) - (2 * j));
@@ -44,17 +44,6 @@ function DrawDastak1(h, x, alfa, D, L, w1, b2, c1, c2, j, alfaw1, hminw1, StartP
     Tool = D + ((2 * c1) - (2 * j));
     linePlan(StartPointX - (2 * j), StartPointY, StartPointX - (2 * j) - (w1 * Math.sin(toRadians(alfaw1))), StartPointY - (w1 * (-1) * Math.cos(toRadians(alfaw1))));////1
 
-    //cosalfaw1 = Math.sin(toRadians(alfaw1));
-
-    //y1 = (cosalfaw1 == 0 ? 0 : fix1 / (Math.sin(toRadians(alfaw1))));
-    //x1 = (cosalfaw1 == 0 ? 0 : fix1 / (Math.sin(toRadians(alfaw1))));
-
-    //y1 = (fix1 * (Math.cos(toRadians(alfaw1)) * (Math.tan(toRadians(alfaw1)))));
-
-
-
-    //y1 = fix1 * (Math.sin(toRadians(alfaw1)));
-    //x1 = fix1 * (-1) * (Math.cos(toRadians(alfaw1)));
     T = (c1 + c2 + j) / Math.cos(toRadians(alfa));
    
     y1 = 0;
@@ -148,34 +137,7 @@ function DrawDastak1(h, x, alfa, D, L, w1, b2, c1, c2, j, alfaw1, hminw1, StartP
         linePlan(StartPointX - (2 * j) + x3, StartPointY - j - y3, StartPointX - (2 * j) + (x3) - xnew3, StartPointY - j - y3 + ynew3);////3
     }
 
-    //linePlan(StartPointX - (2 * j) + x1, StartPointY - y1, StartPointX - (2 * j) + (x2), StartPointY - (y2));////1
-    //linePlan(StartPointX - (2 * j) + (x2), StartPointY - (y2), StartPointX - (2 * j) + (x3), StartPointY - (y3));////1
 
-    //linePlan(StartPointX - (2 * j), StartPointY, StartPointX - (2 * j) + x1, StartPointY - y1);////1
-    //linePlan(StartPointX - (2 * j) + x1, StartPointY - y1, StartPointX - (2 * j) + (x2), StartPointY - (y2));////1
-    //linePlan(StartPointX - (2 * j) + (x2), StartPointY - (y2), StartPointX - (2 * j) + (x3), StartPointY - (y3));////1
-
-    //linePlan(StartPointX - j +x1, StartPointY - y1, StartPointX - j - (w1 * Math.sin(toRadians(alfaw1))) + x1, StartPointY - (w1 * (-1) * Math.cos(toRadians(alfaw1))) + y1);////1
-    //linePlan(StartPointX - j, StartPointY - (y1 + y2), StartPointX -j- (w1 * Math.cos(toRadians(alfaw1))), StartPointY - (y1 + y2) - (w1 * Math.sin(toRadians(alfaw1))));////1
-    //linePlan(StartPointX - j, StartPointY - (y1 + y2 + y3), StartPointX -j- (w1 * Math.cos(toRadians(alfaw1))), StartPointY - (y1 + y2 + y3) - (w1 * Math.sin(toRadians(alfaw1))));////1
-
-
-    //y1prim = (-1)*((fix1 / (Math.sin(toRadians(alfaw1)))) - (fix1 * (Math.sin(toRadians(alfaw1)))));
-    //x1prim = fix1 *  (Math.cos(toRadians(alfaw1)));
-
-    //y2 = x * (Math.sin(toRadians(alfaw1)));
-    //x2 = x * (-1) * (Math.cos(toRadians(alfaw1)));
-
-    //y3 = (h / 3) * (Math.sin(toRadians(alfaw1)));
-    //yEnd3 = (hminw1 / 3) * (Math.sin(toRadians(alfaw1)));
-    //x3 = (h / 3) * (-1) * (Math.cos(toRadians(alfaw1)));
-    //xEnd3 = (hminw1 / 3) * (-1) * (Math.cos(toRadians(alfaw1)));
-
-    //y2 = (cosalfaw1 == 0 ? 0 : x / Math.sin(toRadians(alfaw1)));
-    //y3 = (cosalfaw1 == 0 ? 0 : (h / 3) / Math.sin(toRadians(alfaw1)));
-    //y1 = y1 < 0 ? (-1 * y1) : y1;
-    //y2 = y2 < 0 ? (-1 * y2) : y2;
-    //y3 = y3 < 0 ? (-1 * y3) : y3;
 }
 
 function DrawDastak2(h, x, alfa, D, L, w2, b2, c1, c2, j, alfaw2, hminw2, StartPointX, StartPointY, Scale, Meyar) {
@@ -275,36 +237,9 @@ function DrawDastak2(h, x, alfa, D, L, w2, b2, c1, c2, j, alfaw2, hminw2, StartP
         linePlan(StartPointX - (2 * j) + x1 - xnew1, StartPointY + j + (D / Math.cos(toRadians(alfa))) + y1 - ynew1, StartPointX - (2 * j) + x2 - xnew2, StartPointY + j + (D / Math.cos(toRadians(alfa))) + y2 - ynew2);////1
         linePlan(StartPointX - (2 * j) + x2 - xnew2, StartPointY + j + (D / Math.cos(toRadians(alfa))) + y2 - ynew2, StartPointX - (2 * j) + x3 - ynew3, StartPointY + j + (D / Math.cos(toRadians(alfa))) + y3 - ynew3);////1
 
-        //linePlan(StartPointX - (2 * j) + (x1), StartPointY - y3, StartPointX - (2 * j) + (x1) - xnew1, StartPointY - y1 + ynew1);////1
-        //linePlan(StartPointX - (2 * j) + (x2), StartPointY - y3, StartPointX - (2 * j) + (x2) - xnew2, StartPointY - y2 + ynew2);////2
-        //linePlan(StartPointX - (2 * j) + (x3), StartPointY - y3, StartPointX - (2 * j) + (x3) - xnew3, StartPointY - y3 + ynew3);////3
  
     }
 
-    //linePlan(StartPointX - j, StartPointY + (D / Math.cos(toRadians(alfa))), StartPointX - j + x1, StartPointY + (D / Math.cos(toRadians(alfa))) + y1);////1
-    //linePlan(StartPointX - j + x1, StartPointY + (D / Math.cos(toRadians(alfa))) + y1, StartPointX - j + (x1 + x2), StartPointY + (D / Math.cos(toRadians(alfa))) + (y1 + y2));////1
-    //linePlan(StartPointX - j + (x1 + x2), StartPointY + (D / Math.cos(toRadians(alfa))) + (y1 + y2), StartPointX - j + (x1 + x2 + x3), StartPointY + (D / Math.cos(toRadians(alfa))) + (y1 + y2 + y3));////1
-
-    //linePlan(StartPointX - j, StartPointY + (D / Math.cos(toRadians(alfa))) + y1, StartPointX - (w2 * Math.cos(toRadians(-90 + alfaw2))), StartPointY + (D / Math.cos(toRadians(alfa))) + y1 + (w2 * Math.sin(toRadians(-90 + alfaw2))));////1
-    //linePlan(StartPointX - j, StartPointY + (D / Math.cos(toRadians(alfa))) + (y1 + y2), StartPointX - (w2 * Math.cos(toRadians(-90 + alfaw2))), StartPointY + (D / Math.cos(toRadians(alfa))) + (y1 + y2) + (w2 * Math.sin(toRadians(-90 + alfaw2))));////1
-    //linePlan(StartPointX - j, StartPointY + (D / Math.cos(toRadians(alfa))) + (y1 + y2 + y3), StartPointX - (w2 * Math.cos(toRadians(-90 + alfaw2))), StartPointY + (D / Math.cos(toRadians(alfa))) + (y1 + y2 + y3) + (w2 * Math.sin(toRadians(-90 + alfaw2))));////1
-
-    //cosalfaw2 = Math.sin(toRadians(-90 + alfaw2));
-
-    //y1 = fix1 * (-1) * Math.sin(toRadians(alfaw2));
-    //x1 = fix1 * (-1) * Math.cos(toRadians(alfaw2));
-
-    //y2 = x * (-1) * Math.sin(toRadians(alfaw2));
-    //x2 = x * (-1) * Math.cos(toRadians(alfaw2));
-
-    //y3 = (h/3) * (-1) * Math.sin(toRadians(alfaw2));
-    //x3 = (h/3) * (-1) * Math.cos(toRadians(alfaw2));
-
-    //y2 = x / Math.sin(toRadians(-90 + alfaw2));
-    //y3 = (h / 3) / Math.sin(toRadians(-90 + alfaw2));
-    //y1 = y1 < 0 ? (-1 * y1) : y1;
-    //y2 = y2 < 0 ? (-1 * y2) : y2;
-    //y3 = y3 < 0 ? (-1 * y3) : y3;
 }
 
 function DrawDastak3(h, x, alfa, D, L, w3, b2, c1, c2, j, alfaw3, hminw3, StartPointX, StartPointY, Scale, Meyar) {
@@ -411,26 +346,6 @@ function DrawDastak3(h, x, alfa, D, L, w3, b2, c1, c2, j, alfaw3, hminw3, StartP
         linePlan(StartPointX - (2 * j) + x2, StartPointY - j - y3, StartPointX - (2 * j) + (x2) - xnew2, StartPointY - j - y2 + ynew2);////2
         linePlan(StartPointX - (2 * j) + x3, StartPointY - j - y3, StartPointX - (2 * j) + (x3) - xnew3, StartPointY - j - y3 + ynew3);////3
     }
-    //y1 = fix1 * Math.sin(toRadians(alfaw3));
-    //x1 = fix1 * Math.cos(toRadians(alfaw3));
-
-    //y2 = x * Math.sin(toRadians(alfaw3));
-    //x2 = x * Math.cos(toRadians(alfaw3));
-
-    //y3 = (h/3) * Math.sin(toRadians(alfaw3));
-    //x3 = (h/3) * Math.cos(toRadians(alfaw3));
-    //cosalfaw3 = Math.sin(toRadians(-90 + alfaw3));
-
-    //y1 = (cosalfaw3 == 0 ? 0 : fix1 / Math.sin(toRadians(-90 + alfaw3)));
-    //y2 = (cosalfaw3 == 0 ? 0 : x / Math.sin(toRadians(-90 + alfaw3)));
-    //y3 = (cosalfaw3 == 0 ? 0 : (h / 3) / Math.sin(toRadians(-90 + alfaw3)));
-    //y1 = y1 < 0 ? (-1 * y1) : y1;
-    //y2 = y2 < 0 ? (-1 * y2) : y2;
-    //y3 = y3 < 0 ? (-1 * y3) : y3;
-
-    //linePlan(StartPointX + j + (L * Math.cos(toRadians(alfa))), StartPointY + (L * Math.sin(toRadians(alfa))) - y1, StartPointX + (L * Math.cos(toRadians(alfa))) + (w3 * Math.cos(toRadians(-90 + alfaw3))), StartPointY + (L * Math.sin(toRadians(alfa))) - (w3 * Math.sin(toRadians(-90 + alfaw3))) - y1);////1
-    //linePlan(StartPointX + j + (L * Math.cos(toRadians(alfa))), StartPointY + (L * Math.sin(toRadians(alfa))) - (y1 + y2), StartPointX + (L * Math.cos(toRadians(alfa))) + (w3 * Math.cos(toRadians(-90 + alfaw3))), StartPointY + (L * Math.sin(toRadians(alfa))) - (w3 * Math.sin(toRadians(-90 + alfaw3))) - (y1 + y2));////1
-    //linePlan(StartPointX + j + (L * Math.cos(toRadians(alfa))), StartPointY + (L * Math.sin(toRadians(alfa))) - (y1 + y2 + y3), StartPointX + (L * Math.cos(toRadians(alfa))) + (w3 * Math.cos(toRadians(-90 + alfaw3))), StartPointY + (L * Math.sin(toRadians(alfa))) - (w3 * Math.sin(toRadians(-90 + alfaw3))) - (y1 + y2 + y3));////1
 }
 
 function DrawDastak4(h, x, alfa, D, L, w4, b2, c1, c2, j, alfaw4, hminw4, StartPointX, StartPointY, Scale, Meyar) {
@@ -563,16 +478,15 @@ function toRadians(angle) {
 }
 
 function lineDashedPlan(x1, y1, x2, y2) {
-    debugger
+    PolExistingId = $('#HDFPolIdForEdit').val();
     Line = "<line x1=\"" + x1 + "\" x2=\"" + x2 + "\" y1=\"" + y1 + "\" y2=\"" + y2 + "\" style=\"stroke-dasharray: 7px 5px;stroke: rgb(0,0,0); stroke-width:1\" />";
-    $('#AbnieShow').find('#svgLinesPlan').append(Line);
-    $('#AbnieShow').find('#svgContainerPlan').html($('#AbnieShow').find('#svgContainerPlan').html());
+    $('#svgLinesPlan-' + PolExistingId).append(Line);
+    $('#svgContainerPlan-' + PolExistingId).html($('#svgContainerPlan-' + PolExistingId).html());
 }
 
 function linePlan(x1, y1, x2, y2) {
-    debugger
-
+    PolExistingId = $('#HDFPolIdForEdit').val();
     Line = "<line x1=\"" + x1 + "\" x2=\"" + x2 + "\" y1=\"" + y1 + "\" y2=\"" + y2 + "\" style=\"stroke: rgb(0,0,0); stroke-width:1\" />";
-    $('#AbnieShow').find('#svgLinesPlan').append(Line);
-    $('#AbnieShow').find('#svgContainerPlan').html($('#AbnieShow').find('#svgContainerPlan').html());
+    $('#svgLinesPlan-' + PolExistingId).append(Line);
+    $('#svgContainerPlan-' + PolExistingId).html($('#svgContainerPlan-' + PolExistingId).html());
 }

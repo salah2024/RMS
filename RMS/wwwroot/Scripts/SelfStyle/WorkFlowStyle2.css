@@ -1,0 +1,220 @@
+﻿
+.workflow-container {
+    direction: rtl;
+    padding: 15px;
+}
+
+.workflow-progress {
+    margin-bottom: 25px;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.workflow-flow {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    overflow-x: auto;
+    padding: 15px 5px 25px;
+}
+
+.workflow-step {
+    min-width: 320px;
+    max-width: 320px;
+    flex-shrink: 0;
+}
+
+.step-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+
+.workflow-step.current .step-card {
+    border: 2px solid #2878d0;
+    box-shadow: 0 3px 14px rgba(40,120,208,.15);
+}
+
+.step-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.round-badge {
+    background: #e9efff;
+    color: #2457a7;
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 12px;
+}
+
+.round-number {
+    color: #777;
+    font-size: 12px;
+}
+
+.step-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+    .step-title h4 {
+        font-size: 15px;
+        font-weight: bold;
+        margin: 0;
+    }
+
+.step-status-icon {
+    font-size: 20px;
+}
+
+.step-status {
+    margin: 12px 0;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.completed,
+.approved {
+    color: #198754;
+}
+
+.rejected {
+    color: #dc3545;
+}
+
+.waiting,
+.pending {
+    color: #d39e00;
+}
+
+.in-progress {
+    color: #0d6efd;
+}
+
+.assignment-list,
+.history-list {
+    border-top: 1px solid #eee;
+    padding-top: 12px;
+    margin-top: 12px;
+}
+
+.section-title {
+    font-weight: bold;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.assignment-item {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-right: 3px solid #ccc;
+}
+
+    .assignment-item.approved {
+        border-right-color: #198754;
+    }
+
+    .assignment-item.rejected {
+        border-right-color: #dc3545;
+    }
+
+    .assignment-item.waiting {
+        border-right-color: #d39e00;
+    }
+
+.assignment-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.user-icon {
+    font-size: 19px;
+}
+
+.user-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.user-name,
+.history-user {
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.company {
+    color: #888;
+    font-size: 11px;
+    margin-top: 4px;
+}
+
+.user-status {
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.assignment-date,
+.history-date {
+    font-size: 11px;
+    color: #888;
+    margin-top: 8px;
+}
+
+.assignment-comment,
+.history-comment {
+    background: #fff;
+    border-radius: 5px;
+    padding: 8px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #555;
+}
+
+.history-item {
+    display: flex;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px dashed #ddd;
+}
+
+.history-action {
+    font-size: 18px;
+}
+
+.history-content {
+    flex: 1;
+}
+
+.history-action-title {
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.no-assignment {
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 8px;
+    color: #999;
+    font-size: 12px;
+}
+
+.arrow {
+    padding-top: 100px;
+    color: #aaa;
+    font-size: 22px;
+    flex-shrink: 0;
+}

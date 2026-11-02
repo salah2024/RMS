@@ -1,7 +1,4 @@
 ﻿
-using System;
-using System.Data;
-using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,9 +9,13 @@ using RMS.Controllers.KhakRizi.EnumKhakRizi;
 using RMS.Controllers.Operation.Dto;
 using RMS.Models.Common;
 using RMS.Models.Entity;
+using System;
+using System.Data;
+using System.Text.RegularExpressions;
 using static RMS.Models.Common.EnumForEntity;
 
 namespace RMS.Controllers.KhakRizi;
+
 public class KhakRiziController(ApplicationDbContext context) : Controller
 {
     private readonly ApplicationDbContext _context = context;
@@ -124,7 +125,12 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
         _context.KhakRiziBarAvords.Add(khakRiziBarAvord);
 
 
-        List<clsKhakRiziDarsad> lstKhakRiziDarsad = _context.KhakRiziDarsads.Where(x => x.NoeRah == RoadTypeId && x.NoeDaneBandi == NoeDaneBandiId && x.Year == Year).ToList();
+        List<KhakRiziConditionForSaveDto> lstKhakRiziCondition = _context.KhakRiziConditions
+            .Where(x => x.NoeRah == RoadTypeId && x.NoeDaneBandi == NoeDaneBandiId && x.Year == Year && x.NoeFB == NoeFBId).Select(x => new KhakRiziConditionForSaveDto
+            {
+                FBShomareh = x.FBShomareh,
+                NoeHajmKhakRizi = x.NoeHajmKhakRizi
+            }).Distinct().ToList();
 
         List<HajmKhakRiziValueDto> lstHajmKhakRiziValue = new List<HajmKhakRiziValueDto>();
         if (HajmKhakRiziValue != null)
@@ -159,10 +165,10 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
         .Select(x => (EnumHajmKhakRizi)(int)x.Id)
         .ToList();
 
-        List<clsKhakRiziDarsad> lstKhakRiziDarsad1 = lstKhakRiziDarsad.Where(x => hajmKhakRiziEnums.Contains(x.NoeHajmKhakRizi)).ToList();
+        List<KhakRiziConditionForSaveDto> lstKhakRiziCondition1 = lstKhakRiziCondition.Where(x => hajmKhakRiziEnums.Contains(x.NoeHajmKhakRizi)).ToList();
 
 
-        List<clsKhakRiziItem> lstKhakRiziItem = _context.KhakRiziItems.Where(x => x.Year == Year).ToList();
+        //List<clsKhakRiziItem> lstKhakRiziItem = _context.KhakRiziItems.Where(x => x.Year == Year).ToList();
 
 
         long Shomareh = 1;
@@ -172,39 +178,23 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
             Shomareh = rizMetreUser.Shomareh + 1;
         }
 
-
-
-
-        foreach (var itemDarsad in lstKhakRiziDarsad1)
+        foreach (var itemCondition in lstKhakRiziCondition1)
         {
-            string ItemFBShomareh = "";
-            foreach (var KhakRiziItem in lstKhakRiziItem)
-            {
-                string strCondition = KhakRiziItem.Condition.Trim();
-                if (strCondition != "")
-                {
-                    string strConditionOp = strCondition.Replace("x", itemDarsad.Darsad.ToString().Trim());
-                    StringToFormula StringToFormula = new StringToFormula();
-                    bool blnCheck = StringToFormula.RelationalExpression2(strConditionOp);
-                    if (blnCheck)
-                    {
-                        ItemFBShomareh = KhakRiziItem.ItemFBShomareh;
-                        break;
-                    }
-                }
-            }
+            string ItemFBShomareh = itemCondition.FBShomareh;
+            //foreach (var KhakRiziItem in lstKhakRiziItem)
+            //{
 
             decimal? MeghdarJoz = null;
             foreach (var item in lstHajmKhakRiziValue)
             {
-                if ((EnumHajmKhakRizi)item.Id == itemDarsad.NoeHajmKhakRizi)
+                if ((EnumHajmKhakRizi)item.Id == itemCondition.NoeHajmKhakRizi)
                 {
                     MeghdarJoz = item.Value;
                 }
             }
 
 
-            clsFB? FB = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordUserId && x.Shomareh == ItemFBShomareh);
+            clsFB? FB = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordUserId && x.Shomareh == ItemFBShomareh && x.NoeFBId == NoeFBId);
             Guid gFBId = new Guid();
             if (FB != null)
             {
@@ -256,6 +246,62 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
 
         return new JsonResult("OK_" + intKMNum);
     }
+
+    [HttpPost]
+    public async Task<JsonResult> DeleteKhakRizi([FromBody] requestDeleteKhakRiziDto request)
+    {
+        try
+        {
+            Guid BarAvordUserId = request.BarAvordId;
+            int Num = request.KMNum;
+
+            clsKhakRiziBarAvord? currentKhakRiziBarAvord = await _context.KhakRiziBarAvords.Where(x => x.BarAvordId == BarAvordUserId && x.KMNum == Num).FirstOrDefaultAsync();
+
+            if (currentKhakRiziBarAvord != null)
+            {
+                List<Guid> lstKhakRiziBarAvordRizMetreIds = _context.KhakRiziBarAvordRizMetres
+                    .Where(x => x.KhakRiziBarAvordId == currentKhakRiziBarAvord.ID).Select(x => x.RizMetreUserId).ToList();
+
+                List<clsRizMetreUsers> lstRMs = _context.RizMetreUserses
+                    .Where(x => lstKhakRiziBarAvordRizMetreIds.Contains(x.ID)).ToList();
+
+                List<Guid> lstKhakRiziEzafeBahaIds = _context.KhakRiziEzafeBahas
+                    .Where(x => x.KhakRiziBarAvordId == currentKhakRiziBarAvord.ID).Select(x => x.ID).ToList();
+
+                List<Guid> lstKhakRiziEzafeBahaRMIds = _context.KhakRiziEzafeBahaRizMetres
+                    .Where(x => lstKhakRiziEzafeBahaIds.Contains(x.KhakRiziEzafeBahaId)).Select(x=>x.RizMetreUserId).ToList();
+
+                List<clsRizMetreUsers> lstRMEBs = _context.RizMetreUserses
+                    .Where(x => lstKhakRiziEzafeBahaRMIds.Contains(x.ID)).ToList();
+
+
+                //// حذف اطلاعات از جداول مرتبط
+                //_context.RizMetreUserses.RemoveRange(lsrRMs);
+                //_context.KhakRiziBarAvordRizMetres.RemoveRange(aaa);
+                //_context.KhakRiziEzafeBahas.RemoveRange(bbb);
+
+                _context.KhakRiziBarAvords.Remove(currentKhakRiziBarAvord);
+                _context.RizMetreUserses.RemoveRange(lstRMs);
+                _context.RizMetreUserses.RemoveRange(lstRMEBs);
+
+                // ذخیره تغییرات در پایگاه داده
+                await _context.SaveChangesAsync(); // یا _context.SaveChanges() بسته به استفاده از async/await
+            }
+            else
+            {
+                // مدیریت حالت عدم وجود currentKhakRiziBarAvord
+                // مثلاً ثبت لاگ یا برگرداندن یک خطا
+                Console.WriteLine("currentKhakRiziBarAvord is null. No records were deleted.");
+            }
+
+            return new JsonResult("OK");
+        }
+        catch (Exception)
+        {
+            return new JsonResult("NOK");
+        }
+    }
+
 
     public JsonResult UpdateKhakRiziInfoForBarAvord([FromBody] requestUpdateKhakRiziInfoForBarAvordDto request)
     {
@@ -314,8 +360,14 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
             //};
             //_context.KhakRiziBarAvords.Add(khakRiziBarAvord);
 
+            List<KhakRiziConditionForSaveDto> lstKhakRiziCondition = _context.KhakRiziConditions
+                .Where(x => x.NoeRah == RoadTypeId && x.NoeDaneBandi == NoeDaneBandiId && x.Year == Year && x.NoeFB == NoeFBId).Select(x => new KhakRiziConditionForSaveDto
+                {
+                    FBShomareh = x.FBShomareh,
+                    NoeHajmKhakRizi = x.NoeHajmKhakRizi
+                }).Distinct().ToList();
 
-            List<clsKhakRiziDarsad> lstKhakRiziDarsad = _context.KhakRiziDarsads.Where(x => x.NoeRah == RoadTypeId && x.NoeDaneBandi == NoeDaneBandiId && x.Year == Year).ToList();
+            //List<clsKhakRiziCondition> lstKhakRiziCondition = _context.KhakRiziConditions.Where(x => x.NoeRah == RoadTypeId && x.NoeDaneBandi == NoeDaneBandiId && x.Year == Year && x.NoeFB==NoeFBId).ToList();
 
             List<HajmKhakRiziValueDto> lstHajmKhakRiziValue = new List<HajmKhakRiziValueDto>();
             if (HajmKhakRiziValue != null)
@@ -350,11 +402,21 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
             .Select(x => (EnumHajmKhakRizi)(int)x.Id)
             .ToList();
 
-            List<clsKhakRiziDarsad> lstKhakRiziDarsad1 = lstKhakRiziDarsad.Where(x => hajmKhakRiziEnums.Contains(x.NoeHajmKhakRizi)).ToList();
+
+            //EnumHajmKhakRizi hajmKhakRizi = hajmKhakRiziEnums.First();
+            //if (hajmKhakRiziEnums.Count > 1)
+            //{
+            //    hajmKhakRizi = hajmKhakRiziEnums.First(x => x == EnumHajmKhakRizi.Low30);
+
+            //}
+
+            //List<KhakRiziConditionForSaveDto> lstKhakRiziCondition1 = lstKhakRiziCondition.Where(x => x.NoeHajmKhakRizi == hajmKhakRizi).ToList();
 
 
-            List<clsKhakRiziItem> lstKhakRiziItem = _context.KhakRiziItems.Where(x => x.Year == Year).ToList();
+            //List<clsKhakRiziItem> lstKhakRiziItem = _context.KhakRiziItems.Where(x => x.Year == Year).ToList();
 
+
+            List<KhakRiziConditionForSaveDto> lstKhakRiziCondition1 = lstKhakRiziCondition.Where(x => hajmKhakRiziEnums.Contains(x.NoeHajmKhakRizi)).ToList();
 
             long Shomareh = 1;
             clsRizMetreUsers? rizMetreUser = _context.RizMetreUserses.Include(x => x.FB).OrderByDescending(x => x.Shomareh).FirstOrDefault(x => x.FB.BarAvordId == BarAvordUserId);
@@ -363,36 +425,21 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
                 Shomareh = rizMetreUser.Shomareh + 1;
             }
 
-            foreach (var itemDarsad in lstKhakRiziDarsad1)
+            foreach (var itemCondition in lstKhakRiziCondition1)
             {
-                string ItemFBShomareh = "";
-                foreach (var KhakRiziItem in lstKhakRiziItem)
-                {
-                    string strCondition = KhakRiziItem.Condition.Trim();
-                    if (strCondition != "")
-                    {
-                        string strConditionOp = strCondition.Replace("x", itemDarsad.Darsad.ToString().Trim());
-                        StringToFormula StringToFormula = new StringToFormula();
-                        bool blnCheck = StringToFormula.RelationalExpression2(strConditionOp);
-                        if (blnCheck)
-                        {
-                            ItemFBShomareh = KhakRiziItem.ItemFBShomareh;
-                            break;
-                        }
-                    }
-                }
+                string ItemFBShomareh = itemCondition.FBShomareh;
 
                 decimal? MeghdarJoz = null;
                 foreach (var item in lstHajmKhakRiziValue)
                 {
-                    if ((EnumHajmKhakRizi)item.Id == itemDarsad.NoeHajmKhakRizi)
+                    if ((EnumHajmKhakRizi)item.Id == itemCondition.NoeHajmKhakRizi)
                     {
                         MeghdarJoz = item.Value;
                     }
                 }
 
 
-                clsFB? FB = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordUserId && x.Shomareh == ItemFBShomareh);
+                clsFB? FB = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordUserId && x.Shomareh == ItemFBShomareh && x.NoeFBId == NoeFBId);
                 Guid gFBId = new Guid();
                 if (FB != null)
                 {
@@ -466,7 +513,9 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
                     BarAvordUserId = BarAvordUserId,
                     ConditionContextId = EzafeBahaKhakRizi.ConditionContextId,
                     Year = Year,
-                    Num = Num
+                    Num = Num,
+                    NoeFBId = NoeFBId,
+                    TextVal = "0"
                 };
                 KhakRiziCommon.SaveEzafeBahaKhakRizi(requestSaveEBKhakRizi, _context);
             }
@@ -489,19 +538,22 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
         List<clsKhakRiziBarAvordRizMetre> lstKhakRiziRizMetre =
             _context.KhakRiziBarAvordRizMetres.Where(x => lstKhakRiziBarAvordIds.Contains(x.KhakRiziBarAvordId)).ToList();
 
-        List<ItemFBShomarehForGetAndShowAddItemsFieldsDto> lstItemFields = _context.ItemsFieldses.Where(x => x.NoeFB == NoeFB).Select(x => new ItemFBShomarehForGetAndShowAddItemsFieldsDto
-        {
-            Shomareh = x.ItemShomareh,
-            FieldType = x.FieldType,
-            Vahed = x.Vahed,
-            IsEnteringValue = x.IsEnteringValue
-        }).ToList();
+        List<ItemFBShomarehForGetAndShowAddItemsFieldsDto> lstItemFields =
+            _context.ItemsFieldses.Where(x => x.NoeFB == NoeFB).Select(x => new ItemFBShomarehForGetAndShowAddItemsFieldsDto
+            {
+                Shomareh = x.ItemShomareh,
+                FieldType = x.FieldType,
+                Vahed = x.Vahed,
+                IsEnteringValue = x.IsEnteringValue,
+                EssentialValue = x.EssentialValue
+            }).ToList();
 
 
         List<Guid> lstRizMetreIds = lstKhakRiziRizMetre.Select(x => x.RizMetreUserId).ToList();
         List<KhakRiziRizMetreDto> rizMetreUsers = _context.RizMetreUserses.Include(x => x.FB)
             .Where(x => lstRizMetreIds.Contains(x.ID)).Select(x => new KhakRiziRizMetreDto
             {
+                Id = x.ID,
                 Shomareh = x.Shomareh,
                 ShomarehNew = x.ShomarehNew,
                 Sharh = x.Sharh,
@@ -547,6 +599,9 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
                 lstItemFBShomarehForGet.Add(ItemFBShomarehForGet);
             }
         }
+
+
+        lstItemFBShomarehForGet = lstItemFBShomarehForGet.OrderBy(x => x.ItemFBShomareh).ToList();
 
 
         var result = new
@@ -677,6 +732,7 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
                 .Select(x => new resultKhakRiziEzafeBahaBarAvordDto
                 {
                     ConditionContextId = x.EzafeBahaKhakRizi.ConditionContextId,
+                    Meghdar = x.Meghdar
                 }).ToList();
 
             List<GetEzafeBahaKhakRiziDto> EzafeBahaKhakRizi = _context.EzafeBahaKhakRizis.Include(x => x.ConditionContext).ThenInclude(x => x.ConditionGroup)
@@ -686,7 +742,9 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
                     Id = x.ConditionContext.Id,
                     GroupContext = x.ConditionContext.ConditionGroup.ConditionGroupName,
                     ConditionGroupId = x.ConditionContext.ConditionGroupId,
-                    Context = x.ConditionContext.Context
+                    Context = x.ConditionContext.Context,
+                    HasEnteringValue = x.HasEnteringValue,
+                    Type = x.Type,
                 }).ToList();
 
             var result = new
@@ -697,6 +755,60 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
 
             return new JsonResult(result);
         }
+    }
+
+    public JsonResult HasRizMetreEzafeBahaForKhakRizi([FromBody] RequestGetRizMetreEzafeBahaForKhakRiziDto request)
+    {
+        long ConditionContextId = request.ConditionContextId;
+        Guid BarAvordId = request.BarAvordId;
+        long Year = request.Year;
+        NoeFehrestBaha NoeFB = request.NoeFB;
+        int Num = request.Num;
+
+        clsEzafeBahaKhakRizi ezafeBahaKhakRizi = _context.EzafeBahaKhakRizis.First(x => x.ConditionContextId == ConditionContextId);
+
+        clsKhakRiziBarAvord? khakRiziBarAvord = _context.KhakRiziBarAvords.FirstOrDefault(x => x.KMNum == Num && x.BarAvordId == BarAvordId);
+        if (khakRiziBarAvord != null)
+        {
+            RizMetreForKhakRiziEzafeBahaBarAvordDto? lstKhRizi =
+                  _context.KhakRiziEzafeBahaRizMetres.Include(x => x.KhakRiziEzafeBaha)
+                  .Where(x => x.KhakRiziEzafeBaha.KhakRiziBarAvordId == khakRiziBarAvord.ID && x.KhakRiziEzafeBaha.EzafeBahaKhakRiziId == ezafeBahaKhakRizi.Id)
+                  .Select(x => new RizMetreForKhakRiziEzafeBahaBarAvordDto
+                  {
+                      Id = x.RizMetreUser.ID,
+                      Shomareh = x.RizMetreUser.Shomareh,
+                      Arz = x.RizMetreUser.Arz,
+                      Des = x.RizMetreUser.Des,
+                      Ertefa = x.RizMetreUser.Ertefa,
+                      FBId = x.RizMetreUser.FBId,
+                      ForItem = x.RizMetreUser.ForItem,
+                      MeghdarJoz = x.RizMetreUser.MeghdarJoz,
+                      Sharh = x.RizMetreUser.Sharh,
+                      Tedad = x.RizMetreUser.Tedad,
+                      Tool = x.RizMetreUser.Tool,
+                      Type = x.RizMetreUser.Type,
+                      Vazn = x.RizMetreUser.Vazn,
+                  }).FirstOrDefault();
+
+            if (lstKhRizi != null)
+            {
+                if (lstKhRizi.MeghdarJoz != null)
+                {
+                    if (lstKhRizi.MeghdarJoz != 0)
+                    {
+                        return new JsonResult(true);
+                    }
+                    else
+                        return new JsonResult(false);
+                }
+                else
+                    return new JsonResult(false);
+            }
+            else
+                return new JsonResult(false);
+        }
+        else
+            return new JsonResult(false);
     }
 
     public JsonResult GetRizMetreEzafeBahaForKhakRizi([FromBody] RequestGetRizMetreEzafeBahaForKhakRiziDto request)
@@ -713,12 +825,14 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
             clsEzafeBahaKhakRizi ezafeBahaKhakRizi = _context.EzafeBahaKhakRizis.First(x => x.ConditionContextId == ConditionContextId);
 
             List<ItemFBShomarehForGetAndShowAddItemsFieldsDto> lstItemFields = _context.ItemsFieldses
-                .Where(x => x.NoeFB == NoeFB).Select(x => new ItemFBShomarehForGetAndShowAddItemsFieldsDto
+                .Where(x => x.NoeFB == NoeFB)
+                .Select(x => new ItemFBShomarehForGetAndShowAddItemsFieldsDto
                 {
                     Shomareh = x.ItemShomareh,
                     FieldType = x.FieldType,
                     Vahed = x.Vahed,
-                    IsEnteringValue = x.IsEnteringValue
+                    IsEnteringValue = x.IsEnteringValue,
+                    EssentialValue = x.EssentialValue
                 }).ToList();
 
             List<RizMetreForKhakRiziEzafeBahaBarAvordDto> lstkhakRiziEzafeBahaRizMetre =
@@ -760,7 +874,7 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
                 ItemFields = lstItemFields.Where(x => x.Shomareh.Trim() == newItem).ToList();
                 foreach (var itemF in ItemFields)
                 {
-                    if (itemF.FieldType == 2 || itemF.FieldType == 3)
+                    if (itemF.FieldType == ItemFieldType.Tool || itemF.FieldType == ItemFieldType.Arz)
                         itemF.IsEnteringValue = true;
                 }
 
@@ -777,6 +891,8 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
                     lstItemFBShomarehForGet.Add(ItemFBShomarehForGet);
                 }
             }
+
+            lstItemFBShomarehForGet = lstItemFBShomarehForGet.OrderBy(x => x.ItemFBShomareh).ToList();
 
 
             var result = new
@@ -805,6 +921,413 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
             return new JsonResult("OK");
         }
     }
+
+    //[HttpPost]
+    //public JsonResult GetEzafeBahaKhakRiziNew([FromBody] GetEzafeBahaKhakRiziNewDto request)
+    //{
+
+    //    List<string> strShomareh = request.Shomareh;
+    //    int Year = request.Year;
+    //    Guid BarAvordId = request.BarAvordId;
+    //    string str = "";
+
+    //    foreach (var Shomareh in strShomareh)
+    //    {
+    //        var varItemsHasCondition = (from tblItemsHasCondition in context.ItemsHasConditions
+    //                                    join tblItemsHasConditionConditionContext in context.ItemsHasCondition_ConditionContexts
+    //                                    on tblItemsHasCondition.Id equals tblItemsHasConditionConditionContext.ItemsHasConditionId
+    //                                    join tblConditionContext in context.ConditionContexts on
+    //                                    tblItemsHasConditionConditionContext.ConditionContextId equals tblConditionContext.Id
+    //                                    join tblConditionGroup in context.ConditionGroups on
+    //                                    tblConditionContext.ConditionGroupId equals tblConditionGroup.Id
+    //                                    where tblItemsHasCondition.Year == Year
+    //                                    select new
+    //                                    {
+    //                                        tblItemsHasConditionConditionContext.Id,
+    //                                        ItemsHasConditionId = tblItemsHasCondition.Id,
+    //                                        ItemFBShomareh = tblItemsHasCondition.ItemFBShomareh,
+    //                                        tblItemsHasConditionConditionContext.HasEnteringValue,
+    //                                        tblConditionContext.Context,
+    //                                        tblConditionContext.TitleDes,
+    //                                        tblItemsHasConditionConditionContext.Des,
+    //                                        tblConditionGroup.ConditionGroupName,
+    //                                        ConditionGroupId = tblConditionGroup.Id,
+    //                                        tblItemsHasConditionConditionContext.DefaultValue,
+    //                                        tblItemsHasConditionConditionContext.StepChange,
+    //                                        tblItemsHasConditionConditionContext.IsShow,
+    //                                        tblItemsHasConditionConditionContext.ParentId,
+    //                                        tblItemsHasConditionConditionContext.MoveToRel,
+    //                                        tblItemsHasConditionConditionContext.ViewCheckAllRecords
+    //                                    }).Where(x => x.ItemFBShomareh == strShomareh[0]).ToList();
+
+
+    //        var varItemsHasConditionAddedToFB = (from ItemsHasConditionAddedToFB in context.ItemsHasConditionAddedToFBs
+    //                                             join ItemsAddingToFB in context.ItemsAddingToFBs on
+    //                                             ItemsHasConditionAddedToFB.ItemsHasCondition_ConditionContextId
+    //                                             equals ItemsAddingToFB.ItemsHasCondition_ConditionContextId
+    //                                             select new
+    //                                             {
+    //                                                 ID = ItemsHasConditionAddedToFB.ID,
+    //                                                 FBShomareh = ItemsHasConditionAddedToFB.FBShomareh,
+    //                                                 BarAvordId = ItemsHasConditionAddedToFB.BarAvordId,
+    //                                                 Meghdar = ItemsHasConditionAddedToFB.Meghdar,
+    //                                                 ItemsHasCondition_ConditionContextId = ItemsHasConditionAddedToFB.ItemsHasCondition_ConditionContextId,
+    //                                                 AddedItems = ItemsAddingToFB.AddedItems
+    //                                             }).Where(x => x.FBShomareh == strShomareh[0] && x.BarAvordId == BarAvordId).ToList();
+
+
+    //        List<int> lst = new List<int>();
+
+    //        if (varItemsHasCondition != null)
+    //        {
+    //            var DrItemsHasCondition = varItemsHasCondition.Where(x => x.ItemFBShomareh == strShomareh[0] && x.IsShow == true).ToList();
+
+    //            bool blnItemsHasConditionChecked = true;
+    //            foreach (var item in DrItemsHasCondition)
+    //            {
+    //                long lngIsParent = long.Parse(item.ParentId.ToString());// long.Parse(DtItemsHasConditionFiltered.Rows[k]["ParentId"].ToString().Trim());
+    //                if (lngIsParent != 0)
+    //                {
+    //                    var varItemsHasConditionAddedToFBWithParentId = (from ItemsHasConditionAddedToFB in context.ItemsHasConditionAddedToFBs
+    //                                                                     join ItemsAddingToFB in context.ItemsAddingToFBs on
+    //                                                                     ItemsHasConditionAddedToFB.ItemsHasCondition_ConditionContextId equals ItemsAddingToFB.ItemsHasCondition_ConditionContextId
+    //                                                                     select new
+    //                                                                     {
+    //                                                                         ID = ItemsHasConditionAddedToFB.ID,
+    //                                                                         FBShomareh = ItemsHasConditionAddedToFB.FBShomareh,
+    //                                                                         BarAvordId = ItemsHasConditionAddedToFB.BarAvordId,
+    //                                                                         Meghdar = ItemsHasConditionAddedToFB.Meghdar,
+    //                                                                         ItemsHasCondition_ConditionContextId = ItemsHasConditionAddedToFB.ItemsHasCondition_ConditionContextId,
+    //                                                                         AddedItems = ItemsAddingToFB.AddedItems
+    //                                                                     }).Where(x => x.ItemsHasCondition_ConditionContextId == lngIsParent).ToList();
+
+    //                    if (varItemsHasConditionAddedToFBWithParentId == null)
+    //                    {
+    //                        blnItemsHasConditionChecked = false;
+    //                    }
+    //                }
+
+    //                if (blnItemsHasConditionChecked)
+    //                {
+    //                    var IsContain = lst.Contains(int.Parse(item.ConditionGroupId.ToString()));
+    //                    if (IsContain != true)
+    //                    {
+    //                        lst.Add(int.Parse(item.ConditionGroupId.ToString()));
+    //                    }
+    //                }
+    //            }
+
+    //            string strDes = "";
+
+
+    //            str += "<div id=\"divAddedItems\" class=\"col-md-12\" style=\"padding:25px 5px 2px 5px;margin-bottom:5px;margin-bottom:5px;border:1px solid #c4d4db;border-radius:4px !important;text-align:right;\">";
+    //            for (int m = 0; m < lst.Count; m++)
+    //            {
+    //                var DrItemsHasConditionWithItemFBShomarehFiltered = DrItemsHasCondition.Where(x => x.ConditionGroupId == lst[m]).ToList();
+
+    //                if (DrItemsHasConditionWithItemFBShomarehFiltered.Count != 0)
+    //                {
+    //                    if (DrItemsHasConditionWithItemFBShomarehFiltered.Count > 1)
+    //                    {
+    //                        bool blnCheckIsSelectData = false;
+    //                        for (int ii = 0; ii < DrItemsHasConditionWithItemFBShomarehFiltered.Count; ii++)
+    //                        {
+    //                            var Dr = varItemsHasConditionAddedToFB.Where(x => x.ItemsHasCondition_ConditionContextId == DrItemsHasConditionWithItemFBShomarehFiltered[ii].Id).ToList();
+    //                            if (Dr.Count != 0)
+    //                            {
+    //                                blnCheckIsSelectData = true;
+    //                            }
+    //                        }
+
+    //                        if (blnCheckIsSelectData)
+    //                            str += "<div class=\"col-md-4\" style=\"color:#0002b1;padding-left:0px;padding-right:0px\"><input type=\"checkbox\" checked=\"checked\" onclick=\"OpenConditionDetails($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupId + "','"
+    //                                    + DrItemsHasConditionWithItemFBShomarehFiltered[0].ItemFBShomareh + "')\"/><span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"OpenConditionDetailsOnly('" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupId + strShomareh + "')\">"
+    //                                    + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupName + "<span></div>";
+    //                        else
+    //                            str += "<div class=\"col-md-4\" style=\"color:#0002b1;padding-left:0px;padding-right:0px\"><input type=\"checkbox\" onclick=\"OpenConditionDetails($(this),'" +
+    //                                DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupId + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ItemFBShomareh + "')\"/><span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"OpenConditionDetailsOnly('" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupId + strShomareh + "')\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupName + "</span></div>";
+
+    //                        str += "<div class=\"col-md-12\" id=\"divConditionGroup" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupId + strShomareh + "\" style=\"display:None;background-color:#ffe7e7;border:1px solid #bfe0ed;margin-bottom:20px;border-radius:5px !important;\">";
+    //                        for (int ii = 0; ii < DrItemsHasConditionWithItemFBShomarehFiltered.Count; ii++)
+    //                        {
+    //                            string strType = "";
+    //                            if (DrItemsHasConditionWithItemFBShomarehFiltered.Count > 1)
+    //                            {
+    //                                strType = "radio";
+    //                            }
+    //                            else
+    //                            {
+    //                                strType = "checkbox";
+    //                            }
+    //                            var Dr = varItemsHasConditionAddedToFB.Where(x => x.ItemsHasCondition_ConditionContextId == DrItemsHasConditionWithItemFBShomarehFiltered[ii].Id).ToList();
+
+    //                            if (DrItemsHasConditionWithItemFBShomarehFiltered[ii].HasEnteringValue == true)
+    //                            {
+    //                                string strMeghdar = "0";
+    //                                strDes = "<span style=\"margin-left:30px\">" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].TitleDes.ToString().Trim() + "</span>";// DrItemsHasConditionWithItemFBShomarehFiltered[ii]["HasDes"].ToString().Trim() == "True" ? "<span style=\"margin-left:30px\">" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["TitleDes"].ToString().Trim() + "</span>" : "";
+    //                                if (Dr.Count != 0)
+    //                                {
+
+    //                                    strMeghdar = decimal.Parse(Dr[0].Meghdar.ToString().Trim()).ToString("G29");
+    //                                    str += "<div class=\"col-md-12\" style=\"padding-right:0px;margin:10px;\"><table><tr><td><input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].Id.ToString() + "\" onchange=\"PreChechedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].Id.ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].ConditionGroupId.ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].ItemFBShomareh.ToString().Trim() + "'," + 1 + ")\" type=\"" + strType
+    //                                        + "\" name=\"group" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].ConditionGroupId.ToString().Trim() + strShomareh + "\" checked=\"checked\"/><span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].Id.ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].ConditionGroupId.ToString() + "')\" style=\"color:#000296;\">"
+    //                                            + DrItemsHasConditionWithItemFBShomarehFiltered[ii].Context.ToString().Trim() + "</span>" + strDes + "</td><td style=\"padding-right:10px;\"><input style=\"text-align:center;width:100px;\" step=\"" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].StepChange.ToString().Trim() + "\" type=\"number\" id=\"txtMeghdar" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].Id.ToString() + "\" onchange=\"textMeghdarOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].ConditionGroupId.ToString().Trim() + "'," + 1 + ")\" class=\"form-control spanStyleMitraMedium\" value=\"" + strMeghdar
+    //                                            + "\"/></td></tr></table></div>";
+    //                                }
+    //                                else
+    //                                {
+
+    //                                    str += "<div class=\"col-md-12\" style=\"padding-right:0px;margin:10px;\"><table><tr><td><input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].Id.ToString() + "\" onchange=\"PreChechedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].Id.ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].ConditionGroupId.ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].ItemFBShomareh.ToString().Trim() + "'," + 1 + ")\" type=\"" + strType
+    //                                        + "\" name=\"group" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].ConditionGroupId.ToString().Trim() + strShomareh.ToString().Trim() + "\" /><span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].Id.ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].ConditionGroupId.ToString() + "')\" style=\"color:#000296;\">"
+    //                                        + DrItemsHasConditionWithItemFBShomarehFiltered[ii].Context.ToString().Trim() + "</span>" + strDes + "</td><td style=\"padding-right:10px;\"><input style=\"text-align:center;width:100px;\" step=\"" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].StepChange.ToString().Trim() + "\" type=\"number\" id=\"txtMeghdar" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].Id.ToString() + "\" class=\"form-control spanStyleMitraMedium\" onchange=\"textMeghdarOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].ConditionGroupId.ToString().Trim() + "'," + 1 + ")\" step=\"" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].StepChange.ToString().Trim() + "\" value=\""
+    //                                        + DrItemsHasConditionWithItemFBShomarehFiltered[ii].DefaultValue.ToString().Trim()
+    //                                        + "\"/></td></tr></table></div>";
+    //                                }
+    //                            }
+    //                            //else
+    //                            //{
+    //                            //    if (Dr.Count != 0)
+    //                            //    {
+    //                            //        if (DrItemsHasConditionWithItemFBShomarehFiltered[ii]["MoveToRel"].ToString() != "True")
+    //                            //        {
+    //                            //            if (DrItemsHasConditionWithItemFBShomarehFiltered[0]["ViewCheckAllRecords"].ToString() == "True")
+    //                            //            {
+    //                            //                Guid guNew = new Guid();
+    //                            //                blnIsEzafeBahaAddedItems = DastyarCommon.CheckLakeGiriIsAddingRizMetreUsers1(strShomareh.ToString().Trim(), DrItemsHasConditionWithItemFBShomarehFiltered[0].Id.ToString(), BarAvordId, guNew);
+    //                            //                string strEzafeBahaIsChecked = "";
+    //                            //                if (blnIsEzafeBahaAddedItems)
+    //                            //                {
+    //                            //                    strEzafeBahaIsChecked = "checked=\"checked\"";
+    //                            //                }
+    //                            //                str += "<div class=\"col-md-4\" style=\"margin:0px 5px\"><input type=\"checkbox\" style=\"border:0px\" class=\"RizMetreUsersAddStyle spanStyleMitraSmall\" " + strEzafeBahaIsChecked + " onclick=\"ShowAndTickAllEzafeBahaAndLakeGiri($(this),'" + strShomareh.ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupId.ToString() + "'," + 1 + ")\"/><span class=\"spanStyleMitraSmall spanLakeGiriStyle\" onclick=\"ShowEzafeBahaAndLakeGiriOnly('" + strShomareh + "','" 
+    //                            //                    + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupId.ToString() + "')\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0].Context.ToString().Trim() + "</span></div>";
+    //                            //                blnItemHasEzafeBaha = true;
+    //                            //            }
+    //                            //            else
+    //                            //            {
+    //                            //                str += "<div class=\"col-md-12\" style=\"padding-right:0px;margin:10px;\"><input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].Id.ToString() + "\" onchange=\"PreChechedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].Id.ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].ConditionGroupId.ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\" checked=\"checked\" name=\"group"
+    //                            //                    + DrItemsHasConditionWithItemFBShomarehFiltered[ii].ConditionGroupId.ToString() + strShomareh.ToString().Trim() + "\" type=\"" + strType + "\"/><span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].Id.ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].ConditionGroupId.ToString() + "')\" style=\"color:#000296;\">"
+    //                            //                     + DrItemsHasConditionWithItemFBShomarehFiltered[ii].Context.ToString().Trim() + "</span></div>";
+    //                            //            }
+    //                            //        }
+    //                            //        else
+    //                            //        {
+    //                            //            if (DrItemsHasConditionWithItemFBShomarehFiltered[0]["ViewCheckAllRecords"].ToString() == "True")
+    //                            //            {
+    //                            //                Guid guNew = new Guid();
+    //                            //                blnIsEzafeBahaAddedItems = DastyarCommon.CheckLakeGiriIsAddingRizMetreUsers1(strShomareh.ToString().Trim(), DrItemsHasConditionWithItemFBShomarehFiltered[0].Id.ToString(), BarAvordId, guNew);
+    //                            //                string strEzafeBahaIsChecked = "";
+    //                            //                if (blnIsEzafeBahaAddedItems)
+    //                            //                {
+    //                            //                    strEzafeBahaIsChecked = "checked=\"checked\"";
+    //                            //                }
+    //                            //                strItemsShowInRelItems += "<div class=\"col-md-4\" style=\"margin:0px 5px\"><input type=\"checkbox\" style=\"border:0px\" class=\"RizMetreUsersAddStyle spanStyleMitraSmall\" " + strEzafeBahaIsChecked + " onclick=\"ShowAndTickAllEzafeBahaAndLakeGiri($(this),'" + Dt.Rows[0]["ItemsFBShomareh"].ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupId.ToString() + "'," + 1 + ")\"/><span class=\"spanStyleMitraSmall spanLakeGiriStyle\" onclick=\"ShowEzafeBahaAndLakeGiriOnly('" + strShomareh.ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupId.ToString() + "')\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["Context"].ToString().Trim() + "</span></div>";
+    //                            //                blnItemHasEzafeBaha = true;
+    //                            //            }
+    //                            //            else
+    //                            //            {
+    //                            //                strItemsShowInRelItems += "<div class=\"col-md-4\" style=\"padding-right:0px;margin:10px;text-align: right;\"><input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].Id.ToString() + "\" onchange=\"PreChechedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].Id.ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].ConditionGroupId.ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\" checked=\"checked\" name=\"group"
+    //                            //                    + DrItemsHasConditionWithItemFBShomarehFiltered[ii].ConditionGroupId.ToString() + strShomareh.ToString().Trim() + "\" type=\"" + strType + "\"/><span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].Id.ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].ConditionGroupId.ToString() + "')\" style=\"color:#000296;\">"
+    //                            //                    + DrItemsHasConditionWithItemFBShomarehFiltered[ii].Context.ToString().Trim() + "</span></div>";
+    //                            //            }
+    //                            //        }
+    //                            //    }
+    //                            //    else
+    //                            //    {
+    //                            //        if (DrItemsHasConditionWithItemFBShomarehFiltered[ii]["MoveToRel"].ToString() != "True")
+    //                            //        {
+    //                            //            if (DrItemsHasConditionWithItemFBShomarehFiltered[0]["ViewCheckAllRecords"].ToString() == "True")
+    //                            //            {
+    //                            //                Guid guNew = new Guid();
+    //                            //                blnIsEzafeBahaAddedItems = DastyarCommon.CheckLakeGiriIsAddingRizMetreUsers1(strShomareh.ToString().Trim(), DrItemsHasConditionWithItemFBShomarehFiltered[0].Id.ToString(), BarAvordId, guNew);
+    //                            //                string strEzafeBahaIsChecked = "";
+    //                            //                if (blnIsEzafeBahaAddedItems)
+    //                            //                {
+    //                            //                    strEzafeBahaIsChecked = "checked=\"checked\"";
+    //                            //                }
+    //                            //                str += "<div class=\"col-md-4\" style=\"margin:0px 5px\"><input type=\"checkbox\" style=\"border:0px\" class=\"RizMetreUsersAddStyle spanStyleMitraSmall\" " + strEzafeBahaIsChecked + " onclick=\"ShowAndTickAllEzafeBahaAndLakeGiri($(this),'" + strShomareh.ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupId.ToString() + "'," + LevelNumber + ")\"/><span class=\"spanStyleMitraSmall spanLakeGiriStyle\" onclick=\"ShowEzafeBahaAndLakeGiriOnly('" + strShomareh.ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupId.ToString() + "')\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["Context"].ToString().Trim() + "</span></div>";
+    //                            //                blnItemHasEzafeBaha = true;
+    //                            //            }
+    //                            //            else
+    //                            //            {
+    //                            //                str += "<div class=\"col-md-12\" style=\"padding-right:0px;margin:10px;\"><input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].Id.ToString() + "\" onchange=\"PreChechedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].Id.ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].ConditionGroupId.ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\" name=\"group"
+    //                            //                      + DrItemsHasConditionWithItemFBShomarehFiltered[ii].ConditionGroupId.ToString() + strShomareh.ToString().Trim() + "\" type=\"" + strType + "\"/><span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].Id.ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].ConditionGroupId.ToString() + "')\" style=\"color:#000296;\">"
+    //                            //                      + DrItemsHasConditionWithItemFBShomarehFiltered[ii].Context.ToString().Trim() + "</span></div>";
+    //                            //            }
+    //                            //        }
+    //                            //        else
+    //                            //        {
+    //                            //            if (DrItemsHasConditionWithItemFBShomarehFiltered[0]["ViewCheckAllRecords"].ToString() == "True")
+    //                            //            {
+    //                            //                Guid guNew = new Guid();
+    //                            //                blnIsEzafeBahaAddedItems = DastyarCommon.CheckLakeGiriIsAddingRizMetreUsers1(strShomareh.ToString().Trim(), DrItemsHasConditionWithItemFBShomarehFiltered[0].Id.ToString(), BarAvordId, guNew);
+    //                            //                string strEzafeBahaIsChecked = "";
+    //                            //                if (blnIsEzafeBahaAddedItems)
+    //                            //                {
+    //                            //                    strEzafeBahaIsChecked = "checked=\"checked\"";
+    //                            //                }
+    //                            //                strItemsShowInRelItems += "<div class=\"col-md-4\" style=\"margin:0px 5px\"><input type=\"checkbox\" style=\"border:0px\" class=\"RizMetreUsersAddStyle spanStyleMitraSmall\" " + strEzafeBahaIsChecked + " onclick=\"ShowAndTickAllEzafeBahaAndLakeGiri($(this),'" + strShomareh.ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupId.ToString() + "'," + LevelNumber + ")\"/><span class=\"spanStyleMitraSmall spanLakeGiriStyle\" onclick=\"ShowEzafeBahaAndLakeGiriOnly('" + strShomareh.ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupId.ToString() + "')\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["Context"].ToString().Trim() + "</span></div>";
+    //                            //                blnItemHasEzafeBaha = true;
+    //                            //            }
+    //                            //            else
+    //                            //            {
+    //                            //                strItemsShowInRelItems += "<div class=\"col-md-4\" style=\"padding-right:0px;margin:10px;text-align: right;\"><input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].Id.ToString() + "\" onchange=\"PreChechedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].Id.ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].ConditionGroupId.ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\" name=\"group"
+    //                            //                    + DrItemsHasConditionWithItemFBShomarehFiltered[ii].ConditionGroupId.ToString() + strShomareh.ToString().Trim() + "\" type=\"" + strType + "\"/><span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].Id.ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[ii].ConditionGroupId.ToString() + "')\" style=\"color:#000296;\">"
+    //                            //                    + DrItemsHasConditionWithItemFBShomarehFiltered[ii].Context.ToString().Trim() + "</span></div>";
+    //                            //            }
+    //                            //        }
+    //                            //    }
+    //                            //}
+    //                        }
+    //                        str += "</div>";
+    //                    }
+    //                    else
+    //                    {
+    //                        var Dr = varItemsHasConditionAddedToFB.Where(x => x.ItemsHasCondition_ConditionContextId == DrItemsHasConditionWithItemFBShomarehFiltered[0].Id).ToList();
+
+    //                        if (DrItemsHasConditionWithItemFBShomarehFiltered[0].HasEnteringValue == true)
+    //                        {
+    //                            strDes = "<div class=\"col-md-1\"><span>" + DrItemsHasConditionWithItemFBShomarehFiltered[0].TitleDes.ToString().Trim() + "</span></div>";//DrItemsHasConditionWithItemFBShomarehFiltered[0]["HasDes"].ToString().Trim() == "True" ? "<div class=\"col-md-1\"><span>" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["TitleDes"].ToString().Trim() + "</span></div>" : "";
+    //                            if (Dr.Count != 0)
+    //                            {
+
+    //                                string strMeghdar = decimal.Parse(Dr[0].Meghdar.ToString().Trim()).ToString("G29");
+    //                                str += "<div class=\"col-md-12\" style=\"color:#0002b1;padding-left:0px;padding-right:0px\">";
+    //                                str += "<div class=\"row\" style=\"margin: 0px;\">";
+    //                                str += "<div class=\"col-md-6 conditionElementStyle\"><input type=\"checkbox\" checked=\"checked\" id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0].Id.ToString() + "\" onclick=\"PreChechedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0].Id.ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupId + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ItemFBShomareh.ToString().Trim() + "'," + 1 + ")\"/><span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[0].Id.ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupId.ToString() + "')\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupName.ToString().Trim() + "</span></div>";
+    //                                str += "<div class=\"col-md-1\"><input style=\"text-align:center;padding:3px;border: 1px solid #d5d0ff;margin-bottom: 2px;\" step=\"" + DrItemsHasConditionWithItemFBShomarehFiltered[0].StepChange.ToString().Trim() + "\" type=\"number\" id=\"txtMeghdar" + DrItemsHasConditionWithItemFBShomarehFiltered[0].Id.ToString() + "\" onchange=\"textMeghdarOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupId + "'," + 1 + ")\" class=\"form-control spanStyleMitraMedium\" value=\"" + strMeghdar + "\"/></div>";
+    //                                str += strDes;
+    //                                str += "</div></div>";
+    //                            }
+    //                            else
+    //                            {
+
+    //                                str += "<div class=\"col-md-12\" style=\"color:#0002b1;padding-left:0px;padding-right:0px\">";
+    //                                str += "<div class=\"row\" style=\"margin: 0px;\">";
+    //                                str += "<div class=\"col-md-6 conditionElementStyle\"><input type=\"checkbox\" id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0].Id.ToString() + "\" onclick=\"PreChechedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0].Id.ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupId + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ItemFBShomareh.ToString().Trim() + "'," + 1 + ")\"/><span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[0].Id.ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupId.ToString() + "')\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupName.ToString().Trim() + "</span></div>";
+    //                                str += "<div class=\"col-md-1\"><input style=\"text-align:center;padding:3px;border: 1px solid #d5d0ff;margin-bottom: 2px;\" step=\"" + DrItemsHasConditionWithItemFBShomarehFiltered[0].StepChange.ToString().Trim() + "\" type=\"number\" step=\"" + DrItemsHasConditionWithItemFBShomarehFiltered[0].StepChange.ToString().Trim() + "\" value=\"" + DrItemsHasConditionWithItemFBShomarehFiltered[0].DefaultValue.ToString().Trim() + "\" id=\"txtMeghdar" + DrItemsHasConditionWithItemFBShomarehFiltered[0].Id.ToString() + "\" onchange=\"textMeghdarOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupId + "'," + 1 + ")\" class=\"form-control spanStyleMitraMedium\"/></div>";
+    //                                str += strDes;
+    //                                str += "</div></div>";
+    //                            }
+    //                        }
+    //                        //else
+    //                        //{
+    //                        //    if (Dr.Count != 0)
+    //                        //    {
+    //                        //        if (DrItemsHasConditionWithItemFBShomarehFiltered[0]["MoveToRel"].ToString() != "True")
+    //                        //        {
+    //                        //            if (DrItemsHasConditionWithItemFBShomarehFiltered[0]["ViewCheckAllRecords"].ToString() == "True")
+    //                        //            {
+    //                        //                clsRizMetreUsers clsRizMetreUsers = new clsRizMetreUsers();
+    //                        //                Guid guNew = new Guid();
+    //                        //                blnIsEzafeBahaAddedItems = DastyarCommon.CheckLakeGiriIsAddingRizMetreUsers1(strShomareh.ToString().Trim(), DrItemsHasConditionWithItemFBShomarehFiltered[0].Id.ToString(), BarAvordId, guNew);
+    //                        //                string strEzafeBahaIsChecked = "";
+    //                        //                if (blnIsEzafeBahaAddedItems)
+    //                        //                {
+    //                        //                    strEzafeBahaIsChecked = "checked=\"checked\"";
+    //                        //                }
+    //                        //                str += "<div class=\"col-md-4\" style=\"margin:0px 5px\"><input type=\"checkbox\" style=\"border:0px\" class=\"RizMetreUsersAddStyle spanStyleMitraSmall\" " + strEzafeBahaIsChecked + " onclick=\"ShowAndTickAllEzafeBahaAndLakeGiri($(this),'" + strShomareh.ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupId.ToString() + "'," + 1 + ")\"/><span class=\"spanStyleMitraSmall spanLakeGiriStyle\" onclick=\"ShowEzafeBahaAndLakeGiriOnly('" + strShomareh + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupId.ToString() + "')\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0].Context.ToString().Trim() + "</span></div>";
+    //                        //                blnItemHasEzafeBaha = true;
+    //                        //            }
+    //                        //            else
+    //                        //            {
+    //                        //                str += "<div class=\"col-md-4 conditionElementStyle\" style=\"color:#0002b1;padding-left:0px;padding-right:0px\"><input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0].Id.ToString() + "\" type=\"checkbox\" checked=\"checked\" onclick=\"PreChechedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0].Id.ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupId + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ItemFBShomareh.ToString().Trim() + "',"
+    //                        //                    + LevelNumber + ")\"/><span onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[0].Id.ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupId.ToString() + "')\" class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupName.ToString().Trim() + "</span></div>";
+    //                        //            }
+    //                        //        }
+    //                        //        //else
+    //                        //        //{
+    //                        //        //    if (DrItemsHasConditionWithItemFBShomarehFiltered[0]["ViewCheckAllRecords"].ToString() == "True")
+    //                        //        //    {
+    //                        //        //        clsRizMetreUsers clsRizMetreUsers = new clsRizMetreUsers();
+    //                        //        //        Guid guNew = new Guid();
+    //                        //        //        blnIsEzafeBahaAddedItems = DastyarCommon.CheckLakeGiriIsAddingRizMetreUsers1(strShomareh.ToString().Trim(), DrItemsHasConditionWithItemFBShomarehFiltered[0].Id.ToString(), BarAvordId, guNew);
+    //                        //        //        string strEzafeBahaIsChecked = "";
+    //                        //        //        if (blnIsEzafeBahaAddedItems)
+    //                        //        //        {
+    //                        //        //            strEzafeBahaIsChecked = "checked=\"checked\"";
+    //                        //        //        }
+    //                        //        //        strItemsShowInRelItems += "<div class=\"col-md-4\" style=\"margin:0px 5px\"><input type=\"checkbox\" style=\"border:0px\" class=\"RizMetreUsersAddStyle spanStyleMitraSmall\" " + strEzafeBahaIsChecked + " onclick=\"ShowAndTickAllEzafeBahaAndLakeGiri($(this),'" + strShomareh.ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupId.ToString() + "'," + 1 + ")\"/><span class=\"spanStyleMitraSmall spanLakeGiriStyle\" onclick=\"ShowEzafeBahaAndLakeGiriOnly('" + strShomareh + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupId.ToString() + "')\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0].Context"].ToString().Trim() + " </ span ></ div > ";
+    //                        //        //        blnItemHasEzafeBaha = true;
+    //                        //        //    }
+    //                        //        //    else
+    //                        //        //    {
+    //                        //        //        strItemsShowInRelItems += "<div class=\"col-md-4\" style=\"padding-right:0px;margin:10px;text-align: right;\"><input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0].Id.ToString() + "\" onchange=\"PreChechedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0].Id.ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupId + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ItemFBShomareh"].ToString().Trim() + "'," + ` +")\" checked=\"checked\" name=\"group"
+    //                        //        //            + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupId.ToString() + strShomareh.ToString().Trim()
+    //                        //        //            + "\" type=\"checkbox\"/><span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[0].Id.ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupId.ToString() + "')\" style=\"color:#000296;\">"
+    //                        //        //            + DrItemsHasConditionWithItemFBShomarehFiltered[0]["Context"].ToString().Trim() + "</span></div>";
+    //                        //        //    }
+    //                        //        //}
+    //                        //    }
+    //                        //    //else
+    //                        //    //{
+    //                        //    //    if (DrItemsHasConditionWithItemFBShomarehFiltered[0]["MoveToRel"].ToString() != "True")
+    //                        //    //    {
+    //                        //    //        if (DrItemsHasConditionWithItemFBShomarehFiltered[0]["ViewCheckAllRecords"].ToString() == "True")
+    //                        //    //        {
+    //                        //    //            clsRizMetreUsers clsRizMetreUsers = new clsRizMetreUsers();
+    //                        //    //            Guid guNew = new Guid();
+    //                        //    //            blnIsEzafeBahaAddedItems = DastyarCommon.CheckLakeGiriIsAddingRizMetreUsers1(strShomareh.ToString().Trim(), DrItemsHasConditionWithItemFBShomarehFiltered[0].Id.ToString(), BarAvordId, guNew);
+    //                        //    //            string strEzafeBahaIsChecked = "";
+    //                        //    //            if (blnIsEzafeBahaAddedItems)
+    //                        //    //            {
+    //                        //    //                strEzafeBahaIsChecked = "checked=\"checked\"";
+    //                        //    //            }
+    //                        //    //            str += "<div class=\"col-md-4\" style=\"margin:0px 5px\"><input type=\"checkbox\" style=\"border:0px\" class=\"RizMetreUsersAddStyle spanStyleMitraSmall\" " + strEzafeBahaIsChecked + " onclick=\"ShowAndTickAllEzafeBahaAndLakeGiri($(this),'" + strShomareh.ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "'," + LevelNumber + ")\"/><span class=\"spanStyleMitraSmall spanLakeGiriStyle\" onclick=\"ShowEzafeBahaAndLakeGiriOnly('" + strShomareh.ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "')\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["Context"].ToString().Trim() + "</span></div>";
+    //                        //    //            blnItemHasEzafeBaha = true;
+    //                        //    //        }
+    //                        //    //        else
+    //                        //    //        {
+    //                        //    //            str += "<div class=\"col-md-4 conditionElementStyle\" style=\"color:#0002b1;padding-left:0px;padding-right:0px\"><input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0].Id.ToString() + "\" type=\"checkbox\" onclick=\"PreChechedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0].Id.ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupId + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber
+    //                        //    //                + ")\"/><span onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[0].Id.ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "')\" class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupName"].ToString().Trim() + "</span></div>";
+    //                        //    //        }
+    //                        //    //    }
+    //                        //    //    else
+    //                        //    //    {
+    //                        //    //        if (DrItemsHasConditionWithItemFBShomarehFiltered[0]["ViewCheckAllRecords"].ToString() == "True")
+    //                        //    //        {
+    //                        //    //            clsRizMetreUsers clsRizMetreUsers = new clsRizMetreUsers();
+    //                        //    //            Guid guNew = new Guid();
+    //                        //    //            blnIsEzafeBahaAddedItems = DastyarCommon.CheckLakeGiriIsAddingRizMetreUsers1(strShomareh.ToString().Trim(), DrItemsHasConditionWithItemFBShomarehFiltered[0].Id.ToString(), BarAvordId, guNew);
+    //                        //    //            string strEzafeBahaIsChecked = "";
+    //                        //    //            if (blnIsEzafeBahaAddedItems)
+    //                        //    //            {
+    //                        //    //                strEzafeBahaIsChecked = "checked=\"checked\"";
+    //                        //    //            }
+    //                        //    //            strItemsShowInRelItems += "<div class=\"col-md-4\" style=\"margin:0px 5px\"><input type=\"checkbox\" style=\"border:0px\" class=\"RizMetreUsersAddStyle spanStyleMitraSmall\" " + strEzafeBahaIsChecked + " onclick=\"ShowAndTickAllEzafeBahaAndLakeGiri($(this),'" + strShomareh.ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "'," + LevelNumber + ")\"/><span class=\"spanStyleMitraSmall spanLakeGiriStyle\" onclick=\"ShowEzafeBahaAndLakeGiriOnly('" + strShomareh.ToString().Trim() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "')\">" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["Context"].ToString().Trim() + "</span></div>";
+    //                        //    //            blnItemHasEzafeBaha = true;
+    //                        //    //        }
+    //                        //    //        else
+    //                        //    //        {
+    //                        //    //            strItemsShowInRelItems += "<div class=\"col-md-4\" style=\"padding-right:0px;margin:10px;text-align: right;\"><input id=\"CK" + DrItemsHasConditionWithItemFBShomarehFiltered[0].Id.ToString() + "\" onchange=\"PreChechedOnChange($(this),'" + DrItemsHasConditionWithItemFBShomarehFiltered[0].Id.ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0].ConditionGroupId + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ItemFBShomareh"].ToString().Trim() + "'," + LevelNumber + ")\" name=\"group"
+    //                        //    //                + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + strShomareh.ToString().Trim()
+    //                        //    //                + "\" type=\"checkbox\"/><span class=\"spanStyleMitraSmall spanStyleItemHasConditionDetails\" onclick=\"spanOnClick('" + DrItemsHasConditionWithItemFBShomarehFiltered[0].Id.ToString() + "','" + DrItemsHasConditionWithItemFBShomarehFiltered[0]["ConditionGroupId"].ToString() + "')\" style=\"color:#000296;\">"
+    //                        //    //                + DrItemsHasConditionWithItemFBShomarehFiltered[0]["Context"].ToString().Trim() + "</span></div>";
+    //                        //    //        }
+    //                        //    //    }
+    //                        //    //}
+    //                        //}
+    //                    }
+    //                }
+
+    //                str += "</div>";
+    //            }
+    //        }
+    //    }
+    //    return new JsonResult(str);
+    //}
+
+    //[HttpPost]
+    //public JsonResult CheckOnChangeKhakRizi([FromBody] CheckOnChangeKhakRiziDto request)
+    //{
+    //    Guid BarAvordUserId = request.BarAvordUserId;
+    //    int Year=request.Year;
+    //    NoeFehrestBaha NoeFB = request.NoeFB;
+
+
+
+
+    //}
 
     [HttpPost]
     public JsonResult UpdateRizMetreKhakRiziEzafeBaha([FromBody] UpdateRizMetreAKhEzafeBaha request)
@@ -922,6 +1445,8 @@ public class KhakRiziController(ApplicationDbContext context) : Controller
                      .ToList();
 
                 _context.KhakRiziEzafeBahas.RemoveRange(lstKhakRiziEzafeBahaBarAvord);
+
+
             }
 
             _context.SaveChanges();

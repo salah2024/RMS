@@ -1,0 +1,146 @@
+﻿@using RMS.Controllers.Report.Dto
+@model List<RizMetreForReportDto>
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>گزارش ریز متره</title>
+    <style>
+            body {
+                font-family: 'Vazirmatn', Tahoma, sans-serif; /* یا هر فونت فارسی دیگری که دارید */
+                margin: 20px;
+                direction: rtl;
+                text-align: right;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 30px;
+                border: 1px solid #ccc;
+            }
+
+            th, td {
+                border: 1px solid #ccc;
+                padding: 8px 12px; /* کمی بیشتر padding برای خوانایی */
+                text-align: center; /* پیش‌فرض وسط */
+            }
+
+            th {
+                background-color: #f2f2f2; /* رنگ هدر ستون‌ها */
+                font-weight: bold;
+                color: #333;
+            }
+
+            td {
+                color: #444;
+            }
+            /* استایل برای گروه‌های اصلی (NoeFBName) */
+            .group-header {
+                background-color: #d3d3d3; /* خاکستری تیره‌تر برای عنوان گروه */
+                font-weight: bold;
+                font-size: 1.1em;
+                color: #222;
+                padding: 10px 5px;
+                text-align: right; /* عنوان گروه راست چین */
+            }
+            /* استایل برای ردیف‌های آیتم */
+            .item-row td {
+                background-color: #fff; /* پس‌زمینه سفید برای ردیف‌ها */
+            }
+            /* ستون شرح که متن طولانی‌تری دارد */
+            td.description {
+                text-align: right; /* شرح راست چین */
+                max-width: 200px; /* محدود کردن عرض برای جلوگیری از کشیدگی جدول */
+                word-wrap: break-word; /* شکستن کلمات طولانی */
+            }
+            /* ستون Tozihat */
+            td.notes {
+                text-align: right;
+                color: #666;
+            }
+
+            /* استایل header های جداول */
+            .table-header th {
+                background-color: #a9a9a9; /* خاکستری تیره‌تر برای هدرهای اصلی */
+                color: white;
+                font-weight: bold;
+            }
+
+            .sub-header th {
+                background-color: #d3d3d3; /* خاکستری ملایم‌تر برای هدرهای فرعی */
+                font-weight: bold;
+                color: #333;
+            }
+    </style>
+</head>
+<body>
+
+    <h1>گزارش ریز متره - سال @Model.FirstOrDefault()?.Year</h1> @* نمایش سال گزارش *@
+
+    @{
+        // گروه‌بندی داده‌ها بر اساس NoeFBName و سپس ItemShomareh
+        var groupedData = Model
+            .GroupBy(x => x.NoeFBName)
+            .Select(g => new
+            {
+                NoeFBName = g.Key,
+                Items = g
+                    .GroupBy(x => x.ItemShomareh)
+                    .Select(subG => new
+                    {
+                        ItemShomareh = subG.Key,
+                        ItemSharh = subG.FirstOrDefault()?.ItemSharh, // یا هر فیلد دیگری از سربرگ گروه
+                        SubItems = subG.ToList()
+                    })
+            });
+    }
+
+    @foreach (var group in groupedData)
+    {
+        <table>
+            <thead>
+                <tr class="group-header">
+                    <td colspan="8">@group.NoeFBName - شماره فهرست بها: @group.Items.FirstOrDefault()?.SubItems.FirstOrDefault()?.ItemShomareh</td> @* نمایش شماره فهرست بها *@
+                </tr>
+                <tr class="sub-header">
+                    <th>ردیف</th>
+                    <th>شرح آیتم</th>
+                    <th>مقدار</th>
+                    <th>واحد</th>
+                    <th>وزن (تن)</th>
+                    <th>ارتفاع (متر)</th>
+                    <th>عرض (متر)</th>
+                    <th>طول (متر)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var itemGroup in group.Items)
+                {
+                    @* اینجا می‌توانیم ردیف شرح کلی آیتم را نمایش دهیم اگر لازم بود *@
+                    @*<tr>
+                        <td colspan="8" style="background-color: #eee; text-align: right; font-weight: bold;">@itemGroup.ItemSharh</td>
+                    </tr>*@
+
+                    @foreach (var item in itemGroup.SubItems)
+                    {
+                        <tr class="item-row">
+                            <td>@item.Code</td> @* یا item.Tozihat اگر برای ردیف اصلی است *@
+                            <td class="description">@item.Sharh</td>
+                            <td>@item.Tedad</td>
+                            <td>واحد</td> @* این مقدار باید از دیتابیس بیاید اگر ستون واحد دارید *@
+                            <td>@item.Vazn</td>
+                            <td>@item.Ertefa</td>
+                            <td>@item.Arz</td>
+                            <td>@item.Tool</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    }
+
+</body>
+</html>

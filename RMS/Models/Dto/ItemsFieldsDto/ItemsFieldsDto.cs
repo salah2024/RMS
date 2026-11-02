@@ -8,7 +8,11 @@ namespace RMS.Models.Dto.ItemsFieldsDto
         public NoeFehrestBaha NoeFB { get;set; }
         public bool IsEnteringValue { get; set; }   
         public string Vahed { get; set; }
-        public int FieldType { get; set; }
+        public ItemFieldType FieldType { get; set; }
         public long OperationId { get; set; }
+        public decimal? DefaultValue { get; set; }
+        public decimal? MaxValue { get; set; }
+        public decimal? MinValue { get; set; }
+
     }
 }

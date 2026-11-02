@@ -1,0 +1,41 @@
+﻿.modern-ribbon {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 0px 20px;
+    margin-bottom:5px;
+}
+
+.modern-ribbon-item {
+    width: 50px;
+    height: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    background: white;
+    transition: all .25s ease;
+    color: #374151;
+}
+
+    .modern-ribbon-item:hover {
+        text-decoration: none;
+        transform: translateY(-2px);
+    }
+
+    .modern-ribbon-item i {
+        font-size: 20px;
+        margin-bottom: 8px;
+        color: #6366f1;
+    }
+
+    .modern-ribbon-item span {
+        font-size: 12px;
+        font-weight: 600;
+        text-align: center;
+        line-height: 1.4;
+    }
+
+
+

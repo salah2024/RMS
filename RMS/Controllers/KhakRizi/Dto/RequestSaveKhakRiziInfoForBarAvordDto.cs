@@ -7,8 +7,8 @@ public class RequestSaveKhakRiziInfoForBarAvordDto
 {
     public Guid BarAvordUserId { get; set; }
     public NoeFehrestBaha NoeFBId { get; set; }
-    public long FromKM { get; set; }
-    public long ToKM { get; set; }
+    public decimal FromKM { get; set; }
+    public decimal ToKM { get; set; }
     public EnumRoadType RoadTypeId { get; set; }
     public EnumNoeDaneBandi NoeDaneBandiId { get; set; }
     public string? HajmKhakRiziValues { get; set; }

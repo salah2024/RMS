@@ -1,8 +1,11 @@
-﻿namespace RMS.Controllers.BoardStand.Dto
+﻿using static RMS.Models.Common.EnumForEntity;
+
+namespace RMS.Controllers.BoardStand.Dto
 {
     public class BoardStandForDeleteDto
     {
         public Guid BaravordId { get; set; }
+        public NoeFehrestBaha NoeFBId { get; set;  }
         /// <summary>
         /// 1-پایه تابلو اطلاعاتی
         /// 2-پایه تابلو دایره ای مثلثی

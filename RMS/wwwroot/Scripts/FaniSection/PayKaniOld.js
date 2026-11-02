@@ -70,7 +70,9 @@ function PayKaniClick(OpId) {
 </div>
     `;
 
-    $('#divItemsAddedAndRel' + ForItem).html(str);
+    NoeFBId = parseInt($('#HDFNoeFB').val());
+
+    $('#divItemsAddedAndRel' + NoeFBId + "_" + ForItem).html(str);
     $('#divAddedItems' + OpId).show();
 
 
@@ -79,7 +81,7 @@ function PayKaniClick(OpId) {
     setTimeout(() => { $('#txtFromKMForPayKani').focus().select(); }, 200);
 
     //$('#ula' + OpId).off('keydown.paykani').on('keydown.paykani', '.khakbardariTextStyle', function (e) {
-    $('#divItemsAddedAndRel' + ForItem).off('keydown.paykani').on('keydown.paykani', '.khakbardariTextStyle', function (e) {
+    $('#divItemsAddedAndRel' + NoeFBId + "_" + ForItem).off('keydown.paykani').on('keydown.paykani', '.khakbardariTextStyle', function (e) {
         if (e.key === 'Enter') {
             e.preventDefault(); // جلوگیری از submit فرم
             const inputs = $('.khakbardariTextStyle');
@@ -1901,37 +1903,37 @@ function ShowRizMetrePayKani(KMExistingId, lstPayKaniInfoRizMetre, lstItemFBShom
                 // نمایش توضیح گروه
                 str += "<div class='col-12'><span style='color:#000'>" + itemGroup.itemFBShomareh + " - " + des + "</span></div>";
 
-                str += "<div class=\"row col-12 styleHeaderTable\" style=\"text-align: center;background-color: #c4bfe3;\">";
+                str += "<div class=\"row col-12 styleHeaderTable\" style=\"text-align: center;\">";
                 str += "<div class=\"col-md-1 spanStyleMitraSmall\" style=\"text-align:center\"><span id=\"spanFieldShomarehName\">ردیف</span></div>";
                 str += "<div class=\"col-md-2 spanStyleMitraSmall\">شرح</div>";
 
                 str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">تعداد</div>";
+                str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">تعداد</div>";
                 str += "<div class=\"VahedStyle\">" + (ItemFields[0] != undefined ? ItemFields[0].vahed : "") + "</div>";
                 str += "</div>";
 
                 str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">طول</div>";
+                str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">طول</div>";
                 str += "<div class=\"VahedStyle\">" + (ItemFields[1] != undefined ? ItemFields[1].vahed : "") + "</div>";
                 str += "</div>";
 
                 str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">عرض</div>";
+                str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">عرض</div>";
                 str += "<div class=\"VahedStyle\">" + (ItemFields[2] != undefined ? ItemFields[2].vahed : "") + "</div>";
                 str += "</div>";
 
                 str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">ارتفاع</div>";
+                str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">ارتفاع</div>";
                 str += "<div class=\"VahedStyle\">" + (ItemFields[3] != undefined ? ItemFields[3].vahed : "") + "</div>";
                 str += "</div>";
 
                 str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">وزن</div>";
+                str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">وزن یا...</div>";
                 str += "<div class=\"VahedStyle\">" + (ItemFields[4] != undefined ? ItemFields[4].vahed : "") + "</div>";
                 str += "</div>";
 
                 str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\"><span>مقدار جزء</span></div>";
+                str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\"><span>مقدار جزء</span></div>";
                 str += "<div class=\"VahedStyle\">" + (ItemFields[5] != undefined ? ItemFields[5].vahed : "") + "</div>";
                 str += "</div>";
 
@@ -1959,7 +1961,7 @@ function ShowRizMetrePayKani(KMExistingId, lstPayKaniInfoRizMetre, lstItemFBShom
                     let HasEditButton = row.hasEditButton;
 
                     str += "<div class='row styleRowTable' style=\"background-color:#fff\" onclick=\"RizMetreSelectClick('" + id + "')\">";
-                    str += "<div class='col-md-1' style=\"text-align:center;color:#000\"><span>" + row.shomareh + "</span></div>";
+                    str += "<div class='col-md-1' style=\"text-align:center;color:#000\"><span class='RMRowStyle'>" + row.shomareh + "</span></div>";
 
                     str += "<div class='col-md-2'><input  type='text'" +
                         " class='form-control spanStyleMitraSmall' id='txtSharh" + id + "' value='" + row.sharh + "' /></div > ";
@@ -1979,15 +1981,22 @@ function ShowRizMetrePayKani(KMExistingId, lstPayKaniInfoRizMetre, lstItemFBShom
                     str += "<div class='col-md-1'><input type='text'" + (ItemFields[4] != undefined ? ItemFields[4].isEnteringValue !== true ? "disabled='disabled'" : "" : "") +
                         " class='form-control spanStyleMitraSmall " + (ItemFields[4] != undefined ? ItemFields[4].isEnteringValue === true ? " HasEnteringValue " : "" : "") + "' id='txtVazn" + id + "' value='" + strVazn + "'/></div>";
 
-                    str += "<div class='col-md-1 RMMJozStyle'>" + MeghdarJoz + "</div>";
+                    str += "<div class='col-md-1>'><label class='RMMJozStyle'>" + MeghdarJoz + "</label></div>";
 
-                    str += "<div class='col-md-2'><input  type='text' title='" + row.des + "' style='font-size:12px' class='form-control input-sm' id='txtDes" + id + "' value='" + row.des + "'/></div>";
-                    if (HasDelButton)
-                        str += "<div class='col-md-1' style='text-align:center;'><i class='fa fa-trash DelRMUStyle' onclick=\"DeleteRMUAddedItemsClick('" + id + "','" + ItemHasConditionId + "'," + ConditionGroupId + ")\"></i></div>";
+                    str += "<div class='col-md-2'><input  type='text' title='" + row.des + "' class='form-control spanStyleMitraSmall input-sm' id='txtDes" + id + "' value='" + row.des + "'/></div>";
+
+                    str += "<div class='col-md-1' style='text-align:center;'>";
+
                     if (HasEditButton)
+                        //str += "<i  id='iUpdate" + id +"' class='fa fa-save SaveRMUStyle' onclick=\"UpdateRMUAddedItemsClick('" + id + "','" + ItemHasConditionId + "'," + ConditionGroupId + ")\"></i>";
                         str += "<button type='button' id='iUpdate" + id + "' onclick=\"UpdateRMUAddedItemsClick('" + id + "','" + ItemHasConditionId + "'," + ConditionGroupId + ")\" class=\"ButtonRowsSaveStyle\"><i id=\"iSave\" class=\"fa fa-save SaveRMUStyle\"></i></button>";
 
+                    if (HasDelButton)
+                        //str += "<i class='fa fa-trash DelRMUStyle' onclick=\"DeleteRMUAddedItemsClick('" + id + "','" + ItemHasConditionId + "'," + ConditionGroupId + ")\"></i>";
+                        str += "<button type='button' id='iDelete" + id + "' onclick=\"DeleteRMUAddedItemsClick('" + id + "','" + ItemHasConditionId + "'," + ConditionGroupId + ")\" class=\"ButtonRowsSaveStyle\"><i id=\"iDelete\" class=\"fa fa-trash DelRMUStyle\"></i></button>";
+
                     str += "</div>";
+                  str += "</div>";
                 });
                 str += "</div>";
 

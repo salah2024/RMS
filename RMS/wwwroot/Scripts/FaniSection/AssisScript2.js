@@ -1,6 +1,4 @@
 ﻿function GetAndShowAddItems(ItemHasConditionId, ConditionGroupId) {
-
-    debugger;
     BarAvordUserId = $('#HDFBarAvordUserID').val();
     OperationId = $('#HDFOperationId').val();
     NoeFB = parseInt($('#HDFNoeFB').val());
@@ -21,13 +19,13 @@
         data: JSON.stringify(vardata),
         contentType: "application/json; charset=utf-8",
         success: function (data) {
-            debugger;
             lstItemFBShomarehForGet = data.lstItemFBShomarehForGet;
             lst = data.lst;
 
-            //در صورتی که مقدار ضریب غبر صفر باشد، یعنی 
+            //در صورتی که مقدار ضریب غبر صفر باشد، یعنی
             //آیتم دارای اضافه یا کسر بهای قیری بوده آیتم های 150801 یا 150802
 
+            debugger;
             var str = '';
 
             // ساخت HTML بر اساس lstItemFBShomarehForGet
@@ -53,7 +51,6 @@
                 a.itemFBShomareh.localeCompare(b.itemFBShomareh)
             );
 
-            debugger;
 
             // ساخت HTML بر اساس lstItemFBShomarehForGet
             if (lst.length != 0) {
@@ -63,45 +60,44 @@
                     let des = itemGroup.des;
                     let ItemFields = itemGroup.itemFields;
 
-                    debugger;
                     let rows = groupedData[itemFBShomareh] || [];
                     if (rows.length != 0) {
                         // نمایش توضیح گروه
                         str += "<div class='row'>";
-                        str += "<div class='col-md-12'><span style='color:#000'>" + itemGroup.itemFBShomareh + " - " + des + "</span></div>";
+                        str += "<div class='col-md-12'><span class='spanDesForEzafeBahaStyle'>" + itemGroup.itemFBShomareh + " - " + des + "</span></div>";
                         str += "</div>";
 
-                        str += "<div class=\"row col-12 styleHeaderTable\" style=\"text-align: center;background-color: #c4bfe3;\">";
+                        str += "<div class=\"row col-12 styleHeaderTable\" style=\"text-align: center;\">";
                         str += "<div class=\"col-md-1 spanStyleMitraSmall\" style=\"text-align:center\"><span id=\"spanFieldShomarehName\">ردیف</span></div>";
                         str += "<div class=\"col-md-2 spanStyleMitraSmall\">شرح</div>";
 
                         str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">تعداد</div>";
+                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">تعداد</div>";
                         str += "<div class=\"VahedStyle\">" + (ItemFields[0] != undefined ? ItemFields[0].vahed : "") + "</div>";
                         str += "</div>";
 
                         str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">طول</div>";
+                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">طول</div>";
                         str += "<div class=\"VahedStyle\">" + (ItemFields[1] != undefined ? ItemFields[1].vahed : "") + "</div>";
                         str += "</div>";
 
                         str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">عرض</div>";
+                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">عرض</div>";
                         str += "<div class=\"VahedStyle\">" + (ItemFields[2] != undefined ? ItemFields[2].vahed : "") + "</div>";
                         str += "</div>";
 
                         str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">ارتفاع</div>";
+                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">ارتفاع</div>";
                         str += "<div class=\"VahedStyle\">" + (ItemFields[3] != undefined ? ItemFields[3].vahed : "") + "</div>";
                         str += "</div>";
 
                         str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">وزن</div>";
+                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">وزن یا...</div>";
                         str += "<div class=\"VahedStyle\">" + (ItemFields[4] != undefined ? ItemFields[4].vahed : "") + "</div>";
                         str += "</div>";
 
                         str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\"><span>مقدار جزء</span></div>";
+                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\"><span>مقدار جزء</span></div>";
                         str += "<div class=\"VahedStyle\">" + (ItemFields[5] != undefined ? ItemFields[5].vahed : "") + "</div>";
                         str += "</div>";
 
@@ -114,7 +110,6 @@
 
                         // نمایش ردیف‌های مربوطه
                         rows.forEach(function (row) {
-                            debugger;
 
                             let id = row.id;
 
@@ -130,34 +125,48 @@
                             let HasEditButton = row.hasEditButton;
 
                             str += "<div class='row styleRowTable' style=\"background-color:#fff\" onclick=\"RizMetreSelectClick('" + id + "')\">";
-                            str += "<div class='col-md-1' style=\"text-align:center;color:#000\"><span>" + row.shomarehNew + "</span></div>";
+                            str += "<div class='col-md-1' style=\"text-align:center;color:#000\"><span class='RMRowStyle'>" + row.shomarehNew + "</span></div>";
 
                             str += "<div class='col-md-2'><input  type='text'" +
                                 " class='form-control spanStyleMitraSmall' id='txtSharh" + id + "' value='" + row.sharh + "' /></div > ";
 
+                            strEnteringValue0 = ItemFields[0] != undefined ? ItemFields[0].isEnteringValue !== true ? "" : " HasEnteringValue ":"";
+                            strEnteringValue1 = ItemFields[1] != undefined ? ItemFields[1].isEnteringValue !== true ? "" : " HasEnteringValue ":"";
+                            strEnteringValue2 = ItemFields[2] != undefined ? ItemFields[2].isEnteringValue !== true ? "" : " HasEnteringValue ":"";
+                            strEnteringValue3 = ItemFields[3] != undefined ? ItemFields[3].isEnteringValue !== true ? "" : " HasEnteringValue ":"";
+                            strEnteringValue4 = ItemFields[4] != undefined ? ItemFields[4].isEnteringValue !== true ? "" : " HasEnteringValue ":"";
+
                             str += "<div class='col-md-1'><input  type='text'" + (ItemFields[0] != undefined ? ItemFields[0].isEnteringValue !== true ? " disabled='disabled'" : "" : "") +
-                                " class='form-control spanStyleMitraSmall " + (ItemFields[0] != undefined ? ItemFields[0].isEnteringValue === true ? " HasEnteringValue " : "" : "") + "' id='txtTedad" + id + "' value = '" + strTedad + "' /></div > ";
+                                " class='form-control spanStyleMitraSmall " + strEnteringValue0 + (ItemFields[0] != undefined ? ItemFields[0].essentialValue === true ? " essentialValue " : "" : "") + "' id='txtTedad" + id + "' value = '" + strTedad + "' /></div > ";
 
                             str += "<div class='col-md-1'><input  type='text'" + (ItemFields[1] != undefined ? ItemFields[1].isEnteringValue !== true ? " disabled='disabled'" : "" : "") +
-                                " class='form-control spanStyleMitraSmall " + (ItemFields[1] != undefined ? ItemFields[1].isEnteringValue === true ? " HasEnteringValue " : "" : "") + "' id='txtTool" + id + "' value='" + strTool + "'/></div>";
+                                " class='form-control spanStyleMitraSmall " + strEnteringValue1 + (ItemFields[1] != undefined ? ItemFields[1].essentialValue === true ? " essentialValue " : "" : "") + "' id='txtTool" + id + "' value='" + strTool + "'/></div>";
 
                             str += "<div class='col-md-1'><input  type='text'" + (ItemFields[2] != undefined ? ItemFields[2].isEnteringValue !== true ? " disabled='disabled'" : "" : "") +
-                                " class='form-control spanStyleMitraSmall " + (ItemFields[2] != undefined ? ItemFields[2].isEnteringValue === true ? " HasEnteringValue " : "" : "") + "' id='txtArz" + id + "' value='" + strArz + "'/></div>";
+                                " class='form-control spanStyleMitraSmall " + strEnteringValue2 + (ItemFields[2] != undefined ? ItemFields[2].essentialValue === true ? " essentialValue " : "" : "") + "' id='txtArz" + id + "' value='" + strArz + "'/></div>";
 
                             str += "<div class='col-md-1'><input  type='text'" + (ItemFields[3] != undefined ? ItemFields[3].isEnteringValue !== true ? "disabled='disabled'" : "" : "") +
-                                " class='form-control spanStyleMitraSmall " + (ItemFields[3] != undefined ? ItemFields[3].isEnteringValue === true ? " HasEnteringValue " : "" : "") + "' id='txtErtefa" + id + "' value='" + strErtefa + "'/></div>";
+                                " class='form-control spanStyleMitraSmall " + strEnteringValue3 + (ItemFields[3] != undefined ? ItemFields[3].essentialValue === true ? " essentialValue " : "" : "") + "' id='txtErtefa" + id + "' value='" + strErtefa + "'/></div>";
 
-                            str += "<div class='col-md-1'><input type='text'" + (ItemFields[4] != undefined ? ItemFields[4].isEnteringValue !== true ? "disabled='disabled'" : "" : "") +
-                                " class='form-control spanStyleMitraSmall " + (ItemFields[4] != undefined ? ItemFields[4].isEnteringValue === true ? " HasEnteringValue " : "" : "") + "' id='txtVazn" + id + "' value='" + strVazn + "'/></div>";
+                            str += "<div class='col-md-1'><input type='text'" + strEnteringValue4 + (ItemFields[4] != undefined ? ItemFields[4].isEnteringValue !== true ? "disabled='disabled'" : "" : "") +
+                                " class='form-control spanStyleMitraSmall " + strEnteringValue4 + (ItemFields[4] != undefined ? ItemFields[4].essentialValue === true ? " essentialValue " : "" : "") + "' id='txtVazn" + id + "' value='" + strVazn + "'/></div>";
 
-                            str += "<div class='col-md-1 RMMJozStyle'>" + MeghdarJoz + "</div>";
+                            str += "<div class='col-md-1'><label class='RMMJozStyle'>" + MeghdarJoz + "</label></div>";
 
-                            str += "<div class='col-md-2'><input  type='text' title='" + row.des + "' style='font-size:12px' class='form-control input-sm' id='txtDes" + id + "' value='" + row.des + "'/></div>";
-                            if (HasDelButton)
-                                str += "<div class='col-md-1' style='text-align:center;'><i class='fa fa-trash DelRMUStyle' onclick=\"DeleteRMUAddedItemsClick('" + id + "','" + ItemHasConditionId + "'," + ConditionGroupId + ")\"></i></div>";
+                            str += "<div class='col-md-2'><input type='text' title='" + row.des + "' class='form-control spanStyleMitraSmall input-sm' id='txtDes" + id + "' value='" + row.des + "'/></div>";
+
+                            str += "<div class='col-md-1' style='text-align:center;'>";
+
                             if (HasEditButton)
+                                //str += "<i id='iUpdate"+ id +"' class='fa fa-save SaveRMUStyle' onclick=\"UpdateRMUAddedItemsClick('" + id + "','" + ItemHasConditionId + "'," + ConditionGroupId + ")\"></i>";
                                 str += "<button type='button' id='iUpdate" + id + "' onclick=\"UpdateRMUAddedItemsClick('" + id + "','" + ItemHasConditionId + "'," + ConditionGroupId + ")\" class=\"ButtonRowsSaveStyle\"><i id=\"iSave\" class=\"fa fa-save SaveRMUStyle\"></i></button>";
 
+                            if (HasDelButton)
+                                //str += "<i class='fa fa-trash DelRMUStyle' onclick=\"DeleteRMUAddedItemsClick('" + id + "','" + ItemHasConditionId + "'," + ConditionGroupId + ")\"></i>";
+                                str += "<button type='button' id='iDelete" + id + "' onclick=\"DeleteRMUAddedItemsClick('" + id + "','" + ItemHasConditionId + "'," + ConditionGroupId + ")\" class=\"ButtonRowsSaveStyle\"><i id=\"iDelete\" class=\"fa fa-trash DelRMUStyle\"></i></button>";
+
+
+                            str += "</div>";
                             str += "</div>";
                         });
                         str += "</div>";
@@ -168,7 +177,7 @@
                 var $targetDiv = $("#divShowRizMetre" + ItemHasConditionIdSplit[0]);
                 $targetDiv.html(str);
 
-                $targetDiv.find("input[type='text'].HasEnteringValue")
+                $targetDiv.find("input[type='text'].essentialValue")
                     .filter(function () {
                         return $(this).val().trim() === "";
                     })
@@ -177,18 +186,19 @@
                     .focus();
 
 
-                $targetDiv.on("change", "input[type='text'].HasEnteringValue", function () {
+                $targetDiv.on("change", "input[type='text'].essentialValue", function () {
                     if ($(this).val().trim() !== "") {
                         $(this).removeClass("blinking");
                     }
                 });
 
 
-                $targetDiv.on("keypress", "input[type='text'].HasEnteringValue", function (e) {
+                $targetDiv.on("keypress", "input[type='text']", function (e) {
                     /* ENTER PRESSED */
+                        debugger;
                     if (e.keyCode == 13) {
                         /* FOCUS ELEMENT */
-                        var inputs = $(this).parent().parent().find("input[Type=text].HasEnteringValue,button");
+                        var inputs = $(this).parent().parent().find("input[Type=text],button");
                         var idx = inputs.index(this);
                         if (idx == inputs.length - 1) {
                             inputs[0].focus();
@@ -225,7 +235,6 @@
 
 ////////////
 function DeleteRMUAddedItemsClick(Id, ItemHasConditionId, ConditionGroupId) {
-    debugger;
     var vardata = new Object();
     BarAvordUserId = $('#HDFBarAvordUserID').val();
     OperationId = $('#HDFOperationId').val();
@@ -244,7 +253,6 @@ function DeleteRMUAddedItemsClick(Id, ItemHasConditionId, ConditionGroupId) {
             if (response == "OK") {
                 toastr.success('ریز متره بدرستی حذف گردید', 'موفقیت');
                 GetAndShowAddItems(ItemHasConditionId, ConditionGroupId);
-                debugger;
                 GetRizMetreWithFBId(1);
             }
         },
@@ -255,6 +263,7 @@ function DeleteRMUAddedItemsClick(Id, ItemHasConditionId, ConditionGroupId) {
 }
 ////////////
 function UpdateRMUAddedItemsClick(Id, ItemHasConditionId, ConditionGroupId) {
+
     debugger;
     Obj = $('#iUpdate' + Id);
     Obj.prop('disabled', true);
@@ -289,7 +298,7 @@ function UpdateRMUAddedItemsClick(Id, ItemHasConditionId, ConditionGroupId) {
     }
 
     firstObjectHasFocus = null;
-    if ($('#txtTool' + Id).hasClass('HasEnteringValue')) {
+    if ($('#txtTool' + Id).hasClass('essentialValue')) {
         if ($.isNumeric(parseFloat($('#txtTool' + Id).val()))) {
             Tool = $('#txtTool' + Id).val().replace(/\,/g, '');
             $('#txtTool' + Id).removeClass('ErrorValueStyle');
@@ -305,7 +314,7 @@ function UpdateRMUAddedItemsClick(Id, ItemHasConditionId, ConditionGroupId) {
     }
     else Tool = undefined;
 
-    if ($('#txtArz' + Id).hasClass('HasEnteringValue')) {
+    if ($('#txtArz' + Id).hasClass('essentialValue')) {
         if ($.isNumeric(parseFloat($('#txtArz' + Id).val()))) {
             Arz = $('#txtArz' + Id).val().replace(/\,/g, '');
             $('#txtArz' + Id).removeClass('ErrorValueStyle');
@@ -322,7 +331,7 @@ function UpdateRMUAddedItemsClick(Id, ItemHasConditionId, ConditionGroupId) {
     }
     else Arz = undefined;
 
-    if ($('#txtErtefa' + Id).hasClass('HasEnteringValue')) {
+    if ($('#txtErtefa' + Id).hasClass('essentialValue')) {
         if ($.isNumeric(parseFloat($('#txtErtefa' + Id).val()))) {
             Ertefa = $('#txtErtefa' + Id).val().replace(/\,/g, '');
             $('#txtErtefa' + Id).removeClass('ErrorValueStyle');
@@ -339,7 +348,7 @@ function UpdateRMUAddedItemsClick(Id, ItemHasConditionId, ConditionGroupId) {
     }
     else Ertefa = undefined;
 
-    if ($('#txtVazn' + Id).hasClass('HasEnteringValue')) {
+    if ($('#txtVazn' + Id).hasClass('essentialValue')) {
         if ($.isNumeric(parseFloat($('#txtVazn' + Id).val()))) {
             Vazn = $('#txtVazn' + Id).val().replace(/\,/g, '');
             $('#txtVazn' + Id).removeClass('ErrorValueStyle');
@@ -356,7 +365,6 @@ function UpdateRMUAddedItemsClick(Id, ItemHasConditionId, ConditionGroupId) {
     }
     else Vazn = undefined;
 
-    debugger;
     if (firstObjectHasFocus != null)
         firstObjectHasFocus.focus();
     var vardata = new Object();
@@ -368,7 +376,7 @@ function UpdateRMUAddedItemsClick(Id, ItemHasConditionId, ConditionGroupId) {
     vardata.Ertefa = Ertefa === undefined ? null : Ertefa;
     vardata.Vazn = Vazn === undefined ? null : Vazn;
     vardata.Des = Des;
-    vardata.NoeFB = NoeFB;
+    vardata.NoeFBId = NoeFB;
     vardata.Year = Year;
     vardata.FBId = FBId;
     vardata.OperationId = OperationId;
@@ -402,14 +410,14 @@ function UpdateRMUAddedItemsClick(Id, ItemHasConditionId, ConditionGroupId) {
         toastr.warning('مقادیر مشخص شده را وارد نمایید', 'هشدار');
     }
 }
-/////
-
+////
 function GetRizMetreWithFBId(LevelNumber) {
-    debugger;
+
     NoeFB = parseInt($('#HDFNoeFB').val());
     BarAvordUserId = $('#HDFBarAvordUserID').val();
     Year = $('#HDFYear').val();
     FBId = $('#HDFFBID').val();
+    //alert(FBId);
     Operation = $('#HDFOperationId').val();
     ItemsFBShomareh = $('#HDFItemsFBShomareh').val();
     var vardata = new Object();
@@ -429,6 +437,7 @@ function GetRizMetreWithFBId(LevelNumber) {
         success: function (response) {
             var itemsFields = response.itemsFields;
             var rizMetreUsers = response.rizMetreUsers;
+            var DeleteEditButtonMng = response.deleteEditButtonMng;
 
             var lstItemsFields = "";
             for (var i = 0; i < itemsFields.length; i++) {
@@ -445,11 +454,14 @@ function GetRizMetreWithFBId(LevelNumber) {
                 $('#divAddedItems' + Operation)
                     .find('input[type=checkbox]').each(function () {
                         $(this).prop('checked', false);
-                        debugger;
                     });
                 $('#divAddedItems' + Operation).slideUp(1000);
             }
             else {
+
+                hasDelButton = DeleteEditButtonMng.hasDelButton;
+                hasEditButton = DeleteEditButtonMng.hasEditButton;
+
                 rizMetreUsers.forEach(function (row) {
                     let id = row.id;
 
@@ -461,7 +473,7 @@ function GetRizMetreWithFBId(LevelNumber) {
                     let MeghdarJoz = parseFloat(row.meghdarJoz) === 0 ? "0" : isNaN(parseFloat(row.meghdarJoz)) ? "" : parseFloat(row.meghdarJoz).toString();
 
                     str += "<div class='row styleRowTable' onclick=\"RizMetreSelectClick('" + id + "')\">";
-                    str += "<div class='col-md-1'><div class='col-md-12' style='padding-left:0px;'><span>" + row.shomarehNew + "</span></div></div>";
+                    str += "<div class='col-md-1'><div class='col-md-12' style='padding-left:0px;'><span class='RMRowStyle'>" + row.shomarehNew + "</span></div></div>";
 
                     str += "<div class='col-md-2'><input type='text' class='form-control spanStyleMitraSmall TextEdit row-input' id='txtSharh" + id + "' value='" + row.sharh + "'/></div>";
 
@@ -480,24 +492,26 @@ function GetRizMetreWithFBId(LevelNumber) {
                     str += "<div class='col-md-1'><input type='text'" + (itemsFields[4].isEnteringValue !== true ? " disabled='disabled'" : "") +
                         " class='form-control spanStyleMitraSmall TextEdit row-input" + (itemsFields[4].isEnteringValue === true ? " HasEnteringValue " : "") + "' id='txtVazn" + id + "' value='" + strVazn + "'/></div>";
 
-                    str += "<div class='col-md-1 RMMJozStyle'>" + (MeghdarJoz === 0 ? "" : MeghdarJoz) + "</div>";
+                    str += "<div class='col-md-1'><label class='RMMJozStyle'>" + (MeghdarJoz === 0 ? "" : MeghdarJoz) + "</label></div>";
 
-                    str += "<div class='col-md-2'><input type='text' class='form-control input-sm TextEdit row-input' id='txtDes" + id + "' value='" + row.des + "'/></div>";
+                    str += "<div class='col-md-2'><input type='text' class='form-control spanStyleMitraSmall input-sm TextEdit row-input' id='txtDes" + id + "' value='" + row.des + "'/></div>";
 
                     str += "<div class='col-md-1'>" +
-                        "<i class='fa fa-edit EditRMUStyle displayNone' id='iEdit" + id + "' onclick=\"EditRMUClick('" + id + "', '" + Operation + "', '" + row.fbId + "', '" + lstItemsFields + "')\"></i>" +
-                        "<button type=\"button\" id='iUpdate" + id + "' onclick=\"UpdateRMUClick('" + id + "')\" class=\"ButtonRowsSaveStyle\"><i id=\"iSave\" class=\"fa fa-save SaveRMUStyle\"></i></button>" +
-                        "<button type=\"button\" onclick=\"DeleteRMUClick('" + id + "')\" class=\"ButtonRowsSaveStyle\"><i id=\"iSave\" class=\"fa fa-trash DelRMUStyle\"></i></button></div>";
+                        "<i class='fa fa-edit EditRMUStyle displayNone' id='iEdit" + id + "' onclick=\"EditRMUClick('" + id + "', '" + Operation + "', '" + row.fbId + "', '" + lstItemsFields + "')\"></i>";
+                    if (hasDelButton)
+                        str += "<button type=\"button\" id='iUpdate" + id + "' onclick=\"UpdateRMUClick('" + id + "')\" class=\"ButtonRowsSaveStyle\"><i id=\"iSave\" class=\"fa fa-save SaveRMUStyle\"></i></button>";
+                    if (hasEditButton)
+                        str += "<button type=\"button\" onclick=\"DeleteRMUClick('" + id + "')\" class=\"ButtonRowsSaveStyle\"><i id=\"iSave\" class=\"fa fa-trash DelRMUStyle\"></i></button>";
 
-                    str += "</div>";
+                    str += "</div></div>";
                 });
-                debugger;
                 //var $targetDiv = $("#Grid" + ItemsFBShomareh).find(".RMCollectStyle");
                 var $targetDiv = $("#uldiva" + Operation).find(".RMCollectStyle");
                 $targetDiv.html(str);
 
                 $targetDiv.on('keydown', '.row-input', function (e) {
                     if (e.key === 'Enter') {
+                        debugger;
                         e.preventDefault();
 
                         var $currentInput = $(this);
@@ -523,9 +537,15 @@ function GetRizMetreWithFBId(LevelNumber) {
             //$targetDiv.scrollTop($targetDiv[0].scrollHeight);
 
             if (rizMetreUsers.length != 0) {
-                if (!$("#divItemsAddedAndRel" + ItemsFBShomareh + " .styleHeaderTable1").length > 0) {
-                    if (true) {
-                        PayKaniClick(Operation);
+                if (!$("#divItemsAddedAndRel" + NoeFB + "_" + ItemsFBShomareh + " .styleHeaderTable1").length > 0) {
+                    PayKani = $('#HDFPayKani').val().split('_');
+                    if (PayKani[0] == 'true') {
+                        if (PayKani[1] == 2) {
+                            PayKaniClick(Operation, PayKani[1]);
+                        }
+                        else if (PayKani[1] == 3) {
+                            ChanelKaniClick(Operation, PayKani[1]);
+                        }
                     }
                     else
                         GetItemsAddedAndRelForRizMetre(LevelNumber);
@@ -540,7 +560,6 @@ function GetRizMetreWithFBId(LevelNumber) {
 
 function GetItemsAddedAndRelForRizMetre(LevelNumber) {
 
-    debugger;
     BarAvordUserId = $('#HDFBarAvordUserID').val();
     IsFromAddedOperation = $('#HDFIsFromAddedOperation').val();
     if (IsFromAddedOperation == 'true')
@@ -571,12 +590,11 @@ function GetItemsAddedAndRelForRizMetre(LevelNumber) {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (response) {
-            debugger;
             if (response == '') {
-                $('#divItemsAddedAndRel' + ForItem).remove();
+                $('#divItemsAddedAndRel' + NoeFB + "_" + ForItem).remove();
             }
             else {
-                $('#divItemsAddedAndRel' + ForItem).html(response);
+                $('#divItemsAddedAndRel' + NoeFB + "_" + ForItem).html(response);
                 $('#divAddedItems' + OperationId).show();
             }
         },

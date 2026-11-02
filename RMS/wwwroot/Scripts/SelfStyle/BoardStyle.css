@@ -1,8 +1,7 @@
 ﻿fieldset {
-    border: 1px solid #ccc;
     border-radius: 8px;
-    padding: 5px;
-    margin-bottom: 5px;
+    padding: 0px;
+    margin-bottom: 0px;
     background-color: #fff;
 }
 
@@ -14,8 +13,11 @@ legend {
 
 label {
     display: inline-block;
-    margin: 6px 10px;
+    margin: 1px 10px;
     cursor: pointer;
+    color: #0002b1;
+    font-family: 'BMitra';
+    font-size: 16px;
 }
 
 .boardRowStyle {
@@ -128,6 +130,35 @@ label {
     color: blue; /* رنگ متن در حالت چشمک */
 }
 
+.txtBorderStyleRed {
+    border: 1px solid red !important;
+}
+
+.eb-radio {
+    margin-right: 15px;
+}
+
+.eb-group-header
+{
+
+}
+.eb-group-header:hover {
+    cursor: pointer;
+}
+
+.eb-group-title {
+    color: #0002b1;
+    font-size: 16px;
+    margin-right: 6px;
+}
+
+
+.radio-invalid {
+    border: 1px solid #9b0707;
+    border-radius: 5px;
+}
+
+
 @keyframes blinkText {
     0% {
         color: blue;
@@ -141,3 +172,5 @@ label {
         color: blue;
     }
 }
+
+

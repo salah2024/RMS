@@ -1,0 +1,41 @@
+﻿<style>
+
+    a {
+        color: #2f019b;
+        font-size: 20px;
+        font-family: 'BMitra', sans-serif;
+    }
+</style>
+
+@using RMS.Models.Entity
+@model clsPermission
+
+<div style="margin-top:70px">
+<h2>ایجاد مجوز</h2>
+
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+
+    <div>
+        <label>کلید پایه (مثال: دستیار)</label>
+        <input name="baseKey" />
+    </div>
+
+    <div>
+        <label>عنوان (مثال: دستیار)</label>
+        <input name="title" />
+    </div>
+
+    <div>
+        <label>Group</label>
+        <input name="group" />
+    </div>
+
+    <button type="submit">ذخیره</button>
+    <a asp-action="Index">بازگشت</a>
+</form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

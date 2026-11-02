@@ -1,0 +1,188 @@
+﻿
+<style>
+
+
+    /* نشانگر موس برای کل ردیف‌ها */
+    #fosoulTable tbody tr {
+        cursor: pointer;
+    }
+
+
+    .ShowNoneZeroClass {
+    }
+
+        .ShowNoneZeroClass:hover {
+            cursor: pointer;
+        }
+
+</style>
+
+<link href="~/Scripts/font-awesome/all.min.css" rel="stylesheet">
+<link href="~/Scripts/font-awesome/fontawesome.min.css" rel="stylesheet">
+
+<script src="~/Scripts/font-awesome/fontawesome.min.js"></script>
+
+
+<link href="~/Scripts/jsTree/my-treeStyle.css" rel="stylesheet">
+<link href="~/Scripts/SelfStyle/ShowBaravordStyle.css" rel="stylesheet">
+
+<script src="~/Scripts/FaniSection/PishnahadGhaymatScript.js"></script>
+
+
+
+
+<script>
+        $(document).ready(function () {
+              GetViewBag();
+        });
+
+    function GetViewBag() {
+         $.ajax({
+            type: "Get",
+                url: "/BaseInfo/GetViewBag",
+                      data: JSON.stringify(''),
+                      contentType: "application/json; charset=utf-8",
+                      dataType: "json",
+                      success: function (response) {
+
+                         viewBag=response.viewBag;
+                         lstNoeFBs=  response.lstNoeFBs;
+
+                         $('#HDFBarAvordUserID').val(viewBag.baId);
+                         $('#HDFYear').val(viewBag.year);
+
+                            let str = "";
+                            let selectedId = null;
+
+                            $.each(lstNoeFBs, function (index, item) {
+
+                            // اولین رادیو انتخاب شود
+                            let checked = index === 0 ? "checked" : "";
+
+                            // اگر اولین آیتم است مقدارش را در متغیر ذخیره کن
+                            if (index === 0) {
+                            selectedId = item.id;
+                            }
+
+                        str += `
+                            <label style="margin-right:10px;">
+                            <input type="radio" name="radType" onchange="FBChange(${item.id})" value="${item.id}" ${checked}/>
+                            ${item.name}
+                            </label>
+                            `;
+                            });
+
+                            $('#HDFNoeFB').val(selectedId);
+                            $('#divFB').html(str);
+
+                          GetFosoulPishnahadGhaymat();
+                      },
+                      error: function (response) {
+                          toastr.error('خطا', 'خطا');
+                      }
+          });
+    }
+
+
+
+    function FBChange(selectedId)
+    {
+        $('#HDFNoeFB').val(selectedId);
+        GetFosoulPishnahadGhaymat();
+    }
+</script>
+<div class="row" style="background-color: #ccc;border-top: 1px solid #aaa;font-family: 'BMitra';margin-top: 10px;">
+    @*  <div class="col-9" id="divFB">
+    </div >*@
+</div>
+
+<div class="row" style="">
+    <div class="col-12">
+        <div class="table-responsive">
+            <div id="tableWrapper">
+                <table id="fosoulTable" class="table table-bordered fixed-table">
+                    <thead>
+                        <tr>
+                            <th style="text-align:center;width:5%">
+                                ردیف
+                            </th>
+                            <th colspan="2" style="text-align:right;width:40%">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <span>
+                                            عنوان فصول فهرست‌بها
+                                        </span>
+                                    </div>
+                                    <div class="col-9" id="divFB">
+                                    </div>
+                                </div>
+                            </th>
+                            <th style="text-align:center;width:15%">
+                                <span>برآورد فصل(اقلام پایه و غیرپایه) (ریال)</span>
+                            </th>
+                            <th style="text-align:center;width:15%">
+                                <span>برآورد فصل پس از اعمال تمامی ضرایب (ریال)</span>
+                            </th>
+                            <th style="text-align:center;width:15%">
+                                <span>مبلغ پیشنهادی پیمانکار با احتساب امامی تمامی ضرایب و هزینه‌های مورد نظر (ریال)</span>
+                            </th>
+                            <th style="text-align:center;width:10%">
+                                <span>ضریب پیشنهادی جزء/کل</span>
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="FaslBody">
+                        <!-- Rows will be added here dynamically -->
+                    </tbody>
+                    <tfoot>
+                        <tr style="background-color:#d4c9ff;text-align: center;">
+                            <td style="text-align:right;font-weight:bold;width:5%">
+                            </td>
+                            <td colspan="2" style="text-align:right;width:40%">
+                                <span style="font-size: 15px;padding-right: 30px;color: #1e27b5;">
+                                    جمع مبلغ پیشنهاد برای هر رشته، تجهیزوبرچیدن کارگاه و ضریب پیشنهادی کل
+                                </span>
+                            </td>
+                            <td id="tdJamKol" style="width:15%;text-align:center"></td>
+                            <td id="tdJamKolWithZarayeb" style="width:15%"></td>
+                            <td id="tdJamMablaghPishnahadi" style="width:15%"></td>
+                            <td id="tdJamZarib" style="width:10%"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<a id="aViewDes" class="" data-toggle="modal" href="#PopupViewDes"></a>
+<div class="modal fade" id="PopupViewDes" tabindex="-1" role="dialog" style="z-index:5000"
+     aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="direction: ltr;">
+                <button id="btnClose" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 style="margin-top: 10px;margin-bottom: 0px;margin-right: 20px;" id="ModalTitle">
+                </h4>
+            </div>
+            <div class="modal-body" style="overflow:auto;max-height:600px">
+                <div class="row" id="TableFosoul">
+                    <div class="col-12">
+                        <div id="ShowDes" style="direction:rtl">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<input type="hidden" id="HDFBarAvordUserID" name="name" value="" />
+<input type="hidden" id="HDFYear" name="name" value="" />
+<input type="hidden" id="HDFNoeFB" name="name" value="" />
+<input type="hidden" id="HDFFaslSelected" name="name" value="" />

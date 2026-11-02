@@ -418,7 +418,7 @@ function ShowSelctionPolForPaykani(PolExistingId, PolNum, GetTedadDahaneh, GetDa
     str += '<div class=\'col-md-12\'><span>زیر تراز آب (متر)</span></div>';
     str += '</div></div></div>';
 
-    ActivityTitle = ["کوله", "پایه میانی", "دستک 1", "دستک 2", "دستک 3", "دستک 4"];
+    ActivityTitle = ["کوله", "پایه میانی", "دیوار بالی 1", "دیوار بالی 2", "دیوار بالی 3", "دیوار بالی 4"];
 
     ////////////////
 
@@ -586,7 +586,7 @@ function ShowSelctionPolForPaykani(PolExistingId, PolNum, GetTedadDahaneh, GetDa
             str += '</div>';
             str += '</div></div></div>';
 
-            ActivityTitle = ["کوله", "پایه میانی", "دستک 1", "دستک 2", "دستک 3", "دستک 4"];
+            ActivityTitle = ["کوله", "پایه میانی", "دیوار بالی 1", "دیوار بالی 2", "دیوار بالی 3", "دیوار بالی 4"];
 
             PolNum = $('#HDFPolNum').val();
             var vardata = new Object();

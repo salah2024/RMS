@@ -9,6 +9,7 @@ using RMS.Models.Common.Dto;
 using RMS.Models.Common;
 using RMS.Models.Entity;
 using static RMS.Models.Common.EnumForEntity;
+using RMS.Controllers.BarAvordUser.Common;
 
 namespace RMS.Controllers.BaseInfo;
 
@@ -32,13 +33,13 @@ public class BaseInfoController(ApplicationDbContext context) : Controller
 
     public ActionResult GetConditionDes([FromBody] GetConditionDesInputDto request)
     {
-        clsConditionContext CC = _context.ConditionContexts.Where(x => x.Id == request.ConditionContextId).FirstOrDefault();
+        clsConditionContext? CC = _context.ConditionContexts.Where(x => x.Id == request.ConditionContextId).FirstOrDefault();
         if (CC != null)
         {
             return new JsonResult(CC);
         }
         else
-            return null;
+            return new JsonResult(null);
     }
 
     //[HttpPost]
@@ -68,16 +69,34 @@ public class BaseInfoController(ApplicationDbContext context) : Controller
     //}
 
     [HttpPost]
-    public JsonResult SetViewBag([FromBody] SetViewBagInputDto request)
+    public async Task<JsonResult> SetViewBag([FromBody] SetViewBagInputDto request)
     {
         Guid BAId = request.BAId;
+        string strProjectTitle = "";
+        int BAType = request.BAType;
+        if (BAType == 3)
+        {
+            clsBaravordUser CurrentBarAvord = await _context.BaravordUsers.FirstAsync(x => x.ID == BAId);
+            clsBaravordUser? ParentBarAvord = await _context.BaravordUsers.FirstOrDefaultAsync(x => x.ID == CurrentBarAvord.ParentId);
+            if (ParentBarAvord != null)
+            {
+                strProjectTitle = ParentBarAvord.Name;
+            }
+        }
+        else if (BAType == 2)
+        {
+            clsBaravordUser CurrentBarAvord = await _context.BaravordUsers.FirstAsync(x => x.ID == BAId);
+            strProjectTitle = CurrentBarAvord.Name;
+        }
+
         int Year = request.Year;
         //NoeFehrestBaha NoeFB = request.NoeFB;
 
         TempData["BAId"] = BAId;
+        TempData["BAType"] = BAType;
         TempData["Year"] = Year;
         //TempData["NoeFB"] = NoeFB;
-        return new JsonResult("OK");
+        return new JsonResult("OK_" + strProjectTitle);
     }
 
     [HttpPost]
@@ -87,6 +106,7 @@ public class BaseInfoController(ApplicationDbContext context) : Controller
         TempData["Year"] = "";
         TempData["NoeFB"] = "";
         TempData["UserName"] = "";
+        TempData["BAType"] = "";
         return new JsonResult("OK");
     }
 
@@ -100,9 +120,11 @@ public class BaseInfoController(ApplicationDbContext context) : Controller
                 if (TempData["BAId"] != null)
                 {
                     string BAId = TempData["BAId"].ToString();
+                    string BAType = TempData["BAType"].ToString();
                     string Year = TempData["Year"].ToString();
                     //string NoeFB = TempData["NoeFB"].ToString();
                     TempData["BAId"] = BAId;
+                    TempData["BAType"] = BAType;
                     TempData["Year"] = Year;
                     //TempData["NoeFB"] = NoeFB;
                     //DataTable Dt = new DataTable();
@@ -121,6 +143,7 @@ public class BaseInfoController(ApplicationDbContext context) : Controller
                     ViewBagDataDto viewBag = new ViewBagDataDto
                     {
                         BAId = BAId == null ? "" : BAId,
+                        BAType = BAType == null ? "" : BAType,
                         Year = Year == null ? "" : Year,
                     };
 
@@ -132,45 +155,67 @@ public class BaseInfoController(ApplicationDbContext context) : Controller
                         if (baravordUser != null)
                         {
                             viewBag.BarAvordName = baravordUser.Name;
+                            viewBag.BAType = baravordUser.Type.ToString();
                             string NoeFBs = baravordUser.NoeFBs;
                             if (NoeFBs != "")
                             {
+                                string Title = baravordUser.Name;
+                                if (baravordUser.Type == NoeBarAvord.BarAvord)
+                                {
 
+                                }
+                                else if (baravordUser.Type == NoeBarAvord.Gharardad || baravordUser.Type == NoeBarAvord.SooratVaziat)
+                                {
+                                    clsBaravordUser? ParentBaravordUser = _context.BaravordUsers.FirstOrDefault(x => x.ID == baravordUser.ParentId);
+
+                                    if (ParentBaravordUser != null)
+                                    {
+
+                                        Title = ParentBaravordUser.Name + " - " + Title;
+                                    }
+                                }
                                 List<NoeFBDto> lstNoeFBs = new List<NoeFBDto>();
                                 string[] strNoeFBs = NoeFBs.Split(",");
                                 foreach (var item in strNoeFBs)
                                 {
                                     NoeFBDto noeFB = new NoeFBDto();
-                                    switch (item)
+                                    NoeFehrestBaha NoeFBItem = (NoeFehrestBaha)int.Parse(item);
+                                    switch (NoeFBItem)
                                     {
-                                        case "232":
+                                        case NoeFehrestBaha.RahDari:
                                             {
-                                                noeFB.Id = 232;
+                                                noeFB.Id = 22;
                                                 noeFB.Name = "راهداری";
                                                 break;
                                             }
-                                        case "233":
+                                        case NoeFehrestBaha.Abnie:
                                             {
-                                                noeFB.Id = 233;
+                                                noeFB.Id = 11;
                                                 noeFB.Name = "ابنیه";
                                                 break;
                                             }
-                                        case "234":
+                                        case NoeFehrestBaha.RahoBand:
                                             {
-                                                noeFB.Id = 234;
-                                                noeFB.Name = "راه، باند و فرودگاه";
+                                                noeFB.Id = 21;
+                                                noeFB.Name = "راه، راه‌آھن و باند فرودگاه";
                                                 break;
                                             }
-                                        case "235":
+                                        case NoeFehrestBaha.Barghi:
                                             {
-                                                noeFB.Id = 235;
+                                                noeFB.Id = 13;
                                                 noeFB.Name = "تاسیسات برقی";
                                                 break;
                                             }
-                                        case "236":
+                                        case NoeFehrestBaha.Mekaniki:
                                             {
-                                                noeFB.Id = 236;
+                                                noeFB.Id = 12;
                                                 noeFB.Name = "تاسیسات مکانیکی";
+                                                break;
+                                            }
+                                        case NoeFehrestBaha.MareMat:
+                                            {
+                                                noeFB.Id = 16;
+                                                noeFB.Name = "مرمت بناهای تاریخی";
                                                 break;
                                             }
                                         default:
@@ -182,7 +227,8 @@ public class BaseInfoController(ApplicationDbContext context) : Controller
                                 var result = new
                                 {
                                     viewBag,
-                                    lstNoeFBs
+                                    lstNoeFBs,
+                                    Title
                                 };
                                 return new JsonResult(result);
                             }
@@ -210,158 +256,131 @@ public class BaseInfoController(ApplicationDbContext context) : Controller
     }
 
     [HttpPost]
-    public JsonResult GetFosoul([FromBody] GetFosoulInputDto request)
+    public async Task<JsonResult> GetFosoulForBarAvord([FromBody] GetFosoulForBAAndSVInputDto request)
     {
         Guid BarAvordUserId = request.BarAvordUserId;
         NoeFehrestBaha NoeFBId = request.NoeFBId;
         int Year = request.Year;
 
-        List<GetFosoulOutputDto> Fosoul = _context.Fosouls.Where(x => x.NoeFB == NoeFBId)
-            .OrderBy(x => x.order)
-            .Select(x => new GetFosoulOutputDto
-            {
-                Id = x.Id,
-                Code = x.Code,
-                FaslName = x.Name,
-                Order = x.order,
-            }).ToList();
 
+        //List<GetFosoulOutputDto> Fosoul = await showBarAvord.AllFosoulBarAvord(request, BaravordUser, _context);
 
-        var RizMetre = _context.RizMetreUserses.Include(x => x.FB).Where(x => x.FB.BarAvordId == BarAvordUserId && x.FB.NoeFBId == NoeFBId)
-            .Select(riz => new ViewUserBarAvordOutPutRizMetreDto
-            {
-                Id = riz.ID,
-                Sharh = riz.Sharh,
-                Shomareh = riz.Shomareh,
-                Arz = riz.Arz,
-                Des = riz.Des,
-                Ertefa = riz.Ertefa,
-                Tedad = riz.Tedad,
-                Tool = riz.Tool,
-                Vazn = riz.Vazn,
-                FBId = riz.FBId,
-                MeghdarJoz = riz.MeghdarJoz
-            }).OrderBy(x => x.Shomareh).ToList();
+        //List<clsVahed> lstVaheds = await _context.Vaheds.ToListAsync();
 
+        //var result = new ResultGetFosoulForBarAvordDto
+        //{
+        //    lstVaheds = lstVaheds,
+        //    Fosoul = Fosoul,
+        //};
 
+        ShowBarAvordCommon showBarAvord = new ShowBarAvordCommon();
 
-        //clsBaravordZaribBalaSari? baravordZaribBalaSari = _context.BaravordZaribBalaSaris.FirstOrDefault(x => x.BaravordId == request.BarAvordUserId);
-        //clsBaravordZaribManteghe? baravordZaribManteghe = _context.BaravordZaribManteghes.FirstOrDefault(x => x.BaravordId == request.BarAvordUserId);
+        ResultGetFosoulForBarAvordDto Result = await showBarAvord.fnGetFosoulForBarAvord(request, _context);
 
-        //decimal zaribManteghe = baravordZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe.Value : 1 : 1;
-        //decimal zaribBalaSari = baravordZaribBalaSari != null ? baravordZaribBalaSari.ZaribBalasari != null ? baravordZaribBalaSari.ZaribBalasari.Value : 1 : 1;
+        return new JsonResult(Result);
+    }
 
-        RequestGetZarayebDto requestGetZarayeb = new RequestGetZarayebDto
+    [HttpPost]
+    public async Task<JsonResult> GetFosoulForSooratVaziat([FromBody] GetFosoulForBAAndSVInputDto request)
+    {
+        Guid BarAvordUserId = request.BarAvordUserId;
+        NoeFehrestBaha NoeFBId = request.NoeFBId;
+        int Year = request.Year;
+        string Code = request.Code;
+
+        //List<GetFosoulOutputDto> Fosoul = await showBarAvord.AllFosoulBarAvord(request, BaravordUser, _context);
+
+        //List<clsVahed> lstVaheds = await _context.Vaheds.ToListAsync();
+
+        //var result = new ResultGetFosoulForBarAvordDto
+        //{
+        //    lstVaheds = lstVaheds,
+        //    Fosoul = Fosoul,
+        //};
+
+        ShowBarAvordCommon showBarAvord = new ShowBarAvordCommon();
+
+        clsBaravordUser? BaravordUser = await _context.BaravordUsers.FirstOrDefaultAsync(x => x.ID == BarAvordUserId);
+        if (BaravordUser == null)
         {
-            BarAvordId = BarAvordUserId,
-            NoeFBId = NoeFBId,
-            Year = Year
-        };
-        ResultGetZarayebDto result1 = RizMetreCommon.GetZarayeb(requestGetZarayeb, _context);
-
-        decimal zaribBalaSari = result1.zaribBalaSari != null ? result1.zaribBalaSari.Value : 1;
-        decimal zaribManteghe = result1.zaribManteghe != null ? result1.zaribManteghe.Value : 1;
-
-        decimal AllZarib = zaribManteghe * zaribBalaSari;
-
-        foreach (var fasl in Fosoul)
+            return new JsonResult(null);
+        }
+        else
         {
-            // اول FBs رو فیلتر و گروه‌بندی کن (در حافظه)
-            var fbItems = _context.FBs
-                .Where(f => f.BarAvordId == BarAvordUserId && f.NoeFBId == NoeFBId)
-                .GroupBy(f => f.Shomareh)
-                .Select(g => g.FirstOrDefault())
-                .ToList(); // انتقال به حافظه، جلوگیری از خطای EF
 
-            // سپس FehrestBahas رو از دیتابیس بگیر و join کن در حافظه
-            var userBarAvordOutPut = _context.FehrestBahas
-                .Where(fehrest => fehrest.Sal == request.Year && fehrest.NoeFB == NoeFBId && fehrest.Shomareh.StartsWith(fasl.Code))
-                .ToList() // انتقال به حافظه
-                .GroupJoin(fbItems,
-                    fehrest => fehrest.Shomareh,
-                    fb => fb.Shomareh,
-                    (fehrest, fbGroup) => new { fehrest, fbItem = fbGroup.FirstOrDefault() })
-                .OrderBy(x => x.fehrest.Shomareh)
-                .Select(x => new ViewUserBarAvordOutPutDto
-                {
-                    ItemFbShomareh = x.fehrest.Shomareh,
-                    Sharh = x.fehrest.Sharh,
-                    BahayeVahed = x.fehrest.BahayeVahed,
-                    Vahed = x.fehrest.Vahed,
-                    FBId = x.fbItem != null ? x.fbItem.ID : null,
-                    BahayeVahedNew = x.fbItem != null ? x.fbItem.BahayeVahedNew : 0,
-                    RizMetre = new List<ViewUserBarAvordOutPutRizMetreDto>()
-                }).ToList();
-
-
-            decimal JameFasl = 0;
-            foreach (var item in userBarAvordOutPut)
+            ResultGetFosoulForSooratVaziatDto Result = await showBarAvord.fnGetFosoulForSooratVaziat(request, BaravordUser, _context);
+            if (Code != "")
             {
-                decimal Meghdar = 0;
-                foreach (var RM in RizMetre)
-                {
-                    if (item.FBId == RM.FBId)
-                    {
-                        item.RizMetre.Add(RM);
-                        Meghdar += RM.MeghdarJoz != null ? RM.MeghdarJoz.Value : 0;
-                    }
-                }
-                decimal dBVahed = item.BahayeVahedNew != 0 ? item.BahayeVahedNew : item.BahayeVahed == null || item.BahayeVahed == "" ? 0 : decimal.Parse(item.BahayeVahed);
-                item.Meghdar = Meghdar;
-                decimal dBahayeKol = Meghdar * dBVahed;
-                item.BahayeKol = dBahayeKol;
-                JameFasl += dBahayeKol;
+                GetFosoulOutputDto? Fasl = Result.Fosoul.FirstOrDefault(x => x.Code == Code);
+                if (Fasl!=null) 
+                    Result.CurrentFasl = Fasl;
             }
-
-            fasl.JameFasl = JameFasl;
-            decimal dJameFaslWithZarib = AllZarib * JameFasl;
-            fasl.JameFaslWithZarib = dJameFaslWithZarib;
-
-            List<clsItemFBStar> lstItemFBStars = _context.ItemFBStars.Where(x => x.BaravordId == BarAvordUserId && x.NoeFBId == NoeFBId && x.Shomareh.Substring(0, 2) == fasl.Code).ToList();
-            decimal AllJameFaslStar = 0;
-            decimal AllJameFaslStarWithZarib = 0;
-            foreach (var itemFBStarCurrent in lstItemFBStars)
-            {
-                decimal JameItemFBStar = 0;
-                //clsItemFBStar? itemFBStar = _context.ItemFBStars.FirstOrDefault(x => x.BaravordId == BarAvordUserId && x.NoeFBId == NoeFBId && x.Shomareh.Trim() == itemFBStarCurrent.Shomareh);
-
-                //BahayeVahedStar = 0;
-                //if (itemFBStar != null)
-                //{
-                decimal BahayeVahedStar = itemFBStarCurrent.BahayeVahed;
-                //}
-                JameItemFBStar = context.RizMetreStars.Include(x => x.ItemFBStar)
-                     .Where(x => x.ItemFBStar.BaravordId == BarAvordUserId && x.ItemFBStar.NoeFBId == NoeFBId && x.ItemFBStar.Shomareh.Trim() == itemFBStarCurrent.Shomareh)
-                     .Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
-
-                AllJameFaslStar += JameItemFBStar * BahayeVahedStar;
-                bool blnKharidTajhizat = itemFBStarCurrent.blnKharidTajhizat == null ? false : itemFBStarCurrent.blnKharidTajhizat.Value;
-                decimal ZaribStar2 = zaribBalaSari;
-                if (blnKharidTajhizat)
-                {
-                    ZaribStar2 = 1.14m;
-                }
-                AllJameFaslStarWithZarib += (JameItemFBStar * BahayeVahedStar * zaribManteghe * ZaribStar2);
-            }
-
-            fasl.JameFaslStar = AllJameFaslStar;
-            fasl.JameFaslStarWithZarib = AllJameFaslStarWithZarib;
-            fasl.JameFaslAll = AllJameFaslStar + JameFasl;
-            fasl.JameFaslWithZaribAll = dJameFaslWithZarib + AllJameFaslStarWithZarib;
-
+            return new JsonResult(Result);
         }
 
-        List<clsVahed> lstVaheds = _context.Vaheds.ToList();
-
-        var result = new
-        {
-            lstVaheds = lstVaheds,
-            Fosoul = Fosoul,
-
-        };
-
-        return new JsonResult(result);
     }
+
+
+    [HttpPost]
+    public async Task<JsonResult> GetSumAllFBForSooratVaziat([FromBody] GetFosoulForBAAndSVInputDto request)
+    {
+        Guid BarAvordUserId = request.BarAvordUserId;
+        //NoeFehrestBaha NoeFBId = request.NoeFBId;
+        int Year = request.Year;
+
+        ShowBarAvordCommon showBarAvord = new ShowBarAvordCommon();
+
+        clsBaravordUser? BaravordUser = await _context.BaravordUsers.FirstOrDefaultAsync(x => x.ID == BarAvordUserId);
+        if (BaravordUser == null)
+        {
+            return new JsonResult(null);
+        }
+        else
+        {
+            string[] NoeFBs = BaravordUser.NoeFBs.Split(",");
+
+            decimal dJamAllFB = 0;
+            foreach (var NoeFB in NoeFBs)
+            {
+                NoeFehrestBaha NoeFBId = (NoeFehrestBaha)int.Parse(NoeFB);
+                request.NoeFBId = NoeFBId;
+                ResultGetFosoulForSooratVaziatDto Result = await showBarAvord.fnGetFosoulForSooratVaziat(request, BaravordUser, _context);
+
+                dJamAllFB += Result.SumFosoulForSooratVaziat.dJameFaslWithTajhizWithZarib;
+            }
+
+
+            return new JsonResult(dJamAllFB);
+        }
+    }
+
+    [HttpPost]
+    public async Task<JsonResult> GetSumAllFosoulForSooratVaziat([FromBody] GetFosoulForBAAndSVInputDto request)
+    {
+        Guid BarAvordUserId = request.BarAvordUserId;
+        NoeFehrestBaha NoeFBId = request.NoeFBId;
+        int Year = request.Year;
+
+        ShowBarAvordCommon showBarAvord = new ShowBarAvordCommon();
+
+        clsBaravordUser? BaravordUser = await _context.BaravordUsers.FirstOrDefaultAsync(x => x.ID == BarAvordUserId);
+        if (BaravordUser == null)
+        {
+            return new JsonResult(null);
+        }
+        else
+        {
+
+            decimal dJamAllFB = 0;
+
+            ResultGetFosoulForSooratVaziatDto Result = await showBarAvord.fnGetFosoulForSooratVaziat(request, BaravordUser, _context);
+
+            dJamAllFB += Result.SumFosoulForSooratVaziat.dJameFaslWithTajhizWithZarib;
+
+            return new JsonResult(dJamAllFB);
+        }
+    }
+
 
     [HttpPost]
     public JsonResult GetDescriptionForFasl([FromBody] GetDescriptionInputForFaslDto request)

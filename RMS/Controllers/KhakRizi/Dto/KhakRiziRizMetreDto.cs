@@ -2,6 +2,7 @@
 
 public class KhakRiziRizMetreDto
 {
+    public Guid Id { get; set; }
     public string ItemFBShomareh { get; set; }
     public long Shomareh { get; set; }
     public string? ShomarehNew { get; set; }

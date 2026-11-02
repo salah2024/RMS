@@ -1,0 +1,89 @@
+﻿.child-row {
+    background: #f8fbff;
+}
+
+.child-container {
+    border-top: 2px solid #0d6efd;
+}
+
+.child-header {
+    background: #0d6efd;
+    color: white;
+    padding: 8px;
+    font-weight: bold;
+}
+
+.parent-selected {
+    background: #dbeafe !important;
+    font-weight: bold;
+}
+
+
+.card .table td {
+    border: 1px solid #bbc9d7;
+}
+
+.tblTajmieFosoulItems thead th {
+    background: #0d6efd none repeat scroll 0% 0%;
+    color:#fff;
+    text-align:center;
+}
+
+#tblTajmieBody tbody td {
+    padding: 3px !important;
+}
+
+.btn {
+    font-size: 12px;
+}
+
+
+.table td {
+    padding: 3px;
+}
+
+.form-control {
+    height: 22px !important;
+    font-size: 14px;
+}
+
+.form-control:focus{
+    border:1px solid #0cc;
+    color:darkblue;
+
+}
+
+.tblTajmieFBItems thead th {
+    background: #345078 none repeat scroll 0% 0%;
+    color: #fff;
+}
+
+.btn-success-Tajmie {
+    background-color: #056e1d;
+}
+
+.btn-success-TajmieItem {
+    background-color: #168f32;
+}
+
+.btn-success {
+    font-weight: 400;
+    font-size: 14px !important;
+}
+
+
+.spanBahayeKolInMeghdar {
+    background-color: #595e02;
+    padding: 2px 10px;
+    border-radius: 5px;
+    color: #fff;
+}
+
+
+.table tbody tr:nth-of-type(odd) {
+     background-color: unset;
+}
+
+.table tbody tr:nth-of-type(odd):hover {
+     background-color: unset;
+}

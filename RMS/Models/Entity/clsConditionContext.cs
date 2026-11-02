@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using static RMS.Models.Common.EnumForEntity;
 
 namespace RMS.Models.Entity;
 
@@ -23,4 +24,6 @@ public class clsConditionContext
     /// این فیلد بصورت رشته ای بوده و میتواند چندین وابسته داشته باشد که با ,  از هم جدا میشوند
     /// </summary>
     public string? ConditionContextRel { get; set; }
+    public NoeFehrestBaha NoeFB { get; set; }
+
 }

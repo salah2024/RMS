@@ -1,0 +1,29 @@
+﻿
+.PolExistHeadStyle {
+    border: 1px solid #592787;
+    background-color: #b4b4ff;
+    text-align: center;
+    padding: 5px 0px;
+}
+
+.PolExistBodyStyle {
+    border-bottom: 1px solid #dfbdff;
+    text-align: center;
+    padding: 5px 0px;
+}
+.PolExistBodyStyle:hover {
+    cursor:pointer;
+}
+.BKRowExistPol {
+    background-color: #ecf4d3;
+}
+
+.showSubItemsRizMetreClass {
+    background-color: #ceceff;
+    padding: 7px 1px;
+    margin-bottom: 8px;
+}
+
+.showSubItemsRizMetreClass:hover{
+    cursor:pointer;
+}

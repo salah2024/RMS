@@ -9,25 +9,25 @@ function KhakBardariMashinWithBarAvordIdClick(OpId, BarAvordUserId) {
   </div>
 
 
-      <!-- کیلومتراژ های ثبت شده -->
+      <!-- متراژ های ثبت شده -->
 
     <div class="khakbardari-container" style="border: 1px solid #cb92ff;background-color: #f3ebff;">
     <div class="row khakbardari-box">
 
-    <!-- از کیلومتراژ -->
+    <!-- از متراژ -->
     <div class="col-md-1">
         <i class="fa fa-plus" style="font-size: 20px;color: green;"></i>
     </div>
     <div class="col-md-1 label-col">
-      <span>از کیلومتراژ:</span>
+      <span>از متراژ:</span>
     </div>
     <div class="col-md-1">
       <input type="text" class="form-control_1 khakbardariTextStyle input-sm text-center" id="txtFromKMForKhakbardari" value="0"/>
     </div>
 
-    <!-- تا کیلومتراژ -->
+    <!-- تا متراژ -->
     <div class="col-md-1 label-col">
-      <span>تا کیلومتراژ:</span>
+      <span>تا متراژ:</span>
     </div>
     <div class="col-md-1">
       <input type="text" class="form-control_1 khakbardariTextStyle input-sm text-center" id="txtToKMForKhakbardari" value="0"/>
@@ -53,11 +53,14 @@ function KhakBardariMashinWithBarAvordIdClick(OpId, BarAvordUserId) {
  <!-- دکمه ذخیره -->
  <div class="row">
  <div class="col-12" style="direction: ltr;">
-    <div class="col-md-2 action-col">
-      <input type="button" class="btn buttonStyleBoard" value="ذخیره" style="color:#fff" onclick="SaveKhakBardariInfo('${BarAvordUserId}'` + ',' + `'Add')"/>
-        
 
-    </div><!--col-md-2 action-col -->
+ <div class="col-md-1 action-col">
+     <button type="button"
+            onclick="SaveKhakBardariInfo('${BarAvordUserId}'` + ',' + `'Add')"
+            class="ButtonRowsSaveStyle">
+            <i id="iSave" class="fa fa-save SaveRMUStyle"></i>
+     </button>
+    </div>
     </div><!--col-12 -->
     </div>
 
@@ -113,8 +116,7 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
        style="padding:5px 0 0;
               border:1px solid #b1d3ec;
               border-radius:10px;
-              background-color:#d3e4fc;
-              font-size:12px;">
+              background-color:#d3e4fc;">
 
     <!-- ستون خالی -->
     <div class="col-1" style="display:none">
@@ -144,10 +146,10 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
           </div>
           </div>
         </div>
-       <!-- واریزه -->
+       <!-- حمل به دپو -->
         <div class="col-3">
           <div class="col-12" style="text-align:center;border-bottom:1px solid #98b3c3;">
-            <span>واریزه</span>
+            <span>حمل به دپو</span>
           </div>
           <div class="row">
           <div class="col-6" style="text-align:center;padding:0;">
@@ -173,10 +175,10 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
           </div>
         </div>
 
-        <!-- حمل به دپو/مسیر -->
+        <!-- واریزه/مسیر -->
         <div class="col-3">
           <div class="col-12" style="text-align:center;border-bottom:1px solid #98b3c3;">
-            <span>حمل به دپو</span>
+            <span>واریزه</span>
           </div>
           <div class="row">
           <div class="col-6" style="text-align:center;padding:0;">
@@ -221,7 +223,7 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
     </span>
     </div>
     <div class="col-4" style="padding:0;text-align:right;z-index:555;">
-      <span id="spanKhakBardariItems${i + 1}" class="spanStyleKhakBardariItems" style="font-size:12px;">
+      <span id="spanKhakBardariItems${i + 1}" class="spanStyleKhakBardariItems">
         ${ActivityTitleComplete[i].title}
       </span>
     </div>
@@ -242,18 +244,18 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
           </div>
         </div>
 
-        <!-- واریزه -->
+      <!-- حمل به دپو/مسیر -->
         <div class="col-3" style="padding:0;">
           <div class="row">
             <div class="col-6" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtVarizi${i + 1}" value=""  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtHaml${i + 1}" value=""  />
             </div>
             <div class="col-4" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtDarsadVarizi${i + 1}" value=""  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtDarsadHaml${i + 1}" value=""  />
             </div>
           </div>
         </div>
-
+        
         <!-- قابل مصرف در خاکریزی -->
         <div class="col-3" style="padding:0;">
           <div class="row">
@@ -266,17 +268,18 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
           </div>
         </div>
 
-        <!-- حمل به دپو/مسیر -->
+        <!-- واریزه -->
         <div class="col-3" style="padding:0;">
           <div class="row">
             <div class="col-6" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtHaml${i + 1}" value=""  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" disabled id="txtVarizi${i + 1}" value=""  />
             </div>
             <div class="col-4" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtDarsadHaml${i + 1}" value=""  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" disabled id="txtDarsadVarizi${i + 1}" value=""  />
             </div>
           </div>
         </div>
+
       </div>
     </div>
   </div>
@@ -310,14 +313,14 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
           </div>
         </div>
 
-        <!-- واریزه -->
+    <!-- حمل به دپو -->
         <div class="col-3" style="padding:0;">
           <div class="row">
             <div class="col-6" style="text-align:center;padding:0 2px;">
-              <span id="spantotalVariziNew"></span>
+              <span id="spantotalHamlNew"></span>
             </div>
             <div class="col-6" style="text-align:center;padding:0 2px;">
-              <span id="spantotalDarsadVariziNew"></span>
+              <span id="spantotalDarsadHamlNew"></span>
             </div>
           </div>
         </div>
@@ -333,17 +336,20 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
             </div>
           </div>
         </div>
-        <!-- حمل به دپو -->
+
+        <!-- واریزه -->
         <div class="col-3" style="padding:0;">
           <div class="row">
             <div class="col-6" style="text-align:center;padding:0 2px;">
-              <span id="spantotalHamlNew"></span>
+              <span id="spantotalVariziNew"></span>
             </div>
             <div class="col-6" style="text-align:center;padding:0 2px;">
-              <span id="spantotalDarsadHamlNew"></span>
+              <span id="spantotalDarsadVariziNew"></span>
             </div>
           </div>
         </div>
+
+
       </div>
     </div>
   </div>
@@ -352,6 +358,8 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
             $('#ViewKhakBardariNew').html(strSSKB);
 
             $('#ViewKhakBardariNew input[type="text"]').change(function () {
+
+                debugger;
 
                 let changedId = $(this).attr("id");
                 let i = changedId.match(/\d+/) ? changedId.match(/\d+/)[0] : ""; // شماره ردیف
@@ -378,8 +386,8 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
                 // مقادیر اصلی ردیف
                 let khDetail = parseFloat($("#txtKhDetail" + i).val()) || 0;
 
-                if (khDetail != null || khDetail != 0) {
-
+                //if (khDetail != null || khDetail != 0) {
+                if (khDetail > 0) {
                     $("#txtVarizi" + i).prop('disabled') ? '' : $("#txtVarizi" + i).val() != "" ? $("#txtVarizi" + i).removeClass('blinking') : $("#txtVarizi" + i).addClass('blinking');
                     $("#txtReUseHajm" + i).prop('disabled') ? '' : $("#txtReUseHajm" + i).val() != "" ? $("#txtReUseHajm" + i).removeClass('blinking') : $("#txtReUseHajm" + i).addClass('blinking');
                     $("#txtHaml" + i).prop('disabled') ? '' : $("#txtHaml" + i).val() != "" ? $("#txtHaml" + i).removeClass('blinking') : $("#txtHaml" + i).addClass('blinking');
@@ -415,10 +423,20 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
                     }
 
                     // ✅ حالا با مقدار اصلاح‌شده محاسبه کن
-                    dVarizi === 0 ? 0 : ((dVarizi / 100) * khDetail).toFixed(2);
-                    $("#txtVarizi" + i).val(dVarizi);
-                    $("#txtReUseHajm" + i).val(((dReuse / 100) * khDetail).toFixed(2));
-                    $("#txtHaml" + i).val(((dHaml / 100) * khDetail).toFixed(2));
+                    // dVarizi === 0 ? 0 : ((dVarizi / 100) * khDetail).toFixed(2);
+                    // $("#txtVarizi" + i).val(dVarizi);
+                    // $("#txtReUseHajm" + i).val(((dReuse / 100) * khDetail).toFixed(2));
+                    // $("#txtHaml" + i).val(((dHaml / 100) * khDetail).toFixed(2));
+
+
+                    // حجم هر بخش بر اساس درصد
+                    let vVarizi = (dVarizi / 100) * khDetail;
+                    let vReUse = (dReuse / 100) * khDetail;
+                    let vHaml = (dHaml / 100) * khDetail;
+
+                    $("#txtVarizi" + i).val(vVarizi.toFixed(2));
+                    $("#txtReUseHajm" + i).val(vReUse.toFixed(2));
+                    $("#txtHaml" + i).val(vHaml.toFixed(2));
                 }
 
                 if (changedId.includes("Darsad")
@@ -464,11 +482,11 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
                         $("#txtDarsadVarizi" + i).removeClass('blinking');
                     } else if (changedId.includes("ReUseHajm")) {
                         dReuse = (khDetail === 0 ? 0 : (reuseHajm / khDetail)) * 100;
-                        $("#txtReUseDarsad" + i).val(dReuse.toFixed(2));
+                        $("#txtReUseDarsad" + i).val(dReuse.toFixed(0));
                         $("#txtReUseDarsad" + i).removeClass('blinking');
                     } else if (changedId.includes("Haml") && !changedId.includes("Darsad")) {
                         dHaml = (khDetail === 0 ? 0 : (haml / khDetail)) * 100;
-                        $("#txtDarsadHaml" + i).val(dHaml.toFixed(2));
+                        $("#txtDarsadHaml" + i).val(dHaml.toFixed(0));
                         $("#txtDarsadHaml" + i).removeClass('blinking');
                     }
                 }
@@ -482,57 +500,13 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
                 dReuse = parseFloat($("#txtReUseDarsad" + i).val()) || 0;
                 dHaml = parseFloat($("#txtDarsadHaml" + i).val()) || 0;
 
-                // کنترل مجموع درصدها
-                let dSum = dVarizi + dReuse + dHaml;
-                if (dSum > 100) {
-                    let extra = dSum - 100;
-                    if (changedId.includes("DarsadVarizi")) {
-                        dVarizi -= extra;
-                        $("#txtDarsadVarizi" + i).val(dVarizi.toFixed(2));
-                        $("#txtDarsadVarizi" + i).removeClass('blinking');
-
-                        $("#txtVarizi" + i).val(((dVarizi / 100) * khDetail).toFixed(2));
-                        $("#txtVarizi" + i).removeClass('blinking');
-                    } else if (changedId.includes("ReUseDarsad")) {
-                        dReuse -= extra;
-                        $("#txtReUseDarsad" + i).val(dReuse.toFixed(2));
-                        $("#txtReUseDarsad" + i).removeClass('blinking');
-                        $("#txtReUseHajm" + i).val(((dReuse / 100) * khDetail).toFixed(2));
-                        $("#txtReUseHajm" + i).removeClass('blinking');
-                    } else if (changedId.includes("DarsadHaml")) {
-                        dHaml -= extra;
-                        $("#txtDarsadHaml" + i).val(dHaml.toFixed(2));
-                        $("#txtDarsadHaml" + i).removeClass('blinking');
-                        $("#txtHaml" + i).val(((dHaml / 100) * khDetail).toFixed(2));
-                        $("#txtHaml" + i).removeClass('blinking');
-                    }
-                }
-
-                //// کنترل مجموع حجم‌ها
-                let vSum = varizi + reuseHajm + haml;
-                if (vSum > khDetail) {
-                    let extra = vSum - khDetail;
-                    if (changedId.includes("Varizi") && !changedId.includes("Darsad")) {
-                        varizi -= extra;
-                        $("#txtVarizi" + i).val(varizi.toFixed(2));
-                        $("#txtDarsadVarizi" + i).val((khDetail === 0 ? 0 : (varizi / khDetail) * 100).toFixed(2));
-                    } else if (changedId.includes("ReUseHajm")) {
-                        reuseHajm -= extra;
-                        $("#txtReUseHajm" + i).val(reuseHajm.toFixed(2));
-                        $("#txtReUseDarsad" + i).val((khDetail === 0 ? 0 : (reuseHajm / khDetail) * 100).toFixed(2));
-                    } else if (changedId.includes("Haml") && !changedId.includes("Darsad")) {
-                        haml -= extra;
-                        $("#txtHaml" + i).val(haml.toFixed(2));
-                        $("#txtDarsadHaml" + i).val((khDetail === 0 ? 0 : (haml / khDetail) * 100).toFixed(2));
-                    }
-                }
-
+               
 
                 AutoFillThirdColumn(i, khDetail, changedId);
 
-                SumKol = sumKolNew(ActivityLength);
+                SumKol = sumKolNew(ActivityLength,0);
                 $('#spantotalKhDetailNew').html(toPersianDigits(SumKol[0].toFixed(2)));
-                $('#spantotalDarsadKhDetailNew').html(toPersianDigits(SumKol[1].toFixed(2)) + " % ");
+                $('#spantotalDarsadKhDetailNew').html(toPersianDigits(SumKol[1].toFixed(0)) + " % ");
 
                 $('#spantotalVariziNew').html(toPersianDigits(SumKol[2].toFixed(2)));
 
@@ -545,7 +519,7 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
 
                 $('#spantotalHamlNew').html(toPersianDigits(SumKol[4].toFixed(2)));
                 DarsadHamlNew = (parseFloat(SumKol[4]) / parseFloat(HajmKhakBardari)) * 100;
-                $('#spantotalDarsadHamlNew').html(toPersianDigits(DarsadHamlNew.toFixed(2))+" % ");
+                $('#spantotalDarsadHamlNew').html(toPersianDigits(DarsadHamlNew.toFixed(2)) + " % ");
             });
 
             $('#txtHajmKhakBardari').on('keydown', function (e) {
@@ -564,7 +538,7 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
                     }
 
                     if (KMS > KME) {
-                        toastr.info('کیلومتراژ خاتمه قبل از کیلومتراژ شروع میباشد', 'اطلاع');
+                        toastr.info('متراژ خاتمه قبل از متراژ شروع میباشد', 'اطلاع');
                         $('#txtToKMForKhakbardari').addClass('blinking');
                         $('#txtFromKMForKhakbardari').addClass('blinking');
                         return;
@@ -597,7 +571,7 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
                 }
 
                 if (KMS > KME) {
-                    toastr.info('کیلومتراژ خاتمه قبل از کیلومتراژ شروع میباشد', 'اطلاع');
+                    toastr.info('متراژ خاتمه قبل از متراژ شروع میباشد', 'اطلاع');
                     $('#txtToKMForKhakbardari').addClass('blinking');
                     $('#txtFromKMForKhakbardari').addClass('blinking');
                     return;
@@ -617,6 +591,13 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
                 }
 
                 $('#MainViewKhakBardariNew').slideDown(500);
+
+                debugger;
+                $(this).closest('ul').find('.StyleMainViewKhakBardari').each(function () {
+                    debugger;
+                    $(this).slideUp(500);
+                });
+
                 $('#divKhakBardariInfoDetails').show();
                 $(this).removeClass('blinking');
 
@@ -676,20 +657,13 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
 
             $('#txtFromKMForKhakbardari').change(function () {
                 var KM = $(this).val();
-                //var KMSplit = KM.split('+');
-                //if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
-                //    $(this).addClass('blinking');
-                //    toastr.info('کیلومتراژ شروع وارد شده طبق فرمت نمی باشد', 'فرمت 000+000 می باشد');
-                //}
-                //else {
-                //    $(this).removeClass('blinking');
-                //}
+               
 
 
                 var KMS = parseFloat(KM);//.replace('+', ''));
                 var KME = parseFloat($('#txtToKMForKhakbardari').val());//.replace('+', ''));
                 if (KMS > KME) {
-                    toastr.info('کیلومتراژ خاتمه قبل از کیلومتراژ شروع میباشد', 'اطلاع');
+                    toastr.info('متراژ خاتمه قبل از متراژ شروع میباشد', 'اطلاع');
                     $('#txtToKMForKhakbardari').addClass('blinking');
                 }
                 else {
@@ -712,20 +686,13 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
 
             $('#txtToKMForKhakbardari').change(function () {
                 var KM = $(this).val();
-                //var KMSplit = KM.split('+');
-                //if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
-                //    $(this).addClass('blinking');
-                //    toastr.info('کیلومتراژ خاتمه وارد شده طبق فرمت نمی باشد', 'فرمت 000+000 می باشد');
-                //}
-                //else {
-                //    $(this).removeClass('blinking');
-                //}
+               
 
 
                 var KME = parseFloat(KM);//.replace('+', ''));
                 var KMS = parseFloat($('#txtFromKMForKhakbardari').val());//.replace('+', ''));
                 if (KMS > KME) {
-                    toastr.info('کیلومتراژ خاتمه قبل از کیلومتراژ شروع میباشد', 'اطلاع');
+                    toastr.info('متراژ خاتمه قبل از متراژ شروع میباشد', 'اطلاع');
                     $('#txtToKMForKhakbardari').addClass('blinking');
                 }
                 else {
@@ -768,15 +735,18 @@ function ShowExistingKMKhakBardari(BarAvordUserId) {
                 strSEKB = `
                  <div class="row col-12 ExistKhBHeaderStyle">
                         <div class="col-1" style="border-left: 1px solid #ccc;border-right: 1px solid #ccc;"><span>ردیف</span></div>
-                        <div class="col-2" style="border-left: 1px solid #ccc;border-right: 1px solid #ccc;" ><span>از کیلومتراژ</span></div>
-                        <div class="col-2" style="border-left: 1px solid #ccc;border-right: 1px solid #ccc;"><span>تا کیلومتراژ</span></div>
+                        <div class="col-2" style="border-left: 1px solid #ccc;border-right: 1px solid #ccc;" ><span>از متراژ</span></div>
+                        <div class="col-2" style="border-left: 1px solid #ccc;border-right: 1px solid #ccc;"><span>تا متراژ</span></div>
                         <div class="col-2" style="border-left: 1px solid #ccc;border-right: 1px solid #ccc;"><span>حجم خاکبرداری</span></div>
                         <div class="col-3" style="border-left: 1px solid #ccc;border-right: 1px solid #ccc;"><span>عملیات</span></div>
                         <div class="col-2" style="border-left: 1px solid #ccc;border-right: 1px solid #ccc;"></div>
                 </div>
 
             `;
+
+                lastKM = 0;
                 debugger;
+
                 $.each(KMAmalyateKhakiBarAvord, function () {
                     debugger;
 
@@ -789,19 +759,21 @@ function ShowExistingKMKhakBardari(BarAvordUserId) {
                     KMNum = this.kmNum;
                     Type = this.type;
 
+                    lastKM = KMNum;
+
                     strSEKB += `
-    <div id="div${KMNum}" class="row col-12 ExistKhBStyle" style="border:1px solid #a99dbd;background-color:#ffe9ff">
-    <div id="divExistKMHeader${KMNum}" class="row col-12 ExistKMHeaderStyle" onclick="ViewKhakBardariInfo('${KMExistingId}'` + ',' + `${KMNum}` + ',' + `'${BarAvordUserId}')">
+    <div id="div${KMNum}" class="row col-12 ExistKhBStyle" style="border:1px solid #a99dbd;background-color:#f5daf5">
+    <div id="divExistKMHeader${KMNum}" class="row col-12 ExistKMHeaderStyle">
     <div class="col-md-1 label-col" style="text-align:center">
       <span>${KMNum}</span>
     </div>
-    <!-- از کیلومتراژ -->
+    <!-- از متراژ -->
     
     <div class="col-md-2">
       <input type="text" class="form-control_1 khakbardariTextStyle  input-sm text-center" id="txtFromKMForKhakbardari${KMNum}" value="${FromKM}" onclick="event.stopPropagation();"/>
     </div>
 
-    <!-- تا کیلومتراژ -->
+    <!-- تا متراژ -->
     
     <div class="col-md-2">
       <input type="text" class="form-control_1 khakbardariTextStyle input-sm text-center" id="txtToKMForKhakbardari${KMNum}" value="${ToKM}" onclick="event.stopPropagation();"/>
@@ -812,18 +784,33 @@ function ShowExistingKMKhakBardari(BarAvordUserId) {
     <div class="col-md-2">
       <input type="text" class="form-control_1 khakbardariTextStyle input-sm text-center" id="txtHajmKhakBardari${KMNum}" value="${Value}" onclick="event.stopPropagation();"/>
     </div>
+
         <div class="col-md-3" style="text-align:center">
-        <span>جهت مشاهده جزییات کلیک نمایید</span>
-</div>
+
+            <button class="ButtonRowsViewStyle" title="مشاهده" onclick="ViewKhakBardariInfo('${KMExistingId}'` + ',' + `${KMNum}` + ',' + `'${BarAvordUserId}')">
+                <i class="fa fa-eye ViewRMUStyle"></i>
+            </button>
+        
+            <button type="button" title="ویرایش"
+                onclick="UpdateKhakBardariInfo('${KMExistingId}'` + ',' + `'${BarAvordUserId}'` + ',' + `${KMNum})" onclick="event.stopPropagation();"
+                class="ButtonRowsSaveStyle">
+                    <i id="iSave" class="fa fa-save SaveRMUStyle"></i>
+            </button>
+
+            <button class="ButtonRowsViewStyle" title="حذف" onclick="DeleteKhakBardariInfo('${KMExistingId}'` + ',' + `${KMNum}` + ',' + `'${BarAvordUserId}')">
+                <i class="fa fa-trash DelRMUStyle"></i>
+            </button>
+        
+        </div>
    
     </div>
   <!-- بخش نمایش -->
 
-  <div class="row col-12" style="direction:ltr;display:none" id="MainViewKhakBardari${KMNum}" class="khakbardari-view">
+  <div class="row col-12 StyleMainViewKhakBardari" style="direction:ltr;display:none"  id="MainViewKhakBardari${KMNum}" class="khakbardari-view">
     <div id="ViewKhakBardari${KMNum}" class="khakbardari-view" style="direction: rtl;">
     </div>
-    <div class="col-md-2 action-col">
-      <input type="button" value="ذخیره" class="btn buttonStyleBoard" style="color:#fff" onclick="UpdateKhakBardariInfo('${KMExistingId}'` + ',' + `'${BarAvordUserId}'` + ',' + `${KMNum})" onclick="event.stopPropagation();"/>
+    <div class="col-md-1 action-col">
+        
     </div>
   <div id="ViewRizMetreKH${KMNum}" style="direction: rtl;" class="col-12 khakbardari-view"></div>
   <div id="ViewKhakBardariEzafeBaha${KMNum}" style="direction: rtl;" class="col-12 khakbardari-view"></div>
@@ -833,12 +820,17 @@ function ShowExistingKMKhakBardari(BarAvordUserId) {
 
                     //    str += '<div class=\'col-md-12\' style=\'margin:1px 0px;\'><a class=\'ExsitingPolStyle\' onclick=\"SelctionKMAmalyateKhaki($(this),\'' + KMExistingId + '\',\'' + KMNum
                     //        + '\')\" ondblclick=\"ShowSelctionKhakBardari(0,' + KMExistingId + ',' + KMNum + ',' + BarAvordUserId + ',' + "'" + FromKM + "'" + ',' + "'" + ToKM + "'" + ',' + "'" + FromKMSplit + "'" + ',' + "'" + ToKMSplit + "'" + ',' + Value + ')\">' + count++
-                    //        + ' - کیلومتراژ' + '<label>' + FromKMSplit + ' - ' + ToKMSplit + '</label>' + '</a></div>';
+                    //        + ' - متراژ' + '<label>' + FromKMSplit + ' - ' + ToKMSplit + '</label>' + '</a></div>';
                 });
 
                 $('#divExistingKM').html(strSEKB);
+
+                $('#divExistKMHeader' + lastKM).click();
+
                 //$('#divExistingKM').find('#MainViewKhakBardari' + KMNum).hide();
             }
+            else
+                $('#divExistingKM').html('');
 
             //$('#ula' + OpId).find('divExistingKM').html(str);
             //$('#divViewExistingKMAmalyateKhaki').html(str);
@@ -851,11 +843,7 @@ function ShowExistingKMKhakBardari(BarAvordUserId) {
 }
 
 function AutoFillThirdColumn(KMNum, khDetail, changedId) {
-    debugger;
-    // برای تشخیص "پر شده" بودن (خالی نبودن)
-    const hasVal = (selector) => $.trim($(selector).val()) !== "";
 
-    // selectors
     const $v = $("#txtVarizi" + KMNum);
     const $dv = $("#txtDarsadVarizi" + KMNum);
 
@@ -865,185 +853,454 @@ function AutoFillThirdColumn(KMNum, khDetail, changedId) {
     const $h = $("#txtHaml" + KMNum);
     const $dh = $("#txtDarsadHaml" + KMNum);
 
-    // helpers
-    const clamp = (x, min, max) => Math.max(min, Math.min(max, x));
-    const n = (x) => (parseFloat(x) || 0);
+    // -----------------------------
+    // Helper functions
+    // -----------------------------
 
-    // اگه khDetail معتبر نیست کاری نکن
-    khDetail = n(khDetail);
-    if (khDetail <= 0) return;
-
-    // ردیف های 1 و 2 => ReUse همیشه صفر، و Varizi/Haml مکمل هم تا 100%
-    const isNoReuseRow = (KMNum === "1" || KMNum === "2");
-    if (isNoReuseRow) {
-        $r.val("0.00");
-        $dr.val("0.00");
-
-        // اگر درصد یکی پر باشد، دیگری = 100 - آن
-        const variziPercentFilled = hasVal("#txtDarsadVarizi" + KMNum);
-        const hamlPercentFilled = hasVal("#txtDarsadHaml" + KMNum);
-
-        // اگر حجم یکی پر باشد، درصدش را بساز
-        const variziVolFilled = hasVal("#txtVarizi" + KMNum);
-        const hamlVolFilled = hasVal("#txtHaml" + KMNum);
-
-        // اول سعی کن درصدها را کامل کنی
-        if (variziPercentFilled && !hamlPercentFilled) {
-            let dv = clamp(n($dv.val()), 0, 100);
-            let dh = clamp(100 - dv, 0, 100);
-            $dh.val(dh.toFixed(2));
-            $dh.removeClass('blinking');
-
-            $v.val(dv===0?'': ((dv / 100) * khDetail).toFixed(2));
-            $v.removeClass('blinking');
-
-            $h.val(dh===0?'':((dh / 100) * khDetail).toFixed(2));
-            $h.removeClass('blinking');
-
-            return;
-        }
-        if (hamlPercentFilled && !variziPercentFilled) {
-            let dh = clamp(n($dh.val()), 0, 100);
-            let dv = clamp(100 - dh, 0, 100);
-            $dv.val(dv.toFixed(2));
-            $dv.removeClass('blinking');
-
-            $h.val(dh===0?'':((dh / 100) * khDetail).toFixed(2));
-            $h.removeClass('blinking');
-
-            $v.val(dv===0?'':((dv / 100) * khDetail).toFixed(2));
-            $v.removeClass('blinking');
-
-            return;
+    const toNumber = function (value) {
+        if (value === null || value === undefined || value === "") {
+            return 0;
         }
 
-        // اگر درصدها پر نیستند، با حجم‌ها برو جلو: یکی پر شد -> دیگری = باقی‌مانده تا khDetail
-        if (variziVolFilled && !hamlVolFilled) {
-            let vv = clamp(n($v.val()), 0, khDetail);
-            let vh = clamp(khDetail - vv, 0, khDetail);
-            $h.val(vh.toFixed(2));
-            $h.removeClass('blinking');
+        const number = parseFloat(value);
 
-            $dv.val(dv===0?'':(khDetail === 0 ? 0 : (vv / khDetail) * 100).toFixed(2));
-            $dv.removeClass('blinking');
-
-            $dh.val(dh===0?'':(khDetail === 0 ? 0 : (vh / khDetail) * 100).toFixed(2));
-            $dh.removeClass('blinking');
-
-            return;
-        }
-        if (hamlVolFilled && !variziVolFilled) {
-            let vh = clamp(n($h.val()), 0, khDetail);
-            let vv = clamp(khDetail - vh, 0, khDetail);
-            $v.val(vv.toFixed(2));
-            $v.removeClass('blinking');
-
-            $dh.val(dh===0?'':(khDetail === 0 ? 0 : (vh / khDetail) * 100).toFixed(2));
-            $dh.removeClass('blinking');
-
-            $dv.val(dv===0?'':(khDetail === 0 ? 0 : (vv / khDetail) * 100).toFixed(2));
-            $dv.removeClass('blinking');
-
-            return;
-        }
-
-        // اگر هر دو پر هستند، فقط اصلاح clamp
-        let vv = clamp(n($v.val()), 0, khDetail);
-        let vh = clamp(n($h.val()), 0, khDetail);
-        // اگر جمع بیشتر شد، همان چیزی که تغییر کرده را نگه دار و دیگری را کم کن
-        if (vv + vh > khDetail) {
-            if (changedId.includes("Varizi")) vh = clamp(khDetail - vv, 0, khDetail);
-            else vv = clamp(khDetail - vh, 0, khDetail);
-            $v.val(vv.toFixed(2));
-            $v.removeClass('blinking');
-
-            $h.val(vh.toFixed(2));
-            $h.removeClass('blinking');
-
-        }
-        $dv.val(vv===0?'':(vv / khDetail * 100).toFixed(2));
-        $dv.removeClass('blinking');
-
-        $dh.val(vh===0?'':(vh / khDetail * 100).toFixed(2));
-        $dh.removeClass('blinking');
-
-        return;
-    }
-
-    // سایر ردیف ها: سه ستون فعال (Varizi / ReUse / Haml)
-
-    // اگر درصدی وارد شده، حجمش را بساز
-    // (فقط برای فیلدی که خودش درصدش پر است)
-    if (hasVal("#txtDarsadVarizi" + KMNum)) $v.val(((clamp(n($dv.val()), 0, 100) / 100) * khDetail).toFixed(2));
-    if (hasVal("#txtReUseDarsad" + KMNum)) $r.val(((clamp(n($dr.val()), 0, 100) / 100) * khDetail).toFixed(2));
-    if (hasVal("#txtDarsadHaml" + KMNum)) $h.val(((clamp(n($dh.val()), 0, 100) / 100) * khDetail).toFixed(2));
-
-    // تشخیص اینکه کدام درصدها "پر شده‌اند"
-    const filledP = {
-        v: hasVal("#txtDarsadVarizi" + KMNum),
-        r: hasVal("#txtReUseDarsad" + KMNum),
-        h: hasVal("#txtDarsadHaml" + KMNum),
+        return isNaN(number) ? 0 : number;
     };
 
-    // تشخیص اینکه کدام حجم‌ها "پر شده‌اند"
-    const filledV = {
-        v: hasVal("#txtVarizi" + KMNum),
-        r: hasVal("#txtReUseHajm" + KMNum),
-        h: hasVal("#txtHaml" + KMNum),
+    const hasValue = function ($input) {
+        return $.trim($input.val()) !== "";
     };
 
-    // اگر دو تا درصد پر بود => سومی = 100 - جمع
-    const countP = (filledP.v ? 1 : 0) + (filledP.r ? 1 : 0) + (filledP.h ? 1 : 0);
-    if (countP >= 2) {
-        let dv = clamp(n($dv.val()), 0, 100);
-        let dr = clamp(n($dr.val()), 0, 100);
-        let dh = clamp(n($dh.val()), 0, 100);
+    const clamp = function (value, min, max) {
+        return Math.max(min, Math.min(max, value));
+    };
 
-        if (!filledP.v) dv = clamp(100 - (dr + dh), 0, 100), $dv.val(dv.toFixed(2));
-        if (!filledP.r) dr = clamp(100 - (dv + dh), 0, 100), $dr.val(dr.toFixed(2));
-        if (!filledP.h) dh = clamp(100 - (dv + dr), 0, 100), $dh.val(dh.toFixed(2));
+    const setValue = function ($input, value) {
+        $input.val(parseFloat(Number(value).toFixed(2)));
+        $input.removeClass("blinking");
+    };
 
-        $v.val(dv===0?'':((dv / 100) * khDetail).toFixed(2));
-        $v.removeClass('blinking');
-        $r.val(dr===0?'':((dr / 100) * khDetail).toFixed(2));
-        $r.removeClass('blinking');
-        $h.val(dh===0?'':((dh / 100) * khDetail).toFixed(2));
-        $h.removeClass('blinking');
+
+    // -----------------------------
+    // KhDetail
+    // -----------------------------
+
+    khDetail = toNumber(khDetail);
+
+    if (khDetail <= 0) {
         return;
     }
 
-    // اگر دو تا حجم پر بود => سومی = khDetail - جمع
-    const countV = (filledV.v ? 1 : 0) + (filledV.r ? 1 : 0) + (filledV.h ? 1 : 0);
-    if (countV >= 2) {
-        let vv = clamp(n($v.val()), 0, khDetail);
-        let vr = clamp(n($r.val()), 0, khDetail);
-        let vh = clamp(n($h.val()), 0, khDetail);
 
-        if (!filledV.v) vv = clamp(khDetail - (vr + vh), 0, khDetail), $v.val(vv.toFixed(2));
-        if (!filledV.r) vr = clamp(khDetail - (vv + vh), 0, khDetail), $r.val(vr.toFixed(2));
-        if (!filledV.h) vh = clamp(khDetail - (vv + vr), 0, khDetail), $h.val(vh.toFixed(2));
+    // =========================================================
+    // ردیف 1 و 2
+    // فقط:
+    // Varizi + Haml = KhDetail
+    // Varizi% + Haml% = 100
+    //
+    // ReUse کاملاً از محاسبات خارج است
+    // =========================================================
 
-        $dv.val(vv===0?'':(vv / khDetail * 100).toFixed(2));
-        $dv.removeClass('blinking');
+    if (KMNum === "1" || KMNum === "2") {
 
-        $dr.val(vr===0?'':(vr / khDetail * 100).toFixed(2));
-        $dr.removeClass('blinking');
+        // ReUse در ردیف 1 و 2 اصلاً در محاسبات نیست
+        setValue($r, 0);
+        setValue($dr, 0);
 
-        $dh.val(vh===0?'':(vh / khDetail * 100).toFixed(2));
-        $dh.removeClass('blinking');
+        // تغییر درصد واریزی
+        if (changedId && changedId.includes("DarsadVarizi")) {
+
+            let variziPercent = clamp(
+                toNumber($dv.val()),
+                0,
+                100
+            );
+
+            let hamlPercent = 100 - variziPercent;
+
+            let variziVolume =
+                (variziPercent / 100) * khDetail;
+
+            let hamlVolume =
+                (hamlPercent / 100) * khDetail;
+
+            setValue($dv, variziPercent);
+            setValue($dh, hamlPercent);
+
+            setValue($v, variziVolume);
+            setValue($h, hamlVolume);
+
+            return;
+        }
+
+        // تغییر درصد حمل
+        if (changedId && changedId.includes("DarsadHaml")) {
+
+            let hamlPercent = clamp(
+                toNumber($dh.val()),
+                0,
+                100
+            );
+
+            let variziPercent = 100 - hamlPercent;
+
+            let hamlVolume =
+                (hamlPercent / 100) * khDetail;
+
+            let variziVolume =
+                (variziPercent / 100) * khDetail;
+
+            setValue($dh, hamlPercent);
+            setValue($dv, variziPercent);
+
+            setValue($h, hamlVolume);
+            setValue($v, variziVolume);
+
+            return;
+        }
+
+        // تغییر مقدار حجمی واریزی
+        if (changedId &&
+            changedId.includes("Varizi") &&
+            !changedId.includes("Darsad")) {
+
+            let variziVolume = clamp(
+                toNumber($v.val()),
+                0,
+                khDetail
+            );
+
+            let hamlVolume =
+                khDetail - variziVolume;
+
+            let variziPercent =
+                (variziVolume / khDetail) * 100;
+
+            let hamlPercent =
+                (hamlVolume / khDetail) * 100;
+
+            setValue($v, variziVolume);
+            setValue($h, hamlVolume);
+
+            setValue($dv, variziPercent);
+            setValue($dh, hamlPercent);
+
+            return;
+        }
+
+        // تغییر مقدار حجمی حمل
+        if (changedId &&
+            changedId.includes("Haml") &&
+            !changedId.includes("Darsad")) {
+
+            let hamlVolume = clamp(
+                toNumber($h.val()),
+                0,
+                khDetail
+            );
+
+            let variziVolume =
+                khDetail - hamlVolume;
+
+            let hamlPercent =
+                (hamlVolume / khDetail) * 100;
+
+            let variziPercent =
+                (variziVolume / khDetail) * 100;
+
+            setValue($h, hamlVolume);
+            setValue($v, variziVolume);
+
+            setValue($dh, hamlPercent);
+            setValue($dv, variziPercent);
+
+            return;
+        }
+
+        // حالت عادی
+        let hamlVolume = clamp(
+            toNumber($h.val()),
+            0,
+            khDetail
+        );
+
+        let variziVolume =
+            khDetail - hamlVolume;
+
+        let hamlPercent =
+            (hamlVolume / khDetail) * 100;
+
+        let variziPercent =
+            (variziVolume / khDetail) * 100;
+
+        setValue($v, variziVolume);
+        setValue($h, hamlVolume);
+
+        setValue($dv, variziPercent);
+        setValue($dh, hamlPercent);
 
         return;
     }
 
-    // حالت‌های تک‌ورودی: فعلاً کاری نکن (تا وقتی دومی پر بشه)
+
+    // =========================================================
+    // سایر ردیف‌ها
+    //
+    // ReUse و Haml مستقل هستند
+    //
+    // Varizi = KhDetail - ReUse - Haml
+    //
+    // درصدها:
+    //
+    // DarsadVarizi = 100 - DarsadReUse - DarsadHaml
+    // =========================================================
+
+
+    // =========================================================
+    // 1. تغییر حجم ReUse
+    // =========================================================
+
+    if (changedId && changedId.includes("ReUseHajm")) {
+
+        let reuse = clamp(
+            toNumber($r.val()),
+            0,
+            khDetail
+        );
+
+        let haml = clamp(
+            toNumber($h.val()),
+            0,
+            khDetail - reuse
+        );
+
+        let varizi = khDetail - reuse - haml;
+
+        if (varizi < 0) {
+            varizi = 0;
+        }
+
+
+        // فقط Varizi محاسبه می‌شود
+        // ReUse و Haml دست نمی‌خورند
+
+        setValue($r, reuse);
+        setValue($h, haml);
+        setValue($v, varizi);
+
+
+        // درصدها
+
+        let reusePercent = (reuse / khDetail) * 100;
+        let hamlPercent = (haml / khDetail) * 100;
+        let variziPercent = (varizi / khDetail) * 100;
+
+        setValue($dr, reusePercent);
+        setValue($dh, hamlPercent);
+        setValue($dv, variziPercent);
+
+        return;
+    }
+
+
+    // =========================================================
+    // 2. تغییر حجم Haml
+    // =========================================================
+
+    if (changedId && changedId.includes("Haml")) {
+
+        let reuse = clamp(
+            toNumber($r.val()),
+            0,
+            khDetail
+        );
+
+        // این قسمت مهم است:
+        // Haml فقط نسبت به ReUse محدود می‌شود
+        // نه نسبت به Varizi قبلی
+        let haml = clamp(
+            toNumber($h.val()),
+            0,
+            khDetail - reuse
+        );
+
+        let varizi = khDetail - reuse - haml;
+
+        if (varizi < 0) {
+            varizi = 0;
+        }
+
+
+        // ReUse اصلاً تغییر نمی‌کند
+        setValue($r, reuse);
+
+        // Haml همان مقداری که کاربر وارد کرده
+        setValue($h, haml);
+
+        // Varizi باقیمانده است
+        setValue($v, varizi);
+
+
+        // درصدها
+
+        let reusePercent = (reuse / khDetail) * 100;
+        let hamlPercent = (haml / khDetail) * 100;
+        let variziPercent = (varizi / khDetail) * 100;
+
+        setValue($dr, reusePercent);
+        setValue($dh, hamlPercent);
+        setValue($dv, variziPercent);
+
+        return;
+    }
+
+
+    // =========================================================
+    // 3. تغییر درصد ReUse
+    // =========================================================
+
+    if (changedId && changedId.includes("ReUseDarsad")) {
+
+        let reusePercent = clamp(
+            toNumber($dr.val()),
+            0,
+            100
+        );
+
+        let hamlPercent = clamp(
+            toNumber($dh.val()),
+            0,
+            100 - reusePercent
+        );
+
+        let variziPercent =
+            100 - reusePercent - hamlPercent;
+
+
+        if (variziPercent < 0) {
+            variziPercent = 0;
+        }
+
+
+        // تبدیل درصد به حجم
+
+        let reuse = (reusePercent / 100) * khDetail;
+        let haml = (hamlPercent / 100) * khDetail;
+        let varizi = (variziPercent / 100) * khDetail;
+
+
+        setValue($r, reuse);
+        setValue($h, haml);
+        setValue($v, varizi);
+
+
+        setValue($dr, reusePercent);
+        setValue($dh, hamlPercent);
+        setValue($dv, variziPercent);
+
+        return;
+    }
+
+
+    // =========================================================
+    // 4. تغییر درصد Haml
+    // =========================================================
+
+    if (changedId && changedId.includes("DarsadHaml")) {
+
+        let reusePercent = clamp(
+            toNumber($dr.val()),
+            0,
+            100
+        );
+
+        // Haml مستقل است.
+        // فقط نباید مجموع ReUse + Haml بیشتر از 100 شود.
+        let hamlPercent = clamp(
+            toNumber($dh.val()),
+            0,
+            100 - reusePercent
+        );
+
+        let variziPercent =
+            100 - reusePercent - hamlPercent;
+
+
+        if (variziPercent < 0) {
+            variziPercent = 0;
+        }
+
+
+        // تبدیل درصد به حجم
+
+        let reuse = (reusePercent / 100) * khDetail;
+        let haml = (hamlPercent / 100) * khDetail;
+        let varizi = (variziPercent / 100) * khDetail;
+
+
+        // ReUse تغییر نمی‌کند
+        setValue($dr, reusePercent);
+        setValue($r, reuse);
+
+
+        // Haml همان مقدار وارد شده
+        setValue($dh, hamlPercent);
+        setValue($h, haml);
+
+
+        // فقط Varizi باقیمانده است
+        setValue($dv, variziPercent);
+        setValue($v, varizi);
+
+        return;
+    }
+
+
+    // =========================================================
+    // 5. اگر تابع بدون changedId اجرا شد
+    // مقدار Varizi از ReUse و Haml محاسبه می‌شود
+    // =========================================================
+
+    let reuse = clamp(
+        toNumber($r.val()),
+        0,
+        khDetail
+    );
+
+    let haml = clamp(
+        toNumber($h.val()),
+        0,
+        khDetail - reuse
+    );
+
+    let varizi = khDetail - reuse - haml;
+
+    if (varizi < 0) {
+        varizi = 0;
+    }
+
+
+    // درصدها
+
+    let reusePercent = (reuse / khDetail) * 100;
+    let hamlPercent = (haml / khDetail) * 100;
+    let variziPercent = (varizi / khDetail) * 100;
+
+
+    // خروجی نهایی
+
+    setValue($r, reuse);
+    setValue($h, haml);
+    setValue($v, varizi);
+
+    setValue($dr, reusePercent);
+    setValue($dh, hamlPercent);
+    setValue($dv, variziPercent);
 }
 
-function AutoFillThirdColumnForEdit(KMNum, i, khDetail, changedId) {
-    debugger;
-    // برای تشخیص "پر شده" بودن (خالی نبودن)
-    const hasVal = (selector) => $.trim($(selector).val()) !== "";
 
-    // selectors
+function AutoFillThirdColumnForEdit(KMNum, i, khDetail, changedId) {
+
     const $v = $("#txtVarizi" + KMNum + "_" + i);
     const $dv = $("#txtDarsadVarizi" + KMNum + "_" + i);
 
@@ -1053,179 +1310,936 @@ function AutoFillThirdColumnForEdit(KMNum, i, khDetail, changedId) {
     const $h = $("#txtHaml" + KMNum + "_" + i);
     const $dh = $("#txtDarsadHaml" + KMNum + "_" + i);
 
-    // helpers
-    const clamp = (x, min, max) => Math.max(min, Math.min(max, x));
-    const n = (x) => (parseFloat(x) || 0);
+    const hasVal = ($input) => {
+        return $.trim($input.val()) !== "";
+    };
 
-    // اگه khDetail معتبر نیست کاری نکن
+    const clamp = (x, min, max) => {
+        return Math.max(min, Math.min(max, x));
+    };
+
+    const n = (x) => {
+        const value = parseFloat(x);
+        return isNaN(value) ? 0 : value;
+    };
+
+    const setValue = ($input, value) => {
+        $input.val(parseFloat(Number(value).toFixed(2)));
+        $input.removeClass("blinking");
+    };
+
     khDetail = n(khDetail);
-    if (khDetail <= 0) return;
 
-    // ردیف های 1 و 2 => ReUse همیشه صفر، و Varizi/Haml مکمل هم تا 100%
+    if (khDetail <= 0) {
+        return;
+    }
+
+
+    // =========================================================
+    // ردیف های 1 و 2
+    // ReUse کاملاً از محاسبات حذف می شود
+    //
+    // Varizi + Haml = KhDetail
+    // Varizi% + Haml% = 100
+    // =========================================================
+
     const isNoReuseRow = (i === "1" || i === "2");
+
     if (isNoReuseRow) {
-        $r.val("0.00");
-        $dr.val("0.00");
 
-        // اگر درصد یکی پر باشد، دیگری = 100 - آن
-        const variziPercentFilled = hasVal("#txtDarsadVarizi" + KMNum + "_" + i);
-        const hamlPercentFilled = hasVal("#txtDarsadHaml" + KMNum + "_" + i);
+        // ReUse همیشه صفر
+        setValue($r, 0);
+        setValue($dr, 0);
 
-        // اگر حجم یکی پر باشد، درصدش را بساز
-        const variziVolFilled = hasVal("#txtVarizi" + KMNum + "_" + i);
-        const hamlVolFilled = hasVal("#txtHaml" + KMNum + "_" + i);
 
-        // اول سعی کن درصدها را کامل کنی
-        if (variziPercentFilled && !hamlPercentFilled) {
-            let dv = clamp(n($dv.val()), 0, 100);
-            let dh = clamp(100 - dv, 0, 100);
-            $dh.val(dh.toFixed(2));
-            $dh.removeClass('blinking');
+        // -----------------------------------------------------
+        // تغییر درصد واریزی
+        // -----------------------------------------------------
 
-            $v.val(((dv / 100) * khDetail).toFixed(2));
-            $v.removeClass('blinking');
+        if (changedId &&
+            changedId.includes("DarsadVarizi" + KMNum)) {
 
-            $h.val(((dh / 100) * khDetail).toFixed(2));
-            $h.removeClass('blinking');
+            let variziPercent = clamp(
+                n($dv.val()),
+                0,
+                100
+            );
 
-            return;
-        }
-        if (hamlPercentFilled && !variziPercentFilled) {
-            let dh = clamp(n($dh.val()), 0, 100);
-            let dv = clamp(100 - dh, 0, 100);
-            $dv.val(dv.toFixed(2));
-            $dv.removeClass('blinking');
+            let hamlPercent = 100 - variziPercent;
 
-            $h.val(((dh / 100) * khDetail).toFixed(2));
-            $h.removeClass('blinking');
+            let variziVolume =
+                (variziPercent / 100) * khDetail;
 
-            $v.val(((dv / 100) * khDetail).toFixed(2));
-            $v.removeClass('blinking');
+            let hamlVolume =
+                (hamlPercent / 100) * khDetail;
+
+            setValue($dv, variziPercent);
+            setValue($dh, hamlPercent);
+
+            setValue($v, variziVolume);
+            setValue($h, hamlVolume);
 
             return;
         }
 
-        // اگر درصدها پر نیستند، با حجم‌ها برو جلو: یکی پر شد -> دیگری = باقی‌مانده تا khDetail
-        if (variziVolFilled && !hamlVolFilled) {
-            let vv = clamp(n($v.val()), 0, khDetail);
-            let vh = clamp(khDetail - vv, 0, khDetail);
-            $h.val(vh.toFixed(2));
-            $h.removeClass('blinking');
 
-            $dv.val((khDetail === 0 ? 0 : (vv / khDetail) * 100).toFixed(2));
-            $dv.removeClass('blinking');
+        // -----------------------------------------------------
+        // تغییر درصد حمل
+        // -----------------------------------------------------
 
-            $dh.val((khDetail === 0 ? 0 : (vh / khDetail) * 100).toFixed(2));
-            $dh.removeClass('blinking');
+        if (changedId &&
+            changedId.includes("DarsadHaml" + KMNum)) {
+
+            let hamlPercent = clamp(
+                n($dh.val()),
+                0,
+                100
+            );
+
+            let variziPercent = 100 - hamlPercent;
+
+            let hamlVolume =
+                (hamlPercent / 100) * khDetail;
+
+            let variziVolume =
+                (variziPercent / 100) * khDetail;
+
+            setValue($dh, hamlPercent);
+            setValue($dv, variziPercent);
+
+            setValue($h, hamlVolume);
+            setValue($v, variziVolume);
 
             return;
         }
-        if (hamlVolFilled && !variziVolFilled) {
-            let vh = clamp(n($h.val()), 0, khDetail);
-            let vv = clamp(khDetail - vh, 0, khDetail);
-            $v.val(vv.toFixed(2));
-            $v.removeClass('blinking');
 
-            $dh.val((khDetail === 0 ? 0 : (vh / khDetail) * 100).toFixed(2));
-            $dh.removeClass('blinking');
 
-            $dv.val((khDetail === 0 ? 0 : (vv / khDetail) * 100).toFixed(2));
-            $dv.removeClass('blinking');
+        // -----------------------------------------------------
+        // تغییر حجم واریزی
+        // -----------------------------------------------------
+
+        if (changedId &&
+            changedId.includes("Varizi" + KMNum) &&
+            !changedId.includes("Darsad")) {
+
+            let variziVolume = clamp(
+                n($v.val()),
+                0,
+                khDetail
+            );
+
+            let hamlVolume =
+                khDetail - variziVolume;
+
+            let variziPercent =
+                (variziVolume / khDetail) * 100;
+
+            let hamlPercent =
+                (hamlVolume / khDetail) * 100;
+
+            setValue($v, variziVolume);
+            setValue($h, hamlVolume);
+
+            setValue($dv, variziPercent);
+            setValue($dh, hamlPercent);
 
             return;
         }
 
-        // اگر هر دو پر هستند، فقط اصلاح clamp
-        let vv = clamp(n($v.val()), 0, khDetail);
-        let vh = clamp(n($h.val()), 0, khDetail);
-        // اگر جمع بیشتر شد، همان چیزی که تغییر کرده را نگه دار و دیگری را کم کن
-        if (vv + vh > khDetail) {
-            if (changedId.includes("Varizi")) vh = clamp(khDetail - vv, 0, khDetail);
-            else vv = clamp(khDetail - vh, 0, khDetail);
-            $v.val(vv.toFixed(2));
-            $v.removeClass('blinking');
 
-            $h.val(vh.toFixed(2));
-            $h.removeClass('blinking');
+        // -----------------------------------------------------
+        // تغییر حجم حمل
+        // -----------------------------------------------------
 
+        if (changedId &&
+            changedId.includes("Haml" + KMNum) &&
+            !changedId.includes("Darsad")) {
+
+            let hamlVolume = clamp(
+                n($h.val()),
+                0,
+                khDetail
+            );
+
+            let variziVolume =
+                khDetail - hamlVolume;
+
+            let hamlPercent =
+                (hamlVolume / khDetail) * 100;
+
+            let variziPercent =
+                (variziVolume / khDetail) * 100;
+
+            setValue($h, hamlVolume);
+            setValue($v, variziVolume);
+
+            setValue($dh, hamlPercent);
+            setValue($dv, variziPercent);
+
+            return;
         }
-        $dv.val((vv / khDetail * 100).toFixed(2));
-        $dv.removeClass('blinking');
 
-        $dh.val((vh / khDetail * 100).toFixed(2));
-        $dh.removeClass('blinking');
+
+        // -----------------------------------------------------
+        // حالت اولیه / بدون تغییر مشخص
+        // -----------------------------------------------------
+
+        let variziVolume = clamp(
+            n($v.val()),
+            0,
+            khDetail
+        );
+
+        let hamlVolume = khDetail - variziVolume;
+
+        let variziPercent =
+            (variziVolume / khDetail) * 100;
+
+        let hamlPercent =
+            (hamlVolume / khDetail) * 100;
+
+        setValue($v, variziVolume);
+        setValue($h, hamlVolume);
+
+        setValue($dv, variziPercent);
+        setValue($dh, hamlPercent);
 
         return;
     }
 
-    // سایر ردیف ها: سه ستون فعال (Varizi / ReUse / Haml)
 
-    // اگر درصدی وارد شده، حجمش را بساز
-    // (فقط برای فیلدی که خودش درصدش پر است)
-    if (hasVal("#txtDarsadVarizi" + KMNum + "_" + i)) $v.val(((clamp(n($dv.val()), 0, 100) / 100) * khDetail).toFixed(2));
-    if (hasVal("#txtReUseDarsad" + KMNum + "_" + i)) $r.val(((clamp(n($dr.val()), 0, 100) / 100) * khDetail).toFixed(2));
-    if (hasVal("#txtDarsadHaml" + KMNum + "_" + i)) $h.val(((clamp(n($dh.val()), 0, 100) / 100) * khDetail).toFixed(2));
+    // =========================================================
+    // سایر ردیف ها
+    // Varizi + ReUse + Haml = KhDetail
+    // =========================================================
 
-    // تشخیص اینکه کدام درصدها "پر شده‌اند"
-    const filledP = {
-        v: hasVal("#txtDarsadVarizi" + KMNum + "_" + i),
-        r: hasVal("#txtReUseDarsad" + KMNum + "_" + i),
-        h: hasVal("#txtDarsadHaml" + KMNum + "_" + i),
-    };
 
-    // تشخیص اینکه کدام حجم‌ها "پر شده‌اند"
-    const filledV = {
-        v: hasVal("#txtVarizi" + KMNum + "_" + i),
-        r: hasVal("#txtReUseHajm" + KMNum + "_" + i),
-        h: hasVal("#txtHaml" + KMNum + "_" + i),
-    };
+    // ---------------------------------------------------------
+    // اگر درصد وارد شده، حجم متناظر را محاسبه کن
+    // ---------------------------------------------------------
 
-    // اگر دو تا درصد پر بود => سومی = 100 - جمع
-    const countP = (filledP.v ? 1 : 0) + (filledP.r ? 1 : 0) + (filledP.h ? 1 : 0);
-    if (countP >= 2) {
+    if (changedId &&
+        changedId.includes("DarsadVarizi" + KMNum)) {
+
         let dv = clamp(n($dv.val()), 0, 100);
+
+        setValue(
+            $v,
+            (dv / 100) * khDetail
+        );
+    }
+
+    if (changedId &&
+        changedId.includes("ReUseDarsad" + KMNum)) {
+
         let dr = clamp(n($dr.val()), 0, 100);
+
+        setValue(
+            $r,
+            (dr / 100) * khDetail
+        );
+    }
+
+    if (changedId &&
+        changedId.includes("DarsadHaml" + KMNum)) {
+
         let dh = clamp(n($dh.val()), 0, 100);
 
-        if (!filledP.v) dv = clamp(100 - (dr + dh), 0, 100), $dv.val(dv.toFixed(2));
-        if (!filledP.r) dr = clamp(100 - (dv + dh), 0, 100), $dr.val(dr.toFixed(2));
-        if (!filledP.h) dh = clamp(100 - (dv + dr), 0, 100), $dh.val(dh.toFixed(2));
+        setValue(
+            $h,
+            (dh / 100) * khDetail
+        );
+    }
 
-        $v.val(((dv / 100) * khDetail).toFixed(2));
-        $v.removeClass('blinking');
-        $r.val(((dr / 100) * khDetail).toFixed(2));
-        $r.removeClass('blinking');
-        $h.val(((dh / 100) * khDetail).toFixed(2));
-        $h.removeClass('blinking');
+
+    // =========================================================
+    // سایر ردیف ها - ردیف 3 به بعد
+    // =========================================================
+
+
+    // ---------------------------------------------------------
+    // تغییر حجم ReUse
+    // Haml ثابت می ماند
+    // Varizi = KhDetail - ReUse - Haml
+    // ---------------------------------------------------------
+
+    if (changedId &&
+        changedId.includes("ReUseHajm" + KMNum) &&
+        !changedId.includes("Darsad")) {
+
+        let haml = clamp(
+            n($h.val()),
+            0,
+            khDetail
+        );
+
+        let reuse = clamp(
+            n($r.val()),
+            0,
+            khDetail - haml
+        );
+
+        let varizi = khDetail - reuse - haml;
+
+        setValue($r, reuse);
+        setValue($h, haml);
+        setValue($v, varizi);
+
+        setValue($dr, (reuse / khDetail) * 100);
+        setValue($dh, (haml / khDetail) * 100);
+        setValue($dv, (varizi / khDetail) * 100);
+
         return;
     }
 
-    // اگر دو تا حجم پر بود => سومی = khDetail - جمع
-    const countV = (filledV.v ? 1 : 0) + (filledV.r ? 1 : 0) + (filledV.h ? 1 : 0);
-    if (countV >= 2) {
-        let vv = clamp(n($v.val()), 0, khDetail);
-        let vr = clamp(n($r.val()), 0, khDetail);
-        let vh = clamp(n($h.val()), 0, khDetail);
 
-        if (!filledV.v) vv = clamp(khDetail - (vr + vh), 0, khDetail), $v.val(vv.toFixed(2));
-        if (!filledV.r) vr = clamp(khDetail - (vv + vh), 0, khDetail), $r.val(vr.toFixed(2));
-        if (!filledV.h) vh = clamp(khDetail - (vv + vr), 0, khDetail), $h.val(vh.toFixed(2));
+    // ---------------------------------------------------------
+    // تغییر حجم Haml
+    // ReUse ثابت می ماند
+    // Varizi = KhDetail - ReUse - Haml
+    // ---------------------------------------------------------
 
-        $dv.val((vv / khDetail * 100).toFixed(2));
-        $dv.removeClass('blinking');
+    if (changedId &&
+        changedId.includes("Haml" + KMNum) &&
+        !changedId.includes("Darsad")) {
 
-        $dr.val((vr / khDetail * 100).toFixed(2));
-        $dr.removeClass('blinking');
+        let reuse = clamp(
+            n($r.val()),
+            0,
+            khDetail
+        );
 
-        $dh.val((vh / khDetail * 100).toFixed(2));
-        $dh.removeClass('blinking');
+        let haml = clamp(
+            n($h.val()),
+            0,
+            khDetail - reuse
+        );
+
+        let varizi = khDetail - reuse - haml;
+
+        setValue($r, reuse);
+        setValue($h, haml);
+        setValue($v, varizi);
+
+        setValue($dr, (reuse / khDetail) * 100);
+        setValue($dh, (haml / khDetail) * 100);
+        setValue($dv, (varizi / khDetail) * 100);
 
         return;
     }
 
-    // حالت‌های تک‌ورودی: فعلاً کاری نکن (تا وقتی دومی پر بشه)
+
+    // ---------------------------------------------------------
+    // تغییر درصد ReUse
+    // Haml ثابت می ماند
+    // Varizi = باقی مانده
+    // ---------------------------------------------------------
+
+    if (changedId &&
+        changedId.includes("ReUseDarsad" + KMNum)) {
+
+        let haml = clamp(
+            n($dh.val()),
+            0,
+            100
+        );
+
+        let reusePercent = clamp(
+            n($dr.val()),
+            0,
+            100 - haml
+        );
+
+        let hamlVolume =
+            (haml / 100) * khDetail;
+
+        let reuseVolume =
+            (reusePercent / 100) * khDetail;
+
+        let variziVolume =
+            khDetail - reuseVolume - hamlVolume;
+
+        let variziPercent =
+            (variziVolume / khDetail) * 100;
+
+        setValue($dr, reusePercent);
+        setValue($dh, haml);
+
+        setValue($r, reuseVolume);
+        setValue($h, hamlVolume);
+
+        setValue($v, variziVolume);
+        setValue($dv, variziPercent);
+
+        return;
+    }
+
+
+    // ---------------------------------------------------------
+    // تغییر درصد Haml
+    // ReUse ثابت می ماند
+    // Varizi = باقی مانده
+    // ---------------------------------------------------------
+
+    if (changedId &&
+        changedId.includes("DarsadHaml" + KMNum)) {
+
+        let reusePercent = clamp(
+            n($dr.val()),
+            0,
+            100
+        );
+
+        let hamlPercent = clamp(
+            n($dh.val()),
+            0,
+            100 - reusePercent
+        );
+
+        let reuseVolume =
+            (reusePercent / 100) * khDetail;
+
+        let hamlVolume =
+            (hamlPercent / 100) * khDetail;
+
+        let variziVolume =
+            khDetail - reuseVolume - hamlVolume;
+
+        let variziPercent =
+            (variziVolume / khDetail) * 100;
+
+        setValue($dr, reusePercent);
+        setValue($dh, hamlPercent);
+
+        setValue($r, reuseVolume);
+        setValue($h, hamlVolume);
+
+        setValue($v, variziVolume);
+        setValue($dv, variziPercent);
+
+        return;
+    }
+
+    // ---------------------------------------------------------
+    // حالت پیش فرض
+    // ---------------------------------------------------------
+
+    let reuse = clamp(
+        n($r.val()),
+        0,
+        khDetail
+    );
+
+    let haml = clamp(
+        n($h.val()),
+        0,
+        khDetail - reuse
+    );
+
+    let varizi =
+        khDetail - reuse - haml;
+
+    setValue($r, reuse);
+    setValue($h, haml);
+    setValue($v, varizi);
+
+    setValue(
+        $dr,
+        (reuse / khDetail) * 100
+    );
+
+    setValue(
+        $dh,
+        (haml / khDetail) * 100
+    );
+
+    setValue(
+        $dv,
+        (varizi / khDetail) * 100
+    );
 }
 
+// function AutoFillThirdColumn(KMNum, khDetail, changedId) {
+//     debugger;
+//     // برای تشخیص "پر شده" بودن (خالی نبودن)
+//     const hasVal = (selector) => $.trim($(selector).val()) !== "";
+
+//     // selectors
+//     const $v = $("#txtVarizi" + KMNum);
+//     const $dv = $("#txtDarsadVarizi" + KMNum);
+
+//     const $r = $("#txtReUseHajm" + KMNum);
+//     const $dr = $("#txtReUseDarsad" + KMNum);
+
+//     const $h = $("#txtHaml" + KMNum);
+//     const $dh = $("#txtDarsadHaml" + KMNum);
+
+//     // helpers
+//     const clamp = (x, min, max) => Math.max(min, Math.min(max, x));
+//     const n = (x) => (parseFloat(x) || 0);
+
+//     // اگه khDetail معتبر نیست کاری نکن
+//     khDetail = n(khDetail);
+//     if (khDetail <= 0) return;
+
+//     // ردیف های 1 و 2 => ReUse همیشه صفر، و Varizi/Haml مکمل هم تا 100%
+//     const isNoReuseRow = (KMNum === "1" || KMNum === "2");
+//     if (isNoReuseRow) {
+//         $r.val("0.00");
+//         $dr.val("0.00");
+
+//         // اگر درصد یکی پر باشد، دیگری = 100 - آن
+//         const variziPercentFilled = hasVal("#txtDarsadVarizi" + KMNum);
+//         const hamlPercentFilled = hasVal("#txtDarsadHaml" + KMNum);
+
+//         // اگر حجم یکی پر باشد، درصدش را بساز
+//         const variziVolFilled = hasVal("#txtVarizi" + KMNum);
+//         const hamlVolFilled = hasVal("#txtHaml" + KMNum);
+
+//         // اول سعی کن درصدها را کامل کنی
+//         if (variziPercentFilled && !hamlPercentFilled) {
+//             let dv = clamp(n($dv.val()), 0, 100);
+//             let dh = clamp(100 - dv, 0, 100);
+//             $dh.val(dh.toFixed(2));
+//             $dh.removeClass('blinking');
+
+//             $v.val(dv === 0 ? '' : ((dv / 100) * khDetail).toFixed(2));
+//             $v.removeClass('blinking');
+
+//             $h.val(dh === 0 ? '' : ((dh / 100) * khDetail).toFixed(2));
+//             $h.removeClass('blinking');
+
+//             return;
+//         }
+//         if (hamlPercentFilled && !variziPercentFilled) {
+//             let dh = clamp(n($dh.val()), 0, 100);
+//             let dv = clamp(100 - dh, 0, 100);
+//             $dv.val(dv.toFixed(2));
+//             $dv.removeClass('blinking');
+
+//             $h.val(dh === 0 ? '' : ((dh / 100) * khDetail).toFixed(2));
+//             $h.removeClass('blinking');
+
+//             $v.val(dv === 0 ? '' : ((dv / 100) * khDetail).toFixed(2));
+//             $v.removeClass('blinking');
+
+//             return;
+//         }
+
+//         // اگر درصدها پر نیستند، با حجم‌ها برو جلو: یکی پر شد -> دیگری = باقی‌مانده تا khDetail
+//         if (variziVolFilled && !hamlVolFilled) {
+//             let vv = clamp(n($v.val()), 0, khDetail);
+//             let vh = clamp(khDetail - vv, 0, khDetail);
+//             $h.val(vh.toFixed(2));
+//             $h.removeClass('blinking');
+
+//             $dv.val(dv === 0 ? '' : (khDetail === 0 ? 0 : (vv / khDetail) * 100).toFixed(2));
+//             $dv.removeClass('blinking');
+
+//             $dh.val(dh === 0 ? '' : (khDetail === 0 ? 0 : (vh / khDetail) * 100).toFixed(2));
+//             $dh.removeClass('blinking');
+
+//             return;
+//         }
+//         if (hamlVolFilled && !variziVolFilled) {
+//             let vh = clamp(n($h.val()), 0, khDetail);
+//             let vv = clamp(khDetail - vh, 0, khDetail);
+//             $v.val(vv.toFixed(2));
+//             $v.removeClass('blinking');
+
+//             $dh.val(dh === 0 ? '' : (khDetail === 0 ? 0 : (vh / khDetail) * 100).toFixed(2));
+//             $dh.removeClass('blinking');
+
+//             $dv.val(dv === 0 ? '' : (khDetail === 0 ? 0 : (vv / khDetail) * 100).toFixed(2));
+//             $dv.removeClass('blinking');
+
+//             return;
+//         }
+
+//         // اگر هر دو پر هستند، فقط اصلاح clamp
+//         let vv = clamp(n($v.val()), 0, khDetail);
+//         let vh = clamp(n($h.val()), 0, khDetail);
+//         // اگر جمع بیشتر شد، همان چیزی که تغییر کرده را نگه دار و دیگری را کم کن
+//         if (vv + vh > khDetail) {
+//             if (changedId.includes("Varizi")) vh = clamp(khDetail - vv, 0, khDetail);
+//             else vv = clamp(khDetail - vh, 0, khDetail);
+//             $v.val(vv.toFixed(2));
+//             $v.removeClass('blinking');
+
+//             $h.val(vh.toFixed(2));
+//             $h.removeClass('blinking');
+
+//         }
+//         $dv.val(vv === 0 ? '' : (vv / khDetail * 100).toFixed(2));
+//         $dv.removeClass('blinking');
+
+//         $dh.val(vh === 0 ? '' : (vh / khDetail * 100).toFixed(2));
+//         $dh.removeClass('blinking');
+
+//         return;
+//     }
+
+//     // سایر ردیف ها: سه ستون فعال (Varizi / ReUse / Haml)
+
+//     // اگر درصدی وارد شده، حجمش را بساز
+//     // (فقط برای فیلدی که خودش درصدش پر است)
+//     if (hasVal("#txtDarsadVarizi" + KMNum)) $v.val(((clamp(n($dv.val()), 0, 100) / 100) * khDetail).toFixed(2));
+//     if (hasVal("#txtReUseDarsad" + KMNum)) $r.val(((clamp(n($dr.val()), 0, 100) / 100) * khDetail).toFixed(2));
+//     if (hasVal("#txtDarsadHaml" + KMNum)) $h.val(((clamp(n($dh.val()), 0, 100) / 100) * khDetail).toFixed(2));
+
+//     // تشخیص اینکه کدام درصدها "پر شده‌اند"
+//     const filledP = {
+//         v: hasVal("#txtDarsadVarizi" + KMNum),
+//         r: hasVal("#txtReUseDarsad" + KMNum),
+//         h: hasVal("#txtDarsadHaml" + KMNum),
+//     };
+
+//     // تشخیص اینکه کدام حجم‌ها "پر شده‌اند"
+//     const filledV = {
+//         v: hasVal("#txtVarizi" + KMNum),
+//         r: hasVal("#txtReUseHajm" + KMNum),
+//         h: hasVal("#txtHaml" + KMNum),
+//     };
+
+//     // اگر دو تا درصد پر بود => سومی = 100 - جمع
+//     // const countP = (filledP.v ? 1 : 0) + (filledP.r ? 1 : 0) + (filledP.h ? 1 : 0);
+//     // if (countP >= 2) {
+//     //     let dv = clamp(n($dv.val()), 0, 100);
+//     //     let dr = clamp(n($dr.val()), 0, 100);
+//     //     let dh = clamp(n($dh.val()), 0, 100);
+
+//     //     let vv = clamp(n($v.val()), 0, khDetail);
+//     //     let vr = clamp(n($r.val()), 0, khDetail);
+//     //     let vh = clamp(n($h.val()), 0, khDetail);
+
+//     //     if (!filledP.v) dv = clamp(100 - (dr + dh), 0, 100), $dv.val(dv.toFixed(2));
+//     //     if (!filledP.r) dr = clamp(100 - (dv + dh), 0, 100), $dr.val(dr.toFixed(2));
+//     //     if (!filledP.h) dh = clamp(100 - (dv + dr), 0, 100), $dh.val(dh.toFixed(2));
+
+//     //     if (vv === 0) {
+//     //         //$v.val(dv === 0 ? '' : ((dv / 100) * khDetail).toFixed(2));
+//     //         $v.val(dv === 0 ? '' : (khDetail - (vr + vh)).toFixed(2));
+//     //         $v.removeClass('blinking');
+//     //     }
+
+//     //     if (vr === 0) {
+//     //         //$r.val(dr === 0 ? '' : ((dr / 100) * khDetail).toFixed(2));
+//     //         $r.val(dr === 0 ? '' : (khDetail - (vv + vh)).toFixed(2));
+//     //         $r.removeClass('blinking');
+//     //     }
+
+//     //     if (vh === 0) {
+//     //         //$h.val(dh === 0 ? '' : ((dh / 100) * khDetail).toFixed(2));
+//     //         $h.val(dh === 0 ? '' : (khDetail - (vv + vr)).toFixed(2));
+//     //         $h.removeClass('blinking');
+//     //     }
+//     //     return;
+//     // }
+
+
+//     const countP =
+//         (filledP.v ? 1 : 0) +
+//         (filledP.r ? 1 : 0) +
+//         (filledP.h ? 1 : 0);
+
+//     if (countP >= 2) {
+
+//         let dv = clamp(n($dv.val()), 0, 100);
+//         let dr = clamp(n($dr.val()), 0, 100);
+//         let dh = clamp(n($dh.val()), 0, 100);
+
+//         let vv = clamp(n($v.val()), 0, khDetail);
+//         let vr = clamp(n($r.val()), 0, khDetail);
+//         let vh = clamp(n($h.val()), 0, khDetail);
+
+
+//         // =========================
+//         // درصدها
+//         // V همیشه از R و H محاسبه شود
+//         // =========================
+
+//         if (!filledP.v) {
+//             dv = clamp(100 - dr - dh, 0, 100);
+//             $dv.val(dv.toFixed(2));
+//         }
+
+//         if (!filledP.r) {
+//             dr = clamp(100 - dv - dh, 0, 100);
+//             $dr.val(dr.toFixed(2));
+//         }
+
+//         if (!filledP.h) {
+//             dh = clamp(100 - dv - dr, 0, 100);
+//             $dh.val(dh.toFixed(2));
+//         }
+
+
+//         // =========================
+//         // مقادیر
+//         // V همیشه از R و H محاسبه شود
+//         // =========================
+
+//         vv = clamp(khDetail - (vr + vh), 0, khDetail);
+
+//         $v.val(vv.toFixed(2));
+//         $v.removeClass('blinking');
+
+
+//         // اگر R خالی/صفر باشد
+//         if (vr === 0 && dr !== 0) {
+//             vr = clamp(khDetail - (vv + vh), 0, khDetail);
+//             $r.val(vr.toFixed(2));
+//             $r.removeClass('blinking');
+//         }
+
+
+//         // اگر H خالی/صفر باشد
+//         if (vh === 0 && dh !== 0) {
+//             vh = clamp(khDetail - (vv + vr), 0, khDetail);
+//             $h.val(vh.toFixed(2));
+//             $h.removeClass('blinking');
+//         }
+
+//         return;
+//     }
+
+//     // اگر دو تا حجم پر بود => سومی = khDetail - جمع
+//     const countV = (filledV.v ? 1 : 0) + (filledV.r ? 1 : 0) + (filledV.h ? 1 : 0);
+//     if (countV >= 2) {
+//         let vv = clamp(n($v.val()), 0, khDetail);
+//         let vr = clamp(n($r.val()), 0, khDetail);
+//         let vh = clamp(n($h.val()), 0, khDetail);
+
+//         if (!filledV.v) vv = clamp(khDetail - (vr + vh), 0, khDetail), $v.val(vv.toFixed(2));
+//         if (!filledV.r) vr = clamp(khDetail - (vv + vh), 0, khDetail), $r.val(vr.toFixed(2));
+//         if (!filledV.h) vh = clamp(khDetail - (vv + vr), 0, khDetail), $h.val(vh.toFixed(2));
+
+//         $dv.val(vv === 0 ? '' : (vv / khDetail * 100).toFixed(2));
+//         $dv.removeClass('blinking');
+
+//         $dr.val(vr === 0 ? '' : (vr / khDetail * 100).toFixed(2));
+//         $dr.removeClass('blinking');
+
+//         $dh.val(vh === 0 ? '' : (vh / khDetail * 100).toFixed(2));
+//         $dh.removeClass('blinking');
+
+//         return;
+//     }
+
+//     // حالت‌های تک‌ورودی: فعلاً کاری نکن (تا وقتی دومی پر بشه)
+// }
+
+// function AutoFillThirdColumnForEdit(KMNum, i, khDetail, changedId) {
+//     debugger;
+//     // برای تشخیص "پر شده" بودن (خالی نبودن)
+//     const hasVal = (selector) => $.trim($(selector).val()) !== "";
+
+//     // selectors
+//     const $v = $("#txtVarizi" + KMNum + "_" + i);
+//     const $dv = $("#txtDarsadVarizi" + KMNum + "_" + i);
+
+//     const $r = $("#txtReUseHajm" + KMNum + "_" + i);
+//     const $dr = $("#txtReUseDarsad" + KMNum + "_" + i);
+
+//     const $h = $("#txtHaml" + KMNum + "_" + i);
+//     const $dh = $("#txtDarsadHaml" + KMNum + "_" + i);
+
+//     // helpers
+//     const clamp = (x, min, max) => Math.max(min, Math.min(max, x));
+//     const n = (x) => (parseFloat(x) || 0);
+
+//     // اگه khDetail معتبر نیست کاری نکن
+//     khDetail = n(khDetail);
+//     if (khDetail <= 0) return;
+
+//     // ردیف های 1 و 2 => ReUse همیشه صفر، و Varizi/Haml مکمل هم تا 100%
+//     const isNoReuseRow = (i === "1" || i === "2");
+//     if (isNoReuseRow) {
+//         $r.val("0.00");
+//         $dr.val("0.00");
+
+//         // اگر درصد یکی پر باشد، دیگری = 100 - آن
+//         const variziPercentFilled = hasVal("#txtDarsadVarizi" + KMNum + "_" + i);
+//         const hamlPercentFilled = hasVal("#txtDarsadHaml" + KMNum + "_" + i);
+
+//         // اگر حجم یکی پر باشد، درصدش را بساز
+//         const variziVolFilled = hasVal("#txtVarizi" + KMNum + "_" + i);
+//         const hamlVolFilled = hasVal("#txtHaml" + KMNum + "_" + i);
+
+//         // اول سعی کن درصدها را کامل کنی
+//         if (variziPercentFilled && !hamlPercentFilled) {
+//             let dv = clamp(n($dv.val()), 0, 100);
+//             let dh = clamp(100 - dv, 0, 100);
+//             $dh.val(dh.toFixed(2));
+//             $dh.removeClass('blinking');
+
+//             $v.val(((dv / 100) * khDetail).toFixed(2));
+//             $v.removeClass('blinking');
+
+//             $h.val(((dh / 100) * khDetail).toFixed(2));
+//             $h.removeClass('blinking');
+
+//             return;
+//         }
+//         if (hamlPercentFilled && !variziPercentFilled) {
+//             let dh = clamp(n($dh.val()), 0, 100);
+//             let dv = clamp(100 - dh, 0, 100);
+//             $dv.val(dv.toFixed(2));
+//             $dv.removeClass('blinking');
+
+//             $h.val(((dh / 100) * khDetail).toFixed(2));
+//             $h.removeClass('blinking');
+
+//             $v.val(((dv / 100) * khDetail).toFixed(2));
+//             $v.removeClass('blinking');
+
+//             return;
+//         }
+
+//         // اگر درصدها پر نیستند، با حجم‌ها برو جلو: یکی پر شد -> دیگری = باقی‌مانده تا khDetail
+//         if (variziVolFilled && !hamlVolFilled) {
+//             let vv = clamp(n($v.val()), 0, khDetail);
+//             let vh = clamp(khDetail - vv, 0, khDetail);
+//             $h.val(vh.toFixed(2));
+//             $h.removeClass('blinking');
+
+//             $dv.val((khDetail === 0 ? 0 : (vv / khDetail) * 100).toFixed(2));
+//             $dv.removeClass('blinking');
+
+//             $dh.val((khDetail === 0 ? 0 : (vh / khDetail) * 100).toFixed(2));
+//             $dh.removeClass('blinking');
+
+//             return;
+//         }
+//         if (hamlVolFilled && !variziVolFilled) {
+//             let vh = clamp(n($h.val()), 0, khDetail);
+//             let vv = clamp(khDetail - vh, 0, khDetail);
+//             $v.val(vv.toFixed(2));
+//             $v.removeClass('blinking');
+
+//             $dh.val((khDetail === 0 ? 0 : (vh / khDetail) * 100).toFixed(2));
+//             $dh.removeClass('blinking');
+
+//             $dv.val((khDetail === 0 ? 0 : (vv / khDetail) * 100).toFixed(2));
+//             $dv.removeClass('blinking');
+
+//             return;
+//         }
+
+//         // اگر هر دو پر هستند، فقط اصلاح clamp
+//         let vv = clamp(n($v.val()), 0, khDetail);
+//         let vh = clamp(n($h.val()), 0, khDetail);
+//         // اگر جمع بیشتر شد، همان چیزی که تغییر کرده را نگه دار و دیگری را کم کن
+//         if (vv + vh > khDetail) {
+//             if (changedId.includes("Varizi")) vh = clamp(khDetail - vv, 0, khDetail);
+//             else vv = clamp(khDetail - vh, 0, khDetail);
+//             $v.val(vv.toFixed(2));
+//             $v.removeClass('blinking');
+
+//             $h.val(vh.toFixed(2));
+//             $h.removeClass('blinking');
+
+//         }
+//         $dv.val((vv / khDetail * 100).toFixed(2));
+//         $dv.removeClass('blinking');
+
+//         $dh.val((vh / khDetail * 100).toFixed(2));
+//         $dh.removeClass('blinking');
+
+//         return;
+//     }
+
+//     // سایر ردیف ها: سه ستون فعال (Varizi / ReUse / Haml)
+
+//     // اگر درصدی وارد شده، حجمش را بساز
+//     // (فقط برای فیلدی که خودش درصدش پر است)
+//     if (hasVal("#txtDarsadVarizi" + KMNum + "_" + i)) $v.val(((clamp(n($dv.val()), 0, 100) / 100) * khDetail).toFixed(2));
+//     if (hasVal("#txtReUseDarsad" + KMNum + "_" + i)) $r.val(((clamp(n($dr.val()), 0, 100) / 100) * khDetail).toFixed(2));
+//     if (hasVal("#txtDarsadHaml" + KMNum + "_" + i)) $h.val(((clamp(n($dh.val()), 0, 100) / 100) * khDetail).toFixed(2));
+
+//     // تشخیص اینکه کدام درصدها "پر شده‌اند"
+//     const filledP = {
+//         v: hasVal("#txtDarsadVarizi" + KMNum + "_" + i),
+//         r: hasVal("#txtReUseDarsad" + KMNum + "_" + i),
+//         h: hasVal("#txtDarsadHaml" + KMNum + "_" + i),
+//     };
+
+//     // تشخیص اینکه کدام حجم‌ها "پر شده‌اند"
+//     const filledV = {
+//         v: hasVal("#txtVarizi" + KMNum + "_" + i),
+//         r: hasVal("#txtReUseHajm" + KMNum + "_" + i),
+//         h: hasVal("#txtHaml" + KMNum + "_" + i),
+//     };
+
+//     // اگر دو تا درصد پر بود => سومی = 100 - جمع
+//     const countP = (filledP.v ? 1 : 0) + (filledP.r ? 1 : 0) + (filledP.h ? 1 : 0);
+//     if (countP >= 2) {
+//         let dv = clamp(n($dv.val()), 0, 100);
+//         let dr = clamp(n($dr.val()), 0, 100);
+//         let dh = clamp(n($dh.val()), 0, 100);
+
+//         if (!filledP.v) dv = clamp(100 - (dr + dh), 0, 100), $dv.val(dv.toFixed(2));
+//         if (!filledP.r) dr = clamp(100 - (dv + dh), 0, 100), $dr.val(dr.toFixed(2));
+//         if (!filledP.h) dh = clamp(100 - (dv + dr), 0, 100), $dh.val(dh.toFixed(2));
+
+
+//         let vv = clamp(n($v.val()), 0, khDetail);
+//         let vr = clamp(n($r.val()), 0, khDetail);
+//         let vh = clamp(n($h.val()), 0, khDetail);
+
+
+//         if (vv === 0) {
+//             //$v.val(dv === 0 ? '' : ((dv / 100) * khDetail).toFixed(2));
+//             $v.val(dv === 0 ? '' : (khDetail - (vr + vh)).toFixed(2));
+//             $v.removeClass('blinking');
+//         }
+
+//         if (vr === 0) {
+//             //$r.val(dr === 0 ? '' : ((dr / 100) * khDetail).toFixed(2));
+//             $r.val(dr === 0 ? '' : (khDetail - (vv + vh)).toFixed(2));
+//             $r.removeClass('blinking');
+//         }
+
+//         if (vh === 0) {
+//             //$h.val(dh === 0 ? '' : ((dh / 100) * khDetail).toFixed(2));
+//             $h.val(dh === 0 ? '' : (khDetail - (vv + vr)).toFixed(2));
+//             $h.removeClass('blinking');
+//         }
+
+//         // $v.val(((dv / 100) * khDetail).toFixed(2));
+//         // $v.removeClass('blinking');
+//         // $r.val(((dr / 100) * khDetail).toFixed(2));
+//         // $r.removeClass('blinking');
+//         // $h.val(((dh / 100) * khDetail).toFixed(2));
+//         // $h.removeClass('blinking');
+//         return;
+//     }
+
+//     // اگر دو تا حجم پر بود => سومی = khDetail - جمع
+//     const countV = (filledV.v ? 1 : 0) + (filledV.r ? 1 : 0) + (filledV.h ? 1 : 0);
+//     if (countV >= 2) {
+//         let vv = clamp(n($v.val()), 0, khDetail);
+//         let vr = clamp(n($r.val()), 0, khDetail);
+//         let vh = clamp(n($h.val()), 0, khDetail);
+
+//         if (!filledV.v) vv = clamp(khDetail - (vr + vh), 0, khDetail), $v.val(vv.toFixed(2));
+//         if (!filledV.r) vr = clamp(khDetail - (vv + vh), 0, khDetail), $r.val(vr.toFixed(2));
+//         if (!filledV.h) vh = clamp(khDetail - (vv + vr), 0, khDetail), $h.val(vh.toFixed(2));
+
+//         $dv.val((vv / khDetail * 100).toFixed(2));
+//         $dv.removeClass('blinking');
+
+//         $dr.val((vr / khDetail * 100).toFixed(2));
+//         $dr.removeClass('blinking');
+
+//         $dh.val((vh / khDetail * 100).toFixed(2));
+//         $dh.removeClass('blinking');
+
+//         return;
+//     }
+
+//     // حالت‌های تک‌ورودی: فعلاً کاری نکن (تا وقتی دومی پر بشه)
+// }
 
 function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
     //$('#HDFStateAmalyateKhakiSaveOrEdit').val('Edit');
@@ -1268,8 +2282,7 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
        style="padding:5px 0 0;
               border:1px solid #b1d3ec;
               border-radius:10px;
-              background-color:#d3e4fc;
-              font-size:12px;">
+              background-color:#d3e4fc;">
 
     <!-- ستون خالی -->
     <div class="col-1" style="display:none">
@@ -1299,10 +2312,12 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
           </div>
           </div>
         </div>
-       <!-- واریزه -->
+
+
+         <!-- حمل به دپو/مسیر -->
         <div class="col-3">
           <div class="col-12" style="text-align:center;border-bottom:1px solid #98b3c3;">
-            <span>واریزه</span>
+            <span>حمل به دپو</span>
           </div>
           <div class="row">
           <div class="col-6" style="text-align:center;padding:0;">
@@ -1313,6 +2328,7 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
           </div>
           </div>
         </div>
+       
         <!-- قابل مصرف در خاکریزی -->
         <div class="col-3">
           <div class="col-12" style="text-align:center;border-bottom:1px solid #98b3c3;padding:0;">
@@ -1328,10 +2344,10 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
           </div>
         </div>
 
-        <!-- حمل به دپو/مسیر -->
+       <!-- واریزه -->
         <div class="col-3">
           <div class="col-12" style="text-align:center;border-bottom:1px solid #98b3c3;">
-            <span>حمل به دپو</span>
+            <span>واریزه</span>
           </div>
           <div class="row">
           <div class="col-6" style="text-align:center;padding:0;">
@@ -1371,7 +2387,7 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
     </span>
     </div>
     <div class="col-4" style="padding:0;text-align:right;z-index:555;">
-      <span id="spanKhakBardariItems${KMNum}_${i}" class="spanStyleKhakBardariItems" style="font-size:12px;">
+      <span id="spanKhakBardariItems${KMNum}_${i}" class="spanStyleKhakBardariItems">
         ${this.title}
       </span>
     </div>`;
@@ -1406,27 +2422,29 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
         </div>`;
 
 
-                let Varizi = result.filter(x => x.name === "Varizi").length > 0 ? result.filter(x => x.name === "Varizi")[0].value : 0;
-                let DarsadVarizi = result.filter(x => x.name === "DarsadVarizi").length > 0 ? result.filter(x => x.name === "DarsadVarizi")[0].value : 0;
+                let Haml = result.filter(x => x.name === "Haml").length > 0 ? result.filter(x => x.name === "Haml")[0].value : 0;
+                let DarsadHaml = result.filter(x => x.name === "DarsadHaml").length > 0 ? result.filter(x => x.name === "DarsadHaml")[0].value : 0;
 
-                Varizi = Varizi == null ? 0 : Varizi;
-                DarsadVarizi = DarsadVarizi == null ? 0 : DarsadVarizi;
+                Haml = Haml == null ? 0 : Haml;
+                DarsadHaml = DarsadHaml == null ? 0 : DarsadHaml;
 
-                totalVarizi += parseFloat(Varizi);
-                totalDarsadVarizi += parseFloat(DarsadVarizi);
+                totalHaml += parseFloat(Haml);
+                totalDarsadHaml += parseFloat(DarsadHaml);
                 strKMAK += `
-         <!-- واریزه -->
+        <!-- حمل به دپو/مسیر -->
         <div class="col-3" style="padding:0;">
           <div class="row">
             <div class="col-6" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle"  id="txtVarizi${KMNum}_${i}" value="${Varizi == 0 ? '' : Varizi}"
-}"  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtHaml${KMNum}_${i}" value="${Haml == 0 ? '' : Haml}"  />
             </div>
             <div class="col-4" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtDarsadVarizi${KMNum}_${i}" value="${DarsadVarizi == 0 ? '' : DarsadVarizi}"  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtDarsadHaml${KMNum}_${i}" value="${DarsadHaml == 0 ? '' : DarsadHaml}"  />
             </div>
           </div>
-        </div>`
+        </div>`;
+
+
+               
 
                 let ReUseHajm = result.filter(x => x.name === "ReUseHajm").length > 0 ? result.filter(x => x.name === "ReUseHajm")[0].value : 0;
                 let DarsadReUseHajm = result.filter(x => x.name === "DarsadReUseHajm").length > 0 ? result.filter(x => x.name === "DarsadReUseHajm")[0].value : 0;
@@ -1447,26 +2465,29 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
             </div>
           </div>
         </div>`
-                let Haml = result.filter(x => x.name === "Haml").length > 0 ? result.filter(x => x.name === "Haml")[0].value : 0;
-                let DarsadHaml = result.filter(x => x.name === "DarsadHaml").length > 0 ? result.filter(x => x.name === "DarsadHaml")[0].value : 0;
 
-                Haml = Haml == null ? 0 : Haml;
-                DarsadHaml = DarsadHaml == null ? 0 : DarsadHaml;
 
-                totalHaml += parseFloat(Haml);
-                totalDarsadHaml += parseFloat(DarsadHaml);
+                let Varizi = result.filter(x => x.name === "Varizi").length > 0 ? result.filter(x => x.name === "Varizi")[0].value : 0;
+                let DarsadVarizi = result.filter(x => x.name === "DarsadVarizi").length > 0 ? result.filter(x => x.name === "DarsadVarizi")[0].value : 0;
+
+                Varizi = Varizi == null ? 0 : Varizi;
+                DarsadVarizi = DarsadVarizi == null ? 0 : DarsadVarizi;
+
+                totalVarizi += parseFloat(Varizi);
+                totalDarsadVarizi += parseFloat(DarsadVarizi);
                 strKMAK += `
-        <!-- حمل به دپو/مسیر -->
+         <!-- واریزه -->
         <div class="col-3" style="padding:0;">
           <div class="row">
             <div class="col-6" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtHaml${KMNum}_${i}" value="${Haml == 0 ? '' : Haml}"  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" disabled  id="txtVarizi${KMNum}_${i}" value="${Varizi == 0 ? '' : Varizi}" />
             </div>
             <div class="col-4" style="padding:0 2px;">
-              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" id="txtDarsadHaml${KMNum}_${i}" value="${DarsadHaml == 0 ? '' : DarsadHaml}"  />
+              <input type="text" class="form-control_1 input-sm khakbardariTextStyle" disabled id="txtDarsadVarizi${KMNum}_${i}" value="${DarsadVarizi == 0 ? '' : DarsadVarizi}"  />
             </div>
           </div>
         </div>
+               
       </div>
     </div>
   </div>
@@ -1509,11 +2530,11 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
           </div>
         </div>
 
-        <!-- واریزه -->
+       <!-- حمل به دپو -->
         <div class="col-3" style="padding:0;">
           <div class="row">
             <div class="col-6" style="text-align:center;padding:0 2px;">
-              <span id="spantotalVarizi${KMNum}">${fmt(totalVarizi)}</span>
+              <span id="spantotalHaml${KMNum}">${fmt(totalHaml)}</span>
             </div>
             
           </div>
@@ -1529,15 +2550,17 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
           </div>
         </div>
 
-        <!-- حمل به دپو -->
+
+         <!-- واریزه -->
         <div class="col-3" style="padding:0;">
           <div class="row">
             <div class="col-6" style="text-align:center;padding:0 2px;">
-              <span id="spantototalHaml${KMNum}">${fmt(totalHaml)}</span>
+              <span id="spantotalVarizi${KMNum}">${fmt(totalVarizi)}</span>
             </div>
             
           </div>
         </div>
+
 
       </div>
     </div>
@@ -1582,7 +2605,7 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
                 }
 
                 // مقادیر اصلی ردیف
-                let khDetail = parseFloat($("#txtKhDetail" + KMNum + "_" + i).val()) || 0;
+                khDetail = parseFloat($("#txtKhDetail" + KMNum + "_" + i).val()) || 0;
 
                 if (khDetail != null || khDetail != 0) {
 
@@ -1607,7 +2630,7 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
                 // 🟢 بخش ۱: کنترل حجم کل و درصد
                 if (changedId.includes("KhDetail" + KMNum)) {
                     let Zarb = HajmKhakBardari === 0 ? 0 : (khDetail / HajmKhakBardari) * 100;
-                    $("#txtDarsad" + KMNum + "_" + i).val(Zarb.toFixed(2));
+                    $("#txtDarsad" + KMNum + "_" + i).val(Zarb.toFixed(0));
 
                     let SumAll = ReturnSumAllDetailsKhakBardariForEdit(KMNum);
                     if (SumAll > HajmKhakBardari) {
@@ -1616,13 +2639,39 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
                         khDetail = NewVal; // ✅ مقدار جدید رو دوباره ست کن
 
                         let Zarb = HajmKhakBardari === 0 ? 0 : (khDetail / HajmKhakBardari) * 100;
-                        $("#txtDarsad" + KMNum + "_" + i).val(Zarb.toFixed(2));
+                        $("#txtDarsad" + KMNum + "_" + i).val(Zarb.toFixed(0));
                     }
 
                     // ✅ حالا با مقدار اصلاح‌شده محاسبه کن
                     $("#txtVarizi" + KMNum + "_" + i).val(dVarizi > 0 ? ((dVarizi / 100) * khDetail).toFixed(2) : "");
                     $("#txtReUseHajm" + KMNum + "_" + i).val(dReuse > 0 ? ((dReuse / 100) * khDetail).toFixed(2) : "");
                     $("#txtHaml" + KMNum + "_" + i).val(dHaml > 0 ? ((dHaml / 100) * khDetail).toFixed(2) : "");
+                }
+
+                if (changedId.includes("txtDarsad" + KMNum)) {
+                    debugger;
+
+                    var Zarb = parseFloat($(this).val()) || 0;
+                    // مجموع درصد همه ردیف‌ها منهای همین ردیف
+                    let SumOther = ReturnSumAllDardadForEdit(KMNum) - Zarb;
+
+                    // اگه بیشتر از 100 بشه، اصلاح کن
+                    if (SumOther + Zarb > 100) {
+                        Zarb = 100 - SumOther;
+                        if (Zarb < 0) Zarb = 0; // امنیتی
+                        $(this).val(Zarb.toFixed(2));
+                    }
+
+                    // حالا حجم این ردیف رو بر اساس درصد اصلاح‌شده محاسبه کن
+                    let newKhDetail = (Zarb / 100) * HajmKhakBardari;
+                    $('#txtKhDetail' + KMNum + "_" + i).val(newKhDetail.toFixed(2));
+
+
+                    // // ✅ حالا با مقدار اصلاح‌شده محاسبه کن
+                    $("#txtVarizi" + KMNum + "_" + i).val(dVarizi > 0 ? ((dVarizi / 100) * newKhDetail).toFixed(2) : "");
+                    $("#txtReUseHajm" + KMNum + "_" + i).val(dReuse > 0 ? ((dReuse / 100) * newKhDetail).toFixed(2) : "");
+                    $("#txtHaml" + KMNum + "_" + i).val(dHaml > 0 ? ((dHaml / 100) * newKhDetail).toFixed(2) : "");
+
                 }
 
                 if (changedId.includes("Darsad" + KMNum)
@@ -1644,8 +2693,8 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
                     }
 
                     // حالا حجم این ردیف رو بر اساس درصد اصلاح‌شده محاسبه کن
-                    let newKhDetail = (dVal / 100) * HajmKhakBardari;
-                    $('#txtKhDetail' + KMNum + "_" + i).val(newKhDetail.toFixed(2));
+                     //let newKhDetail = (dVal / 100) * HajmKhakBardari;
+                     //$('#txtKhDetail' + KMNum + "_" + i).val(newKhDetail.toFixed(2));
                 }
 
 
@@ -1665,15 +2714,15 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
 
                     if (changedId.includes("Varizi" + KMNum) && !changedId.includes("Darsad" + KMNum)) {
                         dVarizi = khDetail === 0 ? 0 : (varizi / khDetail) * 100;
-                        $("#txtDarsadVarizi" + KMNum + "_" + i).val(dVarizi.toFixed(2));
+                        $("#txtDarsadVarizi" + KMNum + "_" + i).val(dVarizi.toFixed(0));
                         $("#txtDarsadVarizi" + KMNum + "_" + i).removeClass('blinking');
                     } else if (changedId.includes("ReUseHajm" + KMNum)) {
                         dReuse = khDetail === 0 ? 0 : (reuseHajm / khDetail) * 100;
-                        $("#txtReUseDarsad" + KMNum + "_" + i).val(dReuse.toFixed(2));
+                        $("#txtReUseDarsad" + KMNum + "_" + i).val(dReuse.toFixed(0));
                         $("#txtReUseDarsad" + KMNum + "_" + i).removeClass('blinking');
                     } else if (changedId.includes("Haml" + KMNum) && !changedId.includes("Darsad" + KMNum)) {
                         dHaml = khDetail === 0 ? 0 : (haml / khDetail) * 100;
-                        $("#txtDarsadHaml" + KMNum + "_" + i).val(dHaml.toFixed(2));
+                        $("#txtDarsadHaml" + KMNum + "_" + i).val(dHaml.toFixed(0));
                         $("#txtDarsadHaml" + KMNum + "_" + i).removeClass('blinking');
                     }
                 }
@@ -1687,52 +2736,171 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
                 dReuse = parseFloat($("#txtReUseDarsad" + KMNum + "_" + i).val()) || 0;
                 dHaml = parseFloat($("#txtDarsadHaml" + KMNum + "_" + i).val()) || 0;
 
-                // کنترل مجموع درصدها
-                let dSum = dVarizi + dReuse + dHaml;
-                if (dSum > 100) {
-                    let extra = dSum - 100;
-                    if (changedId.includes("DarsadVarizi" + KMNum)) {
-                        dVarizi -= extra;
-                        $("#txtDarsadVarizi" + KMNum + "_" + i).val(dVarizi.toFixed(2));
-                        $("#txtDarsadVarizi" + KMNum + "_" + i).removeClass('blinking');
 
-                        $("#txtVarizi" + KMNum + "_" + i).val(((dVarizi / 100) * khDetail).toFixed(2));
-                        $("#txtVarizi" + KMNum + "_" + i).removeClass('blinking');
-                    } else if (changedId.includes("ReUseDarsad" + KMNum)) {
-                        dReuse -= extra;
-                        $("#txtReUseDarsad" + KMNum + "_" + i).val(dReuse.toFixed(2));
-                        $("#txtReUseDarsad" + KMNum + "_" + i).removeClass('blinking');
-                        $("#txtReUseHajm" + KMNum + "_" + i).val(((dReuse / 100) * khDetail).toFixed(2));
-                        $("#txtReUseHajm" + KMNum + "_" + i).removeClass('blinking');
-                    } else if (changedId.includes("DarsadHaml" + KMNum)) {
-                        dHaml -= extra;
-                        $("#txtDarsadHaml" + KMNum + "_" + i).val(dHaml.toFixed(2));
-                        $("#txtDarsadHaml" + KMNum + "_" + i).removeClass('blinking');
-                        $("#txtHaml" + KMNum + "_" + i).val(((dHaml / 100) * khDetail).toFixed(2));
-                        $("#txtHaml" + KMNum + "_" + i).removeClass('blinking');
-                    }
-                }
 
-                // کنترل مجموع حجم‌ها
-                let vSum = varizi + reuseHajm + haml;
-                if (vSum > khDetail) {
-                    let extra = vSum - khDetail;
-                    if (changedId.includes("Varizi" + KMNum) && !changedId.includes("Darsad" + KMNum)) {
-                        varizi -= extra;
-                        $("#txtVarizi" + KMNum + "_" + i).val(varizi.toFixed(2));
-                        $("#txtDarsadVarizi" + KMNum + "_" + i).val((khDetail === 0 ? 0 : (varizi / khDetail) * 100).toFixed(2));
-                    } else if (changedId.includes("ReUseHajm" + KMNum)) {
-                        reuseHajm -= extra;
-                        $("#txtReUseHajm" + KMNum + "_" + i).val(reuseHajm.toFixed(2));
-                        $("#txtReUseDarsad" + KMNum + "_" + i).val((khDetail === 0 ? 0 : (reuseHajm / khDetail) * 100).toFixed(2));
-                    } else if (changedId.includes("Haml" + KMNum) && !changedId.includes("Darsad" + KMNum)) {
-                        haml -= extra;
-                        $("#txtHaml" + KMNum + "_" + i).val(haml.toFixed(2));
-                        $("#txtDarsadHaml" + KMNum + "_" + i).val((khDetail === 0 ? 0 : (haml / khDetail) * 100).toFixed(2));
-                    }
-                }
+                // =========================================================
+                // کنترل مجموع برای ردیف های 3 به بعد
+                // ردیف های 1 و 2 توسط AutoFillThirdColumnForEdit مدیریت می شوند
+                // =========================================================
+
+                // if (i !== "1" && i !== "2") {
+
+                //     // دوباره مقادیر را بخوان
+                //     varizi = parseFloat(
+                //         $("#txtVarizi" + KMNum + "_" + i).val()
+                //     ) || 0;
+
+                //     reuseHajm = parseFloat(
+                //         $("#txtReUseHajm" + KMNum + "_" + i).val()
+                //     ) || 0;
+
+                //     haml = parseFloat(
+                //         $("#txtHaml" + KMNum + "_" + i).val()
+                //     ) || 0;
+
+                //     dVarizi = parseFloat(
+                //         $("#txtDarsadVarizi" + KMNum + "_" + i).val()
+                //     ) || 0;
+
+                //     dReuse = parseFloat(
+                //         $("#txtReUseDarsad" + KMNum + "_" + i).val()
+                //     ) || 0;
+
+                //     dHaml = parseFloat(
+                //         $("#txtDarsadHaml" + KMNum + "_" + i).val()
+                //     ) || 0;
+
+
+                //     // مجموع درصدها
+                //     let dSum = dVarizi + dReuse + dHaml;
+
+                //     if (dSum > 100) {
+
+                //         let extra = dSum - 100;
+
+                //         if (changedId.includes("DarsadVarizi" + KMNum)) {
+
+                //             dVarizi -= extra;
+
+                //             dVarizi = Math.max(0, dVarizi);
+
+                //             $("#txtDarsadVarizi" + KMNum + "_" + i)
+                //                 .val(dVarizi.toFixed(2));
+
+                //             $("#txtVarizi" + KMNum + "_" + i)
+                //                 .val(((dVarizi / 100) * khDetail).toFixed(2));
+
+                //         }
+                //         else if (changedId.includes("ReUseDarsad" + KMNum)) {
+
+                //             dReuse -= extra;
+
+                //             dReuse = Math.max(0, dReuse);
+
+                //             $("#txtReUseDarsad" + KMNum + "_" + i)
+                //                 .val(dReuse.toFixed(2));
+
+                //             $("#txtReUseHajm" + KMNum + "_" + i)
+                //                 .val(((dReuse / 100) * khDetail).toFixed(2));
+                //         }
+                //         else if (changedId.includes("DarsadHaml" + KMNum)) {
+
+                //             dHaml -= extra;
+
+                //             dHaml = Math.max(0, dHaml);
+
+                //             $("#txtDarsadHaml" + KMNum + "_" + i)
+                //                 .val(dHaml.toFixed(2));
+
+                //             $("#txtHaml" + KMNum + "_" + i)
+                //                 .val(((dHaml / 100) * khDetail).toFixed(2));
+                //         }
+                //     }
+
+
+                //     // مجموع حجم ها
+                //     varizi = parseFloat(
+                //         $("#txtVarizi" + KMNum + "_" + i).val()
+                //     ) || 0;
+
+                //     reuseHajm = parseFloat(
+                //         $("#txtReUseHajm" + KMNum + "_" + i).val()
+                //     ) || 0;
+
+                //     haml = parseFloat(
+                //         $("#txtHaml" + KMNum + "_" + i).val()
+                //     ) || 0;
+
+                //     let vSum = varizi + reuseHajm + haml;
+
+                //     if (vSum > khDetail) {
+
+                //         let extra = vSum - khDetail;
+
+                //         if (changedId.includes("Varizi" + KMNum) &&
+                //             !changedId.includes("Darsad")) {
+
+                //             varizi = Math.max(0, varizi - extra);
+
+                //             $("#txtVarizi" + KMNum + "_" + i)
+                //                 .val(varizi.toFixed(2));
+
+                //             $("#txtDarsadVarizi" + KMNum + "_" + i)
+                //                 .val(
+                //                     ((varizi / khDetail) * 100).toFixed(2)
+                //                 );
+                //         }
+                //         else if (changedId.includes("ReUseHajm" + KMNum)) {
+
+                //             reuseHajm = Math.max(0, reuseHajm - extra);
+
+                //             $("#txtReUseHajm" + KMNum + "_" + i)
+                //                 .val(reuseHajm.toFixed(2));
+
+                //             $("#txtReUseDarsad" + KMNum + "_" + i)
+                //                 .val(
+                //                     ((reuseHajm / khDetail) * 100).toFixed(2)
+                //                 );
+                //         }
+                //         else if (changedId.includes("Haml" + KMNum) &&
+                //             !changedId.includes("Darsad")) {
+
+                //             haml = Math.max(0, haml - extra);
+
+                //             $("#txtHaml" + KMNum + "_" + i)
+                //                 .val(haml.toFixed(2));
+
+                //             $("#txtDarsadHaml" + KMNum + "_" + i)
+                //                 .val(
+                //                     ((haml / khDetail) * 100).toFixed(2)
+                //                 );
+                //         }
+                //     }
+                // }
+
+
+                khDetail = parseFloat($("#txtKhDetail" + KMNum + "_" + i).val()) || 0;
+
 
                 AutoFillThirdColumnForEdit(KMNum, i, khDetail, changedId);
+
+                SumKol = sumKolNew(9, KMNum);
+                debugger;
+                $('#spantotalKhDetail' + KMNum).html(toPersianDigits(SumKol[0].toFixed(2)));
+                $('#spantotalDarsadKhDetail'+KMNum).html(toPersianDigits(SumKol[1].toFixed(0)) + " % ");
+
+                $('#spantotalVarizi' + KMNum).html(toPersianDigits(SumKol[2].toFixed(2)));
+
+                DarsadVariziNew = (parseFloat(SumKol[2]) / parseFloat(HajmKhakBardari)) * 100;
+                $('#spantotalDarsadVarizi' + KMNum).html(toPersianDigits(DarsadVariziNew.toFixed(2)) + " % ");
+
+                $('#spantotalReUseHajm' + KMNum).html(toPersianDigits(SumKol[3].toFixed(2)));
+                DarsadReUseHajmNew = (parseFloat(SumKol[3]) / parseFloat(HajmKhakBardari)) * 100;
+                $('#spantotalDarsadReUseHajm' + KMNum).html(toPersianDigits(DarsadReUseHajmNew.toFixed(2)) + " % ");
+
+                $('#spantotalHaml' + KMNum).html(toPersianDigits(SumKol[4].toFixed(2)));
+                DarsadHamlNew = (parseFloat(SumKol[4]) / parseFloat(HajmKhakBardari)) * 100;
+                $('#spantotalDarsadHaml' + KMNum).html(toPersianDigits(DarsadHamlNew.toFixed(2)) + " % ");
 
             });
 
@@ -1837,11 +3005,11 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
             ValueOfHaml = $('#txtHaml' + Type).val();
             ValueOfFaseleHaml = $('#txtFaseleHaml' + Type).val();
 
-            $('#txtDarsad' + Type).val(parseFloat(Value) == 0 ? 0 : (parseFloat(CurrentValue) / parseFloat(Value) * 100).toFixed(2));
-            $('#txtReUseDarsad' + Type).val(parseFloat(CurrentValue) == 0 ? 0 : (parseFloat(ValueOfReCycle) / parseFloat(CurrentValue) * 100).toFixed(2));
-            $('#txtDarsadVarizi' + Type).val(parseFloat(CurrentValue) == 0 ? 0 : (parseFloat(ValueOfVarize) / parseFloat(CurrentValue) * 100).toFixed(2));
-            $('#txtDarsadHaml' + Type).val(parseFloat(CurrentValue) == 0 ? 0 : (parseFloat(ValueOfHaml) / parseFloat(CurrentValue) * 100).toFixed(2));
-            $('#txtDarsadFaseleHaml' + Type).val(parseFloat(ValueOfVarize) == 0 ? 0 : (parseFloat(ValueOfFaseleHaml) / parseFloat(ValueOfVarize) * 100).toFixed(2));
+            $('#txtDarsad' + Type).val(parseFloat(Value) == 0 ? 0 : (parseFloat(CurrentValue) / parseFloat(Value) * 100).toFixed(0));
+            $('#txtReUseDarsad' + Type).val(parseFloat(CurrentValue) == 0 ? 0 : (parseFloat(ValueOfReCycle) / parseFloat(CurrentValue) * 100).toFixed(0));
+            $('#txtDarsadVarizi' + Type).val(parseFloat(CurrentValue) == 0 ? 0 : (parseFloat(ValueOfVarize) / parseFloat(CurrentValue) * 100).toFixed(0));
+            $('#txtDarsadHaml' + Type).val(parseFloat(CurrentValue) == 0 ? 0 : (parseFloat(ValueOfHaml) / parseFloat(CurrentValue) * 100).toFixed(0));
+            $('#txtDarsadFaseleHaml' + Type).val(parseFloat(ValueOfVarize) == 0 ? 0 : (parseFloat(ValueOfFaseleHaml) / parseFloat(ValueOfVarize) * 100).toFixed(0));
 
             KMAmalyateRizeshBarAvordDetailsEzafeBaha = response.kmAmalyateRizeshBarAvordDetailsEzafeBaha;
             $.each(KMAmalyateRizeshBarAvordDetailsEzafeBaha, function () {
@@ -1858,7 +3026,7 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
 
         },
         error: function (response) {
-            toastr.error('مشکل در بارگذاری کیلومتراژ انتخابی', 'خطا');
+            toastr.error('مشکل در بارگذاری متراژ انتخابی', 'خطا');
         }
     });
 
@@ -1895,37 +3063,37 @@ function ShowRizMetreKH(KMExistingId, lstAKhInfoRizMetre, lstItemFBShomarehForGe
                 // نمایش توضیح گروه
                 str += "<div class='col-12'><span style='color:#000'>" + itemGroup.itemFBShomareh + " - " + des + "</span></div>";
 
-                str += "<div class=\"row col-12 styleHeaderTable\" style=\"text-align: center;background-color: #c4bfe3;\">";
+                str += "<div class=\"row col-12 styleHeaderTable\" style=\"text-align: center;\">";
                 str += "<div class=\"col-md-1 spanStyleMitraSmall\" style=\"text-align:center\"><span id=\"spanFieldShomarehName\">ردیف</span></div>";
                 str += "<div class=\"col-md-2 spanStyleMitraSmall\">شرح</div>";
 
                 str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">تعداد</div>";
+                str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">تعداد</div>";
                 str += "<div class=\"VahedStyle\">" + (ItemFields[0] != undefined ? ItemFields[0].vahed : "") + "</div>";
                 str += "</div>";
 
                 str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">طول</div>";
+                str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">طول</div>";
                 str += "<div class=\"VahedStyle\">" + (ItemFields[1] != undefined ? ItemFields[1].vahed : "") + "</div>";
                 str += "</div>";
 
                 str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">عرض</div>";
+                str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">عرض</div>";
                 str += "<div class=\"VahedStyle\">" + (ItemFields[2] != undefined ? ItemFields[2].vahed : "") + "</div>";
                 str += "</div>";
 
                 str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">ارتفاع</div>";
+                str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">ارتفاع</div>";
                 str += "<div class=\"VahedStyle\">" + (ItemFields[3] != undefined ? ItemFields[3].vahed : "") + "</div>";
                 str += "</div>";
 
                 str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">وزن</div>";
+                str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">وزن یا...</div>";
                 str += "<div class=\"VahedStyle\">" + (ItemFields[4] != undefined ? ItemFields[4].vahed : "") + "</div>";
                 str += "</div>";
 
                 str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\"><span>مقدار جزء</span></div>";
+                str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\"><span>مقدار جزء</span></div>";
                 str += "<div class=\"VahedStyle\">" + (ItemFields[5] != undefined ? ItemFields[5].vahed : "") + "</div>";
                 str += "</div>";
 
@@ -1953,34 +3121,43 @@ function ShowRizMetreKH(KMExistingId, lstAKhInfoRizMetre, lstItemFBShomarehForGe
                     let HasEditButton = row.hasEditButton;
 
                     str += "<div class='row styleRowTable' style=\"background-color:#fff\" onclick=\"RizMetreSelectClick('" + id + "')\">";
-                    str += "<div class='col-md-1' style=\"text-align:center;color:#000\"><span>" + row.shomareh + "</span></div>";
+                    str += "<div class='col-md-1' style=\"text-align:center;color:#000\"><span  class=\"RMRowStyle\">" + row.shomareh + "</span></div>";
 
                     str += "<div class='col-md-2'><input  type='text'" +
                         " class='form-control spanStyleMitraSmall' id='txtSharh" + id + "' value='" + row.sharh + "' /></div > ";
 
                     str += "<div class='col-md-1'><input  type='text'" + (ItemFields[0] != undefined ? ItemFields[0].isEnteringValue !== true ? " disabled='disabled'" : "" : "") +
-                        " class='form-control spanStyleMitraSmall " + (ItemFields[0] != undefined ? ItemFields[0].isEnteringValue === true ? " HasEnteringValue " : "" : "") + "' id='txtTedad" + id + "' value = '" + strTedad + "' /></div > ";
+                        " class='form-control spanStyleMitraSmall " + (ItemFields[0] != undefined ? ItemFields[0].essentialValue === true ? " essentialValue " : "" : "") + "' id='txtTedad" + id + "' value = '" + strTedad + "' /></div > ";
 
                     str += "<div class='col-md-1'><input  type='text'" + (ItemFields[1] != undefined ? ItemFields[1].isEnteringValue !== true ? " disabled='disabled'" : "" : "") +
-                        " class='form-control spanStyleMitraSmall " + (ItemFields[1] != undefined ? ItemFields[1].isEnteringValue === true ? " HasEnteringValue " : "" : "") + "' id='txtTool" + id + "' value='" + strTool + "'/></div>";
+                        " class='form-control spanStyleMitraSmall " + (ItemFields[1] != undefined ? ItemFields[1].essentialValue === true ? " essentialValue " : "" : "") + "' id='txtTool" + id + "' value='" + strTool + "'/></div>";
 
                     str += "<div class='col-md-1'><input  type='text'" + (ItemFields[2] != undefined ? ItemFields[2].isEnteringValue !== true ? " disabled='disabled'" : "" : "") +
-                        " class='form-control spanStyleMitraSmall " + (ItemFields[2] != undefined ? ItemFields[2].isEnteringValue === true ? " HasEnteringValue " : "" : "") + "' id='txtArz" + id + "' value='" + strArz + "'/></div>";
+                        " class='form-control spanStyleMitraSmall " + (ItemFields[2] != undefined ? ItemFields[2].essentialValue === true ? " essentialValue " : "" : "") + "' id='txtArz" + id + "' value='" + strArz + "'/></div>";
 
                     str += "<div class='col-md-1'><input  type='text'" + (ItemFields[3] != undefined ? ItemFields[3].isEnteringValue !== true ? "disabled='disabled'" : "" : "") +
-                        " class='form-control spanStyleMitraSmall " + (ItemFields[3] != undefined ? ItemFields[3].isEnteringValue === true ? " HasEnteringValue " : "" : "") + "' id='txtErtefa" + id + "' value='" + strErtefa + "'/></div>";
+                        " class='form-control spanStyleMitraSmall " + (ItemFields[3] != undefined ? ItemFields[3].essentialValue === true ? " essentialValue " : "" : "") + "' id='txtErtefa" + id + "' value='" + strErtefa + "'/></div>";
 
                     str += "<div class='col-md-1'><input type='text'" + (ItemFields[4] != undefined ? ItemFields[4].isEnteringValue !== true ? "disabled='disabled'" : "" : "") +
-                        " class='form-control spanStyleMitraSmall " + (ItemFields[4] != undefined ? ItemFields[4].isEnteringValue === true ? " HasEnteringValue " : "" : "") + "' id='txtVazn" + id + "' value='" + strVazn + "'/></div>";
+                        " class='form-control spanStyleMitraSmall " + (ItemFields[4] != undefined ? ItemFields[4].essentialValue === true ? " essentialValue " : "" : "") + "' id='txtVazn" + id + "' value='" + strVazn + "'/></div>";
 
-                    str += "<div class='col-md-1 RMMJozStyle'>" + MeghdarJoz + "</div>";
+                    str += "<div class='col-md-1'><label class='RMMJozStyle'>" + MeghdarJoz + "</label></div>";
 
-                    str += "<div class='col-md-2'><input  type='text' title='" + row.des + "' style='font-size:12px' class='form-control input-sm' id='txtDes" + id + "' value='" + row.des + "'/></div>";
-                    if (HasDelButton)
-                        str += "<div class='col-md-1' style='text-align:center;'><i class='fa fa-trash DelRMUStyle' onclick=\"DeleteRMUAddedItemsClick('" + id + "','" + ItemHasConditionId + "'," + ConditionGroupId + ")\"></i></div>";
+                    str += "<div class='col-md-2'><input  type='text' title='" + row.des + "' class='form-control spanStyleMitraSmall input-sm' id='txtDes" + id + "' value='" + row.des + "'/></div>";
+
+                    str += "<div class='col-md-1' style='text-align:center;'>";
+
                     if (HasEditButton)
+                        //str += "<i  id='iUpdate" + id +"' class='fa fa-save SaveRMUStyle' onclick=\"UpdateRMUAddedItemsClick('" + id + "','" + ItemHasConditionId + "'," + ConditionGroupId + ")\"></i>";
                         str += "<button type='button' id='iUpdate" + id + "' onclick=\"UpdateRMUAddedItemsClick('" + id + "','" + ItemHasConditionId + "'," + ConditionGroupId + ")\" class=\"ButtonRowsSaveStyle\"><i id=\"iSave\" class=\"fa fa-save SaveRMUStyle\"></i></button>";
 
+                    if (HasDelButton)
+                        //str += "<i class='fa fa-trash DelRMUStyle' onclick=\"DeleteRMUAddedItemsClick('" + id + "','" + ItemHasConditionId + "'," + ConditionGroupId + ")\"></i>";
+                        str += "<button type='button' id='iDelete" + id + "' onclick=\"DeleteRMUAddedItemsClick('" + id + "','" + ItemHasConditionId + "'," + ConditionGroupId + ")\" class=\"ButtonRowsSaveStyle\"><i id=\"iDelete\" class=\"fa fa-trash DelRMUStyle\"></i></button>";
+
+
+
+                    str += "</div>";
                     str += "</div>";
                 });
                 str += "</div>";
@@ -1996,7 +3173,7 @@ function ShowRizMetreKH(KMExistingId, lstAKhInfoRizMetre, lstItemFBShomarehForGe
 
 
 
-        $targetDivRizMetreKH.find("input[type='text'].HasEnteringValue")
+        $targetDivRizMetreKH.find("input[type='text'].essentialValue")
             .filter(function () {
                 return $(this).val().trim() === "";
             })
@@ -2005,7 +3182,7 @@ function ShowRizMetreKH(KMExistingId, lstAKhInfoRizMetre, lstItemFBShomarehForGe
             .focus();
 
 
-        $targetDivRizMetreKH.on("change", "input[type='text'].HasEnteringValue", function () {
+        $targetDivRizMetreKH.on("change", "input[type='text'].essentialValue", function () {
             if ($(this).val().trim() !== "") {
                 $(this).removeClass("blinking");
             }
@@ -2139,89 +3316,127 @@ function SumAllDetailsKhakBardariForEdit(KMNum) {
     }
 }
 
+
 function CheckValuesOfKhakBardariDetails() {
     debugger;
+
     checkValues = false;
+
+    // حداکثر اختلاف مجاز
+    const TOLERANCE = 0.01;
+
+    // تبدیل مقدار input به عدد
+    const getValue = (id) => {
+        const value = $('#' + id).val();
+
+        if (value === '' || value == null)
+            return 0;
+
+        const number = parseFloat(value);
+
+        return isNaN(number) ? 0 : number;
+    };
+
+    // آیا دو عدد با در نظر گرفتن تلورانس برابر هستند؟
+    const isEqual = (a, b) => {
+        return Math.abs(a - b) <= TOLERANCE;
+    };
+
+    // پاک کردن خطاهای یک ردیف
+    const clearRowErrors = (i) => {
+        const currentRow = $('#txtDarsadHaml' + i)
+            .closest('.AmalyatKhakiRowStyle');
+
+        currentRow.removeClass('errorRow');
+
+        $('#txtReUseHajm' + i).removeClass('blinking');
+        $('#txtVarizi' + i).removeClass('blinking');
+        $('#txtHaml' + i).removeClass('blinking');
+
+        $('#txtReUseDarsad' + i).removeClass('blinking');
+        $('#txtDarsadVarizi' + i).removeClass('blinking');
+        $('#txtDarsadHaml' + i).removeClass('blinking');
+    };
+
+    // علامت زدن مقادیر حجم
+    const blinkVolumes = (i) => {
+        if (i != 1 && i != 2) {
+            $('#txtReUseHajm' + i).addClass('blinking');
+        }
+
+        $('#txtVarizi' + i).addClass('blinking');
+        $('#txtHaml' + i).addClass('blinking');
+    };
+
     for (var i = 1; i <= ActivityLength; i++) {
-        KhDetail = $('#txtKhDetail' + i).val() == '' ? 0 : parseFloat($('#txtKhDetail' + i).val());
-        ReUseHajm = $('#txtReUseHajm' + i).val() == '' ? 0 : parseFloat($('#txtReUseHajm' + i).val());
-        ReUseDarsad = $('#txtReUseDarsad' + i).val() == '' ? 0 : parseFloat($('#txtReUseDarsad' + i).val());
-        Varizi = $('#txtVarizi' + i).val() == '' ? 0 : parseFloat($('#txtVarizi' + i).val());
-        DarsadVarizi = $('#txtDarsadVarizi' + i).val() == '' ? 0 : parseFloat($('#txtDarsadVarizi' + i).val());
-        Haml = $('#txtHaml' + i).val() == '' ? 0 : parseFloat($('#txtHaml' + i).val());
-        DarsadHaml = $('#txtDarsadHaml' + i).val() == '' ? 0 : parseFloat($('#txtDarsadHaml' + i).val());
 
-        ReUseHajm = isNaN(ReUseHajm) ? 0 : ReUseHajm;
-        Varizi = isNaN(Varizi) ? 0 : Varizi;
-        Haml = isNaN(Haml) ? 0 : Haml;
-        sumAllThisRow = ReUseHajm + Varizi + Haml;
-        if (sumAllThisRow != KhDetail) {
-            currentRow = $('#txtDarsadHaml' + i).closest('.AmalyatKhakiRowStyle');
+        var KhDetail = getValue('txtKhDetail' + i);
+
+        var ReUseHajm = getValue('txtReUseHajm' + i);
+        var ReUseDarsad = getValue('txtReUseDarsad' + i);
+
+        var Varizi = getValue('txtVarizi' + i);
+        var DarsadVarizi = getValue('txtDarsadVarizi' + i);
+
+        var Haml = getValue('txtHaml' + i);
+        var DarsadHaml = getValue('txtDarsadHaml' + i);
+
+        // جمع سه مقدار
+        var sumAllThisRow = ReUseHajm + Varizi + Haml;
+
+        // اختلاف
+        var difference = Math.abs(sumAllThisRow - KhDetail);
+
+        /*
+         * اگر اختلاف حداکثر 0.01 باشد، قابل قبول است.
+         *
+         * مثال:
+         * KhDetail = 0.10
+         * Sum      = 0.09
+         * اختلاف   = 0.01
+         *
+         * این حالت مجاز است.
+         */
+        if (difference <= TOLERANCE) {
+
+            clearRowErrors(i);
+
+        }
+        else {
+
+            // جمع کمتر یا بیشتر از مقدار خاکبرداری است
+            const currentRow = $('#txtDarsadHaml' + i)
+                .closest('.AmalyatKhakiRowStyle');
+
             currentRow.addClass('errorRow');
+
+            blinkVolumes(i);
+
             checkValues = true;
+
             return true;
         }
-        if (sumAllThisRow < KhDetail) {
-            if (i != 1 && i != 2) {
-                $('#txtReUseHajm' + i).addClass('blinking');
-            }
-            $('#txtVarizi' + i).addClass('blinking');
-            $('#txtHaml' + i).addClass('blinking');
-            return true;
-        }
-        if (sumAllThisRow > KhDetail) {
-            if (i != 1 && i != 2) {
-                $('#txtReUseHajm' + i).addClass('blinking');
-            }
-            $('#txtVarizi' + i).addClass('blinking');
-            $('#txtHaml' + i).addClass('blinking');
-            return true;
-        }
-        else if (sumAllThisRow == KhDetail) {
-            currentRow = $('#txtDarsadHaml' + i).closest('.AmalyatKhakiRowStyle');
-            currentRow.removeClass('errorRow');
 
-            $('#txtReUseHajm' + i).removeClass('blinking');
-            $('#txtVarizi' + i).removeClass('blinking');
-            $('#txtHaml' + i).removeClass('blinking');
-
-            $('#txtReUseDarsad' + i).removeClass('blinking');
-            $('#txtDarsadVarizi' + i).removeClass('blinking');
-            $('#txtDarsadHaml' + i).removeClass('blinking');
-            return false;
-        }
-
-        if (KhDetail != 0 && KhDetail != '') {
-            if (ReUseHajm == 0 || isNaN(ReUseHajm)) {
-                $('#txtReUseHajm' + i).addClass('blinking');
-                return true;
-            }
-            else if (Varizi == 0 || isNaN(Varizi)) {
-                $('#txtVarizi' + i).addClass('blinking');
-                return true;
-            }
-            else if (Haml == 0 || isNaN(Haml)) {
-                $('#txtHaml' + i).addClass('blinking');
-                return true;
-            }
-            else return false;
-        }
-
-        if (ReUseHajm > KhDetail) {
+        // بررسی مقادیر منفی یا بزرگ‌تر از مقدار کل
+        if (ReUseHajm > KhDetail + TOLERANCE) {
             $('#txtReUseHajm' + i).addClass('blinking');
             checkValues = true;
         }
-        else
+        else {
             $('#txtReUseHajm' + i).removeClass('blinking');
+        }
 
+        // درصد ReUse
         if (ReUseDarsad > 100) {
             $('#txtReUseDarsad' + i).addClass('blinking');
             checkValues = true;
         }
-        else
+        else {
             $('#txtReUseDarsad' + i).removeClass('blinking');
-        /////////////
-        if (Varizi > KhDetail) {
+        }
+
+        // واریزی
+        if (Varizi > KhDetail + TOLERANCE) {
             $('#txtVarizi' + i).addClass('blinking');
             checkValues = true;
         }
@@ -2229,7 +3444,8 @@ function CheckValuesOfKhakBardariDetails() {
             $('#txtVarizi' + i).removeClass('blinking');
         }
 
-        if (Haml > KhDetail) {
+        // حمل
+        if (Haml > KhDetail + TOLERANCE) {
             $('#txtHaml' + i).addClass('blinking');
             checkValues = true;
         }
@@ -2237,6 +3453,7 @@ function CheckValuesOfKhakBardariDetails() {
             $('#txtHaml' + i).removeClass('blinking');
         }
 
+        // درصد واریزی
         if (DarsadVarizi > 100) {
             $('#txtDarsadVarizi' + i).addClass('blinking');
             checkValues = true;
@@ -2245,6 +3462,7 @@ function CheckValuesOfKhakBardariDetails() {
             $('#txtDarsadVarizi' + i).removeClass('blinking');
         }
 
+        // درصد حمل
         if (DarsadHaml > 100) {
             $('#txtDarsadHaml' + i).addClass('blinking');
             checkValues = true;
@@ -2253,91 +3471,387 @@ function CheckValuesOfKhakBardariDetails() {
             $('#txtDarsadHaml' + i).removeClass('blinking');
         }
     }
+
     return checkValues;
 }
+
 
 function CheckValuesOfKhakBardariDetailsForEdit(KMNum) {
     debugger;
+
     checkValues = false;
+
+    // حداکثر اختلاف مجاز
+    const TOLERANCE = 0.01;
+
+    // مقایسه دو عدد اعشاری با تلورانس
+    const isEqual = (a, b) => {
+        return Math.abs(a - b) <= TOLERANCE;
+    };
+
+    // گرفتن مقدار عددی از input
+    const getValue = (id) => {
+        const value = parseFloat($('#' + id).val());
+        return isNaN(value) ? 0 : value;
+    };
+
     for (var i = 1; i <= ActivityLength; i++) {
+
         JamKol = 0;
         JamDarsad = 0;
-        KhDetail = parseFloat($('#txtKhDetail' + KMNum + "_" + i).val());
-        if (!isNaN(KhDetail)) {
 
-            ReUseHajm = parseFloat($('#txtReUseHajm' + KMNum + "_" + i).val());
-            if (ReUseHajm > KhDetail) {
-                $('#txtReUseHajm' + KMNum + "_" + i).addClass('blinking');
-                checkValues = true;
-            }
-            else
-                $('#txtReUseHajm' + KMNum + "_" + i).removeClass('blinking');
-            JamKol += isNaN(ReUseHajm) ? 0 : ReUseHajm;
+        var prefix = KMNum + "_" + i;
 
-            ReUseDarsad = parseFloat($('#txtReUseDarsad' + KMNum + "_" + i).val());
-            if (ReUseDarsad > 100) {
-                $('#txtReUseDarsad' + KMNum + "_" + i).addClass('blinking');
-                checkValues = true;
-            }
-            else
-                $('#txtReUseDarsad' + KMNum + "_" + i).removeClass('blinking');
-            JamDarsad += isNaN(ReUseDarsad) ? 0 : ReUseDarsad;
+        var KhDetail = parseFloat($('#txtKhDetail' + prefix).val());
 
-            /////////////
-            Varizi = parseFloat($('#txtVarizi' + KMNum + "_" + i).val());
-            if (Varizi > KhDetail) {
-                $('#txtVarizi' + KMNum + "_" + i).addClass('blinking');
-                checkValues = true;
-            }
-            else {
-                $('#txtVarizi' + KMNum + "_" + i).removeClass('blinking');
-            }
-            JamKol += isNaN(Varizi) ? 0 : Varizi;
+        // اگر KhDetail عدد نیست، این ردیف بررسی نشود
+        if (isNaN(KhDetail))
+            continue;
+
+        // ==========================================
+        // ReUse
+        // ==========================================
+
+        var ReUseHajm = getValue('txtReUseHajm' + prefix);
+
+        if (ReUseHajm > KhDetail + TOLERANCE) {
+            $('#txtReUseHajm' + prefix).addClass('blinking');
+            checkValues = true;
+        }
+        else {
+            $('#txtReUseHajm' + prefix).removeClass('blinking');
+        }
+
+        JamKol += ReUseHajm;
 
 
-            Haml = parseFloat($('#txtHaml' + KMNum + "_" + i).val());
-            if (Haml > KhDetail) {
-                $('#txtHaml' + KMNum + "_" + i).addClass('blinking');
-                checkValues = true;
-            }
-            else {
-                $('#txtHaml' + KMNum + "_" + i).removeClass('blinking');
-            }
-            JamKol += isNaN(Haml) ? 0 : Haml;
+        var ReUseDarsad = getValue('txtReUseDarsad' + prefix);
 
-            DarsadVarizi = parseFloat($('#txtDarsadVarizi' + KMNum + "_" + i).val());
-            if (DarsadVarizi > 100) {
-                $('#txtDarsadVarizi' + KMNum + "_" + i).addClass('blinking');
-                checkValues = true;
-            }
-            else {
-                $('#txtDarsadVarizi' + KMNum + "_" + i).removeClass('blinking');
-            }
-            JamDarsad += isNaN(DarsadVarizi) ? 0 : DarsadVarizi;
+        if (ReUseDarsad > 100 + TOLERANCE) {
+            $('#txtReUseDarsad' + prefix).addClass('blinking');
+            checkValues = true;
+        }
+        else {
+            $('#txtReUseDarsad' + prefix).removeClass('blinking');
+        }
+
+        JamDarsad += ReUseDarsad;
 
 
-            DarsadHaml = parseFloat($('#txtDarsadHaml' + KMNum + "_" + i).val());
-            if (DarsadHaml > 100) {
-                $('#txtDarsadHaml' + KMNum + "_" + i).addClass('blinking');
-                checkValues = true;
-            }
-            else {
-                $('#txtDarsadHaml' + KMNum + "_" + i).removeClass('blinking');
-            }
-            JamDarsad += isNaN(DarsadHaml) ? 0 : DarsadHaml;
+        // ==========================================
+        // Varizi
+        // ==========================================
 
-            if (JamDarsad != 100 || JamKol != KhDetail) {
-                currentRow = $('#txtDarsadHaml' + KMNum + "_" + i).closest('.AmalyatKhakiRowStyle');
+        var Varizi = getValue('txtVarizi' + prefix);
+
+        if (Varizi > KhDetail + TOLERANCE) {
+            $('#txtVarizi' + prefix).addClass('blinking');
+            checkValues = true;
+        }
+        else {
+            $('#txtVarizi' + prefix).removeClass('blinking');
+        }
+
+        JamKol += Varizi;
+
+
+        var DarsadVarizi = getValue('txtDarsadVarizi' + prefix);
+
+        if (DarsadVarizi > 100 + TOLERANCE) {
+            $('#txtDarsadVarizi' + prefix).addClass('blinking');
+            checkValues = true;
+        }
+        else {
+            $('#txtDarsadVarizi' + prefix).removeClass('blinking');
+        }
+
+        JamDarsad += DarsadVarizi;
+
+
+        // ==========================================
+        // Haml
+        // ==========================================
+
+        var Haml = getValue('txtHaml' + prefix);
+
+        if (Haml > KhDetail + TOLERANCE) {
+            $('#txtHaml' + prefix).addClass('blinking');
+            checkValues = true;
+        }
+        else {
+            $('#txtHaml' + prefix).removeClass('blinking');
+        }
+
+        JamKol += Haml;
+
+
+        var DarsadHaml = getValue('txtDarsadHaml' + prefix);
+
+        if (DarsadHaml > 100 + TOLERANCE) {
+            $('#txtDarsadHaml' + prefix).addClass('blinking');
+            checkValues = true;
+        }
+        else {
+            $('#txtDarsadHaml' + prefix).removeClass('blinking');
+        }
+
+        JamDarsad += DarsadHaml;
+
+
+        // ==========================================
+        // بررسی نهایی ردیف
+        // ==========================================
+
+        if (KhDetail != 0) {
+
+            // اختلاف حجم
+            var volumeDifference = Math.abs(JamKol - KhDetail);
+
+            // اختلاف درصد
+            var percentDifference = Math.abs(JamDarsad - 100);
+
+            /*
+             * حجم:
+             * تا 0.01 اختلاف مجاز است.
+             *
+             * درصد:
+             * تا 0.01 اختلاف مجاز است.
+             */
+            if (volumeDifference > TOLERANCE ||
+                percentDifference > TOLERANCE) {
+
+                var currentRow = $('#txtDarsadHaml' + prefix)
+                    .closest('.AmalyatKhakiRowStyle');
+
                 currentRow.addClass('errorRow');
+
                 checkValues = true;
+            }
+            else {
+
+                // مقدارها قابل قبول هستند
+                var currentRow = $('#txtDarsadHaml' + prefix)
+                    .closest('.AmalyatKhakiRowStyle');
+
+                currentRow.removeClass('errorRow');
             }
         }
+        else {
+
+            // اگر KhDetail صفر است و خطای قبلی داشته،
+            // خطای ردیف پاک شود
+            var currentRow = $('#txtDarsadHaml' + prefix)
+                .closest('.AmalyatKhakiRowStyle');
+
+            currentRow.removeClass('errorRow');
+        }
     }
+
     return checkValues;
 }
 
+// function CheckValuesOfKhakBardariDetails() {
+//     debugger;
+//     checkValues = false;
+//     for (var i = 1; i <= ActivityLength; i++) {
+//         KhDetail = $('#txtKhDetail' + i).val() == '' ? 0 : parseFloat($('#txtKhDetail' + i).val());
+//         ReUseHajm = $('#txtReUseHajm' + i).val() == '' ? 0 : parseFloat($('#txtReUseHajm' + i).val());
+//         ReUseDarsad = $('#txtReUseDarsad' + i).val() == '' ? 0 : parseFloat($('#txtReUseDarsad' + i).val());
+//         Varizi = $('#txtVarizi' + i).val() == '' ? 0 : parseFloat($('#txtVarizi' + i).val());
+//         DarsadVarizi = $('#txtDarsadVarizi' + i).val() == '' ? 0 : parseFloat($('#txtDarsadVarizi' + i).val());
+//         Haml = $('#txtHaml' + i).val() == '' ? 0 : parseFloat($('#txtHaml' + i).val());
+//         DarsadHaml = $('#txtDarsadHaml' + i).val() == '' ? 0 : parseFloat($('#txtDarsadHaml' + i).val());
+
+//         ReUseHajm = isNaN(ReUseHajm) ? 0 : ReUseHajm;
+//         Varizi = isNaN(Varizi) ? 0 : Varizi;
+//         Haml = isNaN(Haml) ? 0 : Haml;
+//         sumAllThisRow = ReUseHajm + Varizi + Haml;
+//         if (Math.abs(sumAllThisRow - KhDetail) > 0.01) {
+//             currentRow = $('#txtDarsadHaml' + i).closest('.AmalyatKhakiRowStyle');
+//             currentRow.addClass('errorRow');
+//             checkValues = true;
+//             return true;
+//         }
+//         if (sumAllThisRow < KhDetail) {
+//             if (i != 1 && i != 2) {
+//                 $('#txtReUseHajm' + i).addClass('blinking');
+//             }
+//             $('#txtVarizi' + i).addClass('blinking');
+//             $('#txtHaml' + i).addClass('blinking');
+//             return true;
+//         }
+//         if (sumAllThisRow > KhDetail) {
+//             if (i != 1 && i != 2) {
+//                 $('#txtReUseHajm' + i).addClass('blinking');
+//             }
+//             $('#txtVarizi' + i).addClass('blinking');
+//             $('#txtHaml' + i).addClass('blinking');
+//             return true;
+//         }
+//         else if (sumAllThisRow == KhDetail) {
+//             currentRow = $('#txtDarsadHaml' + i).closest('.AmalyatKhakiRowStyle');
+//             currentRow.removeClass('errorRow');
+
+//             $('#txtReUseHajm' + i).removeClass('blinking');
+//             $('#txtVarizi' + i).removeClass('blinking');
+//             $('#txtHaml' + i).removeClass('blinking');
+
+//             $('#txtReUseDarsad' + i).removeClass('blinking');
+//             $('#txtDarsadVarizi' + i).removeClass('blinking');
+//             $('#txtDarsadHaml' + i).removeClass('blinking');
+//             return false;
+//         }
+
+//         if (KhDetail != 0 && KhDetail != '') {
+//             if (ReUseHajm == 0 || isNaN(ReUseHajm)) {
+//                 $('#txtReUseHajm' + i).addClass('blinking');
+//                 return true;
+//             }
+//             else if (Varizi == 0 || isNaN(Varizi)) {
+//                 $('#txtVarizi' + i).addClass('blinking');
+//                 return true;
+//             }
+//             else if (Haml == 0 || isNaN(Haml)) {
+//                 $('#txtHaml' + i).addClass('blinking');
+//                 return true;
+//             }
+//             else return false;
+//         }
+
+//         if (ReUseHajm > KhDetail) {
+//             $('#txtReUseHajm' + i).addClass('blinking');
+//             checkValues = true;
+//         }
+//         else
+//             $('#txtReUseHajm' + i).removeClass('blinking');
+
+//         if (ReUseDarsad > 100) {
+//             $('#txtReUseDarsad' + i).addClass('blinking');
+//             checkValues = true;
+//         }
+//         else
+//             $('#txtReUseDarsad' + i).removeClass('blinking');
+//         /////////////
+//         if (Varizi > KhDetail) {
+//             $('#txtVarizi' + i).addClass('blinking');
+//             checkValues = true;
+//         }
+//         else {
+//             $('#txtVarizi' + i).removeClass('blinking');
+//         }
+
+//         if (Haml > KhDetail) {
+//             $('#txtHaml' + i).addClass('blinking');
+//             checkValues = true;
+//         }
+//         else {
+//             $('#txtHaml' + i).removeClass('blinking');
+//         }
+
+//         if (DarsadVarizi > 100) {
+//             $('#txtDarsadVarizi' + i).addClass('blinking');
+//             checkValues = true;
+//         }
+//         else {
+//             $('#txtDarsadVarizi' + i).removeClass('blinking');
+//         }
+
+//         if (DarsadHaml > 100) {
+//             $('#txtDarsadHaml' + i).addClass('blinking');
+//             checkValues = true;
+//         }
+//         else {
+//             $('#txtDarsadHaml' + i).removeClass('blinking');
+//         }
+//     }
+//     return checkValues;
+// }
+
+// function CheckValuesOfKhakBardariDetailsForEdit(KMNum) {
+//     debugger;
+//     checkValues = false;
+//     for (var i = 1; i <= ActivityLength; i++) {
+//         JamKol = 0;
+//         JamDarsad = 0;
+//         KhDetail = parseFloat($('#txtKhDetail' + KMNum + "_" + i).val());
+//         if (!isNaN(KhDetail)) {
+
+//             ReUseHajm = parseFloat($('#txtReUseHajm' + KMNum + "_" + i).val());
+//             if (ReUseHajm > KhDetail) {
+//                 $('#txtReUseHajm' + KMNum + "_" + i).addClass('blinking');
+//                 checkValues = true;
+//             }
+//             else
+//                 $('#txtReUseHajm' + KMNum + "_" + i).removeClass('blinking');
+//             JamKol += isNaN(ReUseHajm) ? 0 : ReUseHajm;
+
+//             ReUseDarsad = parseFloat($('#txtReUseDarsad' + KMNum + "_" + i).val());
+//             if (ReUseDarsad > 100) {
+//                 $('#txtReUseDarsad' + KMNum + "_" + i).addClass('blinking');
+//                 checkValues = true;
+//             }
+//             else
+//                 $('#txtReUseDarsad' + KMNum + "_" + i).removeClass('blinking');
+//             JamDarsad += isNaN(ReUseDarsad) ? 0 : ReUseDarsad;
+
+//             /////////////
+//             Varizi = parseFloat($('#txtVarizi' + KMNum + "_" + i).val());
+//             if (Varizi > KhDetail) {
+//                 $('#txtVarizi' + KMNum + "_" + i).addClass('blinking');
+//                 checkValues = true;
+//             }
+//             else {
+//                 $('#txtVarizi' + KMNum + "_" + i).removeClass('blinking');
+//             }
+//             JamKol += isNaN(Varizi) ? 0 : Varizi;
+
+
+//             Haml = parseFloat($('#txtHaml' + KMNum + "_" + i).val());
+//             if (Haml > KhDetail) {
+//                 $('#txtHaml' + KMNum + "_" + i).addClass('blinking');
+//                 checkValues = true;
+//             }
+//             else {
+//                 $('#txtHaml' + KMNum + "_" + i).removeClass('blinking');
+//             }
+//             JamKol += isNaN(Haml) ? 0 : Haml;
+
+//             DarsadVarizi = parseFloat($('#txtDarsadVarizi' + KMNum + "_" + i).val());
+//             if (DarsadVarizi > 100) {
+//                 $('#txtDarsadVarizi' + KMNum + "_" + i).addClass('blinking');
+//                 checkValues = true;
+//             }
+//             else {
+//                 $('#txtDarsadVarizi' + KMNum + "_" + i).removeClass('blinking');
+//             }
+//             JamDarsad += isNaN(DarsadVarizi) ? 0 : DarsadVarizi;
+
+
+//             DarsadHaml = parseFloat($('#txtDarsadHaml' + KMNum + "_" + i).val());
+//             if (DarsadHaml > 100) {
+//                 $('#txtDarsadHaml' + KMNum + "_" + i).addClass('blinking');
+//                 checkValues = true;
+//             }
+//             else {
+//                 $('#txtDarsadHaml' + KMNum + "_" + i).removeClass('blinking');
+//             }
+//             JamDarsad += isNaN(DarsadHaml) ? 0 : DarsadHaml;
+
+//             if (KhDetail != 0) {
+//                 if (JamDarsad != 100 || (Math.abs(JamKol - KhDetail) > 0.01)) { //JamKol != KhDetail) {
+//                     currentRow = $('#txtDarsadHaml' + KMNum + "_" + i).closest('.AmalyatKhakiRowStyle');
+//                     currentRow.addClass('errorRow');
+//                     checkValues = true;
+//                 }
+//             }
+//         }
+//     }
+//     return checkValues;
+// }
+
 
 function SaveKhakBardariInfo(BarAvordUserId, Type) {
+
     debugger;
     check = false;
     //////////
@@ -2374,7 +3888,7 @@ function SaveKhakBardariInfo(BarAvordUserId, Type) {
     var KMS = parseFloat($('#txtFromKMForKhakbardari').val());//.replace('+', ''));
     if (KMS >= KME) {
         $('#txtToKMForKhakbardari').addClass('blinking');
-        toastr.info('کیلومتراژ انتها بایستی بعد از کیلومتراژ شروع باشد', 'اطلاع');
+        toastr.info('متراژ انتها بایستی بعد از متراژ شروع باشد', 'اطلاع');
         check = true;
     }
     else {
@@ -2442,6 +3956,15 @@ function SaveKhakBardariInfo(BarAvordUserId, Type) {
         vardata.HKB = HKB;
         vardata.lstItems = dataList;
         vardata.NoeFBId = NoeFBId;
+
+
+        htmlShowWaiting = ShowWaiting();
+        if (htmlShowWaiting != '')
+            $('#MainViewKhakBardariNew').append(htmlShowWaiting);
+        else
+            $('#ContainerWaiting').show();
+
+
         $.ajax({
             type: "POST",
             url: "/AmalyateKhakiInfoForBarAvords/SaveKhakBardariInfoForBarAvord",
@@ -2460,28 +3983,42 @@ function SaveKhakBardariInfo(BarAvordUserId, Type) {
                     $('#txtToKMForKhakbardari').val('0')
 
                     for (let i = 1; i <= ActivityLength; i++) {
-                        $('#txtKhDetail' + i).val(0);
-                        $('#txtDarsad' + i).val(0);
-                        $('#txtReUseHajm' + i).val(0);
-                        $('#txtReUseDarsad' + i).val(0);
-                        $('#txtVarizi' + i).val(0);
-                        $('#txtDarsadVarizi' + i).val(0);
-                        $('#txtHaml' + i).val(0);
-                        $('#txtDarsadHaml' + i).val(0);
+                        $('#txtKhDetail' + i).val('');
+                        $('#txtDarsad' + i).val('');
+                        $('#txtReUseHajm' + i).val('');
+                        $('#txtReUseDarsad' + i).val('');
+                        $('#txtVarizi' + i).val('');
+                        $('#txtDarsadVarizi' + i).val('');
+                        $('#txtHaml' + i).val('');
+                        $('#txtDarsadHaml' + i).val('');
                         //$('#txtKhakBardariItemId' + i).val(0);
                     }
+
+                    $('#spantotalKhDetailNew').html('');
+                    $('#spantotalDarsadKhDetailNew').html('');
+                    $('#spantotalVariziNew').html('');
+                    $('#spantotalDarsadVariziNew').html('');
+                    $('#spantotalReUseHajmNew').html('');
+                    $('#spantotalDarsadReUseHajmNew').html('');
+                    $('#spantotalHamlNew').html('');
+                    $('#spantotalDarsadHamlNew').html('');
 
                     $('#MainViewKhakBardariNew').slideUp(500);
 
                     ShowExistingKMKhakBardari(BarAvordUserId);
 
-                    toastr.success('اطلاعات کیلومتراژ بدرستی ثبت گردید', 'ثبت');
+                    $('#ContainerWaiting').hide();
+
+                    toastr.success('اطلاعات متراژ بدرستی ثبت گردید', 'ثبت');
                 }
-                else
-                    toastr.error('مشکل در ثبت اطلاعات کیلومتراژ', 'خطا');
+                else {
+                    toastr.error('مشکل در ثبت اطلاعات متراژ', 'خطا');
+                    $('#ContainerWaiting').hide();
+                }
             },
             error: function (response) {
-                toastr.error('مشکل در ثبت اطلاعات کیلومتراژ', 'خطا');
+                toastr.error('مشکل در ثبت اطلاعات متراژ', 'خطا');
+                $('#ContainerWaiting').hide();
             }
         });
     }
@@ -2490,6 +4027,7 @@ function SaveKhakBardariInfo(BarAvordUserId, Type) {
 }
 
 function UpdateKhakBardariInfo(KMKhakBardariId, BarAvordUserId, KMNum) {
+
 
     debugger;
     check = false;
@@ -2527,7 +4065,7 @@ function UpdateKhakBardariInfo(KMKhakBardariId, BarAvordUserId, KMNum) {
     var KMS = parseFloat($('#txtFromKMForKhakbardari' + KMNum).val());//.replace('+', ''));
     if (KMS >= KME) {
         $('#txtToKMForKhakbardari' + KMNum).addClass('blinking');
-        toastr.info('کیلومتراژ انتها بایستی بعد از کیلومتراژ شروع باشد', 'اطلاع');
+        toastr.info('متراژ انتها بایستی بعد از متراژ شروع باشد', 'اطلاع');
         check = true;
     }
     else {
@@ -2572,7 +4110,7 @@ function UpdateKhakBardariInfo(KMKhakBardariId, BarAvordUserId, KMNum) {
                     DarsadValueOfVarize: $('#txtDarsadVarizi' + KMNum + "_" + i).val(),
                     DetailValueOfHaml: $('#txtHaml' + KMNum + "_" + i).val(),
                     DarsadValueOfHaml: $('#txtDarsadHaml' + KMNum + "_" + i).val(),
-                    NoeKhakBardari: $('#txtKhakBardariItemId' + KMNum + "_" + i).val(),
+                    NoeKhakBardari:parseInt($('#txtKhakBardariItemId' + KMNum + "_" + i).val()),
                 };
                 dataList.push(obj);
             }
@@ -2580,7 +4118,7 @@ function UpdateKhakBardariInfo(KMKhakBardariId, BarAvordUserId, KMNum) {
 
         //KMKhakBardariId = $('#HDFKMAmalyateKhakiIdForEdit').val();
         //KMKhakBardariNum = $('#HDFKMAmalyateKhakiNum').val();
-        Year = $('#HDFYear').val();
+        Year = parseInt($('#HDFYear').val());
         NoeFBId = parseInt($('#HDFNoeFB').val());
         var vardata = new Object();
         vardata.BarAvordUserId = BarAvordUserId;
@@ -2592,6 +4130,14 @@ function UpdateKhakBardariInfo(KMKhakBardariId, BarAvordUserId, KMNum) {
         vardata.lstItems = dataList;
         vardata.Year = Year;
         vardata.NoeFBId = NoeFBId;
+
+
+        htmlShowWaiting = ShowWaiting();
+        if (htmlShowWaiting != '')
+            $('#MainViewKhakBardari' + KMNum).append(htmlShowWaiting);
+        else
+            $('#ContainerWaiting').show();
+
         debugger;
         $.ajax({
             type: "POST",
@@ -2603,19 +4149,62 @@ function UpdateKhakBardariInfo(KMKhakBardariId, BarAvordUserId, KMNum) {
                 debugger;
                 info = response.split('_');
                 if (info[0] == "OK") {
-                    toastr.success('اطلاعات کیلومتراژ بدرستی ویرایش گردید', 'ثبت');
+                    toastr.success('اطلاعات متراژ بدرستی ویرایش گردید', 'ثبت');
+                    $('#MainViewKhakBardari' + KMNum).slideUp(500);
                     $('#divExistKMHeader' + KMNum).click();
+                    $('#ContainerWaiting').hide();
                     //$('#ViewKhakBardariEzafeBaha' + KMNum).html('');
 
                 }
-                else
-                    toastr.error('مشکل در ویرایش اطلاعات کیلومتراژ', 'خطا');
+                else {
+                    toastr.error('مشکل در ویرایش اطلاعات متراژ', 'خطا');
+                    $('#ContainerWaiting').hide();
+                }
             },
             error: function (response) {
-                toastr.error('مشکل در ویرایش اطلاعات کیلومتراژ', 'خطا');
+                toastr.error('مشکل در ویرایش اطلاعات متراژ', 'خطا');
+                $('#ContainerWaiting').hide();
             }
         });
     }
     else
         toastr.info('موارد مشخص شده دارای مقادیر نامعتبر میباشند', 'اطلاع');
+}
+
+function DeleteKhakBardariInfo(KMKhakBardariId, KMNum, BarAvordUserId) {
+
+    Year = $('#HDFYear').val();
+
+    var vardata = new Object();
+    vardata.BarAvordUserId = BarAvordUserId;
+    vardata.KMKhakBardariId = KMKhakBardariId;
+    vardata.Year = Year;
+    vardata.KMNum = KMNum;
+
+
+    debugger;
+    $.ajax({
+        type: "POST",
+        url: "/AmalyateKhakiInfoForBarAvords/DeleteKhakBardariInfoForBarAvord",
+        data: JSON.stringify(vardata),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (response) {
+            debugger;
+            info = response.split('_');
+            if (info[0] == "OK") {
+                toastr.success('اطلاعات متراژ بدرستی حذف گردید', 'ثبت');
+                ShowExistingKMKhakBardari(BarAvordUserId);
+            }
+            else {
+                toastr.error('مشکل در حذف اطلاعات', 'خطا');
+                $('#ContainerWaiting').hide();
+            }
+        },
+        error: function (response) {
+            toastr.error('مشکل در حذف اطلاعات', 'خطا');
+            $('#ContainerWaiting').hide();
+        }
+    });
+
 }

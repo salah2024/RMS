@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using static RMS.Models.Common.EnumForEntity;
 
 namespace RMS.Models.Entity;
 
@@ -16,6 +17,7 @@ public class clsOperation
     public clsOperation? Parent { get; set; }
     public string? FunctionCall { get; set; }
     public long Order { get; set; }
+    public NoeFehrestBaha? NoeFB { get; set; }
     public List<clsOperation>? Children { get; set; }
     public clsOperation_ItemsFB Operation_ItemsFBs { get; set; }
 }

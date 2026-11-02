@@ -6,6 +6,7 @@ namespace RMS.Controllers.BaseInfo.Dto
     {
         public Guid BAId { get; set; }
         public int Year { get; set; }
+        public int BAType { get; set; }
         //public NoeFehrestBaha NoeFB { get; set; }
     }
 }

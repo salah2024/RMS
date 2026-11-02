@@ -78,6 +78,15 @@ function FillZaribMantegheControls(OperationId, data) {
         });
     }
 
+    buType = $('#HDFBAType').val();
+
+    if (buType != "BarAvord") {
+        $ddlOstan.prop('disabled', true);
+        $ddlShahr.prop('disabled', true);
+        $ddlBakhsh.prop('disabled', true);
+
+    }
+
     debugger;
     // ۵) ست کردن انتخاب‌ها روی مقدار قبلی
     $ddlOstan.val(bz.ostanId);
@@ -125,25 +134,27 @@ function ShowZaribMantaghe(OperationId, event) {
 <div class="row boardRowStyle" style="direction: rtl; text-align: right;">
 
     <div class="col-md-2">
-        <label for="${ostanId}">استان</label>
-        <select id="${ostanId}" class="form-control">
+        <label for="${ostanId}">استان 
+        <select id="${ostanId}" class="selectZaribMantaghe form-control">
             <option value="">انتخاب استان</option>
         </select>
+        </label>
     </div>
     <div class="col-md-2" style="margin-right:20px">
         <label for="${shahrId}">شهرستان</label>
-        <select id="${shahrId}" class="form-control">
+        <select id="${shahrId}" class="selectZaribMantaghe form-control">
             <option value="">ابتدا استان را انتخاب کنید</option>
         </select>
     </div>
     <div class="col-md-2" style="margin-right:20px">
         <label for="${bakhshId}">بخش</label>
-        <select id="${bakhshId}" class="form-control">
+        <select id="${bakhshId}" class="selectZaribMantaghe form-control">
             <option value="">ابتدا شهرستان را انتخاب کنید</option>
         </select>
     </div>
     <div class="col-md-3" id="divZaribRah" style="padding-top: 17px;display:none;margin-right:40px">
-    <span style="font-weight:bold;padding: 0px 10px;background-color: #cfcfff;border-radius: 5px;">ضریب منطقه ای </span>
+   
+   <span style="font-weight:bold;padding: 0px 10px;background-color: #cfcfff;border-radius: 5px;">ضریب منطقه‌ای </span> 
     <span style="font-weight:bold;" id="spanZaribRah"></span>
     </div>
 
@@ -185,7 +196,7 @@ function ShowZaribMantaghe(OperationId, event) {
         let bakhshIdVal = $(this).val();
         if (bakhshIdVal) {
             GetZaribManteghe(bakhshIdVal);
-        } 
+        }
     });
 
     // در بدو نمایش، استان‌ها لود شوند
@@ -213,7 +224,7 @@ function GetZaribManteghe(bakhshId) {
 
             str = '';
             $.each(data, function () {
-            debugger;
+                debugger;
                 ZaribManteghe = this.zaribManteghe;
                 FBName = this.fbName;
 

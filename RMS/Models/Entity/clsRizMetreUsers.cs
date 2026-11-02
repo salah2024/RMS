@@ -12,7 +12,8 @@ public class clsRizMetreUsers : clsBaseEntity
     /// </summary>
     public string? ShomarehNew { get; set; }      
 
-    public string Sharh { get; set; }               // شرح آیتم
+    public string? TajmieItem { get; set; }               // شماره آیتم تجمیعی در صورت وجود
+    public string Sharh { get; set; }                     // شرح آیتم
 
     [Column(TypeName = "decimal(18,4)")]
     public decimal? Tedad { get; set; }                  // تعداد

@@ -1,0 +1,150 @@
+﻿<link href="~/css/ItemsHasCondition.css" rel="stylesheet" />
+
+
+<div class="container-fluid mt-3">
+
+    <!-- عنوان -->
+    <div class="card shadow-sm border-0 mb-3">
+
+        <div class="card-header bg-primary text-white">
+
+            <i class="fa fa-list-check"></i>
+
+            آیتم های دارای شرط
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <div class="col-md-4 mb-3">
+
+                    <label>شماره آیتم</label>
+
+                    <input id="txtItemNo"
+                           class="form-control"
+                           autocomplete="off" />
+
+                </div>
+
+                <div class="col-md-2 mb-3">
+
+                    <label>سال</label>
+
+                    <select id="cmbYear" class="form-control">
+
+                        @for (int i = 1400; i <= 1410; i++)
+                        {
+                            <option value="@i" selected="@(i == 1404)">
+                                @i
+                            </option>
+                        }
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-3 mb-3">
+
+                    <label>نوع فهرست بها</label>
+
+                    <select id="cmbNoeFB" class="form-control">
+
+                        <option value="232" selected>راهداری</option>
+                        <option value="233">ابنیه</option>
+                        <option value="234">راه و باند</option>
+                        <option value="235">برقی</option>
+                        <option value="236">مکانیکی</option>
+                        <option value="237">مرمت</option>
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-2 d-flex align-items-end">
+
+                    <button id="btnSave"
+                            class="btn btn-success w-100">
+
+                        <i class="fa fa-save"></i>
+
+                        ثبت
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- جدول -->
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header">
+
+            <div class="row">
+
+                <div class="col-md-6 text-start" style="padding-right: 0px;">
+
+                    <input id="txtSearch" style="direction:rtl"
+                           class="form-control"
+                           placeholder="جستجو..." />
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="card-body p-0">
+
+            <div class="table-container">
+
+                <table class="table table-bordered table-hover mb-0" id="tblItems">
+
+                    <thead>
+                        <tr>
+                            <th width="60">ردیف</th>
+                            <th>شماره آیتم</th>
+                            <th width="120">سال</th>
+                            <th width="180">نوع فهرست بها</th>
+                            <th width="160">عملیات</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="tblBody">
+                    </tbody>
+
+                </table>
+
+            </div>
+        </div>
+
+        <div class="card-footer">
+
+            <nav>
+
+                <ul id="pagination"
+                    class="pagination justify-content-center mb-0">
+                </ul>
+
+            </nav>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<input type="hidden" id="hfId" value="0" />
+
+    <script src="~/js/ItemsHasCondition.js"></script>

@@ -18,7 +18,7 @@
 
     LineWithAlfaAndLength(alfa - 180, StartPointX + XEndLine1, StartPointY + YEndLine1 - (D / 2) - (c1 / Math.cos(toRadians(alfa))), L)
     LineWithAlfaAndLength(alfa - 180, StartPointX + XEndLine1, StartPointY + YEndLine1 - (D / 2) - ((c1 + c2) / Math.cos(toRadians(alfa))), L)
-    /
+    
 
     LineWithAlfaAndLength(90, StartPointX + XEndLine1, StartPointY + YEndLine1 - (D / 2) - (c1 / Math.cos(toRadians(alfa))), c1 / Math.cos(toRadians(alfa)))
     LineWithAlfaAndLength(90, StartPointX + XEndLine1, StartPointY + YEndLine1 - (D / 2) - ((c1 + c2) / Math.cos(toRadians(alfa))), (c2) / Math.cos(toRadians(alfa)))
@@ -117,9 +117,6 @@ function DrawDastakNew1(h, x, alfa, D, L, w1, b2, c1, c2, j, alfaw1, hminw1, t, 
     else {
         x1 = (-1) * fix1 * Math.cos(toRadians(alfaw1)) + (T - fix1 * Math.sin(toRadians(alfaw1))) * Math.tan(toRadians(alfaw1))
         y1 = T;
-        //LineWithAlfaAndLength(-90, StartPointX - XEndLine1, StartPointY - YEndLine1 - (D / 2), Q);
-        //LineWithAlfaAndLength(alfaw1 - 90, StartPointX - XEndLine1 - (w1 * Math.sin(toRadians(alfaw1))) - (fix1 * Math.cos(toRadians(alfaw1))), StartPointY - YEndLine1 - (D / 2) + (w1 * Math.cos(toRadians(alfaw1))) - (fix1 * Math.sin(toRadians(alfaw1))), w1 - (T * Math.sin(toRadians(alfaw1))));
-        //LineWithAlfaAndLength(180 + alfaw1, StartPointX - XEndLine1 - (w1 * Math.sin(toRadians(alfaw1))), StartPointY - YEndLine1 - (D / 2) + (w1 * Math.cos(toRadians(alfaw1))), fix1+x);
 
         LineWithAlfaAndLength(180 + alfaw1, StartPointX - XEndLine1 - (w1 * Math.sin(toRadians(alfaw1))), StartPointY - YEndLine1 - (D / 2) + (w1 * Math.cos(toRadians(alfaw1))), fix1);
 
@@ -129,17 +126,6 @@ function DrawDastakNew1(h, x, alfa, D, L, w1, b2, c1, c2, j, alfaw1, hminw1, t, 
         x2Prim = StartPointX + XEndLine1;
         y2Prim = StartPointY + YEndLine1 - (D / 2) - ((c1 + c2) / Math.cos(toRadians(alfa)));
 
-        //LineWithAlfaAndLength(50, x2Prim, y2Prim, 50);
-
-        //xx= x1Prim + 40 * Math.sin(toRadians(alfaw1));
-        //yy = y1Prim - 40 * Math.cos(toRadians(alfaw1));
-
-        //LineWithAlfaAndLength(0, xx, yy, 50);
-
-        //xxx = x2Prim - 200 * Math.cos(toRadians(alfa));
-        //yyy = y2Prim - 200 * Math.sin(toRadians(alfa));
-
-        //LineWithAlfaAndLength(0, xxx, yyy, 50);
 
         Lprim = (y1Prim - y2Prim + (x2Prim - x1Prim) * Math.tan(toRadians(alfa))) / (Math.cos(toRadians(alfaw1)) + Math.sin(toRadians(alfaw1)) * Math.tan(toRadians(alfa)));
         LineWithAlfaAndLength(alfaw1 - 90, StartPointX - XEndLine1 - (w1 * Math.sin(toRadians(alfaw1))) - (fix1 * Math.cos(toRadians(alfaw1))), StartPointY - YEndLine1 - (D / 2) + (w1 * Math.cos(toRadians(alfaw1))) - (fix1 * Math.sin(toRadians(alfaw1))),Lprim);
@@ -272,7 +258,6 @@ function DrawDastakNew2(h, x, alfa, D, L, w2, b2, c1, c2, j, alfaw2, hminw2, t, 
 }
 
 function DrawLineWithTwoPoint(x1, y1, x2, y2) {
-    debugger
     var c = document.getElementById("myCanvas");
     var ctx = c.getContext("2d");
     ctx.moveTo(x1, y1);
@@ -281,8 +266,6 @@ function DrawLineWithTwoPoint(x1, y1, x2, y2) {
 }
 
 function LineWithAlfaAndLength(theta, x, y, Len) {
-    debugger
-
     var c = document.getElementById("myCanvas");
     var ctx = c.getContext("2d");
     ctx.moveTo(x, y);

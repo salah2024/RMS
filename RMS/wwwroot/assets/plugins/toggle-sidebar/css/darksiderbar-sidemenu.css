@@ -481,8 +481,8 @@
 	-ms-flex-align: center;
 	align-items: center;
 	padding: 14px 24px;
-	font-size: 0.9em;
-	font-weight: 300;
+	font-size: 18px;
+	font-weight: 500;
 	border-left: 3px solid transparent;
 	-webkit-transition: border-left-color 0.3s ease, background-color 0.3s ease;
 	-o-transition: border-left-color 0.3s ease, background-color 0.3s ease;
@@ -576,7 +576,7 @@
 	-ms-flex-align: center;
 	align-items: center;
 	padding: 10px 54px 10px 0;
-	font-size: 0.8em;
+	font-size: 16px;
 	color: #fff;
 }
 

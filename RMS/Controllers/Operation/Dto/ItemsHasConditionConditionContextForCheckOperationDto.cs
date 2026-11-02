@@ -19,6 +19,7 @@
         public long ConditionGroupId { get;set; }
         public long OperationId { get; set; }
         public Guid BarAvordId { get; set; }
+        public string? AddedItems { get; set; }
 
     }
 }

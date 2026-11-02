@@ -1,6 +1,5 @@
-﻿function renderRadiosForEdit($container, groupName, items, KhakRizi,num) {
+﻿function renderRadiosForEdit($container, groupName, items, KhakRizi, num) {
 
-    debugger;
 
     $container.empty();
 
@@ -14,14 +13,13 @@
 
 
     items.forEach((item, idx) => {
-        debugger;
 
         // پشتیبانی از هر دو حالت PascalCase/camelCase
         const val = (item.id ?? item.Id ?? idx);
         const lbl = (item.description ?? item.Description ?? '').toString();
         const id = `${groupName}_${val}`;
 
-        if (groupName == 'roadType'+num) {
+        if (groupName == 'roadType' + num) {
             $input = $('<input/>', {
                 class: 'form-check-input',
                 style: 'margin-right: -10px;',
@@ -159,35 +157,56 @@ function validateRadioGroupsForEdit(num) {
 }
 
 function validateHajmInputsOnEdit(num) {
-    debugger;
     const $inputs = $('[id^="txtHajmKhRiziExist_' + num + '"]');
     let anyValid = false;
 
     $inputs.each(function () {
+
         const raw = $(this).val();
+        data_id = $(this).attr('data-id');
         const trimmed = (raw ?? '').trim();
-        if (trimmed === '') {
-            // فعلاً بدون هایلایت؛ بعداً اگر هیچ معتبری نبود، همه را هایلایت می‌کنیم
-            $(this).removeClass('blinking');
-            return;
+
+        if (data_id == "1") {
+            if (trimmed === '' || trimmed === "0") {
+                $(this).addClass('blinking');
+                anyValid = true;
+                return false;
+            }
+            else {
+                const ok = isValidDecimal4(trimmed);
+                if (!ok) {
+                    anyValid = true;
+                    $(this).addClass('blinking');
+                    return false;
+
+                }
+            }
         }
-        const ok = isValidDecimal4(trimmed);
-        if (ok) anyValid = true;
-        $(this).toggleClass('blinking', !ok); // غیرمعتبر → blinking
+        else {
+            if (trimmed === '' || trimmed === "0") {
+                anyValid = false;
+            }
+            else {
+                const ok = isValidDecimal4(trimmed);
+                if (!ok) {
+                    anyValid = true;
+                    $(this).addClass('blinking');
+                    return false;
+                }
+            }
+        }
     });
 
     if (!anyValid) {
-        // هیچ مقداری وارد نشده یا همه نامعتبرند → همه را هایلایت کن
-        $inputs.addClass('blinking');
-        return false;
+        return true;
     }
-    return true;
+    else
+        return false;
 }
 
 
 function UpdateRMKhakRiziAddedItemsClick(Id) {
     ////////////
-    debugger;
     Obj = $('#iUpdate' + Id);
     Obj.prop('disabled', true);
     FBId = $('#HDFFBID').val();
@@ -288,7 +307,6 @@ function UpdateRMKhakRiziAddedItemsClick(Id) {
     }
     else Vazn = undefined;
 
-    debugger;
     if (firstObjectHasFocus != null)
         firstObjectHasFocus.focus();
     var vardata = new Object();
@@ -310,7 +328,13 @@ function UpdateRMKhakRiziAddedItemsClick(Id) {
             success: function (data) {
 
                 if (data == "OK") {
-                    $('#MeghdarJoz' + Id).html(Tool * Arz);
+                    MeghdarJoz = (Tedad != null ? Tedad : 1) * (Tool != null ? Tool : 1) * (Arz != null ? Arz : 1) *
+                        (Ertefa != null ? Ertefa : 1) * (Vazn != null ? Vazn : 1);
+                    $('#MeghdarJoz' + Id).html(MeghdarJoz.toFixed(2));
+
+                    if (MeghdarJoz != 0) {
+                        Obj.closest('fieldset').find('.eb-group-checkbox').prop("checked", true);
+                    }
                     toastr.success('ریزه متره انتخابی بدرستی ویرایش گردید', 'موفقیت');
                 }
                 else
@@ -328,8 +352,13 @@ function UpdateRMKhakRiziAddedItemsClick(Id) {
     }
 }
 
-function UpdateKhakRiziInfo(barAvordUserId, num) {
+function UpdateKhakRiziInfo(Obj, barAvordUserId, num) {
+
     debugger;
+    $(Obj).attr('disabled', true);
+
+    NoeFB = parseInt($('#HDFNoeFB').val());
+
     const kmOk = validateKmFieldsForEdit(num);
     const radiosOk = validateRadioGroupsForEdit(num);  // برای roadType و noeDaneBandi
     const hajmOk = validateHajmInputsOnEdit(num);
@@ -354,7 +383,7 @@ function UpdateKhakRiziInfo(barAvordUserId, num) {
 
     var vardata = {
         BarAvordUserId: barAvordUserId,
-        Num:num,
+        Num: num,
         FromKM: parseFloat($('#txtFromKMForKhakRizi' + num).val().replace('+', '')),
         ToKM: parseFloat($('#txtToKMForKhakRizi' + num).val().replace('+', '')),
 
@@ -365,8 +394,8 @@ function UpdateKhakRiziInfo(barAvordUserId, num) {
         HajmKhakRiziValues: hajmValues,  // ← لیست {Id, Value}
 
         Year: Year = parseInt($('#HDFYear').val()),
+        NoeFBId: NoeFB
     };
-    debugger;
 
     $.ajax({
         type: "POST",
@@ -376,7 +405,9 @@ function UpdateKhakRiziInfo(barAvordUserId, num) {
         dataType: "json",
         success: function (response) {
             toastr.success('ویرایش بدرستی انجام گرفت', 'موفقیت');
-            GetExistKhakRizi(barAvordUserId,num);
+            GetExistKhakRizi(barAvordUserId, num);
+            showKhakRiziDetails(num, barAvordUserId);
+
         },
         error: function () {
             toastr.error('مشکل در ویرایش اطلاعات', 'خطا');

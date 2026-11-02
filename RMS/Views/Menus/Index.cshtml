@@ -1,0 +1,51 @@
+﻿<style>
+
+    a {
+        color: #2f019b;
+        font-size: 20px;
+        font-family: 'BMitra', sans-serif;
+    }
+</style>
+
+@using RMS.Models.Entity
+@model List<clsMenuItem>
+
+@if (TempData["err"] != null)
+{
+    <div style="color:red">@TempData["err"]</div>
+}
+
+<div style="margin-top:70px">
+<p>
+    <a asp-action="Create">منو جدید</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>عنوان</th>
+            <th>آدرس</th>
+            <th>اولویت بندی</th>
+            <th>فعال/غیرفعال</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var m in Model)
+        {
+            var strActive = m.IsActive ? "فعال" : "غیرفعال";
+            <tr>
+                <td>@m.Title</td>
+                <td style="direction: ltr;">@m.Url</td>
+                <td>@m.SortOrder</td>
+                <td>@strActive</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@m.Id">ویرایش</a> |
+                    <a asp-action="Permissions" asp-route-id="@m.Id">دسترسی‌ها</a> |
+                    <a asp-action="Delete" asp-route-id="@m.Id">حذف</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+</div>

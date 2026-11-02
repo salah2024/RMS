@@ -14,9 +14,9 @@ public class ViewCompanyController(ApplicationDbContext context) : Controller
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        var companies = await _context.UserDetails
-            .Include(x => x.User)
-            .Where(x => x.userType == UserType.Legal)
+        var companies = await _context.Companies
+            //.Include(x => x.User)
+            //.Where(x => x.userType == UserType.Legal)
             .ToListAsync();
         if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             return PartialView("_ViewCompanyForm", companies);
@@ -42,7 +42,7 @@ public class ViewCompanyController(ApplicationDbContext context) : Controller
     // POST: ویرایش اطلاعات شرکت
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(clsUserDetail model)
+    public async Task<IActionResult> Edit(clsCompany model)
     {
         if (!ModelState.IsValid)
         {
@@ -52,8 +52,8 @@ public class ViewCompanyController(ApplicationDbContext context) : Controller
             return PartialView(model); 
         }
 
-        var detail = await _context.UserDetails
-            .Include(x => x.User)
+        var detail = await _context.Companies
+            //.Include(x => x.User)
             .FirstOrDefaultAsync(x => x.ID == model.ID);
 
         if (detail == null)
@@ -61,18 +61,22 @@ public class ViewCompanyController(ApplicationDbContext context) : Controller
 
         // به‌روزرسانی فیلدهای اطلاعات تکمیلی
         detail.CompanyName = model.CompanyName;
-        detail.CEOName = model.CEOName;
+        detail.ManagementFirstName = model.ManagementFirstName;
+        detail.ManagementLastName = model.ManagementLastName;
+        detail.PhoneNumber = model.PhoneNumber;
+        detail.MobileNumber = model.MobileNumber;
+        detail.FaxNumber = model.FaxNumber;
         detail.Address = model.Address;
         detail.PostalCode = model.PostalCode;
-        detail.NationalCode = model.NationalCode;
-        detail.userType = model.userType;
+        detail.CompanyNationalCode = model.CompanyNationalCode;
+        //detail.userType = model.userType;
 
         // اگر بخوای اطلاعات کاربر مرتبط هم آپدیت بشه:
-        if (detail.User != null)
-        {
-            detail.User.FullName = model.User?.FullName ?? detail.User.FullName;
-            detail.User.PhoneNumber = model.User?.PhoneNumber ?? detail.User.PhoneNumber;
-        }
+        //if (detail.User != null)
+        //{
+        //    detail.User.FullName = model.User?.FullName ?? detail.User.FullName;
+        //    detail.User.PhoneNumber = model.User?.PhoneNumber ?? detail.User.PhoneNumber;
+        //}
 
         await _context.SaveChangesAsync();
 

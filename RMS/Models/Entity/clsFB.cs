@@ -15,6 +15,10 @@ public class clsFB:clsBaseEntity
 
     [Column(TypeName = "decimal(18,4)")]
     public decimal BahayeVahedZarib { get; set; }
+
+    [Column(TypeName = "decimal(5,3)")]
+    [Range(typeof(decimal), "0", "1", ErrorMessage = "مقدار باید بین 0 و 1 باشد.")]
+    public decimal? ItemZarib { get; set; }
     /// <summary>
     /// برای آیتم هایی که اضافه یا کسر بها به خود آیتم اصلی میخورند، توضیحشان متفاوت خواهد بود نسبت به آیتم اصلی 
     /// در نتیجه در توضیح آیتم ایجاد شده توضیحی که در اینجا درج شده نمایش داده میشود
@@ -28,4 +32,8 @@ public class clsFB:clsBaseEntity
     /// همچنین ممکن است مقدار بهای واحد یک آیتم تغییر یابد که در این صورت آیتم مربوطه بعنوان آیتم ستاره دار در نظر گرفته میشود
     /// </summary>
     public long BahayeVahedNew { get; set; }
+
+    [Column(TypeName = "decimal(18,4)")]
+    public decimal? SumRizMetre { get; set; }
+
 }

@@ -14,17 +14,15 @@ public class clsUserDetail
     public string UserId { get; set; }
     public ApplicationUser User { get; set; }
 
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
     // اطلاعات تکمیلی
     //در صورتی که شرکت باشد، شناسه ملی شرکت قرار میگیرد
     public string? NationalCode { get; set; }
     public string? Address { get; set; }
-    public string? CEOName { get; set; }   // نام مدیرعامل
-    public string? CompanyName { get; set; }
-    /// <summary>
-    /// نوع کاربر
-    /// 1=حقیقی
-    /// 2=حقوقی
-    /// </summary>
-    public UserType userType { get; set; }
+
+    [ForeignKey("Company")]
+    public Guid? CompanyId { get; set;  }
+    public clsCompany Company { get; set; }
     public string? PostalCode { get; set; }
 }

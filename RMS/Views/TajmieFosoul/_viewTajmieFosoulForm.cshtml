@@ -1,0 +1,99 @@
+﻿<link href="~/css/TajmieFosoul.css" rel="stylesheet" />
+
+<div style="margin-top:50px">
+
+    <div class="row mb-3">
+
+        <div class="col-md-1" style="text-align:left">
+
+            <label>نوع فهرست بها:</label>
+
+        </div>
+        <div class="col-md-3">
+
+            <select id="cmbNoeFB" class="form-control" style="margin-top: 5px;">
+
+                <option value="">انتخاب کنید...</option>
+
+                <option value="232">راهداری</option>
+
+                <option value="233">ابنیه</option>
+
+                <option value="234">راه، راه‌آهن و باند فرودگاه</option>
+
+                <option value="235">تأسیسات برقی</option>
+
+                <option value="236">تأسیسات مکانیکی</option>
+
+                <option value="237">آبیاری و زهکشی</option>
+
+                <option value="238">خطوط انتقال آب</option>
+
+                <option value="239">شبکه توزیع آب</option>
+
+                <option value="240">جمع‌آوری و انتقال فاضلاب</option>
+
+                <option value="241">قنوات</option>
+
+                <option value="242">سدسازی</option>
+
+                <option value="243">مرمت آثار تاریخی</option>
+
+            </select>
+
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <div class="card-body p-0">
+
+
+
+            <table class="table table-bordered table-hover mb-0" id="tblTajmie">
+
+                <thead>
+
+                    <thead>
+
+                        <tr>
+
+                            <th width="60">
+                                ردیف
+                            </th>
+                            <th width="60">
+                                کد فصل
+                            </th>
+
+                            <th>
+                                عنوان فصل
+                            </th>
+
+                            <th width="180">
+                                نوع فهرست بها
+                            </th>
+
+                            <th width="140">
+                                عملیات
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tblTajmieBody">
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <input type="hidden" id="hfId" value="0" />
+
+
+    <script src="~/js/TajmieFosoul.js"></script>

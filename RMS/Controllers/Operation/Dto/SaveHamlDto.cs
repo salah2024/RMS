@@ -12,4 +12,6 @@ public class SaveHamlDto
     public long Shomareh { get; set;}
     public decimal? MeghdarJoz { get; set; }
     public int LevelNumber { get; set; }
+    public long? ConditionContextId { get; set; }
+    public string? BaseFBItem { get; set; }
 }

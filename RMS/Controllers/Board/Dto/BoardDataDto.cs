@@ -6,6 +6,7 @@ namespace RMS.Controllers.Board.Dto
     {
         public Guid BaravordId { get; set; }
         public NoeFehrestBaha NoeFBId { get; set; }
+        public int Year { get; set; }
         public Guid barAvordAddedBoardId { get; set; }
         public int Shape { get; set; }
         public long OperationId { get; set; }

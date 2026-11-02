@@ -1,4 +1,5 @@
 ﻿
+
 <style>
 
 	
@@ -11,13 +12,6 @@
 		background-color: #efeaff;
 	}
 
-
-	.table-responsive {
-		max-height: 400px; /* ارتفاع دلخواه برای محتوای جدول */
-		overflow-y: auto;
-		overflow-x: hidden; /* برای جلوگیری از اسکرول عرضی */
-		position: relative;
-	}
 
 		.table-responsive table thead th {
 			position: sticky;
@@ -33,6 +27,9 @@
 			cursor: pointer;
 		}
 
+
+	
+
 </style>
 
 <link href="~/Scripts/font-awesome/all.min.css" rel="stylesheet">
@@ -47,12 +44,16 @@
 
 <script src="~/Scripts/jsTree/jstree.min.js"></script>
 <script src="~/Scripts/jsTree/myTree.js"></script>
-<script src="~/Scripts/FaniSection/DrawingPol.js"></script>
+
+
+@* <script src="~/Scripts/FaniSection/DrawingPol.js"></script>
 <script src="~/Scripts/FaniSection/DrawingPlan2.js"></script>
 <script src="~/Scripts/FaniSection/AbnieFani.js"></script>
 <script src="~/Scripts/FaniSection/AmalyateKhaki.js"></script>
 <script src="~/Scripts/FaniSection/AmalyateKhakiEzafeBaha.js"></script>
 <script src="~/Scripts/FaniSection/AmalyateKhakiGharzeh.js"></script>
+ *@
+
 <script src="~/Scripts/FaniSection/ShowBarAvordScript.js"></script>
 <script src="~/Scripts/FaniSection/ShowBarAvordScriptStar.js"></script>
 
@@ -60,6 +61,10 @@
 <link rel="stylesheet" href="~/Scripts/SelfStyle/FosoulDesStyle.css" />
 
 <script>
+
+
+
+
 		$(document).ready(function () {
 			  GetViewBag();
 
@@ -98,6 +103,9 @@
 
 						 $('#HDFBarAvordUserID').val(viewBag.baId);
 						 $('#HDFYear').val(viewBag.year);
+						 $('#HDFBAType').val(viewBag.baType);
+
+						 $('#spanProjectTitle').html(response.title);
 
 							let str = "";
 							let selectedId = null;
@@ -146,26 +154,26 @@
 	}
 </script>
 
-<div class="row">
+<div class="row" style="margin-top:20px">
 	<div class="col-12">
-		<div class="table-responsive">
-			<div id="tableWrapper">
-				<table id="fosoulTable" class="table table-bordered fixed-table">
+        <div id="tableWrapper" class="table-responsive">
+				<table id="fosoulTable" class="table table-fosoul table-bordered fixed-table">
+
+
 					<thead>
 						<tr>
 							<!-- ستون فصل -->
-							<th rowspan="2" style="width:40%; text-align:center; padding:0; position:relative;">
+							<th COLspan="1" style="width:40%; text-align:center; padding:0; position:relative;">
 								<div class="row">
-									<div class="col-3"></div>
+									<div class="col-1"></div>
 									<!-- ردیف اول: چسبیده به بالا -->
 									<div class="col-9">
 										<div class="row">
 											<div class="col-3">
-												شرح فهرست بها:
+												شرح فصول فهرست بها:
 											</div>
-
-											<div class="col-9" style="text-align:right;" id="divFB">
-											</div>
+											@* <div class="col-9" id="divFB">
+											</div> *@
 										</div>
 									</div>
 								</div>
@@ -173,28 +181,46 @@
 
 
 							<!-- جمع فصل بدون ضرایب -->
-							<th colspan="3" style="text-align:center;">
-								<div class="row">
-									<div class="col-3"></div>
-									<div class="col-6">
-										<span>جمع فصل بدون ضرایب (ریال)</span>
-									</div>
-
-									<div class="col-3">
-										<label class="ShowNoneZeroClass" style="font-weight:normal;color: #00009d;">
-											<input type="checkbox" id="chkNonZeroMeghdarFasl" style="margin-right: 5px;" />
-											مقادیر غیر صفر
-										</label>
-									</div>
-								</div>
+						    <th colspan="3" style="text-align:center;">جمع فصل بدون ضرایب (ریال)
+								
 							</th>
 
 							<!-- جمع فصل با ضرایب -->
-							<th colspan="3" style="text-align:center;">جمع فصل با ضرایب (ریال)</th>
+							<th colspan="3" style="text-align:center;">
+							<div class="row">
+								<div class="col-3"></div>
+								<div class="col-6">
+									<span>جمع فصل با ضرایب (ریال)</span>
+								</div>
+								<div class="col-3">
+									<label class="ShowNoneZeroClass" style="font-weight:normal;color: #00009d;">
+										<input type="checkbox" id="chkNonZeroMeghdarFasl" style="margin-right: 2px;" />
+										مقادیر < > 0
+									</label>
+								</div>
+							</div>
+							</th>
 						</tr>
 
 						<tr>
 							<!-- زیرستون‌های بدون ضریب -->
+						<th COLspan="1" style="width:40%; text-align:center; padding:0; position:relative;">
+							<div class="row">
+								<div class="col-1"></div>
+								<!-- ردیف اول: چسبیده به بالا -->
+
+								<div class="col-9">
+									<div class="row">
+										@* <div class="col-3">
+											شرح فصول فهرست بها:
+										</div> *@
+										<div class="col-9" id="divFB">
+										</div>
+									</div>
+								</div>
+							</div>
+						</th>
+
 							<th style="text-align:center;">پایه</th>
 							<th style="text-align:center;">غیر‌پایه</th>
 							<th style="text-align:center;">کل</th>
@@ -206,14 +232,14 @@
 						</tr>
 					</thead>
 
-					<tbody id="FaslBody">
+					<tbody class="tbody" id="FaslBody">
 						<!-- Rows will be added here dynamically -->
 					</tbody>
 					<tfoot>
-						<tr style="background-color:#ffa8a8">
-							<td style="text-align:right; font-weight:bold;">
-								<span style="font-size: 15px;padding-right: 30px;color: #1e27b5;">
-									جمع برآورد
+						<tr style="background-color:#644d83">
+							<td style="text-align:right; font-weight:bold;width:40%">
+								<span style="font-size: 15px;padding-right: 30px;color: #fff;">
+									مبلغ برآورد هزینه اجرای کار
 								</span>
 							</td>
 							<td id="tdJamBarAvordBase"></td>
@@ -221,11 +247,10 @@
 							<td id="tdJamBarAvordKol"></td>
 							<td id="tdJamBarAvordBaseWithZarib"></td>
 							<td id="tdJamBarAvordStarWithZarib"></td>
-							<td id="tdJamBarAvordKolWithZarib"></td>
+							<td id="tdJamBarAvordKolWithZarib" style="color: #fff;"></td>
 						</tr>
 					</tfoot>
 				</table>
-			</div>
 		</div>
 	</div>
 </div>
@@ -256,7 +281,32 @@
 </div>
 
 
-<input type="hidden" id="HDFBarAvordUserID" name="name" value="" />
+<a id="aShowSelectTajmie" class="" data-toggle="modal" href="#PopupShowSelectTajmie"></a>
+<div class="modal fade" id="PopupShowSelectTajmie" tabindex="-1" role="dialog" style="z-index:5000"
+	 aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header" style="direction: ltr;">
+				<button id="btnClose" type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 style="margin-top: 10px;margin-bottom: 0px;margin-right: 20px;" id="ModalTitle">
+				</h4>
+			</div>
+			<div class="modal-body" style="overflow:auto;max-height:600px">
+				<div class="row" id="TableFosoul">
+					<div class="col-12">
+						<div id="treeItems" style="direction:rtl">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
 <input type="hidden" id="HDFYear" name="name" value="" />
 <input type="hidden" id="HDFNoeFB" name="name" value="" />
 <input type="hidden" id="HDFFaslSelected" name="name" value="" />
+<input type="hidden" id="HDFBAType" name="name" value="" />

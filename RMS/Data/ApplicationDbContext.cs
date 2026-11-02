@@ -2,9 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using RMS.Controllers.AbnieFani.Dto;
 using RMS.Controllers.AmalyateKhaki.Dto;
+using RMS.Controllers.KhakRizi.EnumKhakRizi;
 using RMS.Controllers.Operation.Dto;
 using RMS.Models.Entity;
 using RMS.Models.StoredProceduresData;
+using System.Reflection;
+using System.Security;
 
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {
@@ -91,7 +94,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<clsPayKaniInfoForBarAvordEzafeBahaRizMetre> PayKaniInfoForBarAvordEzafeBahaRizMetres { get; set; }
     public DbSet<clsNoeKhakBardariEzafeBaha> NoeKhakBardariEzafeBahas { get; set; }
     public DbSet<clsNoeKhakBardari_NoeKhakBardariEzafeBaha> NoeKhakBardari_NoeKhakBardariEzafeBahas { get; set; }
-    public DbSet<clsKhakRiziDarsad> KhakRiziDarsads { get; set; }
+    public DbSet<clsKhakRiziCondition> KhakRiziConditions { get; set; }
     public DbSet<clsKhakRiziItem> KhakRiziItems { get; set; }
     public DbSet<clsKhakRiziBarAvord> KhakRiziBarAvords { get; set; }
     public DbSet<clsKhakRiziBarAvordRizMetre> KhakRiziBarAvordRizMetres { get; set; }
@@ -106,7 +109,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<clsOperationDetail> OperationDetails { get; set; }
     public DbSet<clsBarAvordHamlNecessaryLimit> BarAvordHamlNecessaryLimits { get; set; }
     public DbSet<clsUserDetail> UserDetails { get; set; }
-    public DbSet<clsFosoulItem> FosoulItems { get; set; }
+    public DbSet<clsCompany> Companies { get; set; }
+    public DbSet<clsCompanyManagementHistory> CompanyManagementHistories { get; set; }
     public DbSet<clsZaribBalaSari> ZaribBalaSaris { get; set; }
     public DbSet<clsOstan> Ostans { get; set; }
     public DbSet<clsShahr> Shahrs { get; set; }
@@ -116,13 +120,79 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<clsVahed> Vaheds { get; set; }
     public DbSet<clsItemFBStar> ItemFBStars { get; set; }
     public DbSet<clsRizMetreStar> RizMetreStars { get; set; }
+    public DbSet<clsPolVaAbroBarAvordRizMetre> PolVaAbroBarAvordRizMetres { get; set; }
+    public DbSet<clsPermission> Permissions { get; set; }
+    public DbSet<clsRolePermission> RolePermissions { get; set; }
+    public DbSet<clsMenuItem> MenuItems { get; set; }
+    public DbSet<clsMenuPermission> MenuPermissions { get; set; }
+    public DbSet<clsTajhizKargahDarsad> TajhizKargahDarsads { get; set; }
+    public DbSet<clsSetting> Setting { get; set; }
+    public DbSet<clsZarayebFosoul> ZarayebFosouls { get; set; }
+    public DbSet<clsFehrestBahaItemsReplace> FehrestBahaItemsReplaces { get; set; }
+    public DbSet<clsZaribPishnahadiPaymanKar> ZaribPishnahadiPaymanKars { get; set; }
+    public DbSet<clsZaribPishnahadiPaymanKarFosoul> ZaribPishnahadiPaymanKarFosouls { get; set; }
+    public DbSet<clsUserNotification> UserNotifications { get; set; }
+    public DbSet<clsTadilIndexNoeFB> TadilIndexNoeFBs { get; set; }
+    public DbSet<clsTadilIndexFosoul> TadilIndexFosouls { get; set; }
+    public DbSet<clsWorkflow> Workflows { get; set; }
+    public DbSet<clsWorkflowStep> WorkflowSteps { get; set; }
+    public DbSet<clsWorkflowStepRole> WorkflowStepRoles { get; set; }
+    public DbSet<clsWorkflowStepUser> WorkflowStepUsers { get; set; }
+    public DbSet<clsWorkflowInstance> WorkflowInstances { get; set; }
+    public DbSet<clsWorkflowAssignment> WorkflowAssignments { get; set; }
+    public DbSet<clsWorkflowHistory> WorkflowHistories { get; set; }
+    public DbSet<clsBaravordWorkflow> BaravordWorkflows { get; set; }
+    public DbSet<clsBaravordUserAccess> BaravordUserAccesses { get; set; }
+    public DbSet<clsBarAvordUserTajmie> BarAvordUserTajmies { get; set; }
+    public DbSet<clsTajmieFBItems> TajmieFBItemses { get; set; }
+    public DbSet<clsTajmieFosoulItems> TajmieFosoulItemses { get; set; }
+    public DbSet<clsTajmieFosoul> TajmieFosouls { get; set; }
+    public DbSet<clsBahayeVahedItemsRelated> BahayeVahedItemsRelateds { get; set; }
+    public DbSet<clsItemsHasConditionAddedToFBRizMetre> ItemsHasConditionAddedToFBRizMetres { get; set; }
+    public DbSet<clsBarAvordMoshaver> BarAvordMoshavers { get; set; }
+    public DbSet<clsBarAvordKarfarma> BarAvordKarfarmas { get; set; }
+    public DbSet<clsBarAvordPaymanKar> BarAvordPaymanKars { get; set; }
+    public DbSet<clsItemHasConditionBaseItemRemoved> ItemHasConditionBaseItemRemoveds { get; set; }
+    public DbSet<clsBarAvordProjectionWorkFlow> BarAvordProjectionWorkFlows { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            if (typeof(clsBaseEntity).IsAssignableFrom(entityType.ClrType)
+                && !entityType.ClrType.IsAbstract)
+            {
+                var method = typeof(ApplicationDbContext)
+                    .GetMethod(
+                        nameof(ApplyIsDeletedFilter),
+                        BindingFlags.NonPublic | BindingFlags.Static);
+
+                var genericMethod = method!
+                    .MakeGenericMethod(entityType.ClrType);
+
+                genericMethod.Invoke(null, new object[]
+                {
+                    modelBuilder
+                });
+            }
+        }
+
+
+        modelBuilder.HasDefaultSchema("dbo");
+
+        modelBuilder.Entity<clsFehrestBaha>()
+            .HasIndex(x => new { x.Sal, x.NoeFB })
+            .HasDatabaseName("IX_FehrestBahas_Sal_NoeFB");
+
+        modelBuilder.Entity<clsFehrestBahaItemsReplace>()
+            .HasIndex(x => x.FBShomarehMain)
+            .HasDatabaseName("IX_FehrestBahaItemsReplaces_FBShomarehMain");
+
         modelBuilder.Entity<clsOperation>()
-        .HasIndex(o => new { o.Id, o.Year })
-        .IsUnique(); // ترکیب Id + Year باید یکتا باشه
+            .HasIndex(o => new { o.Id, o.Year })
+            .IsUnique(); // ترکیب Id + Year باید یکتا باشه
 
         modelBuilder.Entity<clsOperation>()
             .HasOne(o => o.Parent)
@@ -132,13 +202,15 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
 
         modelBuilder.Entity<clsUserDetail>()
-        .HasOne(d => d.User)
-        .WithOne(u => u.UserDetail)      // اگر در ApplicationUser این پراپرتی رو داری
-        .HasForeignKey<clsUserDetail>(d => d.UserId)
-        .OnDelete(DeleteBehavior.Cascade);
+            .HasOne(d => d.User)
+            .WithOne(u => u.UserDetail)      // اگر در ApplicationUser این پراپرتی رو داری
+            .HasForeignKey<clsUserDetail>(d => d.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
 
 
         modelBuilder.Entity<QuesForAbnieFaniValuesDto>().HasNoKey();
+        modelBuilder.Entity<OperationNameAnalizBahaWithOperationDto>().HasNoKey();
+        modelBuilder.Entity<GetOperationNameHasValueDto>().HasNoKey();
 
         modelBuilder.Entity<ItemsFBShomarehValueShomarehUpdateProcedureDto>().HasNoKey();
         modelBuilder.Entity<ItemsFBDependQuestionForAbnieFaniForSPDto>().HasNoKey();
@@ -169,5 +241,82 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .HasForeignKey(x => x.ItemsHasCondition_ConditionContextId)
             .OnDelete(DeleteBehavior.Restrict); // یا DeleteBehavior.NoAction
 
+        modelBuilder.Entity<clsWorkflowAssignment>()
+            .HasOne(x => x.WorkflowStep)
+            .WithMany()
+            .HasForeignKey(x => x.WorkflowStepId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Permission
+        modelBuilder.Entity<clsPermission>(e =>
+        {
+            e.HasIndex(x => x.Key).IsUnique();
+            e.Property(x => x.Key).IsRequired().HasMaxLength(200);
+            e.Property(x => x.Title).IsRequired().HasMaxLength(200);
+            e.Property(x => x.Group).HasMaxLength(100);
+        });
+
+        // RolePermission (many-to-many)
+        modelBuilder.Entity<clsRolePermission>(e =>
+        {
+            e.HasKey(x => new { x.RoleId, x.PermissionId });
+
+            e.HasOne(x => x.Role)
+             .WithMany()
+             .HasForeignKey(x => x.RoleId)
+             .OnDelete(DeleteBehavior.Cascade);
+
+            e.HasOne(x => x.Permission)
+             .WithMany(p => p.RolePermissions)
+             .HasForeignKey(x => x.PermissionId)
+             .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // MenuItem (self-referencing)
+        modelBuilder.Entity<clsMenuItem>(e =>
+        {
+            e.Property(x => x.Title).IsRequired().HasMaxLength(200);
+            e.Property(x => x.Url).HasMaxLength(400);
+            e.Property(x => x.Icon).HasMaxLength(100);
+
+            e.HasOne(x => x.Parent)
+             .WithMany(x => x.Children)
+             .HasForeignKey(x => x.ParentId)
+             .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // MenuPermission (many-to-many)
+        modelBuilder.Entity<clsMenuPermission>(e =>
+        {
+            e.HasKey(x => new { x.MenuItemId, x.PermissionId });
+
+            e.HasOne(x => x.MenuItem)
+             .WithMany(m => m.MenuPermissions)
+             .HasForeignKey(x => x.MenuItemId)
+             .OnDelete(DeleteBehavior.Cascade);
+
+            e.HasOne(x => x.Permission)
+             .WithMany(p => p.MenuPermissions)
+             .HasForeignKey(x => x.PermissionId)
+             .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<clsWorkflowInstance>()
+            .HasOne(x => x.CurrentStep)
+            .WithMany()
+            .HasForeignKey(x => x.CurrentStepId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+
+        modelBuilder.Entity<clsBaravordUser>()
+        .HasQueryFilter(x => x.IsDeleted != true);
+    }
+
+    private static void ApplyIsDeletedFilter<TEntity>(
+        ModelBuilder modelBuilder)
+        where TEntity : clsBaseEntity
+    {
+        modelBuilder.Entity<TEntity>()
+            .HasQueryFilter(x => x.IsDeleted != true);
     }
 }

@@ -18,6 +18,8 @@ public class clsAbroDaliDetails
     public decimal Tedad { get; set; }
     public decimal Fasele { get; set; }
     public decimal Tool { get; set; }
+    [Column(TypeName = "decimal(18,4)")]
     public decimal VazMilgard1M { get; set; }
+    [Column(TypeName = "decimal(18,4)")]
     public decimal VazMilgardSE { get; set; }
 }

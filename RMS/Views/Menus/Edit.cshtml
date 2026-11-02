@@ -1,0 +1,64 @@
+﻿<style>
+
+    a {
+        color: #2f019b;
+        font-size: 20px;
+        font-family: 'BMitra', sans-serif;
+    }
+</style>
+
+@using RMS.Controllers.Menu.Dto
+@model MenuEditVm
+
+<div style="margin-top:70px">
+<h2>ویرایش منو</h2>
+
+<form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+
+    <div>
+        <label>عنوان</label>
+        <input asp-for="Title" />
+        <span asp-validation-for="Title"></span>
+    </div>
+
+    <div>
+        <label>آدرس</label>
+        <input asp-for="Url" />
+    </div>
+
+    <div>
+        <label>آیکن</label>
+        <input asp-for="Icon" />
+    </div>
+
+    <div>
+        <label>والد</label>
+        <select asp-for="ParentId">
+            <option value="">-- ریشه --</option>
+            @foreach (var p in Model.Parents)
+            {
+                <option value="@p.Id" selected="@(p.Id == Model.ParentId)">@p.Title</option>
+            }
+        </select>
+    </div>
+
+    <div>
+        <label>اولویت بندی</label>
+        <input asp-for="SortOrder" type="number" />
+    </div>
+
+    <div>
+        <label>Active</label>
+        <input asp-for="IsActive" type="checkbox" />
+    </div>
+
+    <button type="submit">ذخیره</button>
+    <a asp-action="Index">بازگشت</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

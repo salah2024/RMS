@@ -1,18 +1,20 @@
-﻿using System;
-using System.Drawing;
-using System.Security.Cryptography;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.EntityFrameworkCore;
 using RMS.Controllers.Board.Dto;
+using RMS.Controllers.Operation.Common;
 using RMS.Controllers.Operation.Dto;
 using RMS.Models.Entity;
+using System;
+using System.Drawing;
+using System.Security.Cryptography;
 using static RMS.Models.Common.BoardEnum;
 using static RMS.Models.Common.EnumForEntity;
 
 namespace RMS.Controllers.Board;
+
 public class BoardController(ApplicationDbContext context) : ControllerBase
 {
     private readonly ApplicationDbContext _context = context;
@@ -99,6 +101,82 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
         }
 
         return new JsonResult(null);
+    }
+    [HttpPost]
+    public JsonResult ShowShekleTableNameAndSizeList([FromBody] ShowShekleTableNameAndSizeListDto request)
+    {
+        string BoardName = request.BoardName;
+
+        List<int> sizeList = new List<int>();
+        List<string> MaterialList = new List<string>();
+        string SizeName = "";
+        switch (BoardName.ToLower())
+        {
+            case "octagon":
+                {
+                    SizeName = "قطر 8 ضلعی";
+                    sizeList = typeof(SizeOctagon)
+                        .GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
+                        .Select(f => (int)f.GetValue(null))
+                        .ToList();
+                    break;
+                }
+            case "circle":
+                {
+                    SizeName = "قطر دایره";
+
+                    sizeList = typeof(SizeCircle)
+                        .GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
+                        .Select(f => (int)f.GetValue(null))
+                        .ToList();
+                    break;
+                }
+            case "triangle":
+                {
+                    SizeName = "ارتفاع مثلث";
+                    sizeList = typeof(SizeTriangle)
+                    .GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
+                    .Select(f => (int)f.GetValue(null))
+                    .ToList();
+                    break;
+                }
+            default:
+                break;
+        }
+
+        var materialList = typeof(Material)
+                .GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
+                .Select(f => f.GetValue(null)?.ToString())
+                .ToList();
+
+
+        var boardTypeList = typeof(BoardTypes)
+            .GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
+            .Select(f => f.GetValue(null)?.ToString())
+            .ToList();
+
+        var printTypeList = typeof(PrintTypes)
+                .GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
+                .Select(f => f.GetValue(null)?.ToString())
+                .ToList();
+
+        var thiknessList = typeof(Thikness)
+                .GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
+                .Select(f => f.GetValue(null)?.ToString())
+                .ToList();
+
+
+        var result = new
+        {
+            SizeName,
+            sizeList,
+            thiknessList,
+            materialList,
+            boardTypeList,
+            printTypeList
+        };
+
+        return new JsonResult(result);
     }
 
     public JsonResult ReturnBoardInfoItems([FromBody] GetBoardItemDto request)
@@ -217,6 +295,7 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
                 PrintType = print,
                 Thickness = thikness,
                 BarAvordId = BaravordId,
+                NoeFBId = NoeFBId,
                 BoardType = Shape,
                 Tedad = Tedad,
                 Sharh = Sharh,
@@ -282,7 +361,7 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
 
                 strMainAddedItem = boardItems.AddedItem;
 
-                clsFB? FBUsers = _context.FBs.FirstOrDefault(x => x.BarAvordId == BaravordId && x.Shomareh == strMainAddedItem);
+                clsFB? FBUsers = _context.FBs.FirstOrDefault(x => x.BarAvordId == BaravordId && x.Shomareh == strMainAddedItem && x.NoeFBId == NoeFBId);
                 Guid FBId = new Guid();
                 if (FBUsers == null)
                 {
@@ -290,7 +369,7 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
                     FBSave.BarAvordId = BaravordId;
                     FBSave.NoeFBId = NoeFBId;
                     FBSave.Shomareh = strMainAddedItem;
-                    FBSave.BahayeVahedZarib = 0;
+                    //FBSave.BahayeVahedZarib = 0;
                     _context.FBs.Add(FBSave);
                     _context.SaveChanges();
                     FBId = FBSave.ID;
@@ -470,14 +549,14 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
                         string strAddedItem = "";
                         strAddedItem = BI.AddedItem;
 
-                        clsFB? FBUsers = _context.FBs.FirstOrDefault(x => x.BarAvordId == BaravordId && x.Shomareh == strAddedItem);
+                        clsFB? FBUsers = _context.FBs.FirstOrDefault(x => x.BarAvordId == BaravordId && x.Shomareh == strAddedItem && x.NoeFBId == NoeFBId);
                         Guid FBId = new Guid();
                         if (FBUsers == null)
                         {
                             clsFB FBSave = new clsFB();
                             FBSave.BarAvordId = BaravordId;
                             FBSave.Shomareh = strAddedItem;
-                            FBSave.BahayeVahedZarib = 0;
+                            //FBSave.BahayeVahedZarib = 0;
                             FBSave.NoeFBId = NoeFBId;
                             _context.FBs.Add(FBSave);
                             _context.SaveChanges();
@@ -563,14 +642,14 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
                         string strAddedItem = "";
                         strAddedItem = BI.AddedItem;
 
-                        clsFB? FBUsers = _context.FBs.FirstOrDefault(x => x.BarAvordId == BaravordId && x.Shomareh == strAddedItem);
+                        clsFB? FBUsers = _context.FBs.FirstOrDefault(x => x.BarAvordId == BaravordId && x.Shomareh == strAddedItem && x.NoeFBId == NoeFBId);
                         Guid FBId = new Guid();
                         if (FBUsers == null)
                         {
                             clsFB FBSave = new clsFB();
                             FBSave.BarAvordId = BaravordId;
                             FBSave.Shomareh = strAddedItem;
-                            FBSave.BahayeVahedZarib = 0;
+                            //FBSave.BahayeVahedZarib = 0;
                             FBSave.NoeFBId = NoeFBId;
 
                             _context.FBs.Add(FBSave);
@@ -754,14 +833,14 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
                     string strAddedItem = "";
                     strAddedItem = boardItems1.AddedItem;
 
-                    clsFB? FBUsers = _context.FBs.FirstOrDefault(x => x.BarAvordId == BaravordId && x.Shomareh == strAddedItem);
+                    clsFB? FBUsers = _context.FBs.FirstOrDefault(x => x.BarAvordId == BaravordId && x.Shomareh == strAddedItem && x.NoeFBId == NoeFBId);
                     Guid FBId = new Guid();
                     if (FBUsers == null)
                     {
                         clsFB FBSave = new clsFB();
                         FBSave.BarAvordId = BaravordId;
                         FBSave.Shomareh = strAddedItem;
-                        FBSave.BahayeVahedZarib = 0;
+                        //FBSave.BahayeVahedZarib = 0;
                         FBSave.NoeFBId = NoeFBId;
                         _context.FBs.Add(FBSave);
                         _context.SaveChanges();
@@ -962,7 +1041,7 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
             //تیپ ساده و لبه دار و ضخامت 1.25
 
             clsBoardItems? boardItems = new clsBoardItems();
-            if (Tip==1 || Tip==2)
+            if (Tip == 1 || Tip == 2)
             {
                 boardItems = _context.BoardItemses.FirstOrDefault(x => x.Shape != "5" && x.Tip == Tip && x.Material == Material && x.PrintType == print && x.Thikness == 1.25m && x.AddedItemType == true);
             }
@@ -988,14 +1067,14 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
 
                 strMainAddedItem = boardItems.AddedItem;
 
-                clsFB? FBUsers = _context.FBs.FirstOrDefault(x => x.BarAvordId == BaravordId && x.Shomareh == strMainAddedItem);
+                clsFB? FBUsers = _context.FBs.FirstOrDefault(x => x.BarAvordId == BaravordId && x.Shomareh == strMainAddedItem && x.NoeFBId == NoeFBId);
                 Guid FBId = new Guid();
                 if (FBUsers == null)
                 {
                     clsFB FBSave = new clsFB();
                     FBSave.BarAvordId = BaravordId;
                     FBSave.Shomareh = strMainAddedItem;
-                    FBSave.BahayeVahedZarib = 0;
+                    //FBSave.BahayeVahedZarib = 0;
                     FBSave.NoeFBId = NoeFBId;
                     _context.FBs.Add(FBSave);
                     _context.SaveChanges();
@@ -1079,14 +1158,14 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
                         string strAddedItem = "";
                         strAddedItem = BI.AddedItem;
 
-                        clsFB? FBUsers = _context.FBs.FirstOrDefault(x => x.BarAvordId == BaravordId && x.Shomareh == strAddedItem);
+                        clsFB? FBUsers = _context.FBs.FirstOrDefault(x => x.BarAvordId == BaravordId && x.Shomareh == strAddedItem && x.NoeFBId == NoeFBId);
                         Guid FBId = new Guid();
                         if (FBUsers == null)
                         {
                             clsFB FBSave = new clsFB();
                             FBSave.BarAvordId = BaravordId;
                             FBSave.Shomareh = strAddedItem;
-                            FBSave.BahayeVahedZarib = 0;
+                            //FBSave.BahayeVahedZarib = 0;
                             FBSave.NoeFBId = NoeFBId;
                             _context.FBs.Add(FBSave);
                             _context.SaveChanges();
@@ -1172,14 +1251,14 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
                         string strAddedItem = "";
                         strAddedItem = BI.AddedItem;
 
-                        clsFB? FBUsers = _context.FBs.FirstOrDefault(x => x.BarAvordId == BaravordId && x.Shomareh == strAddedItem);
+                        clsFB? FBUsers = _context.FBs.FirstOrDefault(x => x.BarAvordId == BaravordId && x.Shomareh == strAddedItem && x.NoeFBId == NoeFBId);
                         Guid FBId = new Guid();
                         if (FBUsers == null)
                         {
                             clsFB FBSave = new clsFB();
                             FBSave.BarAvordId = BaravordId;
                             FBSave.Shomareh = strAddedItem;
-                            FBSave.BahayeVahedZarib = 0;
+                            //FBSave.BahayeVahedZarib = 0;
                             FBSave.NoeFBId = NoeFBId;
                             _context.FBs.Add(FBSave);
                             _context.SaveChanges();
@@ -1265,14 +1344,14 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
                     string strAddedItem = "";
                     strAddedItem = boardItems1.AddedItem;
 
-                    clsFB? FBUsers = _context.FBs.FirstOrDefault(x => x.BarAvordId == BaravordId && x.Shomareh == strAddedItem);
+                    clsFB? FBUsers = _context.FBs.FirstOrDefault(x => x.BarAvordId == BaravordId && x.Shomareh == strAddedItem && x.NoeFBId == NoeFBId);
                     Guid FBId = new Guid();
                     if (FBUsers == null)
                     {
                         clsFB FBSave = new clsFB();
                         FBSave.BarAvordId = BaravordId;
                         FBSave.Shomareh = strAddedItem;
-                        FBSave.BahayeVahedZarib = 0;
+                        //FBSave.BahayeVahedZarib = 0;
                         FBSave.NoeFBId = NoeFBId;
                         _context.FBs.Add(FBSave);
                         _context.SaveChanges();
@@ -1369,6 +1448,31 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
                 _context.RizMetreUserses.RemoveRange(lstRizMetre);
                 _context.BarAvordAddedBoards.Remove(barAvordAddedBoard);
 
+                ///////////
+                //حذف حمل//
+                ///////////
+                ///
+                //var RizMetreWithFB = _context.RizMetreUserses.Include(x => x.FB).Where(x => lstRizMetreIds.Contains(x.ID)).Select(x => new
+                //{
+                //    x.ID,
+                //    x.Shomareh,
+                //    x.FB.BarAvordId,
+                //    x.FB.NoeFBId,
+                //    FBShomareh = x.FB.Shomareh
+                //}).ToList();
+
+                //foreach (var item in RizMetreWithFB)
+                //{
+                //    DeleteHamlDto deleteHaml = new DeleteHamlDto
+                //    {
+                //        BarAvordId = item.BarAvordId,
+                //        FBShomareh = item.FBShomareh,
+                //        RMShomareh = item.Shomareh,
+                //        NoeFBId = item.NoeFBId
+                //    };
+                //    HamlCommon.DeleteHaml(deleteHaml, _context);
+                //}
+
                 _context.SaveChanges();
 
                 return new JsonResult("OK");
@@ -1392,43 +1496,20 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
 
         List<int> lstBoardType = request.lstBoardType;
 
-        List<ItemFBShomarehForGetAndShowAddItemsFieldsDto> lstItemFields = _context.ItemsFieldses.Where(x => x.NoeFB == NoeFB).Select(x => new ItemFBShomarehForGetAndShowAddItemsFieldsDto
-        {
-            Shomareh = x.ItemShomareh,
-            FieldType = x.FieldType,
-            Vahed = x.Vahed,
-            IsEnteringValue = x.IsEnteringValue
-        }).ToList();
+        List<ItemFBShomarehForGetAndShowAddItemsFieldsDto> lstItemFields =
+            _context.ItemsFieldses.Where(x => x.NoeFB == NoeFB)
+            .Select(x => new ItemFBShomarehForGetAndShowAddItemsFieldsDto
+            {
+                Shomareh = x.ItemShomareh,
+                FieldType = x.FieldType,
+                Vahed = x.Vahed,
+                IsEnteringValue = x.IsEnteringValue
+            }).ToList();
 
         long OperationId = request.OperationId;
         clsOperation? operation = _context.Operations.FirstOrDefault(x => x.Id == OperationId);
 
-        //int Shape = request.Shape;
-        //if (operation != null)
-        //{
-        //    switch (operation.LatinName.ToLower())
-        //    {
-        //        case "octagon":
-        //            {
-        //                Shape = 1;
-        //                break;
-        //            }
-        //        case "circle":
-        //            {
-        //                Shape = 2;
-        //                break;
-        //            }
-        //        case "triangle":
-        //            {
-        //                Shape = 3;
-        //                break;
-        //            }
-        //        default:
-        //            break;
-        //    }
-        //}
-
-        List<clsBarAvordAddedBoard> lstbarAvordAddedBoard = _context.BarAvordAddedBoards.Where(x => x.BarAvordId == BaravordId && lstBoardType.Contains(x.BoardType)).ToList();
+        List<clsBarAvordAddedBoard> lstbarAvordAddedBoard = _context.BarAvordAddedBoards.Where(x => x.BarAvordId == BaravordId && x.NoeFBId == NoeFB && lstBoardType.Contains(x.BoardType)).ToList();
         if (lstbarAvordAddedBoard.Count != 0)
         {
             List<RizMetreForBarAvordBoardDto> lst = new List<RizMetreForBarAvordBoardDto>();
@@ -1488,7 +1569,7 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
         }
 
 
-        return new JsonResult("OK");
+        return new JsonResult("NOK");
     }
 
     public JsonResult GetBarAvordAddedBoardWithId([FromBody] GetBarAvordAddedBoardWithIdDto request)
@@ -1536,7 +1617,7 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
     }
 
 
-    public JsonResult SaveInfoBoard([FromBody] BoardDataDto request)
+    public async Task<JsonResult> SaveInfoBoard([FromBody] BoardDataDto request)
     {
         try
         {
@@ -1544,6 +1625,7 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
             NoeFehrestBaha NoeFBId = request.NoeFBId;
             string strMainSharh = "";
             int Shape = request.Shape;
+            int Year = request.Year;
 
             strMainSharh = " تابلو اطلاعاتی، ";
 
@@ -1575,6 +1657,7 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
                 PrintType = print,
                 Thickness = thikness,
                 BarAvordId = BaravordId,
+                NoeFBId = NoeFBId,
                 BoardType = Shape,
                 Tedad = Tedad,
                 Sharh = Sharh,
@@ -1592,7 +1675,7 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
             //Area = (Arz * Ertefa) / 1000000;
 
             long Shomareh = 0;
-            clsRizMetreUsers? RM = _context.RizMetreUserses.Include(x => x.FB).OrderByDescending(x => x.Shomareh).FirstOrDefault(x => x.FB.BarAvordId == BaravordId && x.FB.NoeFBId==NoeFBId);
+            clsRizMetreUsers? RM = _context.RizMetreUserses.Include(x => x.FB).OrderByDescending(x => x.Shomareh).FirstOrDefault(x => x.FB.BarAvordId == BaravordId && x.FB.NoeFBId == NoeFBId);
             if (RM != null)
             {
                 Shomareh = RM.Shomareh;
@@ -1613,14 +1696,14 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
 
                 strMainAddedItem = boardItems.AddedItem;
 
-                clsFB? FBUsers = _context.FBs.FirstOrDefault(x => x.BarAvordId == BaravordId && x.Shomareh == strMainAddedItem);
+                clsFB? FBUsers = _context.FBs.FirstOrDefault(x => x.BarAvordId == BaravordId && x.Shomareh == strMainAddedItem && x.NoeFBId == NoeFBId);
                 Guid FBId = new Guid();
                 if (FBUsers == null)
                 {
                     clsFB FBSave = new clsFB();
                     FBSave.BarAvordId = BaravordId;
                     FBSave.Shomareh = strMainAddedItem;
-                    FBSave.BahayeVahedZarib = 0;
+                    //FBSave.BahayeVahedZarib = 0;
                     FBSave.NoeFBId = NoeFBId;
                     _context.FBs.Add(FBSave);
                     _context.SaveChanges();
@@ -1676,6 +1759,26 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
                 };
                 _context.RizMetreForBarAvordAddedBoards.Add(RizMetreForBarAvordAddedBoard);
 
+                //Start///////////////////////
+                ////////////حمل///////////////
+                //////////////////////////////
+                ///آیتم های حمل درج میگردد
+                ///
+                SaveHamlDto requestSaveHaml = new SaveHamlDto
+                {
+                    BarAvordUserId = BaravordId,
+                    Year = Year,
+                    ItemFBShomareh = strMainAddedItem,
+                    NoeFBId = NoeFBId,
+                    Shomareh = Shomareh,
+                    MeghdarJoz = dMeghdarJoz,
+                    LevelNumber = 1,
+                };
+                await HamlCommon.SaveHaml(requestSaveHaml, _context);
+                /////////////
+                //////////////
+                //////////////
+
                 _context.SaveChanges();
             }
             else
@@ -1698,14 +1801,14 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
 
                 strMainAddedItem = boardItemsAdded.AddedItem;
 
-                clsFB? FBUsers = _context.FBs.FirstOrDefault(x => x.BarAvordId == BaravordId && x.Shomareh == strMainAddedItem);
+                clsFB? FBUsers = _context.FBs.FirstOrDefault(x => x.BarAvordId == BaravordId && x.Shomareh == strMainAddedItem && x.NoeFBId == NoeFBId);
                 Guid FBId = new Guid();
                 if (FBUsers == null)
                 {
                     clsFB FBSave = new clsFB();
                     FBSave.BarAvordId = BaravordId;
                     FBSave.Shomareh = strMainAddedItem;
-                    FBSave.BahayeVahedZarib = 0;
+                    //FBSave.BahayeVahedZarib = 0;
                     FBSave.NoeFBId = NoeFBId;
                     _context.FBs.Add(FBSave);
                     _context.SaveChanges();
@@ -1761,6 +1864,26 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
                 };
                 _context.RizMetreForBarAvordAddedBoards.Add(RizMetreForBarAvordAddedBoard);
 
+
+                //Start///////////////////////
+                ////////////حمل///////////////
+                //////////////////////////////
+                ///آیتم های حمل درج میگردد
+                ///
+                SaveHamlDto requestSaveHaml = new SaveHamlDto
+                {
+                    BarAvordUserId = BaravordId,
+                    Year = Year,
+                    ItemFBShomareh = strMainAddedItem,
+                    NoeFBId = NoeFBId,
+                    Shomareh = Shomareh,
+                    MeghdarJoz = dMeghdarJoz,
+                    LevelNumber = 1,
+                };
+                await HamlCommon.SaveHaml(requestSaveHaml, _context);
+                /////////////
+                //////////////
+                //////////////
                 _context.SaveChanges();
             }
 
@@ -1777,14 +1900,14 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
                     string strAddedItem = "";
                     strAddedItem = boardItems1.AddedItem;
 
-                    clsFB? FBUsers = _context.FBs.FirstOrDefault(x => x.BarAvordId == BaravordId && x.NoeFBId==NoeFBId && x.Shomareh == strAddedItem);
+                    clsFB? FBUsers = _context.FBs.FirstOrDefault(x => x.BarAvordId == BaravordId && x.NoeFBId == NoeFBId && x.Shomareh == strAddedItem);
                     Guid FBId = new Guid();
                     if (FBUsers == null)
                     {
                         clsFB FBSave = new clsFB();
                         FBSave.BarAvordId = BaravordId;
                         FBSave.Shomareh = strAddedItem;
-                        FBSave.BahayeVahedZarib = 0;
+                        //FBSave.BahayeVahedZarib = 0;
                         FBSave.NoeFBId = NoeFBId;
                         _context.FBs.Add(FBSave);
                         _context.SaveChanges();
@@ -1839,6 +1962,26 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
                     };
                     _context.RizMetreForBarAvordAddedBoards.Add(RizMetreForBarAvordAddedBoard);
 
+
+                    //Start///////////////////////
+                    ////////////حمل///////////////
+                    //////////////////////////////
+                    ///آیتم های حمل درج میگردد
+                    ///
+                    SaveHamlDto requestSaveHaml = new SaveHamlDto
+                    {
+                        BarAvordUserId = BaravordId,
+                        Year = Year,
+                        ItemFBShomareh = strAddedItem,
+                        NoeFBId = NoeFBId,
+                        Shomareh = Shomareh,
+                        MeghdarJoz = dMeghdarJoz,
+                        LevelNumber = 1,
+                    };
+                    await HamlCommon.SaveHaml(requestSaveHaml, _context);
+                    /////////////
+                    //////////////
+                    //////////////
                     _context.SaveChanges();
                 }
             }
@@ -1851,7 +1994,7 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
         }
     }
 
-    public JsonResult UpdateInfoBoard([FromBody] BoardDataDto request)
+    public async Task<JsonResult> UpdateInfoBoard([FromBody] BoardDataDto request)
     {
 
         try
@@ -1859,13 +2002,13 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
             Guid BaravordId = request.BaravordId;
             Guid barAvordAddedBoardId = request.barAvordAddedBoardId;
             NoeFehrestBaha NoeFBId = request.NoeFBId;
+            int Year = request.Year;
 
             string strMainSharh = "";
 
             int Shape = request.Shape;
 
             strMainSharh = " تابلو اطلاعاتی، ";
-
 
             int Material = int.Parse(request.Items.First(x => x.Name.ToLower() == "materialinfoboard").Value);
             int print = int.Parse(request.Items.First(x => x.Name.ToLower() == "printinfoboard").Value);
@@ -1886,7 +2029,6 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
             else if (Material == 2)
             {
                 strMainSharh += "ورق گالوانیزه، ";
-
             }
 
             long Shomareh = 0;
@@ -1920,6 +2062,34 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
                 List<clsRizMetreUsers> lstRizMetre = _context.RizMetreUserses.Where(x => lstRizMetreIds.Contains(x.ID)).ToList();
 
                 _context.RizMetreUserses.RemoveRange(lstRizMetre);
+
+
+                ///////////
+                //حذف حمل//
+                ///////////
+                ///
+                var RizMetreWithFB = _context.RizMetreUserses.Include(x => x.FB).Where(x => lstRizMetreIds.Contains(x.ID)).Select(x => new
+                {
+                    x.ID,
+                    x.Shomareh,
+                    FBShomareh = x.FB.Shomareh,
+                    x.FB.BarAvordId,
+                    x.FB.NoeFBId
+                }).ToList();
+
+                foreach (var item in RizMetreWithFB)
+                {
+                    DeleteHamlDto deleteHaml = new DeleteHamlDto
+                    {
+                        RIzMetreId = item.ID,
+                        BarAvordId = item.BarAvordId,
+                        FBShomareh = item.FBShomareh,
+                        RMShomareh = item.Shomareh,
+                        NoeFBId = item.NoeFBId
+                    };
+                    await HamlCommon.DeleteHaml(deleteHaml, _context);
+                }
+
                 _context.SaveChanges();
             }
             else
@@ -1945,15 +2115,15 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
 
                 strMainAddedItem = boardItems.AddedItem;
 
-                clsFB? FBUsers = _context.FBs.FirstOrDefault(x => x.BarAvordId == BaravordId && x.Shomareh == strMainAddedItem);
+                clsFB? FBUsers = _context.FBs.FirstOrDefault(x => x.BarAvordId == BaravordId && x.Shomareh == strMainAddedItem && x.NoeFBId == NoeFBId);
                 Guid FBId = new Guid();
                 if (FBUsers == null)
                 {
                     clsFB FBSave = new clsFB();
                     FBSave.BarAvordId = BaravordId;
                     FBSave.Shomareh = strMainAddedItem;
-                    FBSave.BahayeVahedZarib = 0;
-                    FBSave.NoeFBId=NoeFBId;
+                    //FBSave.BahayeVahedZarib = 0;
+                    FBSave.NoeFBId = NoeFBId;
                     _context.FBs.Add(FBSave);
                     _context.SaveChanges();
                     FBId = FBSave.ID;
@@ -1998,6 +2168,26 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
 
                 _context.RizMetreUserses.Add(RizMetreUsers);
 
+                //Start///////////////////////
+                ////////////حمل///////////////
+                //////////////////////////////
+                ///آیتم های حمل درج میگردد
+                ///
+                SaveHamlDto requestSaveHaml = new SaveHamlDto
+                {
+                    BarAvordUserId = BaravordId,
+                    Year = Year,
+                    ItemFBShomareh = strMainAddedItem,
+                    NoeFBId = NoeFBId,
+                    Shomareh = Shomareh,
+                    MeghdarJoz = dMeghdarJoz,
+                    LevelNumber = 1,
+                };
+                await HamlCommon.SaveHaml(requestSaveHaml, _context);
+                /////////////
+                //////////////
+                //////////////
+
                 ///ریزمتره درج شده به ریزمتره های درج شده در تابلو اضافه میشود
                 clsRizMetreForBarAvordAddedBoard RizMetreForBarAvordAddedBoard = new clsRizMetreForBarAvordAddedBoard
                 {
@@ -2025,14 +2215,14 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
 
                 strMainAddedItem = boardItemsAdded.AddedItem;
 
-                clsFB? FBUsers = _context.FBs.FirstOrDefault(x => x.BarAvordId == BaravordId && x.Shomareh == strMainAddedItem);
+                clsFB? FBUsers = _context.FBs.FirstOrDefault(x => x.BarAvordId == BaravordId && x.Shomareh == strMainAddedItem && x.NoeFBId == NoeFBId);
                 Guid FBId = new Guid();
                 if (FBUsers == null)
                 {
                     clsFB FBSave = new clsFB();
                     FBSave.BarAvordId = BaravordId;
                     FBSave.Shomareh = strMainAddedItem;
-                    FBSave.BahayeVahedZarib = 0;
+                    //FBSave.BahayeVahedZarib = 0;
                     FBSave.NoeFBId = NoeFBId;
                     _context.FBs.Add(FBSave);
                     _context.SaveChanges();
@@ -2078,6 +2268,26 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
 
                 _context.RizMetreUserses.Add(RizMetreUsers);
 
+                //Start///////////////////////
+                ////////////حمل///////////////
+                //////////////////////////////
+                ///آیتم های حمل درج میگردد
+                ///
+                SaveHamlDto requestSaveHaml = new SaveHamlDto
+                {
+                    BarAvordUserId = BaravordId,
+                    Year = Year,
+                    ItemFBShomareh = strMainAddedItem,
+                    NoeFBId = NoeFBId,
+                    Shomareh = Shomareh,
+                    MeghdarJoz = dMeghdarJoz,
+                    LevelNumber = 1,
+                };
+                await HamlCommon.SaveHaml(requestSaveHaml, _context);
+                /////////////
+                //////////////
+                //////////////
+
                 ///ریزمتره درج شده به ریزمتره های درج شده در تابلو اضافه میشود
                 clsRizMetreForBarAvordAddedBoard RizMetreForBarAvordAddedBoard = new clsRizMetreForBarAvordAddedBoard
                 {
@@ -2104,14 +2314,14 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
                     string strAddedItem = "";
                     strAddedItem = boardItems1.AddedItem;
 
-                    clsFB? FBUsers = _context.FBs.FirstOrDefault(x => x.BarAvordId == BaravordId && x.Shomareh == strAddedItem);
+                    clsFB? FBUsers = _context.FBs.FirstOrDefault(x => x.BarAvordId == BaravordId && x.Shomareh == strAddedItem && x.NoeFBId == NoeFBId);
                     Guid FBId = new Guid();
                     if (FBUsers == null)
                     {
                         clsFB FBSave = new clsFB();
                         FBSave.BarAvordId = BaravordId;
                         FBSave.Shomareh = strAddedItem;
-                        FBSave.BahayeVahedZarib = 0;
+                        //FBSave.BahayeVahedZarib = 0;
                         FBSave.NoeFBId = NoeFBId;
                         _context.FBs.Add(FBSave);
                         _context.SaveChanges();
@@ -2156,6 +2366,27 @@ public class BoardController(ApplicationDbContext context) : ControllerBase
 
                     _context.RizMetreUserses.Add(RizMetreUsers);
 
+
+                    //Start///////////////////////
+                    ////////////حمل///////////////
+                    //////////////////////////////
+                    ///آیتم های حمل درج میگردد
+                    ///
+                    SaveHamlDto requestSaveHaml = new SaveHamlDto
+                    {
+                        BarAvordUserId = BaravordId,
+                        Year = Year,
+                        ItemFBShomareh = strAddedItem,
+                        NoeFBId = NoeFBId,
+                        Shomareh = Shomareh,
+                        MeghdarJoz = dMeghdarJoz,
+                        LevelNumber = 1,
+                    };
+                    await HamlCommon.SaveHaml(requestSaveHaml, _context);
+                    /////////////
+                    //////////////
+                    //////////////
+                    ///
                     ///ریزمتره درج شده به ریزمتره های درج شده در تابلو اضافه میشود
                     clsRizMetreForBarAvordAddedBoard RizMetreForBarAvordAddedBoard = new clsRizMetreForBarAvordAddedBoard
                     {

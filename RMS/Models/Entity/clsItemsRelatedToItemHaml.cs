@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using static RMS.Models.Common.EnumForEntity;
 
 namespace RMS.Models.Entity;
 
@@ -17,4 +18,5 @@ public class clsItemsRelatedToItemHaml
     [Column(TypeName = "decimal(18,4)")]
     public decimal? Zarib3 { get; set; }
     public long Year { get; set; }
+    public NoeFehrestBaha? NoeFB { get; set; }
 }

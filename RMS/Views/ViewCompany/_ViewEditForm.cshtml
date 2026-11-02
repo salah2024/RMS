@@ -1,5 +1,5 @@
 ﻿@using RMS.Models.Entity
-@model clsUserDetail
+@model clsCompany
 
 <div class="container mt-4" dir="rtl">
     <h4>ویرایش اطلاعات شرکت</h4>
@@ -19,15 +19,21 @@
             </div>
 
             <div class="col-md-6">
-                <label asp-for="CEOName" class="form-label">نام مدیرعامل</label>
-                <input asp-for="CEOName" class="form-control" />
-                <span asp-validation-for="CEOName" class="text-danger small"></span>
+                <label asp-for="ManagementFirstName" class="form-label">نام مدیرعامل</label>
+                <input asp-for="ManagementFirstName" class="form-control" />
+                <span asp-validation-for="ManagementFirstName" class="text-danger small"></span>
             </div>
 
             <div class="col-md-6">
-                <label asp-for="NationalCode" class="form-label">شناسه ملی</label>
-                <input asp-for="NationalCode" class="form-control" />
-                <span asp-validation-for="NationalCode" class="text-danger small"></span>
+                <label asp-for="ManagementLastName" class="form-label">نام خانوادگی مدیرعامل</label>
+                <input asp-for="ManagementLastName" class="form-control" />
+                <span asp-validation-for="ManagementLastName" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="CompanyNationalCode" class="form-label">شناسه ملی</label>
+                <input asp-for="CompanyNationalCode" class="form-control" />
+                <span asp-validation-for="CompanyNationalCode" class="text-danger small"></span>
             </div>
 
             <div class="col-md-6">
@@ -36,20 +42,16 @@
                 <span asp-validation-for="PostalCode" class="text-danger small"></span>
             </div>
 
+            <div class="col-md-6">
+                <label asp-for="PhoneNumber" class="form-label">تلفن</label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+            </div>
+
             <div class="col-12">
                 <label asp-for="Address" class="form-label">آدرس</label>
                 <input asp-for="Address" class="form-control" />
                 <span asp-validation-for="Address" class="text-danger small"></span>
-            </div>
-
-            <div class="col-md-6">
-                <label class="form-label">نام کاربری</label>
-                <input class="form-control" value="@Model.User?.UserName" disabled />
-            </div>
-
-            <div class="col-md-6">
-                <label class="form-label">موبایل</label>
-                <input class="form-control" value="@Model.User?.PhoneNumber" disabled />
             </div>
         </div>
 

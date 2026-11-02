@@ -5,9 +5,9 @@ namespace RMS.Models.Entity;
 [Table("tblGeneralProjectTiming")]
 public class clsGeneralProjectTiming:clsBaseEntity
 {
-    [ForeignKey("Project")]
-    public Guid ProjectId { get; set; }
-    public clsProject Project { get; set; }
+    [ForeignKey("BaravordUser")]
+    public Guid BaravordUserId { get; set; }
+    public clsBaravordUser BaravordUser { get; set; }
     public DateTime StartDate { get; set; }
 
     public int CountDaies { get; set; }

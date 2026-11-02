@@ -1,0 +1,583 @@
+﻿<style>
+    .select2-container {
+        width: 100% !important;
+    }
+
+    .select2-container--default .select2-selection--single {
+        height: 38px;
+        border: 1px solid #ced4da;
+        border-radius: .25rem;
+    }
+
+        .select2-container--default .select2-selection--single
+        .select2-selection__rendered {
+            line-height: 36px;
+            text-align: right;
+        }
+
+        .select2-container--default .select2-selection--single
+        .select2-selection__arrow {
+            height: 36px;
+            left: 8px;
+            right: auto;
+        }
+
+    .select2-results__option {
+        text-align: right;
+    }
+</style>
+
+
+<link href="~/css/ItemsHasConditionConditionContext.css" rel="stylesheet" />
+
+
+<div class="container-fluid">
+
+
+    <!-- فرم ثبت -->
+
+    <div class="card shadow-sm mb-3">
+
+
+        <div class="card-body">
+
+
+            <div class="row">
+
+
+                <div class="col-md-1">
+
+                    <label>
+                        سال
+                    </label>
+
+
+                    <select id="cmbYear"
+                            class="form-control">
+
+                        <option value="1404" selected>
+                            1404
+                        </option>
+
+                        <option value="1403">
+                            1403
+                        </option>
+
+
+                    </select>
+
+                </div>
+
+
+
+                <div class="col-md-2">
+
+
+                    <label>
+                        فهرست بها
+                    </label>
+
+
+                    <select id="cmbNoeFB"
+                            class="form-control">
+
+
+                        <option value="232" selected>
+                            راهداری
+                        </option>
+
+
+                        <option value="233">
+                            ابنیه
+                        </option>
+
+
+                        <option value="234">
+                            راه و باند
+                        </option>
+
+
+                        <option value="235">
+                            برقی
+                        </option>
+
+
+                        <option value="236">
+                            مکانیکی
+                        </option>
+
+
+                        <option value="237">
+                            مرمت
+                        </option>
+
+
+                    </select>
+
+
+                </div>
+
+
+
+                <div class="col-md-2">
+
+
+                    <label>
+                        آیتم فهرست بها
+                    </label>
+
+
+                    <select id="cmbItem"
+                            class="form-control">
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+
+
+                    <label>
+                        شرط مرتبط
+                    </label>
+
+
+                    <input id="txtIHC_CC_Related"
+                           class="form-control" />
+
+
+                </div>
+
+                <div class="col-md-5">
+
+                    <label>
+                        توضیحات
+                    </label>
+
+                    <input id="txtDes"
+                           class="form-control" />
+
+                </div>
+
+
+
+            </div>
+
+
+            <hr />
+
+            <div class="row">
+
+                <!-- گروه شرط -->
+                <div class="col-md-5">
+
+                    <div class="card shadow-sm">
+
+                        <div class="card-header bg-primary text-white p-2">
+                            گروه شرط
+                        </div>
+
+                        <div class="card-body p-2">
+
+                            <input id="txtSearchGroup"
+                                   class="form-control mb-2"
+                                   placeholder="جستجوی گروه شرط..." />
+
+                            <div>
+                                <div>
+                                    <span>انتخاب نوع شرط</span>
+                                </div>
+                                <select id="cmbConditionType" class="form-control mb-2">
+                                    <option value="0">همه</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                    <option value="13">13</option>
+                                    <option value="14">14</option>
+                                    <option value="15">15</option>
+                                    <option value="16">16</option>
+                                    <option value="17">17</option>
+                                    <option value="18">18</option>
+                                    <option value="19">19</option>
+                                </select>
+                            </div>
+
+                            <table id="tblGroup" class="table table-bordered table-hover table-sm mb-0">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th style="width:80%">عنوان</th>
+                                        <th style="width:10%">اولویت</th>
+                                        <th style="width:10%">عملیات</th>
+
+                                    </tr>
+
+                                </thead>
+
+                                <tbody id="tblConditionGroupBody" class="group-body">
+                                </tbody>
+
+                                <tfoot>
+
+                                    <tr>
+
+                                        <td style="width:80%">
+
+                                            <input id="txtNewGroup"
+                                                   class="form-control form-control-sm" />
+
+                                        </td>
+                                        <td style="width:10%">
+
+                                            <input id="txtOrderGroup"
+                                                   class="form-control form-control-sm" />
+
+                                        </td>
+
+                                        <td style="width:10%">
+
+                                            <button id="btnSaveGroup"
+                                                    class="btn btn-success btn-sm w-100"
+                                                    onclick="SaveGroup()">
+
+                                                <i class="fa fa-plus"></i>
+
+                                            </button>
+
+                                            <button id="btnCancelGroup1"
+                                                    class="btn btn-secondary btn-sm w-100 mt-1"
+                                                    style="display:none"
+                                                    onclick="CancelGroup()">
+
+                                                <i class="fa fa-times"></i>
+
+                                            </button>
+
+                                        </td>
+
+                                    </tr>
+
+                                </tfoot>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- شرط -->
+                <div class="col-md-7">
+
+                    <div class="card shadow-sm">
+
+                        <div class="card-header bg-success text-white p-2">
+                            شرط
+                        </div>
+
+                        <div class="card-body p-2">
+
+                            <table class="table table-bordered table-hover table-sm mb-0">
+
+                                <thead>
+
+                                    <tr>
+                                        <th style="width:90%">شرح شرط</th>
+
+                                        <th style="width:10%">عملیات</th>
+
+                                    </tr>
+
+                                </thead>
+
+                                <tbody id="tblConditionBody">
+                                </tbody>
+
+                                <tfoot>
+
+                                    <tr>
+
+                                        <td>
+
+                                            <input id="txtNewCondition"
+                                                   class="form-control form-control-sm" />
+
+                                        </td>
+
+                                        <td>
+
+                                            <button id="btnSaveCondition" class="btn btn-success btn-sm w-100"
+                                                    onclick="SaveCondition()">
+
+                                                <i class="fa fa-plus"></i>
+
+                                            </button>
+
+                                        </td>
+
+                                    </tr>
+
+                                </tfoot>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                    <div>
+                        <div id="divItemsUseForCondition"></div>
+                        <div id="divConditionType"></div>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-4">
+                    <div class="row">
+                        <div class="col-md-3">
+
+                            <div class="form-check">
+
+                                <div class="form-check">
+
+                                    <input id="chkCheckAll"
+                                           class="form-check-input"
+                                           type="checkbox" />
+
+
+                                    <label class="form-check-label" for="chkCheckAll">
+                                        انتخاب همه
+                                    </label>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-3">
+
+                            <div class="form-check">
+
+                                <div class="form-check">
+
+                                    <input id="chkAutoSelecting"
+                                           class="form-check-input"
+                                           type="checkbox" />
+
+
+                                    <label class="form-check-label" for="chkAutoSelecting">
+                                        انتخاب خودکار
+                                    </label>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-3">
+
+                            <div class="form-check">
+
+                                <input type="checkbox"
+                                       id="chkEnableEditing"
+                                       class="form-check-input">
+
+                                <label class="form-check-label" for="chkEnableEditing">
+                                    قابل ویرایش
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-3">
+
+                            <div class="form-check">
+
+                                <input type="checkbox"
+                                       id="chkEnableDeleting"
+                                       class="form-check-input">
+
+                                <label class="form-check-label" for="chkEnableDeleting">
+                                    قابل حذف
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-7">
+
+                    <div class="row">
+                        <div class="col-md-2 d-flex align-items-center gap-2">
+                            <label class="mb-0 text-nowrap">
+                                تعداد ورودی
+                            </label>
+                            <input id="txtEnteringCount"
+                                   type="number"
+                                   class="form-control" />
+
+                        </div>
+
+                        <div class="col-md-2 d-flex align-items-center gap-2">
+                            <label class="mb-0 text-nowrap">
+                                توضیح
+                            </label>
+
+                            <input id="txtDesForEnteringValue"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-2 d-flex align-items-center gap-2">
+                            <label class="mb-0 text-nowrap">
+                                پیش فرض
+                            </label>
+                            <input id="txtDefaultValue"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-2 d-flex align-items-center gap-2">
+                            <label class="mb-0 text-nowrap">
+                                min
+                            </label>
+                            <input id="txtMinValue"
+                                   class="form-control" />
+
+                        </div>
+
+                        <div class="col-md-2 d-flex align-items-center gap-2">
+                            <label class="mb-0 text-nowrap">
+                                max
+                            </label>
+
+                            <input id="txtMaxValue"
+                                   class="form-control" />
+
+                        </div>
+
+                        <div class="col-md-2 d-flex align-items-center gap-2">
+                            <label class="mb-0 text-nowrap">
+                                گام
+                            </label>
+                            <input id="txtStepChange"
+                                   class="form-control" />
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-1">
+                    <button id="btnSave"
+                            class="btn btn-success">
+
+
+                        <i class="fa fa-save"></i>
+
+                        ثبت
+
+
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+
+
+    </div>
+
+
+</div>
+
+<!-- جدول -->
+
+<div class="card shadow-sm" style="margin-bottom:5px">
+
+
+    <div class="card-body p-0">
+
+
+        <div class="table-container">
+
+
+            <table class="table table-bordered table-hover fixed-table">
+
+                <thead>
+                    <tr>
+
+                        <th style="width:30%;">شرط</th>
+
+                        <th style="width:8%">شرط مرتبط</th>
+
+                        <th style="width:5%">ورودی</th>
+
+                        <th style="width:10%">توضیح مقادیر</th>
+
+                        <th style="width:5%">پیش‌فرض</th>
+
+                        <th style="width:5%">min</th>
+
+                        <th style="width:5%">max</th>
+
+                        <th style="width:5%">گام</th>
+
+                        <th style="width:5%">انتخاب همه</th>
+
+                        <th style="width:5%">خودکار</th>
+
+                        <th style="width:5%">ویرایش</th>
+
+                        <th style="width:5%">حذف</th>
+
+                        <th style="width:5%">عملیات</th>
+
+                    </tr>
+                </thead>
+
+
+                <tbody id="tblBody">
+                </tbody>
+
+
+            </table>
+
+
+        </div>
+
+
+    </div>
+
+
+
+    <div class="card-footer">
+
+
+        <ul id="pagination"
+            class="pagination justify-content-center mb-0">
+        </ul>
+
+
+    </div>
+
+
+</div>
+
+<input type="hidden"
+       id="hfId"
+       value="0" />
+
+<script src="~/js/ItemsHasConditionConditionContext.js"></script>

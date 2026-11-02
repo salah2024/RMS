@@ -6,9 +6,9 @@ namespace RMS.Controllers.AmalyateKhaki.Dto
     {
         public Guid BarAvordUserId { get; set; }
         public NoeFehrestBaha NoeFBId { get; set; }
-        public Guid KMPayKaniId { get; set; }
         public string HKB { get; set; }
         public long Year { get; set; }
+        public int Type { get; set; }
         public List<PayKaniInfoForBarAvordItemsForUpdateDto> lstItems { get; set; }
     }
 

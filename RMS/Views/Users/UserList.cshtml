@@ -1,0 +1,8 @@
+﻿@using RMS.Controllers.Users.Dto
+@model PagedResult<UserListViewModel>
+
+@{
+    Layout = "_Layout";
+}
+
+@Html.Partial("_UserList", Model)

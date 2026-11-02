@@ -7,7 +7,8 @@
         public string Shomareh { get; set; }
         public string BahayeVahed { get; set; }
         public string Vahed { get;set; }
-        public decimal BahayeVahedZarib { get; set; }
+        //public decimal BahayeVahedZarib { get; set; }
         public long BahayeVahedNew { get; set; }
+        public decimal? ItemZarib { get; set; }
     }
 }

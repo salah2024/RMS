@@ -53,6 +53,7 @@ namespace RMS.Controllers.AbnieFani.Dto
         public string hMinw2 { get; set; }
         public string hMinw3 { get; set; }
         public string hMinw4 { get; set; }
+        public int Year { get; set; }
 
     }
     public class ConfirmRizMetreUsersForAbnieFaniInputDto1

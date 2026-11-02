@@ -21,5 +21,7 @@
         public Guid FBId { get; set; }
         public string Type { get; set;  }
         public string? ForItem { get; set;  }
+        public string? UseItem { get; set;  }
+        public Guid BarAvordId { get; set;  }
     }
 }

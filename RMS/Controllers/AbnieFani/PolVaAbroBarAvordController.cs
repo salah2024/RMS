@@ -57,6 +57,7 @@ namespace RMS.Controllers.AbnieFani
             //return Content(Ds.GetXml());
         }
 
+        [HttpPost]
         public JsonResult SaveAbroInfo([FromBody] SaveAbroPolInfoDto request)
         {
             try
@@ -101,7 +102,7 @@ namespace RMS.Controllers.AbnieFani
                 PolVaAbroBarAvord.Y = decimal.Parse(SAbroY.Trim());
                 PolVaAbroBarAvord.NoeBanaii = short.Parse(NoeBanaii.Trim());
                 PolVaAbroBarAvord.NahveEjraDal = short.Parse(NahveEjraDal.Trim());
-                clsPolVaAbroBarAvord PolVaAbroBarAvord1 = _context.PolVaAbroBarAvords.Where(x => x.BarAvordId == BarAvordId).OrderByDescending(x => x.PolNum).FirstOrDefault();
+                clsPolVaAbroBarAvord? PolVaAbroBarAvord1 = _context.PolVaAbroBarAvords.Where(x => x.BarAvordId == BarAvordId).OrderByDescending(x => x.PolNum).FirstOrDefault();
                 long PolNum = 0;
                 if (PolVaAbroBarAvord1 != null)
                     PolNum = PolVaAbroBarAvord1.PolNum + 1;
@@ -130,7 +131,7 @@ namespace RMS.Controllers.AbnieFani
                     DastakPolInfo.Zavie = int.Parse(alfaw1.Trim());
                     DastakPolInfo.hMin = decimal.Parse(hMinw1.Trim());
                     _context.DastakPolInfos.Add(DastakPolInfo);
-                    _context.SaveChanges();
+                    //_context.SaveChanges();
                     //DastakPolInfo.Save();
 
                     DastakPolInfo = new clsDastakPolInfo();
@@ -140,7 +141,7 @@ namespace RMS.Controllers.AbnieFani
                     DastakPolInfo.Zavie = int.Parse(alfaw2.Trim());
                     DastakPolInfo.hMin = decimal.Parse(hMinw2.Trim());
                     _context.DastakPolInfos.Add(DastakPolInfo);
-                    _context.SaveChanges();
+                    //_context.SaveChanges();
                     //DastakPolInfo.Save();
 
                     DastakPolInfo = new clsDastakPolInfo();
@@ -150,7 +151,7 @@ namespace RMS.Controllers.AbnieFani
                     DastakPolInfo.Zavie = int.Parse(alfaw3.Trim());
                     DastakPolInfo.hMin = decimal.Parse(hMinw3.Trim());
                     _context.DastakPolInfos.Add(DastakPolInfo);
-                    _context.SaveChanges();
+                    //_context.SaveChanges();
                     //DastakPolInfo.Save();
 
                     DastakPolInfo = new clsDastakPolInfo();
@@ -160,10 +161,10 @@ namespace RMS.Controllers.AbnieFani
                     DastakPolInfo.Zavie = int.Parse(alfaw4.Trim());
                     DastakPolInfo.hMin = decimal.Parse(hMinw4.Trim());
                     _context.DastakPolInfos.Add(DastakPolInfo);
-                    _context.SaveChanges();
                     //DastakPolInfo.Save();
 
                 }
+                _context.SaveChanges();
                 return new JsonResult("OK_" + PolVaAbroBarAvordId + "_" + PolNum);
                 //return "OK_" + PolVaAbroBarAvordId + "_" + PolNum;
             }
@@ -208,25 +209,40 @@ namespace RMS.Controllers.AbnieFani
             //try
             //{
             clsPolVaAbroBarAvord PolVaAbroBarAvord1 = _context.PolVaAbroBarAvords.Where(x => x.ID == PolId).FirstOrDefault();
-            clsPolVaAbroBarAvord PolVaAbroBarAvord = new clsPolVaAbroBarAvord();
-            PolVaAbroBarAvord.ID = PolId;
-            PolVaAbroBarAvord.TedadDahaneh = int.Parse(TedadDahaneh.Trim());
-            PolVaAbroBarAvord.DahaneAbro = int.Parse(DahaneAbro.Trim());
-            PolVaAbroBarAvord.HadAksarErtefaKoole = decimal.Parse(HadeAksarErtefa.Trim());
-            PolVaAbroBarAvord.Hs = ErtefaKhakriz.Trim();
-            PolVaAbroBarAvord.ZavieBie = int.Parse(alfa.Trim());
-            PolVaAbroBarAvord.ToolAbro = decimal.Parse(LAbro.Trim());
-            PolVaAbroBarAvord.X = decimal.Parse(SAbroX.Trim());
-            PolVaAbroBarAvord.Y = decimal.Parse(SAbroY.Trim());
-            PolVaAbroBarAvord.NoeBanaii = short.Parse(NoeBanaii.Trim());
-            PolVaAbroBarAvord.NahveEjraDal = short.Parse(NahveEjraDal.Trim());
-            PolVaAbroBarAvord.PolNum = PolVaAbroBarAvord1.PolNum;
+
+
+            //clsPolVaAbroBarAvord PolVaAbroBarAvord = new clsPolVaAbroBarAvord();
+            ////PolVaAbroBarAvord.ID = PolId;
+            //PolVaAbroBarAvord.TedadDahaneh = int.Parse(TedadDahaneh.Trim());
+            //PolVaAbroBarAvord.DahaneAbro = int.Parse(DahaneAbro.Trim());
+            //PolVaAbroBarAvord.HadAksarErtefaKoole = decimal.Parse(HadeAksarErtefa.Trim());
+            //PolVaAbroBarAvord.Hs = ErtefaKhakriz.Trim();
+            //PolVaAbroBarAvord.ZavieBie = int.Parse(alfa.Trim());
+            //PolVaAbroBarAvord.ToolAbro = decimal.Parse(LAbro.Trim());
+            //PolVaAbroBarAvord.X = decimal.Parse(SAbroX.Trim());
+            //PolVaAbroBarAvord.Y = decimal.Parse(SAbroY.Trim());
+            //PolVaAbroBarAvord.NoeBanaii = short.Parse(NoeBanaii.Trim());
+            //PolVaAbroBarAvord.NahveEjraDal = short.Parse(NahveEjraDal.Trim());
+            //PolVaAbroBarAvord.PolNum = PolVaAbroBarAvord1.PolNum;
             if (PolVaAbroBarAvord1 != null)
             {
                 bool blnCheckUpdate = false;
                 try
                 {
-                    _context.Entry(PolVaAbroBarAvord1).CurrentValues.SetValues(PolVaAbroBarAvord);
+                    //_context.Entry(PolVaAbroBarAvord1).CurrentValues.SetValues(PolVaAbroBarAvord);
+                    _context.Entry(PolVaAbroBarAvord1).CurrentValues.SetValues(new
+                    {
+                        TedadDahaneh = int.Parse(TedadDahaneh.Trim()),
+                        DahaneAbro = decimal.Parse(DahaneAbro.Trim()),
+                        HadAksarErtefaKoole = decimal.Parse(HadeAksarErtefa.Trim()),
+                        Hs = ErtefaKhakriz.Trim(),
+                        ZavieBie = int.Parse(alfa.Trim()),
+                        ToolAbro = decimal.Parse(LAbro.Trim()),
+                        X = decimal.Parse(SAbroX.Trim()),
+                        Y = decimal.Parse(SAbroY.Trim()),
+                        NoeBanaii = short.Parse(NoeBanaii.Trim()),
+                        NahveEjraDal = short.Parse(NahveEjraDal.Trim())
+                    });
                     _context.SaveChanges();
                     blnCheckUpdate = true;
                 }
@@ -243,41 +259,72 @@ namespace RMS.Controllers.AbnieFani
                     DastakPolInfo.PolVaAbroId = PolId;
 
                     clsDastakPolInfo DastakPolInfo1 = _context.DastakPolInfos.Where(x => x.PolVaAbroId == PolId && x.Shomareh == 1).FirstOrDefault();
-                    DastakPolInfo.Shomareh = 1;
-                    DastakPolInfo.ToolW = decimal.Parse(w1.Trim());
-                    DastakPolInfo.Zavie = int.Parse(alfaw1.Trim());
-                    DastakPolInfo.hMin = decimal.Parse(hMinw1.Trim());
-                    _context.Entry(DastakPolInfo1).CurrentValues.SetValues(DastakPolInfo);
-                    _context.SaveChanges();
+
+                    //DastakPolInfo.Shomareh = 1;
+                    //DastakPolInfo.ToolW = decimal.Parse(w1.Trim());
+                    //DastakPolInfo.Zavie = int.Parse(alfaw1.Trim());
+                    //DastakPolInfo.hMin = decimal.Parse(hMinw1.Trim());
+
+
+                    _context.Entry(DastakPolInfo1).CurrentValues.SetValues(new
+                    {
+                        ToolW = decimal.Parse(w1.Trim()),
+                        Zavie = int.Parse(alfaw1.Trim()),
+                        hMin = decimal.Parse(hMinw1.Trim())
+                    });
+                    //_context.SaveChanges();
 
                     //DastakPolInfo.Update();
-                    DastakPolInfo1 = _context.DastakPolInfos.Where(x => x.PolVaAbroId == PolId && x.Shomareh == 2).FirstOrDefault();
-                    DastakPolInfo.Shomareh = 2;
-                    DastakPolInfo.ToolW = decimal.Parse(w2.Trim());
-                    DastakPolInfo.Zavie = int.Parse(alfaw2.Trim());
-                    DastakPolInfo.hMin = decimal.Parse(hMinw2.Trim());
-                    _context.Entry(DastakPolInfo1).CurrentValues.SetValues(DastakPolInfo);
-                    _context.SaveChanges();
+                    clsDastakPolInfo DastakPolInfo2 = _context.DastakPolInfos.Where(x => x.PolVaAbroId == PolId && x.Shomareh == 2).FirstOrDefault();
+
+                    //DastakPolInfo.Shomareh = 2;
+                    //DastakPolInfo.ToolW = decimal.Parse(w2.Trim());
+                    //DastakPolInfo.Zavie = int.Parse(alfaw2.Trim());
+                    //DastakPolInfo.hMin = decimal.Parse(hMinw2.Trim());
+
+                    _context.Entry(DastakPolInfo2).CurrentValues.SetValues(new
+                    {
+                        ToolW = decimal.Parse(w2.Trim()),
+                        Zavie = int.Parse(alfaw2.Trim()),
+                        hMin = decimal.Parse(hMinw2.Trim())
+                    });
+                    // _context.SaveChanges();
                     //DastakPolInfo.Update();
 
-                    DastakPolInfo1 = _context.DastakPolInfos.Where(x => x.PolVaAbroId == PolId && x.Shomareh == 3).FirstOrDefault();
-                    DastakPolInfo.Shomareh = 3;
-                    DastakPolInfo.ToolW = decimal.Parse(w3.Trim());
-                    DastakPolInfo.Zavie = int.Parse(alfaw3.Trim());
-                    DastakPolInfo.hMin = decimal.Parse(hMinw3.Trim());
-                    _context.Entry(DastakPolInfo1).CurrentValues.SetValues(DastakPolInfo);
-                    _context.SaveChanges();
+                    clsDastakPolInfo DastakPolInfo3 = _context.DastakPolInfos.Where(x => x.PolVaAbroId == PolId && x.Shomareh == 3).FirstOrDefault();
+
+                    //DastakPolInfo.Shomareh = 3;
+                    //DastakPolInfo.ToolW = decimal.Parse(w3.Trim());
+                    //DastakPolInfo.Zavie = int.Parse(alfaw3.Trim());
+                    //DastakPolInfo.hMin = decimal.Parse(hMinw3.Trim());
+
+                    _context.Entry(DastakPolInfo3).CurrentValues.SetValues(new
+                    {
+                        ToolW = decimal.Parse(w3.Trim()),
+                        Zavie = int.Parse(alfaw3.Trim()),
+                        hMin = decimal.Parse(hMinw3.Trim())
+                    });
+                    //_context.SaveChanges();
                     //DastakPolInfo.Update();
 
-                    DastakPolInfo1 = _context.DastakPolInfos.Where(x => x.PolVaAbroId == PolId && x.Shomareh == 4).FirstOrDefault();
-                    DastakPolInfo.Shomareh = 4;
-                    DastakPolInfo.ToolW = decimal.Parse(w4.Trim());
-                    DastakPolInfo.Zavie = int.Parse(alfaw4.Trim());
-                    DastakPolInfo.hMin = decimal.Parse(hMinw4.Trim());
-                    _context.Entry(DastakPolInfo1).CurrentValues.SetValues(DastakPolInfo);
-                    _context.SaveChanges();
+                    clsDastakPolInfo DastakPolInfo4 = _context.DastakPolInfos.Where(x => x.PolVaAbroId == PolId && x.Shomareh == 4).FirstOrDefault();
+
+                    //DastakPolInfo.Shomareh = 4;
+                    //DastakPolInfo.ToolW = decimal.Parse(w4.Trim());
+                    //DastakPolInfo.Zavie = int.Parse(alfaw4.Trim());
+                    //DastakPolInfo.hMin = decimal.Parse(hMinw4.Trim());
+
+                    _context.Entry(DastakPolInfo4).CurrentValues.SetValues(new
+                    {
+                        ToolW = decimal.Parse(w4.Trim()),
+                        Zavie = int.Parse(alfaw4.Trim()),
+                        hMin = decimal.Parse(hMinw4.Trim())
+                    });
+                    //_context.SaveChanges();
                     //DastakPolInfo.Update();
                 }
+                _context.SaveChanges();
+
                 //return "OK_" + PolId;
                 return new JsonResult("OK_" + PolId);
             }
@@ -292,6 +339,32 @@ namespace RMS.Controllers.AbnieFani
             //}
         }
 
+        [HttpPost]
+        public JsonResult DeletePolVaAbro([FromBody] DeletePolVaAbroDto request)
+        {
+            try
+            {
+                clsPolVaAbroBarAvord? polVaAbroBarAvord = _context.PolVaAbroBarAvords.FirstOrDefault(x => x.ID == request.PolId);
+                if (polVaAbroBarAvord != null)
+                {
+                    List<clsPolVaAbroBarAvordRizMetre> lstPolVaAbroBarAvordRizMetre = _context.PolVaAbroBarAvordRizMetres.Where(x => x.PolVaAbroBarAvordId == request.PolId).ToList();
+                    List<Guid> RizMetreIds = lstPolVaAbroBarAvordRizMetre.Select(x => x.RizMetreId).ToList();
 
+                    List<clsRizMetreUsers> lstRizMetres = _context.RizMetreUserses.Where(x => RizMetreIds.Contains(x.ID)).ToList();
+
+                    _context.RizMetreUserses.RemoveRange(lstRizMetres);
+                    _context.RemoveRange(lstPolVaAbroBarAvordRizMetre);
+                    _context.Remove(polVaAbroBarAvord);
+                    _context.SaveChanges();
+                }
+
+                return new JsonResult("OK");
+            }
+            catch (Exception)
+            {
+                return new JsonResult("NOK");
+
+            }
+        }
     }
 }

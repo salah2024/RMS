@@ -7,7 +7,6 @@ namespace RMS.Models.Entity;
 public class clsMashinType
 {
     [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long Id { get; set; }
     public string MashinTypeName { get; set; }  
 

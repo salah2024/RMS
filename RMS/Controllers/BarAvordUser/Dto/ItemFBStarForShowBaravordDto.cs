@@ -15,6 +15,7 @@ public class ItemFBStarForShowBaravordDto
     public decimal Meghdar { get; set; }
     public decimal BahayeKol { get; set; }
     public bool? blnKharidTajhizat { get; set; }
+    public decimal? ItemZaribStar { get; set; }
     public List<ViewBarAvordItemStarOutPutRizMetreDto> RizMetre { get; set; }
     public List<ItemsFieldForUserBarAvordOutPutDto> ItemsFields { get; set; }
 

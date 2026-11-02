@@ -10,6 +10,7 @@ public class SaveItemFBStarDto
     public int VahedId { get; set; }
     public string Sharh { get; set; }
     public bool? KharidTajhizat { get; set; }
+    public decimal? ItemZaribStar { get; set; }
     public int Year { get; set; }
     public NoeFehrestBaha NoeFBId { get; set; }
 }

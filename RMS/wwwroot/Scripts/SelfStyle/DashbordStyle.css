@@ -1,0 +1,64 @@
+﻿.action-cell {
+    position: relative;
+    width: 60px;
+    text-align: center;
+}
+
+.action-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: #1976d2;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.action-menu {
+    position: relative;
+    display: inline-block;
+}
+
+.action-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    min-width: 180px;
+    background: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 15px rgba(0,0,0,.15);
+    border-radius: 6px;
+    z-index: 999;
+}
+
+.action-menu:hover .action-dropdown {
+    display: block;
+}
+
+.action-dropdown a {
+    display: block;
+    padding: 10px 12px;
+    text-decoration: none;
+    color: #444;
+    text-align: right;
+    transition: .2s;
+}
+
+    .action-dropdown a:hover {
+        background: #f3f3f3;
+        color: #1976d2;
+    }
+
+.action-dropdown i {
+    width: 22px;
+}
+
+
+
+.table-wrapper {
+    max-height: calc(100vh - 310px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+}

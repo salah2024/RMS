@@ -1,0 +1,201 @@
+﻿
+<script src="~/Scripts/FaniSection/MashinAlatTedadRoz.js"></script>
+
+<style type="text/css">
+    .div3, .draggable {
+        border: 2px solid darkblue;
+        margin: 10px;
+        background-color: darkblue;
+        width: 37px;
+        height: 20px;
+        resize: horizontal;
+        overflow: auto;
+    }
+
+    .custom-chart {
+        float: left;
+        direction: ltr;
+    }
+
+        .custom-chart td {
+            border: 1px solid lightgrey;
+            direction: rtl;
+        }
+
+            .custom-chart td label {
+                margin: 5px;
+            }
+
+            .custom-chart td:first-child label {
+                padding-right: 10px;
+                padding-left: 10px;
+                max-width: 120px;
+            }
+
+            .custom-chart td:first-child {
+                text-align: center;
+            }
+
+                .custom-chart td:first-child label {
+                    padding-right: 10px;
+                    padding-left: 10px;
+                    max-width: 120px;
+                }
+
+            .custom-chart td .bar {
+                /*border: 1px solid darkblue;*/
+                margin: 8px;
+                background-color: darkblue;
+                width: 0px;
+                height: 15px;
+                float: left;
+                /*resize: horizontal;
+                            overflow: auto;*/
+            }
+
+            .custom-chart td #divSplit {
+                float: left;
+            }
+
+                .custom-chart td #divSplit .txtNumber {
+                    width: 40px;
+                    float: left;
+                    height: 22px;
+                    margin: 5px;
+                    text-align: center;
+                }
+
+    #divInfo div {
+        padding: 15px 15px 0 15px;
+    }
+
+        #divInfo div input[type=button] {
+            width: 150px;
+        }
+
+        #divInfo div .main-label {
+            margin-right: 30px;
+        }
+
+    #divInfo #Info-table {
+        margin: 15px;
+    }
+
+        #divInfo #Info-table th {
+            padding: 0 10px;
+            text-align: center;
+        }
+
+        #divInfo #Info-table td {
+            padding: 3px 10px;
+            border: 1px solid lightgrey;
+            text-align: center;
+        }
+
+            #divInfo #Info-table td input[type=checkbox] {
+                margin: 0;
+            }
+
+    .row {
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+
+    .col-md-6 {
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+</style>
+
+<div id="divInfo" class="row">
+    <div class="row">
+        <label for="txtStartDate">تاریخ شروع پروژه :</label>
+        <input type="text" id="txtStartDate" />
+
+        <label for="txtCountDaies" class="main-label">تعداد روزهای پروژه :</label>
+        <input type="text" id="txtCountDaies" />
+        <label for="txtCountDaies">روز</label>
+
+        <label for="txtCourseCountDaies" class="main-label">تعداد روزهای دوره :</label>
+        <input type="text" id="txtCourseCountDaies" />
+        <label for="txtCourseCountDaies">روز</label>
+
+        <label for="txtHolyCourseCountDaies" class="main-label">تعطیلی دوره :</label>
+        <input type="text" id="txtHolyCourseCountDaies" />
+        <label for="txtHolyCourseCountDaies">روز</label>
+    </div>
+
+    <div>
+        <input type="button" id="btnSave" value="ذخیره" onclick="CheckForInsertOrUpdateGeneralProjectTiming();" />
+        <input type="button" id="btnShowInfo" value="مشاهده کل روزهای پروژه" onclick="GetStatusOfDateInPeriod();" />
+    </div>
+
+    <table id="Info-table">
+    </table>
+
+</div>
+
+
+<div style="display: block;" class="row col-12">
+    <div class="col-12" style="margin-bottom: 5px;margin-left:0px;margin-right:0px">
+        <div class="row" style="border: 1px solid #afc1dd; padding: 3px 0px;">
+            <div class="col-2" style="text-align: left;">تعداد ساعت کار روزانه:</div>
+            <div class="col-2">
+                <input id="txtDailyTime" type="text" class="form-control input-sm" onchange="GetMashinAlatRoz(0)" value="8" />
+            </div>
+        </div>
+    </div>
+
+    <div id="divTedadDastgah" class="row col-12" style="overflow: auto; max-height: 480px;">
+    </div>
+
+    <div style="margin-left: 100px">
+        <svg width="100%" height="50" style="border: 1px solid black;">
+            <path id="lineAB" d="M 100 10 l 600 0" stroke="red" stroke-width="3" fill="none" />
+            <!-- Mark relevant points -->
+            <g stroke="black" stroke-width="3" fill="black">
+                <circle id="pointA" cx="100" cy="10" r="3" />
+                <circle id="pointB" cx="150" cy="10" r="3" />
+                <circle id="pointC" cx="200" cy="10" r="3" />
+                <circle id="pointD" cx="250" cy="10" r="3" />
+                <circle id="pointE" cx="300" cy="10" r="3" />
+                <circle id="pointF" cx="350" cy="10" r="3" />
+                <circle id="pointG" cx="400" cy="10" r="3" />
+                <circle id="pointH" cx="450" cy="10" r="3" />
+                <circle id="pointI" cx="500" cy="10" r="3" />
+                <circle id="pointJ" cx="450" cy="10" r="3" />
+                <circle id="pointK" cx="500" cy="10" r="3" />
+                <circle id="pointL" cx="550" cy="10" r="3" />
+                <circle id="pointM" cx="600" cy="10" r="3" />
+            </g>
+
+            <!-- Label the points -->
+            <g font-size="12" font-family="sans-serif" fill="black" stroke="none"
+               text-anchor="middle">
+                <text x="100" y="10" dy="20" transform="rotate(20,80,80)">1397/12/05</text>
+                <text x="150" y="10" dy="20">1397/12/05</text>
+                <text x="200" y="10" dy="20">1397/12/05</text>
+                <text x="250" y="10" dy="20">1397/12/05</text>
+                <text x="300" y="10" dy="20">1397/12/05</text>
+                <text x="350" y="10" dy="20">1397/12/05</text>
+                <text x="400" y="10" dy="20">1397/12/05</text>
+                <text x="450" y="10" dy="20">1397/12/05</text>
+                <text x="500" y="10" dy="20">1397/12/05</text>
+                <text x="550" y="10" dy="20">1397/12/05</text>
+                <text x="600" y="10" dy="20">1397/12/05</text>
+            </g>
+        </svg>
+    </div>
+
+    <table id="chart-table" class="custom-chart">
+    </table>
+
+    <p id="div3" class="div3">sdf</p>
+
+</div>
+
+
+<input type="hidden" id="HDFBarAvordUserID" name="name" value="" />
+<input type="hidden" id="HDFYear" name="name" value="" />
+<input type="hidden" id="HDFNoeFB" name="name" value="" />
+

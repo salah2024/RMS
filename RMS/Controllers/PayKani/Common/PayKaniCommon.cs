@@ -3,6 +3,7 @@ using RMS.Controllers.AmalyateKhaki.Dto;
 using RMS.Models.Entity;
 using static RMS.Models.Common.EnumForEntity;
 namespace RMS.Controllers.AmalyateKhaki.Common;
+
 public class PayKaniCommon
 {
     public bool SaveEzafeBahaPayKani(SaveEzafeBahaPayKaniDto request, ApplicationDbContext _context)
@@ -33,37 +34,46 @@ public class PayKaniCommon
         List<long> noeKhB = _context.NoeKhakBardari_NoeKhakBardariEzafeBahas
               .Where(x => x.NoeKhakBardariEzafeBahaId == request.NoeKhakBardariEzafeBahaId).Select(x => x.NoeKhakBardariId).ToList();
 
-        clsPayKaniInfoForBarAvord? payKaniInfoForBarAvord = _context.PayKaniInfoForBarAvords.FirstOrDefault(x => x.BaravordUserId == request.BarAvordUserId && x.NoeFBId == request.NoeFBId);
+        clsPayKaniInfoForBarAvord? payKaniInfoForBarAvord = _context.PayKaniInfoForBarAvords
+                        .FirstOrDefault(x => x.BaravordUserId == request.BarAvordUserId && x.NoeFBId == request.NoeFBId && x.Type == request.Type);
 
         if (payKaniInfoForBarAvord != null)
         {
             Guid PayKaniInfoForBarAvordId = payKaniInfoForBarAvord.ID;
 
+            //List<PayKaniInfoForBarAvordDetailsInsertedDto> lstPayKaniForBD =
+            //    _context.PayKaniInfoForBarAvordDetailsRizMetres.Include(x => x.PayKaniInfoForBarAvordDetails)
+            //        .ThenInclude(x => x.lstPayKaniInfoForBarAvordDetailsMore)
+            //        .Include(x => x.PayKaniInfoForBarAvordDetails).ThenInclude(x => x.NoeKhakBardari)
+            //     .Where(x => x.PayKaniInfoForBarAvordDetails.PayKaniInfoForBarAvordId == PayKaniInfoForBarAvordId
+            //                 && noeKhB.Contains(x.PayKaniInfoForBarAvordDetails.NoeKhakBardariId))
+            //     .Select(x => new PayKaniInfoForBarAvordDetailsInsertedDto
+            //     {
+            //         RizMetreId = x.RizMetreUserId,
+            //         //AmalyateKhakiInfoForBarAvordDetailId = x.AmalyateKhakiInfoForBarAvordDetailsId,
+            //         //AmalyateKhakiInfoForBarAvordId = x.AmalyateKhakiInfoForBarAvordDetails.AmalyateKhakiInfoForBarAvordId,
+            //         NoeKhakBardariId = x.PayKaniInfoForBarAvordDetails.NoeKhakBardariId,
+            //         NoeKhakBardariName = x.PayKaniInfoForBarAvordDetails.NoeKhakBardari.Title,
+            //         lstPayKaniInfoForBarAvordDetailsMore = x.PayKaniInfoForBarAvordDetails.lstPayKaniInfoForBarAvordDetailsMore.ToList()
+            //     }).ToList();
+
             List<PayKaniInfoForBarAvordDetailsInsertedDto> lstPayKaniForBD =
-                _context.PayKaniInfoForBarAvordDetailsRizMetres.Include(x => x.PayKaniInfoForBarAvordDetails)
-                    .ThenInclude(x => x.lstPayKaniInfoForBarAvordDetailsMore)
-                    .Include(x => x.PayKaniInfoForBarAvordDetails).ThenInclude(x => x.NoeKhakBardari)
-                 .Where(x => x.PayKaniInfoForBarAvordDetails.PayKaniInfoForBarAvordId == PayKaniInfoForBarAvordId
-                             && noeKhB.Contains(x.PayKaniInfoForBarAvordDetails.NoeKhakBardariId))
+                _context.PayKaniInfoForBarAvordDetailses.Include(x => x.NoeKhakBardari)
+                    .Include(x => x.lstPayKaniInfoForBarAvordDetailsMore)
+                 .Where(x => x.PayKaniInfoForBarAvordId == PayKaniInfoForBarAvordId
+                             && noeKhB.Contains(x.NoeKhakBardariId))
                  .Select(x => new PayKaniInfoForBarAvordDetailsInsertedDto
                  {
-                     RizMetreId = x.RizMetreUserId,
+                     //RizMetreId = x.RizMetreUserId,
                      //AmalyateKhakiInfoForBarAvordDetailId = x.AmalyateKhakiInfoForBarAvordDetailsId,
                      //AmalyateKhakiInfoForBarAvordId = x.AmalyateKhakiInfoForBarAvordDetails.AmalyateKhakiInfoForBarAvordId,
-                     NoeKhakBardariId = x.PayKaniInfoForBarAvordDetails.NoeKhakBardariId,
-                     NoeKhakBardariName = x.PayKaniInfoForBarAvordDetails.NoeKhakBardari.Title,
-                     lstPayKaniInfoForBarAvordDetailsMore = x.PayKaniInfoForBarAvordDetails.lstPayKaniInfoForBarAvordDetailsMore.ToList()
+                     NoeKhakBardariId = x.NoeKhakBardariId,
+                     NoeKhakBardariName = x.NoeKhakBardari.Title,
+                     lstPayKaniInfoForBarAvordDetailsMore = x.lstPayKaniInfoForBarAvordDetailsMore.ToList()
                  }).ToList();
 
 
-            clsPayKaniInfoForBarAvordEzafeBaha payKaniInfoForBarAvordEzafeBaha = new clsPayKaniInfoForBarAvordEzafeBaha
-            {
-                PayKaniInfoForBarAvordId = PayKaniInfoForBarAvordId,
-                NoeKhakBardariEzafeBahaId = NoeKhB_EB.Id,
-                InsertDateTime = Now
-            };
-            _context.PayKaniInfoForBarAvordEzafeBahas.Add(payKaniInfoForBarAvordEzafeBaha);
-            clsFB? FB = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordUserId && x.Shomareh == strCurrentShomareh);
+            clsFB? FB = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordUserId && x.Shomareh == strCurrentShomareh && x.NoeFBId==NoeFBId);
             Guid gFBId = new Guid();
             if (FB != null)
             {
@@ -95,30 +105,43 @@ public class PayKaniCommon
                             if (PayKaniInfoForBarAvordDetailsMore != null)
                             {
                                 MeghdarJoz = PayKaniInfoForBarAvordDetailsMore.Value;
-                                clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-                                RizMetre.Shomareh = Shomareh++;
-                                RizMetre.Sharh = item.NoeKhakBardariName + " - " + "حمل به دپو";
-                                RizMetre.Tedad = null;
-                                RizMetre.Tool = null;
-                                RizMetre.Arz = null;
-                                RizMetre.Ertefa = null;
-                                RizMetre.Vazn = null;
-                                RizMetre.Des = "";
-                                RizMetre.FBId = gFBId;
-                                RizMetre.OperationsOfHamlId = 1;
-                                RizMetre.Type = "2";
-                                RizMetre.ForItem = "";
-                                RizMetre.UseItem = "";
-                                RizMetre.MeghdarJoz = MeghdarJoz;
-                                _context.RizMetreUserses.Add(RizMetre);
+                                if (MeghdarJoz != 0)
+                                {
 
-                                clsPayKaniInfoForBarAvordEzafeBahaRizMetre PayKaniInfoForBarAvordEzafeBahaRizMetre
-                                    = new clsPayKaniInfoForBarAvordEzafeBahaRizMetre
+                                    clsPayKaniInfoForBarAvordEzafeBaha payKaniInfoForBarAvordEzafeBaha = new clsPayKaniInfoForBarAvordEzafeBaha
                                     {
-                                        PayKaniInfoForBarAvordEzafeBahaId = payKaniInfoForBarAvordEzafeBaha.ID,
-                                        RizMetreUserId = RizMetre.ID
+                                        PayKaniInfoForBarAvordId = PayKaniInfoForBarAvordId,
+                                        NoeKhakBardariEzafeBahaId = NoeKhB_EB.Id,
+                                        InsertDateTime = Now
                                     };
-                                _context.PayKaniInfoForBarAvordEzafeBahas.Add(payKaniInfoForBarAvordEzafeBaha);
+                                    _context.PayKaniInfoForBarAvordEzafeBahas.Add(payKaniInfoForBarAvordEzafeBaha);
+
+
+                                    clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                                    RizMetre.Shomareh = Shomareh++;
+                                    RizMetre.Sharh = item.NoeKhakBardariName + " - " + "حمل به دپو";
+                                    RizMetre.Tedad = null;
+                                    RizMetre.Tool = null;
+                                    RizMetre.Arz = null;
+                                    RizMetre.Ertefa = null;
+                                    RizMetre.Vazn = null;
+                                    RizMetre.Des = "";
+                                    RizMetre.FBId = gFBId;
+                                    RizMetre.OperationsOfHamlId = 1;
+                                    RizMetre.Type = "2";
+                                    RizMetre.ForItem = "";
+                                    RizMetre.UseItem = "";
+                                    RizMetre.MeghdarJoz = MeghdarJoz;
+                                    _context.RizMetreUserses.Add(RizMetre);
+
+                                    clsPayKaniInfoForBarAvordEzafeBahaRizMetre PayKaniInfoForBarAvordEzafeBahaRizMetre
+                                        = new clsPayKaniInfoForBarAvordEzafeBahaRizMetre
+                                        {
+                                            PayKaniInfoForBarAvordEzafeBahaId = payKaniInfoForBarAvordEzafeBaha.ID,
+                                            RizMetreUserId = RizMetre.ID
+                                        };
+                                    _context.PayKaniInfoForBarAvordEzafeBahaRizMetres.Add(PayKaniInfoForBarAvordEzafeBahaRizMetre);
+                                }
                             }
                             break;
                         }
@@ -131,30 +154,43 @@ public class PayKaniCommon
                             if (PayKaniInfoForBarAvordDetailsMore != null)
                             {
                                 MeghdarJoz = PayKaniInfoForBarAvordDetailsMore.Value;
-                                clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-                                RizMetre.Shomareh = Shomareh++;
-                                RizMetre.Sharh = item.NoeKhakBardariName + " - " + "حمل به دپو";
-                                RizMetre.Tedad = null;
-                                RizMetre.Tool = null;
-                                RizMetre.Arz = null;
-                                RizMetre.Ertefa = null;
-                                RizMetre.Vazn = null;
-                                RizMetre.Des = "";
-                                RizMetre.FBId = gFBId;
-                                RizMetre.OperationsOfHamlId = 1;
-                                RizMetre.Type = "2";
-                                RizMetre.ForItem = "";
-                                RizMetre.UseItem = "";
-                                RizMetre.MeghdarJoz = MeghdarJoz;
-                                _context.RizMetreUserses.Add(RizMetre);
+                                if (MeghdarJoz != 0)
+                                {
 
-                                clsPayKaniInfoForBarAvordEzafeBahaRizMetre PayKaniInfoForBarAvordEzafeBahaRizMetre
-                                    = new clsPayKaniInfoForBarAvordEzafeBahaRizMetre
+
+                                    clsPayKaniInfoForBarAvordEzafeBaha payKaniInfoForBarAvordEzafeBaha = new clsPayKaniInfoForBarAvordEzafeBaha
                                     {
-                                        PayKaniInfoForBarAvordEzafeBahaId = payKaniInfoForBarAvordEzafeBaha.ID,
-                                        RizMetreUserId = RizMetre.ID
+                                        PayKaniInfoForBarAvordId = PayKaniInfoForBarAvordId,
+                                        NoeKhakBardariEzafeBahaId = NoeKhB_EB.Id,
+                                        InsertDateTime = Now
                                     };
-                                _context.PayKaniInfoForBarAvordEzafeBahas.Add(payKaniInfoForBarAvordEzafeBaha);
+                                    _context.PayKaniInfoForBarAvordEzafeBahas.Add(payKaniInfoForBarAvordEzafeBaha);
+
+                                    clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                                    RizMetre.Shomareh = Shomareh++;
+                                    RizMetre.Sharh = item.NoeKhakBardariName + " - " + "حمل به دپو";
+                                    RizMetre.Tedad = null;
+                                    RizMetre.Tool = null;
+                                    RizMetre.Arz = null;
+                                    RizMetre.Ertefa = null;
+                                    RizMetre.Vazn = null;
+                                    RizMetre.Des = "";
+                                    RizMetre.FBId = gFBId;
+                                    RizMetre.OperationsOfHamlId = 1;
+                                    RizMetre.Type = "2";
+                                    RizMetre.ForItem = "";
+                                    RizMetre.UseItem = "";
+                                    RizMetre.MeghdarJoz = MeghdarJoz;
+                                    _context.RizMetreUserses.Add(RizMetre);
+
+                                    clsPayKaniInfoForBarAvordEzafeBahaRizMetre PayKaniInfoForBarAvordEzafeBahaRizMetre
+                                        = new clsPayKaniInfoForBarAvordEzafeBahaRizMetre
+                                        {
+                                            PayKaniInfoForBarAvordEzafeBahaId = payKaniInfoForBarAvordEzafeBaha.ID,
+                                            RizMetreUserId = RizMetre.ID
+                                        };
+                                    _context.PayKaniInfoForBarAvordEzafeBahaRizMetres.Add(PayKaniInfoForBarAvordEzafeBahaRizMetre);
+                                }
                             }
 
 
@@ -163,30 +199,42 @@ public class PayKaniCommon
                             if (PayKaniInfoForBarAvordDetailsMore != null)
                             {
                                 MeghdarJoz = PayKaniInfoForBarAvordDetailsMore.Value;
-                                clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-                                RizMetre.Shomareh = Shomareh++;
-                                RizMetre.Sharh = item.NoeKhakBardariName + " - " + "حمل خاکریزی";
-                                RizMetre.Tedad = null;
-                                RizMetre.Tool = null;
-                                RizMetre.Arz = null;
-                                RizMetre.Ertefa = null;
-                                RizMetre.Vazn = null;
-                                RizMetre.Des = "";
-                                RizMetre.FBId = gFBId;
-                                RizMetre.OperationsOfHamlId = 1;
-                                RizMetre.Type = "2";
-                                RizMetre.ForItem = "";
-                                RizMetre.UseItem = "";
-                                RizMetre.MeghdarJoz = MeghdarJoz;
-                                _context.RizMetreUserses.Add(RizMetre);
+                                if (MeghdarJoz != 0)
+                                {
 
-                                clsPayKaniInfoForBarAvordEzafeBahaRizMetre PayKaniInfoForBarAvordEzafeBahaRizMetre
-                                    = new clsPayKaniInfoForBarAvordEzafeBahaRizMetre
+                                    clsPayKaniInfoForBarAvordEzafeBaha payKaniInfoForBarAvordEzafeBaha = new clsPayKaniInfoForBarAvordEzafeBaha
                                     {
-                                        PayKaniInfoForBarAvordEzafeBahaId = payKaniInfoForBarAvordEzafeBaha.ID,
-                                        RizMetreUserId = RizMetre.ID
+                                        PayKaniInfoForBarAvordId = PayKaniInfoForBarAvordId,
+                                        NoeKhakBardariEzafeBahaId = NoeKhB_EB.Id,
+                                        InsertDateTime = Now
                                     };
-                                _context.PayKaniInfoForBarAvordEzafeBahas.Add(payKaniInfoForBarAvordEzafeBaha);
+                                    _context.PayKaniInfoForBarAvordEzafeBahas.Add(payKaniInfoForBarAvordEzafeBaha);
+
+                                    clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                                    RizMetre.Shomareh = Shomareh++;
+                                    RizMetre.Sharh = item.NoeKhakBardariName + " - " + "حمل خاکریزی";
+                                    RizMetre.Tedad = null;
+                                    RizMetre.Tool = null;
+                                    RizMetre.Arz = null;
+                                    RizMetre.Ertefa = null;
+                                    RizMetre.Vazn = null;
+                                    RizMetre.Des = "";
+                                    RizMetre.FBId = gFBId;
+                                    RizMetre.OperationsOfHamlId = 1;
+                                    RizMetre.Type = "2";
+                                    RizMetre.ForItem = "";
+                                    RizMetre.UseItem = "";
+                                    RizMetre.MeghdarJoz = MeghdarJoz;
+                                    _context.RizMetreUserses.Add(RizMetre);
+
+                                    clsPayKaniInfoForBarAvordEzafeBahaRizMetre PayKaniInfoForBarAvordEzafeBahaRizMetre
+                                        = new clsPayKaniInfoForBarAvordEzafeBahaRizMetre
+                                        {
+                                            PayKaniInfoForBarAvordEzafeBahaId = payKaniInfoForBarAvordEzafeBaha.ID,
+                                            RizMetreUserId = RizMetre.ID
+                                        };
+                                    _context.PayKaniInfoForBarAvordEzafeBahaRizMetres.Add(PayKaniInfoForBarAvordEzafeBahaRizMetre);
+                                }
                             }
                             //if (d1 != 0 || d2 != 0)
                             //{
@@ -202,6 +250,15 @@ public class PayKaniCommon
                         }
                     default:
                         {
+
+                            clsPayKaniInfoForBarAvordEzafeBaha payKaniInfoForBarAvordEzafeBaha = new clsPayKaniInfoForBarAvordEzafeBaha
+                            {
+                                PayKaniInfoForBarAvordId = PayKaniInfoForBarAvordId,
+                                NoeKhakBardariEzafeBahaId = NoeKhB_EB.Id,
+                                InsertDateTime = Now
+                            };
+                            _context.PayKaniInfoForBarAvordEzafeBahas.Add(payKaniInfoForBarAvordEzafeBaha);
+
 
                             clsRizMetreUsers RizMetre = new clsRizMetreUsers();
                             RizMetre.Shomareh = Shomareh++;
@@ -226,7 +283,7 @@ public class PayKaniCommon
                                     PayKaniInfoForBarAvordEzafeBahaId = payKaniInfoForBarAvordEzafeBaha.ID,
                                     RizMetreUserId = RizMetre.ID
                                 };
-                            _context.PayKaniInfoForBarAvordEzafeBahas.Add(payKaniInfoForBarAvordEzafeBaha);
+                            _context.PayKaniInfoForBarAvordEzafeBahaRizMetres.Add(PayKaniInfoForBarAvordEzafeBahaRizMetre);
                             break;
                         }
                 }

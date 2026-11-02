@@ -4,6 +4,7 @@ namespace RMS.Controllers.BarAvordUser.Dto
 {
     public class ViewUserBarAvordInputDto
     {
+        public long Id { get; set; }
         public Guid BarAvordUserId { get; set; }
         public int Year { get; set; }
         public NoeFehrestBaha NoeFBId { get; set; }

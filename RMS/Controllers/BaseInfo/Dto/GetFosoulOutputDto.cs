@@ -13,5 +13,6 @@
         public string Description { get; set; }
         public decimal JameFaslAll { get; set; }
         public decimal JameFaslWithZaribAll { get; set; }
+        public bool? FaslAsli { get; set; }
     }
 }

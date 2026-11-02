@@ -8,6 +8,11 @@ public class clsBaravordUser:clsBaseEntity
 {
     public Guid UserId { get; set; }
     public long Num { get; set; }
+    /// <summary>
+    /// برآورد
+    /// قرارداد   
+    /// صورت وضعیت
+    /// </summary>
     public NoeBarAvord Type { get; set; }
     public string NoeFBs { get; set; }
     public string Name { get; set; }
@@ -16,5 +21,17 @@ public class clsBaravordUser:clsBaseEntity
     public decimal? ZaribBalasari { get; set; }
     [Column(TypeName = "decimal(18,4)")]
     public decimal? ZaribManteghe { get; set; }
+
+    public string? FromDate { get; set; }
+    public string? ToDate { get; set; }
+
+    ///پرنت
+    ///در حالتی که صورت وضعیت باشد به یک قرار داد وابسته است 
+    ///که آیدی آن در پرنت میاد
+    [ForeignKey("BaravordUser")]
+    public Guid? ParentId { get; set;  }
+    public clsBaravordUser? BaravordUser { get; set; }
+
+    //public bool IsCompleted { get; set; }
 
 }

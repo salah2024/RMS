@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using static RMS.Models.Common.EnumForEntity;
 
 namespace RMS.Models.Entity
 {
@@ -11,6 +12,7 @@ namespace RMS.Models.Entity
         [ForeignKey("BaravordUser")]
         public Guid BarAvordId { get; set; }
         public clsBaravordUser BaravordUser { get; set; }
+        public NoeFehrestBaha NoeFBId { get; set; }
         /// <summary>
         /// نوع تابلو
         /// 1- 8 ضلعی

@@ -12,8 +12,7 @@ function createRadioGroup(name, items) {
         <label class="highlighted-checkbox" style="display: inline-flex; align-items: center; gap: 5px; margin-right: 15px;">
         <input id="ckPrintPOPBoard" type="checkbox" name="${name}_POP" value="${value}">
         ${item}
-        <input id="txtPercentPOPBoard" style="height: 25px;text-align:center" type="number" name="${name}_percent" min="0" max="100" step="1" placeholder="">
-        <span>درصد شبرنگ</span>
+        <input id="txtPercentPOPBoard" style="height: 25px;text-align:center;width: 120px;width: 120px;" type="number" name="${name}_percent" min="0" max="100" step="1" placeholder="درصد شبرنگ">
         </label>`;
         }
         // رادیو معمولی
@@ -26,22 +25,21 @@ function createRadioGroup(name, items) {
 function createRadioGroupInfoBoard(name, items) {
     let i = 1;
     return items.map((item, index) => {
-     debugger;
-       const isNumber = !isNaN(item) && !isNaN(parseFloat(item));
+        debugger;
+        const isNumber = !isNaN(item) && !isNaN(parseFloat(item));
         const value = isNumber ? item : i++;
 
         // برای مورد خاص: آخرین آیتم از printTypeList
         if (name === 'printInfoBoard' && index === 3) {
             debugger;
 
-       return `
+            return `
         <label class="highlighted-checkbox" style="display: inline-flex; align-items: center; gap: 5px; margin-right: 15px;">
         <input id="ckPrintPOPBoardInfo" type="checkbox" name="${name}_POP" value="${value}">
         ${item}
-        <input id="txtPercentPOPBoardInfo" style="height: 25px;text-align:center" type="number" name="${name}_percent" min="0" max="100" step="1" placeholder="">
-        <span>درصد شبرنگ</span>
+        <input id="txtPercentPOPBoardInfo" style="height: 25px;text-align:center;width: 120px;" type="number" name="${name}_percent" min="0" max="100" step="1" placeholder="درصد شبرنگ">
         </label>`;
-       }
+        }
         // رادیو معمولی
         return `<label style="margin-right: 15px;">
             <input type="radio" name="${name}" value="${value}" ${index === 0 ? 'checked' : ''}> ${item}
@@ -49,7 +47,7 @@ function createRadioGroupInfoBoard(name, items) {
     }).join("\n");
 }
 
-function ShowBoard(OperationId,event) {
+function ShowBoard(OperationId, event) {
     debugger;
 
     if (event) {
@@ -73,105 +71,114 @@ function ShowBoard(OperationId,event) {
             debugger;
 
             let str = `
-            <div class="row boardRowStyle" style="border-bottom: 1px solid #ffffff;padding-bottom: 10px;padding-top: 10px;">
-            <div class="col-2">
-            <span>انتخاب شکل: </span>
+            <div id="BordTypeBox" class="row boardRowStyle" style="border: 1px solid #be94f5;padding-bottom: 10px;padding-top: 10px;">
+            <div class="col-12 row">
+            <div class="col-1" style="padding-left:0px;padding-right:0px;">
+                <span style="font-weight:bold;font-size:14px;">شکل تابلو: </span>
             </div>
-            <div class="col-3">
-            <select id="BoardType" aria-label="">
-      <option value="">-- انتخاب --</option>
-      <option value="1">8 ضلعی</option>
-      <option value="2">دایره</option>
-      <option value="3">مثلث</option>
-      <option value="4">مربع مستطیل</option>
-    </select>
-    </div>
+            <div class="col-10">
+                <label style="display: inline-flex; align-items: center; gap: 5px; margin-right: 15px;">
+                    <input id="1" type="radio" name="SheklTablo" value="1"/>8 ضلعی
+                </label>
+                <label style="display: inline-flex; align-items: center; gap: 5px; margin-right: 15px;">
+                    <input id="2" type="radio" name="SheklTablo" value="2"/>دایره
+                </label>
+                <label style="display: inline-flex; align-items: center; gap: 5px; margin-right: 15px;">
+                    <input id="3" type="radio" name="SheklTablo" value="3"/>مثلث
+                </label>
+                <label style="display: inline-flex; align-items: center; gap: 5px; margin-right: 15px;">
+                    <input id="4" type="radio" name="SheklTablo" value="4"/>مربع مستطیل
+                </label>
+            </div>
+        </div>
 </div>
 <div class="row boardRowStyle" style="padding-top: 20px;">
-    <div class="col-5" id="Ghotr">
+    <div class="col-4" id="Ghotr">
         <fieldset>
-            <legend id="Size">${data.sizeName} (میلیمتر)</legend>
+            <legend id="Size">${data.sizeName} (میلی‌متر)</legend>
             <div id="circle-sizes">
                 ${createRadioGroup("size", data.sizeList)}
             </div>
         </fieldset>
     </div>
-    <div class="col-5" id="Moraba" style="display:none">
+    <div class="col-4" id="Moraba" style="display:none">
         <fieldset>
-        <legend id="Moraba">مربع یا مستطیل</legend>
+        <legend id="Moraba">مربع یا مستطیل (میلی‌متر)</legend>
 
         <div class="row">
-        <div class="col-3" style="text-align:left">
-            <legend>عرض (میلیمتر)</legend>
+        <div class="col-2" style="text-align:left">
+            <legend>عرض</legend >
         </div>
-            <div class="col-3">
-                <input class="textStyleBoard form-control_1" id="MorabaArz" name="MorabaArz" type="number" min="140" max="1200" step="1" placeholder="">
+            <div class="col-4">
+                <input class="textStyleBoard form-control_1" id="MorabaArz" name="MorabaArz" type="number" min="140" max="1200" step="1" placeholder="میلی‌متر">
             </div>
-           <div class="col-3" style="text-align:left">
-            <legend>ارتفاع (میلیمتر)</legend>
+           <div class="col-2" style="text-align:left">
+            <legend>ارتفاع</legend>
             </div>
-            <div class="col-3">
-                <input class="textStyleBoard form-control_1" id="MorabaErtefa" name="MorabaErtefa" type="number" min="400" max="1200" step="1" placeholder="">
+            <div class="col-4">
+                <input class="textStyleBoard form-control_1" id="MorabaErtefa" name="MorabaErtefa" type="number" min="400" max="1200" step="1" placeholder="میلی‌متر">
             </div>
             </div>
         </fieldset>
     </div>
-    <div class="col-3">
-        <fieldset>
-            <legend id="Material">جنس ورق تابلو</legend>
-            ${createRadioGroup("material", data.materialList)}
-        </fieldset>
-    </div>
-   
- <div class="col-4">
-        <fieldset>
-            <legend id="Thikness">ضخامت ورق (میلیمتر)</legend>
-            <div id="circle-sizes">
-                ${createRadioGroup("thikness", data.thiknessList)}
-            </div>
-        </fieldset>
-    </div>   
-</div>
-<div class="row boardRowStyle">
- <div class="col-5">
-        <fieldset>
-            <legend id="Tip">تیپ تابلو</legend>
-            ${createRadioGroup("tip", data.boardTypeList)}
-        </fieldset>
-    </div>
-    <div class="col-7">
+
+
+    <div class="col-8">
         <fieldset>
             <legend id="Print">نوع شبرنگ</legend>
             ${createRadioGroup("print", data.printTypeList)}
         </fieldset>
     </div>
 </div>
-
 <div class="row boardRowStyle">
+ <div class="col-4">
+        <fieldset>
+            <legend id="Tip">تیپ تابلو</legend>
+            ${createRadioGroup("tip", data.boardTypeList)}
+        </fieldset>
+    </div>
+     <div class="col-2">
+        <fieldset>
+            <legend id="Material">جنس ورق تابلو</legend>
+            ${createRadioGroup("material", data.materialList)}
+        </fieldset>
+    </div>
+   
  <div class="col-2">
-</div>
-<div class="col-1" style="text-align:left">
-    <span>شرح: </span>
-</div>
-<div class="col-3">
-    <input class="form-control" id="BoardSharh" name="BoardSharh" style="height: 25px;text-align:center" type="text" placeholder="طرح تابلو">
-</div>
-<div class="col-1" style="text-align:left">
-    <span>تعداد: </span>
-</div>
+        <fieldset>
+            <legend id="Thikness">ضخامت ورق (میلی‌متر)</legend>
+            <div id="circle-sizes">
+                ${createRadioGroup("thikness", data.thiknessList)}
+            </div>
+        </fieldset>
+    </div> 
 
-<div class="col-1">
-    <input class="textStyleBoard" id="BoardTedad" name="BoardTedad" type="number" min="1" max="10000" step="1" placeholder="">
-</div>
-<div class="col-2">
-    <button id="buttonBoard" class="buttonStyleBoard" onclick="SaveBoard()">ثبت</button>
-</div>
-<div class="col-1">
-    <button id="buttonBoardDel" style="display:none" class="buttonStyleDelBoard" onclick="DelBoard()">حذف</button>
-</div>
-<div class="col-1">
-    <button id="buttonBoardCancel" style="display:none" class="buttonStyleCancelBoard" onclick="CancelBoard()">لغو</button>
-</div>
+ <div class="col-2">
+        <fieldset>
+            <legend id="Thikness">شرح:</legend>
+            <div id="circle-sizes">
+               <input class="form-control" id="BoardSharh" name="BoardSharh" style="height: 25px;text-align:center" type="text" placeholder="">
+            </div>
+        </fieldset>
+    </div> 
+ <div class="col-1">
+        <fieldset>
+            <legend id="Thikness">تعداد:</legend>
+            <div id="circle-sizes">
+                <input class="form-control" id="BoardTedad" name="BoardTedad" type="number" min="1" max="10000" step="1" placeholder="">
+            </div>
+        </fieldset>
+    </div> 
+    <div class="col-1">
+        <button id="buttonBoard" type="button" style="margin-top: 45px;" onclick="SaveBoard()" 
+                class="ButtonRowsSaveStyle"><i id="iSave" class="fa fa-save SaveRMUStyle"></i></button>
+
+        <button id="buttonBoardDel" type="button" style="margin-top: 45px;display:none" onclick="DelBoard()" 
+                class="ButtonRowsSaveStyle"><i class="fa fa-trash DelRMUStyle"></i></button>
+
+        <button id="buttonBoardCancel" type="button" style="margin-top: 45px;display:none" onclick="CancelBoard()" 
+                class="ButtonRowsSaveStyle"><i class="fa fa-times DelRMUStyle"></i></button>
+    </div> 
 </div>
 
 <div id="divBoardRizMetre${operationId}"></div>
@@ -179,7 +186,8 @@ function ShowBoard(OperationId,event) {
 
             $('#ula' + operationId).html(str);
 
-            $('#ula' + operationId).on('change', '#BoardType', function () {
+            $('#ula' + operationId + ' input[name="SheklTablo"]').on('change', function () {
+                debugger;
                 if ($(this).val() == "4") {
                     $('#Ghotr').hide();
                     $('#Moraba').show();
@@ -187,7 +195,10 @@ function ShowBoard(OperationId,event) {
                     $('#Ghotr').show();
                     $('#Moraba').hide();
                 }
+
+                ShowShekleTableName($(this).val());
             });
+
             $('#BoardType').trigger('change');
 
             $('#ula' + operationId).on('change', '#ckPrintPOPBoard', function () {
@@ -249,6 +260,63 @@ function ShowBoard(OperationId,event) {
 
 }
 
+function ShowShekleTableName(val) {
+
+    debugger;
+
+    BoardName = '';
+    switch (val) {
+        case "1": {
+            BoardName = 'octagon';
+            break;
+        }
+        case "2": {
+            BoardName = 'circle';
+            break;
+        }
+        case "3": {
+            BoardName = 'triangle';
+            break;
+        }
+        default:
+    }
+
+    var vardata = new Object();
+    vardata.BoardName = BoardName;
+
+
+    $.ajax({
+        type: "POST",
+        url: '/Board/ShowShekleTableNameAndSizeList',
+        dataType: "json",
+        data: JSON.stringify(vardata),
+        contentType: "application/json; charset=utf-8",
+        success: function (data) {
+
+            debugger;
+            SizeName = data.sizeName;
+            sizeList = data.sizeList;
+
+            $('#Size').html(SizeName);
+
+           str= createRadioGroup("size", sizeList);
+
+            $('#circle-sizes').html(str);
+            //<fieldset>
+            //    <legend id="Size">${data.sizeName} (میلی‌متر)</legend>
+            //    <div id="circle-sizes">
+            //        ${createRadioGroup("size", data.sizeList)}
+            //    </div>
+            //</fieldset>
+           
+        },
+        error: function (msg) {
+            toastr.error('خطا در درج اطلاعات', 'خطا');
+        }
+    });
+
+}
+
 function ShowRizMetreBoard() {
     debugger;
     OperationId = $('#HDFOperationId').val();
@@ -273,151 +341,158 @@ function ShowRizMetreBoard() {
         contentType: "application/json; charset=utf-8",
         success: function (data) {
             debugger;
-            lstItemFBShomarehForGet = data.lstItemFBShomarehForGet;
-            lst = data.lst;
-            //const lstItemFBShomarehForGet = [...new Set(data.map(item => item.itemFBShomareh))];
-            var str = '';
+            if (data != "NOK") {
+                lstItemFBShomarehForGet = data.lstItemFBShomarehForGet;
+                lst = data.lst;
+                //const lstItemFBShomarehForGet = [...new Set(data.map(item => item.itemFBShomareh))];
+                var str = '';
 
-            // ساخت HTML بر اساس lstItemFBShomarehForGet
+                // ساخت HTML بر اساس lstItemFBShomarehForGet
 
-            // گروه‌بندی data.lst بر اساس itemFBShomareh
-            let groupedData = {};
-            lst.forEach(function (row) {
-                if (!groupedData[row.itemFBShomareh]) {
-                    groupedData[row.itemFBShomareh] = [];
-                }
-                groupedData[row.itemFBShomareh].push(row);
-            });
-
-
-            // ساخت HTML بر اساس lstItemFBShomarehForGet
-            if (lst.length != 0) {
-                lstItemFBShomarehForGet.forEach(function (itemGroup) {
-
-                    let itemFBShomareh = itemGroup.itemFBShomareh.substring(0, 6);
-                    let des = itemGroup.des;
-                    let ItemFields = itemGroup.itemFields;
-
-                    let rows = groupedData[itemFBShomareh] || [];
-                    if (rows.length != 0) {
-                        // نمایش توضیح گروه
-                        str += "<div class='row'>";
-                        str += "<div class='col-md-12'><span style='color:#000'>" + itemGroup.itemFBShomareh + " - " + des + "</span></div>";
-                        str += "</div>";
-
-                        str += "<div class=\"row col-12 styleHeaderTable\" style=\"text-align: center;background-color: #c4bfe3;\">";
-                        str += "<div class=\"col-md-1 spanStyleMitraSmall\" style=\"text-align:center\"><span id=\"spanFieldShomarehName\">ردیف</span></div>";
-                        str += "<div class=\"col-md-2 spanStyleMitraSmall\">شرح</div>";
-
-                        str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">تعداد</div>";
-                        str += "<div class=\"VahedStyle\">" + (ItemFields[0] != undefined ? ItemFields[0].vahed : "") + "</div>";
-                        str += "</div>";
-
-                        str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">طول</div>";
-                        str += "<div class=\"VahedStyle\">" + (ItemFields[1] != undefined ? ItemFields[1].vahed : "") + "</div>";
-                        str += "</div>";
-
-                        str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">عرض</div>";
-                        str += "<div class=\"VahedStyle\">" + (ItemFields[2] != undefined ? ItemFields[2].vahed : "") + "</div>";
-                        str += "</div>";
-
-                        str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">ارتفاع</div>";
-                        str += "<div class=\"VahedStyle\">" + (ItemFields[3] != undefined ? ItemFields[3].vahed : "") + "</div>";
-                        str += "</div>";
-
-                        str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">وزن</div>";
-                        str += "<div class=\"VahedStyle\">" + (ItemFields[4] != undefined ? ItemFields[4].vahed : "") + "</div>";
-                        str += "</div>";
-
-                        str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\"><span>مقدار جزء</span></div>";
-                        str += "<div class=\"VahedStyle\">" + (ItemFields[5] != undefined ? ItemFields[5].vahed : "") + "</div>";
-                        str += "</div>";
-
-                        str += "<div class=\"col-md-2 spanStyleMitraSmall\">توضیحات</div>";
-                        //str += "<div class=\"col-md-1 spanStyleMitraSmall\"><span>ویرایش/حذف</span></div>";
-                        str += "</div>";
-                        str += "</div>";
-
-                        str += "<div class='col-12' style='overflow:auto;max-height:400px;padding: 0px;'>";
-
-                        // نمایش ردیف‌های مربوطه
-                        rows.forEach(function (row) {
-
-                            debugger;
-                            let id = row.id;
-                            let rizmetreid = row.rizMetreId;
-                            let BarAvordAddedBoardId = row.barAvordAddedBoardId;
-
-                            let strTedad = parseFloat(row.tedad) === 0 ? "0" : isNaN(parseFloat(row.tedad)) ? "" : parseFloat(row.tedad).toString();
-                            let strTool = parseFloat(row.tool) === 0 ? "0" : isNaN(parseFloat(row.tool)) ? "" : parseFloat(row.tool).toString();
-                            let strArz = parseFloat(row.arz) === 0 ? "0" : isNaN(parseFloat(row.arz)) ? "" : parseFloat(row.arz).toString();
-                            let strErtefa = parseFloat(row.ertefa) === 0 ? "0" : isNaN(parseFloat(row.ertefa)) ? "" : parseFloat(row.ertefa).toString();
-                            let strVazn = parseFloat(row.vazn) === 0 ? "0" : isNaN(parseFloat(row.vazn)) ? "" : parseFloat(row.vazn).toString();
-                            let MeghdarJoz = parseFloat(row.meghdarJoz) === 0 ? "0" : isNaN(parseFloat(row.meghdarJoz)) ? "" : parseFloat(row.meghdarJoz).toString();
-
-
-                            let HasDelButton = row.hasDelButton;
-                            let HasEditButton = row.hasEditButton;
-
-                            str += "<div class='row styleRowTable'  data-boardid='" + BarAvordAddedBoardId + "' style=\"background-color:#fff\" onclick=\"RizMetreSelectClick('" + rizmetreid + "')\">";
-                            str += "<div class='col-md-1' style=\"text-align:center;color:#000\"><span>" + row.shomareh + "</span></div>";
-
-                            str += "<div class='col-md-2'><input disabled type='text'" +
-                                " class='form-control spanStyleMitraSmall' id='txtSharh" + id + "' value='" + row.sharh + "' /></div > ";
-
-                            str += "<div class='col-md-1'><input type='text'" + (ItemFields[0] != undefined ? ItemFields[0].isEnteringValue !== true ? " disabled='disabled'" : "" : "") +
-                                " class='form-control spanStyleMitraSmall " + (ItemFields[0] != undefined ? ItemFields[0].isEnteringValue === true ? " HasEnteringValue " : "" : "")
-                                + "' id='txtTedad" + rizmetreid + "' value = '" + strTedad + "'  onkeyup=\"if(event.key === 'Enter'){ UpdateRMUDetailsClick('" + rizmetreid + "'); }\""
-                                + " onblur =\"UpdateRMUDetailsClick('" + rizmetreid + "')\"/></div> ";
-
-                            str += "<div class='col-md-1'><input disabled type='text'" + (ItemFields[1] != undefined ? ItemFields[1].isEnteringValue !== true ? " disabled='disabled'" : "" : "") +
-                                " class='form-control spanStyleMitraSmall " + (ItemFields[1] != undefined ? ItemFields[1].isEnteringValue === true ? " HasEnteringValue " : "" : "") + "' id='txtTool" + rizmetreid + "' value='" + strTool + "'/></div>";
-
-                            str += "<div class='col-md-1'><input disabled type='text'" + (ItemFields[2] != undefined ? ItemFields[2].isEnteringValue !== true ? " disabled='disabled'" : "" : "") +
-                                " class='form-control spanStyleMitraSmall " + (ItemFields[2] != undefined ? ItemFields[2].isEnteringValue === true ? " HasEnteringValue " : "" : "") + "' id='txtArz" + rizmetreid + "' value='" + strArz + "'/></div>";
-
-                            str += "<div class='col-md-1'><input disabled type='text'" + (ItemFields[3] != undefined ? ItemFields[3].isEnteringValue !== true ? "disabled='disabled'" : "" : "") +
-                                " class='form-control spanStyleMitraSmall " + (ItemFields[3] != undefined ? ItemFields[3].isEnteringValue === true ? " HasEnteringValue " : "" : "") + "' id='txtErtefa" + rizmetreid + "' value='" + strErtefa + "'/></div>";
-
-                            str += "<div class='col-md-1'><input type='text'" + (ItemFields[4] != undefined ? ItemFields[4].isEnteringValue !== true ? "disabled='disabled'" : "" : "") +
-                                " class='form-control spanStyleMitraSmall " + (ItemFields[4] != undefined ? ItemFields[4].isEnteringValue === true ? " HasEnteringValue " : "" : "") + "' id='txtVazn" + rizmetreid + "' value='" + strVazn + "'/></div>";
-
-                            str += "<div class='col-md-1 RMMJozStyle'><span id='MeghdarJoz" + rizmetreid + "'>" + MeghdarJoz + "</span></div>";
-
-                            str += "<div class='col-md-2'><input disabled type='text' title='" + row.des + "' style='font-size:12px' class='form-control input-sm' id='txtDes" + rizmetreid + "' value='" + row.des + "'/></div>";
-                            str += "<div class='col-md-1' style='text-align:center;'><i class='fa fa-pen' onclick=\"ViewRMUDetailsClick('" + BarAvordAddedBoardId + "')\"></i></div>";
-                            //str += "<i id =\"iSave\" class=\"fa fa-save SaveRMUStyle\" onclick=\"UpdateRMUDetailsClick('" + rizmetreid + "')\" class=\"ButtonRowsSaveStyle\"></i>";
-
-                            //if (HasDelButton)
-                            //    str += "<div class='col-md-1' style='text-align:center;'><i class='fa fa-trash DelRMUStyle' onclick=\"DeleteRMUAddedItemsClick('" + id + "','" + ItemHasConditionId + "'," + ConditionGroupId + ")\"></i></div>";
-                            //if (HasEditButton)
-
-                            str += "</div>";
-                        });
-                        str += "</div>";
+                // گروه‌بندی data.lst بر اساس itemFBShomareh
+                let groupedData = {};
+                lst.forEach(function (row) {
+                    if (!groupedData[row.itemFBShomareh]) {
+                        groupedData[row.itemFBShomareh] = [];
                     }
+                    groupedData[row.itemFBShomareh].push(row);
                 });
-                debugger;
 
 
-                $('#divBoardRizMetre' + operationId).html(str);
+                // ساخت HTML بر اساس lstItemFBShomarehForGet
+                if (lst.length != 0) {
+                    lstItemFBShomarehForGet.forEach(function (itemGroup) {
+
+                        let itemFBShomareh = itemGroup.itemFBShomareh.substring(0, 6);
+                        let des = itemGroup.des;
+                        let ItemFields = itemGroup.itemFields;
+
+                        let rows = groupedData[itemFBShomareh] || [];
+                        if (rows.length != 0) {
+                            // نمایش توضیح گروه
+                            str += "<div class='row'>";
+                            str += "<div class='col-md-12'><span style='color:#000'>" + itemGroup.itemFBShomareh + " - " + des + "</span></div>";
+                            str += "</div>";
+
+                            str += "<div class=\"row col-12 styleHeaderTable\" style=\"text-align: center;\">";
+                            str += "<div class=\"col-md-1 spanStyleMitraSmall\" style=\"text-align:center\"><span id=\"spanFieldShomarehName\">ردیف</span></div>";
+                            str += "<div class=\"col-md-2 spanStyleMitraSmall\">شرح</div>";
+
+                            str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
+                            str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">تعداد</div>";
+                            str += "<div class=\"VahedStyle\">" + (ItemFields[0] != undefined ? ItemFields[0].vahed : "") + "</div>";
+                            str += "</div>";
+
+                            str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
+                            str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">طول</div>";
+                            str += "<div class=\"VahedStyle\">" + (ItemFields[1] != undefined ? ItemFields[1].vahed : "") + "</div>";
+                            str += "</div>";
+
+                            str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
+                            str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">عرض</div>";
+                            str += "<div class=\"VahedStyle\">" + (ItemFields[2] != undefined ? ItemFields[2].vahed : "") + "</div>";
+                            str += "</div>";
+
+                            str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
+                            str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">ارتفاع</div>";
+                            str += "<div class=\"VahedStyle\">" + (ItemFields[3] != undefined ? ItemFields[3].vahed : "") + "</div>";
+                            str += "</div>";
+
+                            str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
+                            str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">وزن یا...</div>";
+                            str += "<div class=\"VahedStyle\">" + (ItemFields[4] != undefined ? ItemFields[4].vahed : "") + "</div>";
+                            str += "</div>";
+
+                            str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
+                            str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\"><span>مقدار جزء</span></div>";
+                            str += "<div class=\"VahedStyle\">" + (ItemFields[5] != undefined ? ItemFields[5].vahed : "") + "</div>";
+                            str += "</div>";
+
+                            str += "<div class=\"col-md-2 spanStyleMitraSmall\">توضیحات</div>";
+                            //str += "<div class=\"col-md-1 spanStyleMitraSmall\"><span>ویرایش/حذف</span></div>";
+                            str += "</div>";
+                            str += "</div>";
+
+                            str += "<div class='col-12' style='overflow:auto;max-height:400px;padding: 0px;'>";
+
+                            // نمایش ردیف‌های مربوطه
+                            rows.forEach(function (row) {
+
+                                debugger;
+                                let id = row.id;
+                                let rizmetreid = row.rizMetreId;
+                                let BarAvordAddedBoardId = row.barAvordAddedBoardId;
+
+                                let strTedad = parseFloat(row.tedad) === 0 ? "0" : isNaN(parseFloat(row.tedad)) ? "" : parseFloat(row.tedad).toString();
+                                let strTool = parseFloat(row.tool) === 0 ? "0" : isNaN(parseFloat(row.tool)) ? "" : parseFloat(row.tool).toString();
+                                let strArz = parseFloat(row.arz) === 0 ? "0" : isNaN(parseFloat(row.arz)) ? "" : parseFloat(row.arz).toString();
+                                let strErtefa = parseFloat(row.ertefa) === 0 ? "0" : isNaN(parseFloat(row.ertefa)) ? "" : parseFloat(row.ertefa).toString();
+                                let strVazn = parseFloat(row.vazn) === 0 ? "0" : isNaN(parseFloat(row.vazn)) ? "" : parseFloat(row.vazn).toString();
+                                let MeghdarJoz = parseFloat(row.meghdarJoz) === 0 ? "0" : isNaN(parseFloat(row.meghdarJoz)) ? "" : parseFloat(row.meghdarJoz).toString();
+
+
+                                let HasDelButton = row.hasDelButton;
+                                let HasEditButton = row.hasEditButton;
+
+                                str += "<div class='row styleRowTable'  data-boardid='" + BarAvordAddedBoardId + "' style=\"background-color:#fff\" onclick=\"RizMetreSelectClick('" + rizmetreid + "')\">";
+                                str += "<div class='col-md-1' style=\"text-align:center;color:#000\"><span class='RMRowStyle'>" + row.shomareh + "</span></div>";
+
+                                str += "<div class='col-md-2'><input disabled type='text'" +
+                                    " class='form-control spanStyleMitraSmall' id='txtSharh" + id + "' value='" + row.sharh + "' /></div > ";
+
+                                str += "<div class='col-md-1'><input type='text'" + (ItemFields[0] != undefined ? ItemFields[0].isEnteringValue !== true ? " disabled='disabled'" : "" : "") +
+                                    " class='form-control spanStyleMitraSmall " + (ItemFields[0] != undefined ? ItemFields[0].isEnteringValue === true ? " HasEnteringValue " : "" : "")
+                                    + "' id='txtTedad" + rizmetreid + "' value = '" + strTedad + "'  onkeyup=\"if(event.key === 'Enter'){ UpdateRMUDetailsClick('" + rizmetreid + "'); }\""
+                                    + " onblur =\"UpdateRMUDetailsClick('" + rizmetreid + "')\"/></div> ";
+
+                                str += "<div class='col-md-1'><input disabled type='text'" + (ItemFields[1] != undefined ? ItemFields[1].isEnteringValue !== true ? " disabled='disabled'" : "" : "") +
+                                    " class='form-control spanStyleMitraSmall " + (ItemFields[1] != undefined ? ItemFields[1].isEnteringValue === true ? " HasEnteringValue " : "" : "") + "' id='txtTool" + rizmetreid + "' value='" + strTool + "'/></div>";
+
+                                str += "<div class='col-md-1'><input disabled type='text'" + (ItemFields[2] != undefined ? ItemFields[2].isEnteringValue !== true ? " disabled='disabled'" : "" : "") +
+                                    " class='form-control spanStyleMitraSmall " + (ItemFields[2] != undefined ? ItemFields[2].isEnteringValue === true ? " HasEnteringValue " : "" : "") + "' id='txtArz" + rizmetreid + "' value='" + strArz + "'/></div>";
+
+                                str += "<div class='col-md-1'><input disabled type='text'" + (ItemFields[3] != undefined ? ItemFields[3].isEnteringValue !== true ? "disabled='disabled'" : "" : "") +
+                                    " class='form-control spanStyleMitraSmall " + (ItemFields[3] != undefined ? ItemFields[3].isEnteringValue === true ? " HasEnteringValue " : "" : "") + "' id='txtErtefa" + rizmetreid + "' value='" + strErtefa + "'/></div>";
+
+                                str += "<div class='col-md-1'><input type='text'" + (ItemFields[4] != undefined ? ItemFields[4].isEnteringValue !== true ? "disabled='disabled'" : "" : "") +
+                                    " class='form-control spanStyleMitraSmall " + (ItemFields[4] != undefined ? ItemFields[4].isEnteringValue === true ? " HasEnteringValue " : "" : "") + "' id='txtVazn" + rizmetreid + "' value='" + strVazn + "'/></div>";
+
+                                str += "<div class='col-md-1'><label class='RMMJozStyle' id='MeghdarJoz" + rizmetreid + "'>" + MeghdarJoz + "</label></div>";
+
+                                str += "<div class='col-md-2'><input disabled type='text' title='" + row.des + "' class='form-control spanStyleMitraSmall input-sm' id='txtDes" + rizmetreid + "' value='" + row.des + "'/></div>";
+                                str += "<div class='col-md-1' style='text-align:center;'><i class='fa fa-pen' onclick=\"ViewRMUDetailsClick('" + BarAvordAddedBoardId + "')\"></i></div>";
+                                //str += "<i id =\"iSave\" class=\"fa fa-save SaveRMUStyle\" onclick=\"UpdateRMUDetailsClick('" + rizmetreid + "')\" class=\"ButtonRowsSaveStyle\"></i>";
+
+                                //if (HasDelButton)
+                                //    str += "<div class='col-md-1' style='text-align:center;'><i class='fa fa-trash DelRMUStyle' onclick=\"DeleteRMUAddedItemsClick('" + id + "','" + ItemHasConditionId + "'," + ConditionGroupId + ")\"></i></div>";
+                                //if (HasEditButton)
+
+                                str += "</div>";
+                            });
+                            str += "</div>";
+                        }
+
+                    });
+                    debugger;
+
+
+                    $('#divBoardRizMetre' + operationId).html(str);
+                }
+                else {
+                    ItemHasConditionIdSplit = ItemHasConditionId.split('_');
+                    var $targetDiv = $("#divShowRizMetre" + ItemHasConditionIdSplit[0]);
+                    $targetDiv.slideUp(500);
+                    $targetDiv.html('');
+
+                    $('#CK' + ItemHasConditionId).prop('checked', false);
+
+                }
             }
             else {
-                ItemHasConditionIdSplit = ItemHasConditionId.split('_');
-                var $targetDiv = $("#divShowRizMetre" + ItemHasConditionIdSplit[0]);
-                $targetDiv.slideUp(500);
-                $targetDiv.html('');
+                operationId = $('#HDFOperationId').val();
 
-                $('#CK' + ItemHasConditionId).prop('checked', false);
-
+                $('#divBoardRizMetre' + operationId).html('');
             }
-
             //$('#divShowRizMetre' + ItemHasConditionId).slideToggle(500);
         },
         error: function (msg) {
@@ -482,37 +557,37 @@ function ShowRizMetreInfoBoard() {
                         str += "<div class='col-md-12'><span style='color:#000'>" + itemGroup.itemFBShomareh + " - " + des + "</span></div>";
                         str += "</div>";
 
-                        str += "<div class=\"row col-12 styleHeaderTable\" style=\"text-align: center;background-color: #c4bfe3;\">";
+                        str += "<div class=\"row col-12 styleHeaderTable\" style=\"text-align: center;\">";
                         str += "<div class=\"col-md-1 spanStyleMitraSmall\" style=\"text-align:center\"><span id=\"spanFieldShomarehName\">ردیف</span></div>";
                         str += "<div class=\"col-md-2 spanStyleMitraSmall\">شرح</div>";
 
                         str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">تعداد</div>";
+                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">تعداد</div>";
                         str += "<div class=\"VahedStyle\">" + (ItemFields[0] != undefined ? ItemFields[0].vahed : "") + "</div>";
                         str += "</div>";
 
                         str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">طول</div>";
+                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">طول</div>";
                         str += "<div class=\"VahedStyle\">" + (ItemFields[1] != undefined ? ItemFields[1].vahed : "") + "</div>";
                         str += "</div>";
 
                         str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">عرض</div>";
+                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">عرض</div>";
                         str += "<div class=\"VahedStyle\">" + (ItemFields[2] != undefined ? ItemFields[2].vahed : "") + "</div>";
                         str += "</div>";
 
                         str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">ارتفاع</div>";
+                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">ارتفاع</div>";
                         str += "<div class=\"VahedStyle\">" + (ItemFields[3] != undefined ? ItemFields[3].vahed : "") + "</div>";
                         str += "</div>";
 
                         str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\">وزن</div>";
+                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\">وزن یا...</div>";
                         str += "<div class=\"VahedStyle\">" + (ItemFields[4] != undefined ? ItemFields[4].vahed : "") + "</div>";
                         str += "</div>";
 
                         str += "<div class=\"col-md-1 spanStyleMitraSmall\">";
-                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #84d4e6\"><span>مقدار جزء</span></div>";
+                        str += "<div style=\"padding-bottom:3px;border-bottom:1px solid #fff\"><span>مقدار جزء</span></div>";
                         str += "<div class=\"VahedStyle\">" + (ItemFields[5] != undefined ? ItemFields[5].vahed : "") + "</div>";
                         str += "</div>";
 
@@ -543,7 +618,7 @@ function ShowRizMetreInfoBoard() {
                             let HasEditButton = row.hasEditButton;
 
                             str += "<div class='row styleRowTable' data-boardid='" + BarAvordAddedBoardId + "' style=\"background-color:#fff\" onclick=\"RizMetreSelectClick('" + rizmetreid + "')\">";
-                            str += "<div class='col-md-1' style=\"text-align:center;color:#000\"><span>" + row.shomareh + "</span></div>";
+                            str += "<div class='col-md-1' style=\"text-align:center;color:#000\"><span class='RMRowStyle'>" + row.shomareh + "</span></div>";
 
                             str += "<div class='col-md-2'><input disabled type='text'" +
                                 " class='form-control spanStyleMitraSmall' id='txtSharh" + id + "' value='" + row.sharh + "' /></div > ";
@@ -565,9 +640,9 @@ function ShowRizMetreInfoBoard() {
                             str += "<div class='col-md-1'><input type='text'" + (ItemFields[4] != undefined ? ItemFields[4].isEnteringValue !== true ? "disabled='disabled'" : "" : "") +
                                 " class='form-control spanStyleMitraSmall " + (ItemFields[4] != undefined ? ItemFields[4].isEnteringValue === true ? " HasEnteringValue " : "" : "") + "' id='txtVazn" + rizmetreid + "' value='" + strVazn + "'/></div>";
 
-                            str += "<div class='col-md-1 RMMJozStyle'><span id='MeghdarJoz" + rizmetreid + "'>" + MeghdarJoz + "</span></div>";
+                            str += "<div class='col-md-1'><label class='RMMJozStyle' id='MeghdarJoz" + rizmetreid + "'>" + MeghdarJoz + "</label></div>";
 
-                            str += "<div class='col-md-2'><input disabled type='text' title='" + row.des + "' style='font-size:12px' class='form-control input-sm' id='txtDes" + rizmetreid + "' value='" + row.des + "'/></div>";
+                            str += "<div class='col-md-2'><input disabled type='text' title='" + row.des + "' class='form-control spanStyleMitraSmall input-sm' id='txtDes" + rizmetreid + "' value='" + row.des + "'/></div>";
                             str += "<div class='col-md-1' style='text-align:center;'><i class='fa fa-pen' onclick=\"ViewRMUDetailsInfoBoardClick('" + BarAvordAddedBoardId + "')\"></i></div>";
                             //str += "<i id =\"iSave\" class=\"fa fa-save SaveRMUStyle\" onclick=\"UpdateRMUDetailsClick('" + rizmetreid + "')\" class=\"ButtonRowsSaveStyle\"></i>";
 
@@ -634,16 +709,24 @@ function UpdateRMUDetailsClick(rizmetreid) {
 
 function SaveBoard() {
 
+    debugger;
     let hasError = false;
 
     // ریست کردن استایل خط قرمز قبلی
     $('input, select, fieldset').css('border', '');
 
     // 1- بررسی BoardType
-    let boardType = $('#BoardType').val();
+    //let boardType = $('#BoardType').val();
+    let boardType = $('input[name="SheklTablo"]:checked').val();
+
     if (!boardType) {
-        $('#BoardType').css('border', '1px solid red');
+        // $('input[name="SheklTablo"]').closest('fieldset').css('border', '1px solid red');
+        $('#BordTypeBox').css('border', '1px solid red');
+        // $('#BoardType').css('border', '1px solid red');
         hasError = true;
+    }
+    else {
+        $('#BordTypeBox').css('border', '1px solid #be94f5');
     }
 
     // 2- اگر BoardType = 4 => MorabaArz و MorabaErtefa باید مقدار داشته باشند
@@ -716,13 +799,13 @@ function SaveBoard() {
 
     // 9- BoardSharh
     if (!$('#BoardSharh').val()) {
-        $('#BoardSharh').css('border', '1px solid red');
+        $('#BoardSharh').addClass('txtBorderStyleRed');
         hasError = true;
     }
 
     // 10- BoardTedad
     if (!$('#BoardTedad').val()) {
-        $('#BoardTedad').css('border', '1px solid red');
+        $('#BoardTedad').addClass('txtBorderStyleRed');
         hasError = true;
     }
 
@@ -754,7 +837,7 @@ function SaveBoard() {
     usePOP = false;
     OperationId = $('#HDFOperationId').val();
     BarAvordUserId = $('#HDFBarAvordUserID').val();
-    shape = $('#BoardType').val();
+    shape = $('input[name="SheklTablo"]:checked').val(); //$('#BoardType').val();
     BoardTedad = $('#BoardTedad').val();
     BoardSharh = $('#BoardSharh').val();
     MorabaArz = $('#MorabaArz').val();
@@ -827,6 +910,7 @@ function SaveBoard() {
 }
 
 function DelBoard() {
+    debugger;
     BarAvordAddedBoardId = $('#HDFBarAvordAddedBoardId').val().trim();
     var vardata = new Object();
     vardata.barAvordAddedBoardId = BarAvordAddedBoardId;
@@ -839,6 +923,8 @@ function DelBoard() {
         dataType: "json",
         success: function (data) {
             if (data == "OK") {
+                debugger;
+
                 toastr.success('تابلو بدرستی حذف شد', 'موفقیت');
                 ClearBoard();
                 ShowRizMetreBoard();
@@ -864,10 +950,10 @@ function ClearBoard() {
     $('#ula' + operationId + ' input[name="MorabaArz"]').val('');
     $('#ula' + operationId + ' input[name="MorabaErtefa"]').val('');
     $('#ula' + operationId + ' input[name="print_percent"]').val('');
-    $('#ula' + operationId + ' #buttonBoard').text('ثبت');
+    $('#ula' + operationId + ' #buttonBoard').html(`<i id="iSave" class="fa fa-save SaveRMUStyle"></i>`);
     $('#ula' + operationId + ' #buttonBoardDel').hide();
     $('#ula' + operationId + ' #buttonBoardCancel').hide();
-
+    $('#HDFBarAvordAddedBoardId').val('');
     $('#BoardType').val('');
 }
 function ViewRMUDetailsClick(BarAvordAddedBoardId) {
@@ -918,10 +1004,12 @@ function ViewRMUDetailsClick(BarAvordAddedBoardId) {
             $('#ula' + operationId + ' input[id="ckPrintPOPBoard"]').prop('checked', UsePOP);
             $('#ula' + operationId + ' input[name="print_percent"]').val(PercentPrintPOP);
 
-            $('#ula' + operationId + ' #buttonBoard').text('ویرایش تالبو');
+            //$('#ula' + operationId + ' #buttonBoard').text('ویرایش تالبو');
             $('#ula' + operationId + ' #buttonBoardDel').show();
             $('#ula' + operationId + ' #buttonBoardCancel').show();
-            $('#BoardType').val(shape);
+            debugger;
+            $('#ula' + operationId + ' input[name="SheklTablo"][value="' + shape + '"]').prop('checked', true);
+            //$('#BoardType').val(shape);
 
             if (shape == 4) {
                 $('#Ghotr').hide();
@@ -961,25 +1049,33 @@ function ShowBoardInfo(OperationId, event) {
 
             let str = `
 <div class="row boardRowStyle">
-    <div class="col-4" id="MorabaBoardInfo">
+    <div class="col-3" id="MorabaBoardInfo">
         <fieldset>
-        <legend id="MorabaInfoBoard">ابعاد تابلو</legend>
+        <legend id="MorabaInfoBoard">ابعاد تابلو (میلی‌متر)</legend>
         <div class="row">
-        <div class="col-3" style="text-align:left;padding-left: 0px;">
-            <span>عرض (میلیمتر)</span>
+        <div class="col-2" style="text-align:center ;padding-left: 0px;">
+            <span>عرض</span>
         </div>
-            <div class="col-3">
-                <input class="textStyleBoard" id="MorabaArzInfoBoard" name="MorabaArzInfoBoard" type="number" min="800" max="3000" step="1" placeholder="">
+            <div class="col-4" >
+                <input class="form-control" id="MorabaArzInfoBoard" name="MorabaArzInfoBoard" type="number" min="800" max="3000" step="1" placeholder="میلی‌متر">
             </div>
-           <div class="col-3" style="text-align:left;padding-left: 0px;">
-                <span>ارتفاع (میلیمتر)</span>
+           <div class="col-2" style="text-align:center ;padding-left: 0px;">
+                <span>ارتفاع</span >
             </div>
-            <div class="col-3">
-                <input class="textStyleBoard" id="MorabaErtefaInfoBoard" name="MorabaErtefaInfoBoard" type="number" min="400" max="3000" step="1" placeholder="">
+            <div class="col-4">
+                <input class="form-control" id="MorabaErtefaInfoBoard" name="MorabaErtefaInfoBoard" type="number" min="400" max="3000" step="1" placeholder="میلی‌متر">
             </div>
             </div>
         </fieldset>
     </div>
+    <div class="col-9">
+        <fieldset>
+            <legend>نوع شبرنگ مصرفی</legend>
+            ${createRadioGroupInfoBoard("printInfoBoard", data.printTypeInfoList)}
+        </fieldset>
+    </div>
+  </div>
+   <div class="row boardRowStyle">
     <div class="col-5">
         <fieldset>
             <legend>جنس ورق تابلو</legend>
@@ -988,46 +1084,36 @@ function ShowBoardInfo(OperationId, event) {
             </div>
         </fieldset>
     </div>
-    <div class="col-3">
+    <div class="col-2">
         <fieldset>
-            <legend>ضخامت ورق (میلی متر)</legend>
+            <legend>ضخامت ورق (میلی‌متر)</legend>
             ${createRadioGroupInfoBoard("zakhamatInfoBoard", data.zakhamatVaraqInfoList)}
         </fieldset>
     </div>
-  </div>
-  <div class="row boardRowStyle">
-    <div class="col-12">
+    <div class="col-2">
         <fieldset>
-            <legend>نوع شبرنگ مصرفی</legend>
-            ${createRadioGroupInfoBoard("printInfoBoard", data.printTypeInfoList)}
+            <legend>شرح:</legend>
+            <input class="form-control" id="InfoBoardSharh" name="InfoBoardSharh" style="height: 25px;text-align:center" type="text" placeholder="">
         </fieldset>
     </div>
+    <div class="col-1">
+        <fieldset>
+            <legend>تعداد:</legend>
+            <input class="form-control" id="InfoBoardTedad" name="InfoBoardTedad" type="number" min="1" max="10000" step="1" placeholder="">
+        </fieldset>
+    </div>
+    <div class="col-1">
+        <button type="button" style="margin-top: 45px;" onclick="SaveInfoBoard()" 
+            class="ButtonRowsSaveStyle"><i id="iSave" class="fa fa-save SaveRMUStyle"></i></button>
+        <button id="buttonInfoBoardDel" style="margin-top: 45px;display:none" type="button" onclick="DelInfoBoard()" 
+            class="ButtonRowsSaveStyle"><i class="fa fa-trash DelRMUStyle"></i></button>
+        <button id="buttonInfoBoardCancel" style="margin-top: 45px;display:none" type="button" onclick="CancelInfoBoard()" 
+            class="ButtonRowsSaveStyle"><i class="fa fa-times DelRMUStyle"></i></button>
+    </div>
   </div>
-
-<div class="row boardRowStyle">
  <div class="col-1">
 </div>
-<div class="col-1" style="text-align:left">
-    <span>شرح: </span>
-</div>
-<div class="col-3">
-    <input class="form-control" id="InfoBoardSharh" name="InfoBoardSharh" style="height: 25px;text-align:center" type="text" placeholder="طرح تابلو">
-</div>
-<div class="col-1" style="text-align:left">
-    <span>تعداد: </span>
-</div>
-<div class="col-2">
-    <input class="textStyleBoard" id="InfoBoardTedad" name="InfoBoardTedad" type="number" min="1" max="10000" step="1" placeholder="">
-</div>
-<div class="col-2">
-    <button id="buttonInfoBoard" class="buttonStyleBoard" onclick="SaveInfoBoard()">ثبت</button>
-</div>
-<div class="col-1">
-    <button id="buttonInfoBoardDel" style="display:none" class="buttonStyleDelBoard" onclick="DelInfoBoard()">حذف</button>
-</div>
-<div class="col-1">
-    <button id="buttonInfoBoardCancel" style="display:none" class="buttonStyleCancelBoard" onclick="CancelInfoBoard()">لغو</button>
-</div>
+
 </div>
 
 <div id="divBoardRizMetre${operationId}"></div>
@@ -1083,24 +1169,87 @@ function ShowBoardInfo(OperationId, event) {
 
                 $options.hide(); // اول همه رو مخفی می‌کنیم
 
-                let $visibleOptions;
+                debugger;
+                let currentPIB = $("input[name='printInfoBoard']:checked").val();
+
+                var $visibleOptions;
                 if (val == "1") {
                     // ورق گالوانیزه → فقط 1.25 و 1.5
                     $visibleOptions = $options.find("input[value='1.25'], input[value='1.5']").closest("label").show();
                 }
-                else if (val == "2") {
-                    // ریل گالوانیزه → 1.25 و 1.5 
-                    $visibleOptions = $options.find("input[value='1.25'], input[value='1.5']").closest("label").show();
-                }
-                else if (val == "3") {
+                //if (val == "2") {
+                //    // ریل گالوانیزه → 1.25 و 1.5 
+                //    $visibleOptions = $options.find("input[value='1.25'], input[value='1.5']").closest("label").show();
+                //}
+                if (val == "3") {
                     $visibleOptions = $options.find("input[value='1.25'], input[value='1.5'], input[value='2']").closest("label").show();
                 }
-                else if (val == "4") {
+                if (val == "4") {
                     // ورق روغنی → فقط 3
                     $visibleOptions = $options.find("input[value='3']").closest("label").show();
                 }
-                else {
-                    // پیش‌فرض همه مخفی بمونه (یا می‌تونی همه رو نمایش بدی)
+               
+                if (val == "2" && currentPIB == "1") {
+                    $visibleOptions = $options.find("input[value='1.25'], input[value='1.5']").closest("label").show();
+                }
+
+                if (val == "2" && currentPIB == "2") {
+                    $visibleOptions = $options.find("input[value='1.25'], input[value='1.5']").closest("label").show();
+                }
+
+                if (val == "2" && currentPIB == "3") {
+                    $visibleOptions = $options.find("input[value='1.25']").closest("label").show();
+                }
+
+
+               
+
+
+                // پاک کردن انتخاب قبلی
+                $("input[name='zakhamatInfoBoard']").prop("checked", false);
+
+                $visibleOptions.find("input[name='zakhamatInfoBoard']").first().prop("checked", true);
+
+            });
+
+
+            $('#ula' + operationId).on("change", "input[name='printInfoBoard']", function () {
+                let val = $(this).val();  // مقدار انتخاب شده
+                let $options = $("input[name='zakhamatInfoBoard']").closest("label"); // همه ضخامت‌ها
+
+                $options.hide(); // اول همه رو مخفی می‌کنیم
+
+                debugger;
+                let currentMIB = $("input[name='materialInfoBoard']:checked").val();
+
+                var $visibleOptions;
+                if (val == "1") {
+                    // ورق گالوانیزه → فقط 1.25 و 1.5
+                    $visibleOptions = $options.find("input[value='1.25'], input[value='1.5']").closest("label").show();
+                }
+                if (val == "2") {
+                    // ریل گالوانیزه → 1.25 و 1.5
+                    $visibleOptions = $options.find("input[value='1.25'], input[value='1.5']").closest("label").show();
+                }
+                //if (val == "3") {
+                //    $visibleOptions = $options.find("input[value='1.25'], input[value='1.5'], input[value='2']").closest("label").show();
+                //}
+
+                if (val == "4") {
+                    // ورق روغنی → فقط 3
+                    $visibleOptions = $options.find("input[value='3']").closest("label").show();
+                }
+
+                if (val == "3" && currentMIB == "1") {
+                    $visibleOptions = $options.find("input[value='1.25'], input[value='1.5']").closest("label").show();
+                }
+
+                if (val == "3" && currentMIB == "2") {
+                    $visibleOptions = $options.find("input[value='1.25']").closest("label").show();
+                }
+
+                if (val == "3" && currentMIB == "3") {
+                    $visibleOptions = $options.find("input[value='1.25'], input[value='1.5']").closest("label").show();
                 }
 
                 // پاک کردن انتخاب قبلی
@@ -1235,6 +1384,8 @@ function SaveInfoBoard() {
     usePOP = $('#ckPrintPOPBoardInfo').prop('checked');
     PercentPOPBoard = $('#txtPercentPOPBoardInfo').val() == "" ? null : $('#txtPercentPOPBoardInfo').val();
     NoeFBId = parseInt($('#HDFNoeFB').val());
+    Year = $('#HDFYear').val();
+
     debugger;
 
     var vardata = new Object();
@@ -1249,6 +1400,7 @@ function SaveInfoBoard() {
     vardata.usePOP = usePOP;
     vardata.PercentPrintPOP = PercentPOPBoard;
     vardata.NoeFBId = NoeFBId;
+    vardata.Year = Year;
 
     if (BarAvordAddedBoardId == '') {
         $.ajax({
@@ -1310,6 +1462,7 @@ function CancelBoard() {
 }
 
 function DelInfoBoard() {
+    debugger;
     BarAvordAddedBoardId = $('#HDFBarAvordAddedBoardId').val().trim();
     var vardata = new Object();
     vardata.barAvordAddedBoardId = BarAvordAddedBoardId;
@@ -1323,12 +1476,14 @@ function DelInfoBoard() {
         success: function (data) {
             if (data == "OK") {
                 toastr.success('تابلو بدرستی حذف شد', 'موفقیت');
-                ClearBoard();
+                ClearInfoBoard();
                 ShowRizMetreBoard();
 
             }
-            else
+            else {
+                
                 toastr.error('مشکل در حذف تابلو', 'خطا');
+            }
         },
         error: function (response) {
             toastr.error('مشکل در بارگزاری اطلاعات تابلو انتخابی', 'خطا');
@@ -1336,6 +1491,9 @@ function DelInfoBoard() {
     });
 }
 function ClearInfoBoard() {
+
+    $('#HDFBarAvordAddedBoardId').val('');
+    operationId = $('#HDFOperationId').val();
 
     $(".styleRowTable").css("background-color", "#fff");
 
@@ -1352,7 +1510,7 @@ function ClearInfoBoard() {
     $('#ula' + operationId + ' input[name="MorabaArzInfoBoard"]').val('');
     $('#ula' + operationId + ' input[name="MorabaErtefaInfoBoard"]').val('');
     $('#ula' + operationId + ' input[name="printInfoBoard_percent"]').val('');
-    $('#ula' + operationId + ' #buttonInfoBoard').text('ثبت');
+    $('#ula' + operationId + ' #buttonInfoBoard').text(`<i id="iSave" class="fa fa-save SaveRMUStyle"></i>`);
     $('#ula' + operationId + ' #buttonInfoBoardDel').hide();
     $('#ula' + operationId + ' #buttonInfoBoardCancel').hide();
 }

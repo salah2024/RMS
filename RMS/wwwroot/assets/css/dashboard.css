@@ -90,8 +90,8 @@ section {
 }
 
 body {
-	font-family: "iransans", 'Nunito', sans-serif;
-	font-size: 1rem;
+	font-family: 'BMitra', sans-serif;
+	font-size: 18px;
 	font-weight: 400;
 	line-height: 1.5;
 	margin: 0;
@@ -3406,7 +3406,7 @@ input[type='button'].btn-block {
 	overflow: hidden;
 	height: 0;
 	margin: .5rem 0;
-	border-top: 1px solid #dae0ef;
+	border-top: 1px solid #846e8b;
 }
 
 .dropdown-item {
@@ -4276,6 +4276,7 @@ input[type='button'].btn-block {
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: space-between;
+	height:70px;
 }
 
 .navbar>.container,
@@ -4316,9 +4317,15 @@ input[type='button'].btn-block {
 	padding-left: 0;
 }
 
-.navbar-nav .dropdown-menu {
-	float: none;
-}
+	.navbar-nav .dropdown-menu {
+		float: none;
+		background: linear-gradient(135deg, #f8f4e8 0%, #efe2b5 100%);
+		border: 1px solid rgba(201,162,39,.4);
+		border-radius: 14px;
+		box-shadow: 0 10px 30px rgba(0,0,0,.15), 0 0 15px rgba(201,162,39,.25);
+		padding: 10px 0;
+		min-width: 220px;
+	}
 
 .navbar-text {
 	display: inline-block;
@@ -6206,6 +6213,7 @@ button.close {
 	border-top-right-radius: .4375rem;
 	align-items: flex-start;
 	justify-content: space-between;
+	background-color: #b3b3d1;
 }
 
 .modal-header .close {
@@ -9586,8 +9594,8 @@ button.section-darker:focus {
 
 .avatar-sm {
 	font-size: .875rem;
-	width: 36px;
-	height: 36px;
+	width: 30px;
+	height: 30px;
 }
 
 .avatar-group .avatar {
@@ -9780,17 +9788,17 @@ button.section-darker:focus {
 	position: relative;
 }
 
-.main-content .navbar-top {
-	position: absolute;
-	z-index: 1;
-	top: 0;
-	left: 0;
-	width: 100%;
-	padding-right: 0 !important;
-	padding-left: 0 !important;
-	background-color: #fff;
-	box-shadow: 0 0 2rem 0 rgba(136, 152, 170, .15) !important;
-}
+	.main-content .navbar-top {
+		position: absolute;
+		z-index: 1;
+		top: 0;
+		left: 0;
+		width: 100%;
+		padding-right: 0 !important;
+		padding-left: 0 !important;
+		box-shadow: 0 0 2rem 0 rgba(136, 152, 170, .15) !important;
+		background-color: #846e8b;
+	}
 
 @media (min-width: 768px) {
 	.main-content .container-fluid {
@@ -11270,17 +11278,16 @@ textarea[resize='horizontal'] {
 
 .navbar .dropdown-menu-arrow:before {
 	position: absolute;
-	z-index: -5;
 	bottom: 100%;
 	left: 20px;
-	display: block;
 	width: 12px;
 	height: 12px;
 	content: '';
 	transform: rotate(-45deg) translateY(12px);
 	border-radius: 2px;
-	background: #fff;
-	box-shadow: none;
+	background: #D4AF37;
+	z-index: 1;
+	box-shadow: 0 0 6px rgba(212,175,55,.8), 0 0 12px rgba(212,175,55,.5);
 }
 
 .navbar .dropdown-menu-right:before {

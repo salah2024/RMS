@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using static RMS.Models.Common.EnumForEntity;
 
 namespace RMS.Models.Entity;
 
 [Table("tblItemsHasConditionAddedToFB")]
-public class clsItemsHasConditionAddedToFB:clsBaseEntity
+public class clsItemsHasConditionAddedToFB : clsBaseEntity
 {
     public string FBShomareh { get; set; }
 
@@ -24,4 +25,5 @@ public class clsItemsHasConditionAddedToFB:clsBaseEntity
     [ForeignKey("ConditionGroup")]
     public long ConditionGroupId { get; set; }
     public clsConditionGroup ConditionGroup { get; set; }
+    public NoeFehrestBaha? NoeFB { get; set; }
 }

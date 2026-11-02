@@ -1,4 +1,6 @@
-﻿namespace RMS.Controllers.Operation.Dto
+﻿using static RMS.Models.Common.EnumForEntity;
+
+namespace RMS.Controllers.Operation.Dto
 {
     public class ItemFBShomarehForGetAndShowAddItemsDto
     {
@@ -10,8 +12,9 @@
     public class ItemFBShomarehForGetAndShowAddItemsFieldsDto
     {
         public string Shomareh { get; set; }
-        public int FieldType { get; set; }
+        public ItemFieldType FieldType { get; set; }
         public string Vahed { get; set; }
         public bool IsEnteringValue { get; set; }
+        public bool EssentialValue { get; set; }
     }
 }

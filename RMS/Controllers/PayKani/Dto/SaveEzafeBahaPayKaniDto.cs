@@ -8,5 +8,6 @@ namespace RMS.Controllers.AmalyateKhaki.Dto
         public Guid BarAvordUserId { get; set; }
         public NoeFehrestBaha NoeFBId { get; set; }
         public long Year { get;set; }
+        public int Type { get; set; }
     }
 }

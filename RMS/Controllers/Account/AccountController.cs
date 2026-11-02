@@ -65,6 +65,7 @@ public class AccountController : Controller
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public IActionResult Login(string? returnUrl = null)
     {
         ViewData["ReturnUrl"] = returnUrl;
@@ -172,12 +173,13 @@ public class AccountController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [AllowAnonymous]
     public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
     {
         if (!ModelState.IsValid)
             return View(model);
 
-        var user = await _userManager.FindByNameAsync(model.UserName);
+         var user = await _userManager.FindByNameAsync(model.UserName);
         if (user == null)
         {
             ModelState.AddModelError(string.Empty, "نام کاربری یا رمز عبور اشتباه است");
@@ -201,6 +203,7 @@ public class AccountController : Controller
         if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
             return Redirect(returnUrl);
 
+
         // ریدایرکت پیش‌فرض
         return RedirectToAction("Index", "Dashboard");
     }
@@ -209,6 +212,7 @@ public class AccountController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Logout()
     {
+
         await _signInManager.SignOutAsync();
         return RedirectToAction("Login", "Account");
     }

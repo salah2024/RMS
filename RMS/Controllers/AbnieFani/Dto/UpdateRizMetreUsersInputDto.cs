@@ -6,6 +6,7 @@ namespace RMS.Controllers.AbnieFani.Dto
     {
         public Guid Id { get; set; }
         public string Sharh { get; set; }
+        public string TajmieItem { get; set; }
         public decimal? Tedad { get; set; }
         public decimal? Tool { get; set; }
         public decimal? Arz { get; set; }

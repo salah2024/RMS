@@ -1,0 +1,157 @@
+﻿@using RMS.Controllers.Report.RizMetre.Dto.RizMetre
+@model List<RizMetreReportPageVm>
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+
+    <link href="~/assets/css/reportstyle.css" rel="stylesheet" />
+    <meta charset="utf-8" />
+    <title>گزارش ریز متره</title>
+
+</head>
+<body>
+
+    @foreach (var page1 in Model)
+    {
+        <div class="a4-page">
+
+            <div class="page-title">
+                گزارش ریز متره
+            </div>
+
+            <table class="header-table">
+                <tr>
+                    <td style="width:25%">تاریخ چاپ</td>
+                    <td style="width:25%">@DateTime.Now.ToString("yyyy/MM/dd")</td>
+                    <td style="width:25%">شماره صفحه</td>
+                    <td style="width:25%">@page1.PageNo</td>
+                </tr>
+            </table>
+
+            @foreach (var item in page1.Items)
+            {
+                decimal total = item.Details.Sum(x => x.JameJoz ?? 0);
+                string strStar = (item.ItemBahayeVahedNew != null && item.ItemBahayeVahedNew!=0) ? "*" : "";
+
+                    decimal? BahayeKol = item.ItemBahayeVahed * total;
+
+                <div class="item-block">
+
+                    <table class="report-table">
+                        <tr class="header-dark">
+                            <td style="width:3%"></td>
+                            <td style="width:15%">شماره فهرست بها</td>
+                            <td style="width:40%">شرح فهرست بها</td>
+                            <td style="width:10%">مقدار</td>
+                            <td style="width:15%">واحد</td>
+                            <td style="width:10%">بهای واحد (ريال)</td>
+                            <td style="width:10%">بهای کل (ريال)</td>
+                        </tr>
+
+                        <tr class="header-light">
+                            <td>@strStar</td>
+                            <td>@item.ItemShomareh</td>
+                            <td class="text-right">
+                                @item.ItemSharh
+                            </td>
+
+                            <td>@total.ToString("G29")</td>
+                            <td>@item.ItemVahed</td>
+                            <td>@item.ItemBahayeVahed?.ToString("N0")</td>
+                            <td>@BahayeKol?.ToString("N0")</td>
+                        </tr>
+                    </table>
+
+                    <table class="report-table" style="margin-top:3px">
+
+                        <thead>
+                            <tr class="sub-header">
+                                <th style="width:6%">ردیف</th>
+                                <th style="width:28%">شرح</th>
+                                <th style="width:8%">تعداد</th>
+                                <th style="width:8%">طول</th>
+                                <th style="width:8%">عرض</th>
+                                <th style="width:8%">ارتفاع</th>
+                                <th style="width:8%">وزن</th>
+                                <th style="width:10%">مقدار جزء</th>
+                                <th style="width:16%">توضیحات</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @{
+                                int row = 1;
+                            }
+
+                            @foreach (var detail in item.Details)
+                            {
+                                <tr>
+                                    <td>@row</td>
+                                    <td class="text-right">@detail.Sharh</td>
+                                    <td>@(detail.Tedad?.ToString("G29"))</td>
+                                    <td>@(detail.Tool?.ToString("G29"))</td>
+                                    <td>@(detail.Arz?.ToString("G29"))</td>
+                                    <td>@(detail.Ertefa?.ToString("G29"))</td>
+                                    <td>@(detail.Vazn?.ToString("G29"))</td>
+                                    <td>@(detail.JameJoz?.ToString("G29"))</td>
+                                    <td>@detail.Tozihat</td>
+                                </tr>
+
+                                row++;
+                            }
+
+                            <tr class="sum-row">
+                                <td colspan="7">جمع کل آیتم</td>
+                                <td>@total.ToString("G29")</td>
+                                <td></td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+
+            <div class="page-footer">
+                صفحه @page1.PageNo از @Model.Count
+            </div>
+
+        </div>
+    }
+
+</body>
+
+
+<script type="text/javascript">
+
+        function toPersianDigits(num) {
+        if (num == null) return '';
+        return num.toString().replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+    }
+
+    $(document).ready(function(){
+        convertNumbersInPage();
+    });
+
+    function convertNumbersInPage() {
+        $('*').each(function () {
+            if (this.children.length === 0 && this.nodeType === 1) {
+                const originalText = $(this).text();
+                const convertedText = toPersianDigits(originalText);
+                if (originalText !== convertedText) {
+                    $(this).text(convertedText);
+                }
+            }
+        });
+    }
+
+</script>
+</html>

@@ -16,6 +16,7 @@ namespace RMS.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasDefaultSchema("dbo")
                 .HasAnnotation("ProductVersion", "9.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
@@ -90,7 +91,7 @@ namespace RMS.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("AspNetUsers", "dbo");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -117,7 +118,7 @@ namespace RMS.Migrations
                         .HasDatabaseName("RoleNameIndex")
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
-                    b.ToTable("AspNetRoles", (string)null);
+                    b.ToTable("AspNetRoles", "dbo");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -142,7 +143,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetRoleClaims", (string)null);
+                    b.ToTable("AspNetRoleClaims", "dbo");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -167,7 +168,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserClaims", (string)null);
+                    b.ToTable("AspNetUserClaims", "dbo");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
@@ -189,7 +190,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserLogins", (string)null);
+                    b.ToTable("AspNetUserLogins", "dbo");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
@@ -204,7 +205,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetUserRoles", (string)null);
+                    b.ToTable("AspNetUserRoles", "dbo");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -223,7 +224,7 @@ namespace RMS.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("AspNetUserTokens", (string)null);
+                    b.ToTable("AspNetUserTokens", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Controllers.AbnieFani.Dto.ItemsFBDependQuestionForAbnieFaniForSPDto", b =>
@@ -245,7 +246,7 @@ namespace RMS.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("ItemsFBDependQuestionForAbnieFaniForSPDto");
+                    b.ToTable("ItemsFBDependQuestionForAbnieFaniForSPDto", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Controllers.AmalyateKhaki.Dto.GetExistingKMAmalyateKhakiInfoWithBarAvordDto", b =>
@@ -285,7 +286,7 @@ namespace RMS.Migrations
                     b.Property<decimal>("Value")
                         .HasColumnType("decimal(18,2)");
 
-                    b.ToTable("GetExistingKMAmalyateKhakiInfoWithBarAvordDto");
+                    b.ToTable("GetExistingKMAmalyateKhakiInfoWithBarAvordDto", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Controllers.AmalyateKhaki.Dto.GetExistingKMPayKaniInfoWithBarAvordDto", b =>
@@ -322,7 +323,7 @@ namespace RMS.Migrations
                     b.Property<decimal>("Value")
                         .HasColumnType("decimal(18,2)");
 
-                    b.ToTable("GetExistingKMPayKaniInfoWithBarAvordDto");
+                    b.ToTable("GetExistingKMPayKaniInfoWithBarAvordDto", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Controllers.Operation.Dto.ItemsFBShomarehValueShomarehUpdateProcedureDto", b =>
@@ -330,7 +331,7 @@ namespace RMS.Migrations
                     b.Property<bool>("check")
                         .HasColumnType("bit");
 
-                    b.ToTable("ItemsFBShomarehValueShomarehUpdateProcedureDto");
+                    b.ToTable("ItemsFBShomarehValueShomarehUpdateProcedureDto", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsAbadDivarBali", b =>
@@ -358,7 +359,7 @@ namespace RMS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("tblAbadDivarBali");
+                    b.ToTable("tblAbadDivarBali", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsAbadeKoole", b =>
@@ -428,7 +429,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("HadAksarErtefaKooleId");
 
-                    b.ToTable("tblAbadeKoole");
+                    b.ToTable("tblAbadeKoole", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsAbroDaliDetails", b =>
@@ -458,16 +459,16 @@ namespace RMS.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("VazMilgard1M")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<decimal>("VazMilgardSE")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AbadeKooleId");
 
-                    b.ToTable("tblAbroDaliDetails");
+                    b.ToTable("tblAbroDaliDetails", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsAmalyateKhakiInfoForBarAvord", b =>
@@ -519,7 +520,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("BaravordUserId");
 
-                    b.ToTable("tblAmalyateKhakiInfoForBarAvord");
+                    b.ToTable("tblAmalyateKhakiInfoForBarAvord", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsAmalyateKhakiInfoForBarAvordDetails", b =>
@@ -565,7 +566,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("NoeKhakBardariId");
 
-                    b.ToTable("tblAmalyateKhakiInfoForBarAvordDetails");
+                    b.ToTable("tblAmalyateKhakiInfoForBarAvordDetails", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsAmalyateKhakiInfoForBarAvordDetailsMore", b =>
@@ -603,7 +604,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("AmalyateKhakiInfoForBarAvordDetailsId");
 
-                    b.ToTable("tblAmalyateKhakiInfoForBarAvordDetailsMore");
+                    b.ToTable("tblAmalyateKhakiInfoForBarAvordDetailsMore", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsAmalyateKhakiInfoForBarAvordDetailsRizMetre", b =>
@@ -639,7 +640,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("RizMetreUserId");
 
-                    b.ToTable("tblAmalyateKhakiInfoForBarAvordDetailsRizMetre");
+                    b.ToTable("tblAmalyateKhakiInfoForBarAvordDetailsRizMetre", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsAmalyateKhakiInfoForBarAvordEzafeBaha", b =>
@@ -675,7 +676,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("NoeKhakBardariEzafeBahaId");
 
-                    b.ToTable("tblAmalyateKhakiInfoForBarAvordEzafeBaha");
+                    b.ToTable("tblAmalyateKhakiInfoForBarAvordEzafeBaha", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsAmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetre", b =>
@@ -711,7 +712,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("RizMetreId");
 
-                    b.ToTable("tblAmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetre");
+                    b.ToTable("tblAmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetre", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsAmalyateKhakiInfoForBarAvordEzafeBahaRizMetre", b =>
@@ -747,7 +748,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("RizMetreUserId");
 
-                    b.ToTable("tblAmalyateKhakiInfoForBarAvordEzafeBahaRizMetre");
+                    b.ToTable("tblAmalyateKhakiInfoForBarAvordEzafeBahaRizMetre", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsAmalyateKhakiInfoForBarAvordMore", b =>
@@ -785,7 +786,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("AmalyateKhakiInfoForBarAvordId");
 
-                    b.ToTable("tblAmalyateKhakiInfoForBarAvordMore");
+                    b.ToTable("tblAmalyateKhakiInfoForBarAvordMore", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsAnalizBaha", b =>
@@ -804,16 +805,13 @@ namespace RMS.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("MeghdarMeghias")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,12)");
 
                     b.Property<long>("NiroMasalehMashinId")
                         .HasColumnType("bigint");
 
                     b.Property<int>("NoeFB")
                         .HasColumnType("int");
-
-                    b.Property<long>("Vahed")
-                        .HasColumnType("bigint");
 
                     b.Property<int>("Year")
                         .HasColumnType("int");
@@ -823,7 +821,7 @@ namespace RMS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("tblAnalizBaha");
+                    b.ToTable("tblAnalizBaha", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsAppOperationInfoDetails", b =>
@@ -862,7 +860,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("QuetionId");
 
-                    b.ToTable("tblAppOperationInfoDetails");
+                    b.ToTable("tblAppOperationInfoDetails", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsAppOperationInfoMain", b =>
@@ -914,7 +912,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("OperationId");
 
-                    b.ToTable("tblAppOperationInfoMain");
+                    b.ToTable("tblAppOperationInfoMain", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsAppQuestion", b =>
@@ -940,7 +938,37 @@ namespace RMS.Migrations
 
                     b.HasIndex("OperationId");
 
-                    b.ToTable("tblAppQuestion");
+                    b.ToTable("tblAppQuestion", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsBahayeVahedItemsRelated", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("ItemShomareh")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ItemShomarehRelated")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NoeFB")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("tblBahayeVahedItemsRelated", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsBakhsh", b =>
@@ -955,14 +983,8 @@ namespace RMS.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("NoeFBId")
-                        .HasColumnType("int");
-
                     b.Property<long>("ShahrId")
                         .HasColumnType("bigint");
-
-                    b.Property<int>("Year")
-                        .HasColumnType("int");
 
                     b.Property<decimal>("ZaribAbKhizDari")
                         .HasColumnType("decimal(18,4)");
@@ -1013,7 +1035,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("ShahrId");
 
-                    b.ToTable("tblBakhsh");
+                    b.ToTable("tblBakhsh", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsBarAvordAddedBoard", b =>
@@ -1049,6 +1071,9 @@ namespace RMS.Migrations
                     b.Property<decimal?>("MeghdarPrintType")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int>("NoeFBId")
+                        .HasColumnType("int");
+
                     b.Property<decimal?>("PercentPrintPOP")
                         .HasColumnType("decimal(18,2)");
 
@@ -1083,7 +1108,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("BarAvordId");
 
-                    b.ToTable("tblBarAvordAddedBoard");
+                    b.ToTable("tblBarAvordAddedBoard", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsBarAvordAddedBoardStand", b =>
@@ -1104,6 +1129,9 @@ namespace RMS.Migrations
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<int>("NoeFBId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("RemoveDateTime")
                         .HasColumnType("datetime2");
 
@@ -1122,7 +1150,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("BoardStandItemId");
 
-                    b.ToTable("tblBarAvordAddedBoardStand");
+                    b.ToTable("tblBarAvordAddedBoardStand", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsBarAvordHaml", b =>
@@ -1170,7 +1198,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("BarAvordId");
 
-                    b.ToTable("tblBarAvordHaml");
+                    b.ToTable("tblBarAvordHaml", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsBarAvordHamlNecessaryLimit", b =>
@@ -1204,7 +1232,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("BarAvordId");
 
-                    b.ToTable("tblBarAvordHamlNecessaryLimit");
+                    b.ToTable("tblBarAvordHamlNecessaryLimit", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsBarAvordHamlRizMetre", b =>
@@ -1240,7 +1268,192 @@ namespace RMS.Migrations
 
                     b.HasIndex("RizMetreId");
 
-                    b.ToTable("tblBarAvordHamlRizMetre");
+                    b.ToTable("tblBarAvordHamlRizMetre", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsBarAvordKarfarma", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BarAvordUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("InsertDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("KarFarmaId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("RemoveDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UserInserter")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserRemover")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("BarAvordUserId");
+
+                    b.HasIndex("KarFarmaId");
+
+                    b.ToTable("tblBarAvordKarfarma", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsBarAvordMoshaver", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BarAvordUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("InsertDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("MoshaverId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("RemoveDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UserInserter")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserRemover")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("BarAvordUserId");
+
+                    b.HasIndex("MoshaverId");
+
+                    b.ToTable("tblBarAvordMoshaver", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsBarAvordPaymanKar", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BarAvordUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("InsertDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("PayManKarId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("RemoveDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UserInserter")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserRemover")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("BarAvordUserId");
+
+                    b.HasIndex("PayManKarId");
+
+                    b.ToTable("tblBarAvordPaymanKar", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsBarAvordProjectionWorkFlow", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BarAvordUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("InsertDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("RemoveDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UserInserter")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserRemover")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("proccesType")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("tblBarAvordProjectionWorkFlow", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsBarAvordUserTajmie", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("BahayeKol")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("BahayeVahed")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("BarAvordUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("InsertDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("Meghdar")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("RemoveDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("TajmieFosoulItemId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid?>("UserInserter")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserRemover")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("BarAvordUserId");
+
+                    b.HasIndex("TajmieFosoulItemId");
+
+                    b.ToTable("tblBarAvordUserTajmie", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsBaravordUser", b =>
@@ -1248,6 +1461,9 @@ namespace RMS.Migrations
                     b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FromDate")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("InsertDateTime")
                         .HasColumnType("datetime2");
@@ -1266,8 +1482,14 @@ namespace RMS.Migrations
                     b.Property<long>("Num")
                         .HasColumnType("bigint");
 
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime?>("RemoveDateTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("ToDate")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
@@ -1292,7 +1514,89 @@ namespace RMS.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("tblBaravordUser");
+                    b.HasIndex("ParentId");
+
+                    b.ToTable("tblBaravordUser", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsBaravordUserAccess", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AccessType")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("BaravordUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("InsertDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("RemoveDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("UserInserter")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserRemover")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("BaravordUserId");
+
+                    b.ToTable("tblBaravordUserAccess", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsBaravordWorkflow", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BaravordUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("InsertDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("RemoveDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("StartUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserInserter")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserRemover")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("WorkflowId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("BaravordUserId");
+
+                    b.HasIndex("WorkflowId");
+
+                    b.ToTable("tblBaravordWorkflow", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsBaravordZaribBalaSari", b =>
@@ -1316,7 +1620,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("BaravordId");
 
-                    b.ToTable("tblBaravordZaribBalaSari");
+                    b.ToTable("tblBaravordZaribBalaSari", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsBaravordZaribManteghe", b =>
@@ -1343,7 +1647,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("BaravordId");
 
-                    b.ToTable("tblBaravordZaribManteghe");
+                    b.ToTable("tblBaravordZaribManteghe", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsBaseInfo", b =>
@@ -1376,7 +1680,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("TypeId");
 
-                    b.ToTable("tblBaseInfo");
+                    b.ToTable("tblBaseInfo", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsBaseInfoType", b =>
@@ -1397,7 +1701,7 @@ namespace RMS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("tblBaseInfoType");
+                    b.ToTable("tblBaseInfoType", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsBoardInfo", b =>
@@ -1432,7 +1736,7 @@ namespace RMS.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("tblBoardInfo");
+                    b.ToTable("tblBoardInfo", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsBoardItems", b =>
@@ -1486,7 +1790,7 @@ namespace RMS.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("tblBoardItems");
+                    b.ToTable("tblBoardItems", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsBoardStandItems", b =>
@@ -1540,7 +1844,125 @@ namespace RMS.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("tblBoardStandItems");
+                    b.ToTable("tblBoardStandItems", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsCompany", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CompanyName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CompanyNationalCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CompanyType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FaxNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("InsertDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ManagementFirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ManagementLastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MobileNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PostalCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("RemoveDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UserInserter")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserRemover")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("tblCompany", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsCompanyManagementHistory", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FromDate")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("InsertDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NationalCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("RemoveDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ToDate")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("UserInserter")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserRemover")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("tblCompanyManagementHistory", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsConditionContext", b =>
@@ -1568,6 +1990,9 @@ namespace RMS.Migrations
                     b.Property<bool>("HasDes")
                         .HasColumnType("bit");
 
+                    b.Property<int>("NoeFB")
+                        .HasColumnType("int");
+
                     b.Property<string>("TitleDes")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1579,7 +2004,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("ConditionGroupId");
 
-                    b.ToTable("tblConditionContext");
+                    b.ToTable("tblConditionContext", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsConditionGroup", b =>
@@ -1594,12 +2019,15 @@ namespace RMS.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("NoeFB")
+                        .HasColumnType("int");
+
                     b.Property<int?>("Order")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("tblConditionGroup");
+                    b.ToTable("tblConditionGroup", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsDastakPolInfo", b =>
@@ -1629,7 +2057,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("PolVaAbroId");
 
-                    b.ToTable("tblDastakPolInfo");
+                    b.ToTable("tblDastakPolInfo", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsEzafeBahaKhakRizi", b =>
@@ -1642,6 +2070,15 @@ namespace RMS.Migrations
 
                     b.Property<long>("ConditionContextId")
                         .HasColumnType("bigint");
+
+                    b.Property<bool?>("HasEnteringValue")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("NoeFB")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.Property<long>("Year")
                         .HasColumnType("bigint");
@@ -1656,7 +2093,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("ConditionContextId");
 
-                    b.ToTable("tblEzafeBahaKhakRizi");
+                    b.ToTable("tblEzafeBahaKhakRizi", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsEzafeBahaKhakRiziAddItems", b =>
@@ -1687,7 +2124,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("EzafeBahaKhakRiziId");
 
-                    b.ToTable("tblEzafeBahaKhakRiziAddItems");
+                    b.ToTable("tblEzafeBahaKhakRiziAddItems", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsFB", b =>
@@ -1715,6 +2152,9 @@ namespace RMS.Migrations
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<decimal?>("ItemZarib")
+                        .HasColumnType("decimal(5,3)");
+
                     b.Property<int>("NoeFBId")
                         .HasColumnType("int");
 
@@ -1724,6 +2164,9 @@ namespace RMS.Migrations
                     b.Property<string>("Shomareh")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("SumRizMetre")
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<Guid?>("UserInserter")
                         .HasColumnType("uniqueidentifier");
@@ -1735,7 +2178,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("BarAvordId");
 
-                    b.ToTable("tblFB");
+                    b.ToTable("tblFB", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsFehrestBaha", b =>
@@ -1769,7 +2212,43 @@ namespace RMS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("tblFehrestBaha");
+                    b.HasIndex("Sal", "NoeFB")
+                        .HasDatabaseName("IX_FehrestBahas_Sal_NoeFB");
+
+                    b.ToTable("tblFehrestBaha", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsFehrestBahaItemsReplace", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("FBShomarehMain")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("FBShomarehNew")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("FaslId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("NoeFB")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FBShomarehMain")
+                        .HasDatabaseName("IX_FehrestBahaItemsReplaces_FBShomarehMain");
+
+                    b.ToTable("tblFehrestBahaItemsReplace", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsFosoul", b =>
@@ -1788,6 +2267,9 @@ namespace RMS.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool?>("FaslAsli")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LatinName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1802,43 +2284,21 @@ namespace RMS.Migrations
                     b.Property<int>("Year")
                         .HasColumnType("int");
 
-                    b.Property<decimal?>("Zarib")
-                        .HasColumnType("decimal(18,4)");
-
                     b.Property<int>("order")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("tblFosoul");
-                });
-
-            modelBuilder.Entity("RMS.Models.Entity.clsFosoulItem", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("FBShomareh")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("FosoulId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FosoulId");
-
-                    b.ToTable("tblFosoulItem");
+                    b.ToTable("tblFosoul", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsGeneralProjectTiming", b =>
                 {
                     b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BaravordUserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("CountDaies")
@@ -1856,9 +2316,6 @@ namespace RMS.Migrations
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime?>("RemoveDateTime")
                         .HasColumnType("datetime2");
 
@@ -1873,9 +2330,9 @@ namespace RMS.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("ProjectId");
+                    b.HasIndex("BaravordUserId");
 
-                    b.ToTable("tblGeneralProjectTiming");
+                    b.ToTable("tblGeneralProjectTiming", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsHadAksarErtefaKoole", b =>
@@ -1897,7 +2354,7 @@ namespace RMS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("tblHadAksarErtefaKoole");
+                    b.ToTable("tblHadAksarErtefaKoole", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsItemFBStar", b =>
@@ -1917,6 +2374,9 @@ namespace RMS.Migrations
 
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<decimal?>("ItemZaribStar")
+                        .HasColumnType("decimal(5,3)");
 
                     b.Property<int>("NoeFBId")
                         .HasColumnType("int");
@@ -1946,9 +2406,46 @@ namespace RMS.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("BaravordId");
+
                     b.HasIndex("VahedId");
 
-                    b.ToTable("tblItemFBStar");
+                    b.ToTable("tblItemFBStar", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsItemHasConditionBaseItemRemoved", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BarAvordId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<long>("ConditionContextId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("InsertDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("RemoveDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("RizMetreId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserInserter")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserRemover")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("tblItemHasConditionBaseItemRemoved", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsItemsAddingToFB", b =>
@@ -1984,6 +2481,9 @@ namespace RMS.Migrations
                     b.Property<long>("ItemsHasCondition_ConditionContextId")
                         .HasColumnType("bigint");
 
+                    b.Property<int?>("NoeFB")
+                        .HasColumnType("int");
+
                     b.Property<string>("UseItemForAdd")
                         .HasColumnType("nvarchar(max)");
 
@@ -1994,7 +2494,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("ItemsHasCondition_ConditionContextId");
 
-                    b.ToTable("tblItemsAddingToFB");
+                    b.ToTable("tblItemsAddingToFB", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsItemsFBDependQuestionForAbnieFani", b =>
@@ -2023,7 +2523,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("QuesForAbnieFaniId");
 
-                    b.ToTable("tblItemsFBDependQuestionForAbnieFani");
+                    b.ToTable("tblItemsFBDependQuestionForAbnieFani", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsItemsFBShomarehValueShomareh", b =>
@@ -2052,7 +2552,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("BarAvordId");
 
-                    b.ToTable("tblItemsFBShomarehValueShomareh");
+                    b.ToTable("tblItemsFBShomarehValueShomareh", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsItemsFields", b =>
@@ -2063,8 +2563,8 @@ namespace RMS.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<string>("DefaultValue")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<decimal?>("DefaultValue")
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<bool>("EssentialValue")
                         .HasColumnType("bit");
@@ -2079,16 +2579,21 @@ namespace RMS.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal?>("MaxValue")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<decimal?>("MinValue")
+                        .HasColumnType("decimal(18,4)");
+
                     b.Property<int>("NoeFB")
                         .HasColumnType("int");
 
                     b.Property<string>("Vahed")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("tblItemsFields");
+                    b.ToTable("tblItemsFields", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsItemsForGetValues", b =>
@@ -2116,7 +2621,7 @@ namespace RMS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("tblItemsForGetValues");
+                    b.ToTable("tblItemsForGetValues", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsItemsHasCondition", b =>
@@ -2131,12 +2636,15 @@ namespace RMS.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("NoeFB")
+                        .HasColumnType("int");
+
                     b.Property<int>("Year")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("tblItemsHasCondition");
+                    b.ToTable("tblItemsHasCondition", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsItemsHasConditionAddedToFB", b =>
@@ -2170,6 +2678,9 @@ namespace RMS.Migrations
                     b.Property<decimal>("Meghdar2")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int?>("NoeFB")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("RemoveDateTime")
                         .HasColumnType("datetime2");
 
@@ -2187,7 +2698,46 @@ namespace RMS.Migrations
 
                     b.HasIndex("ItemsHasCondition_ConditionContextId");
 
-                    b.ToTable("tblItemsHasConditionAddedToFB");
+                    b.ToTable("tblItemsHasConditionAddedToFB", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsItemsHasConditionAddedToFBRizMetre", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BaseRizMetreId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("InsertDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("ItemsHasConditionAddedToFBId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("RemoveDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("RizMetreId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserInserter")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserRemover")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ItemsHasConditionAddedToFBId");
+
+                    b.HasIndex("RizMetreId");
+
+                    b.ToTable("tblItemsHasConditionAddedToFBRizMetre", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsItemsHasCondition_ConditionContext", b =>
@@ -2226,6 +2776,9 @@ namespace RMS.Migrations
                     b.Property<bool>("HasEnteringValue")
                         .HasColumnType("bit");
 
+                    b.Property<string>("IHC_CC_Related")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsShow")
                         .HasColumnType("bit");
 
@@ -2240,6 +2793,9 @@ namespace RMS.Migrations
 
                     b.Property<bool>("MoveToRel")
                         .HasColumnType("bit");
+
+                    b.Property<int?>("NoeFB")
+                        .HasColumnType("int");
 
                     b.Property<long?>("ParentId")
                         .HasColumnType("bigint");
@@ -2261,7 +2817,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("ParentId");
 
-                    b.ToTable("tblItemsHasCondition_ConditionContext");
+                    b.ToTable("tblItemsHasCondition_ConditionContext", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsItemsHasHaml", b =>
@@ -2284,7 +2840,7 @@ namespace RMS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("tblItemsHasHaml");
+                    b.ToTable("tblItemsHasHaml", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsItemsRelatedToItemHaml", b =>
@@ -2303,6 +2859,9 @@ namespace RMS.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("NoeFB")
+                        .HasColumnType("int");
+
                     b.Property<long>("Year")
                         .HasColumnType("bigint");
 
@@ -2317,7 +2876,7 @@ namespace RMS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("tblItemsRelatedToItemHaml");
+                    b.ToTable("tblItemsRelatedToItemHaml", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsKhakRiziBarAvord", b =>
@@ -2368,7 +2927,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("BarAvordId");
 
-                    b.ToTable("tblKhakRiziBarAvord");
+                    b.ToTable("tblKhakRiziBarAvord", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsKhakRiziBarAvordRizMetre", b =>
@@ -2404,10 +2963,10 @@ namespace RMS.Migrations
 
                     b.HasIndex("RizMetreUserId");
 
-                    b.ToTable("tblKhakRiziBarAvordRizMetre");
+                    b.ToTable("tblKhakRiziBarAvordRizMetre", "dbo");
                 });
 
-            modelBuilder.Entity("RMS.Models.Entity.clsKhakRiziDarsad", b =>
+            modelBuilder.Entity("RMS.Models.Entity.clsKhakRiziCondition", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -2415,10 +2974,26 @@ namespace RMS.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<int>("Darsad")
-                        .HasColumnType("int");
+                    b.Property<string>("Condition")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FBShomareh")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FBShomarehCondition2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FinalWork")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("NoeDaneBandi")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NoeFB")
                         .HasColumnType("int");
 
                     b.Property<int>("NoeHajmKhakRizi")
@@ -2432,7 +3007,7 @@ namespace RMS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("tblKhakRiziDarsad");
+                    b.ToTable("tblKhakRiziCondition", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsKhakRiziEzafeBaha", b =>
@@ -2453,6 +3028,9 @@ namespace RMS.Migrations
                     b.Property<Guid>("KhakRiziBarAvordId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<decimal?>("Meghdar")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<DateTime?>("RemoveDateTime")
                         .HasColumnType("datetime2");
 
@@ -2468,7 +3046,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("KhakRiziBarAvordId");
 
-                    b.ToTable("tblKhakRiziEzafeBaha");
+                    b.ToTable("tblKhakRiziEzafeBaha", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsKhakRiziEzafeBahaRizMetre", b =>
@@ -2504,7 +3082,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("RizMetreUserId");
 
-                    b.ToTable("tblKhakRiziEzafeBahasRizMetre");
+                    b.ToTable("tblKhakRiziEzafeBahasRizMetre", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsKhakRiziItem", b =>
@@ -2528,7 +3106,7 @@ namespace RMS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("tblKhakRiziItem");
+                    b.ToTable("tblKhakRiziItem", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsKiloMetrazhOfHaml", b =>
@@ -2554,7 +3132,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("OperationOfHamlId");
 
-                    b.ToTable("tblKiloMetrazhOfHaml");
+                    b.ToTable("tblKiloMetrazhOfHaml", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsMashinType", b =>
@@ -2579,7 +3157,59 @@ namespace RMS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("tblMashinType");
+                    b.ToTable("tblMashinType", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsMenuItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Icon")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ParentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Url")
+                        .HasMaxLength(400)
+                        .HasColumnType("nvarchar(400)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentId");
+
+                    b.ToTable("tblMenuItem", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsMenuPermission", b =>
+                {
+                    b.Property<int>("MenuItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PermissionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MenuItemId", "PermissionId");
+
+                    b.HasIndex("PermissionId");
+
+                    b.ToTable("tblMenuPermission", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsNiroMasalehMashin", b =>
@@ -2594,13 +3224,24 @@ namespace RMS.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("NoeFB")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("VahedId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.ToTable("tblNiroMasalehMashin");
+                    b.HasIndex("VahedId");
+
+                    b.ToTable("tblNiroMasalehMashin", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsNiroZaribKarKard", b =>
@@ -2633,7 +3274,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("OperationId");
 
-                    b.ToTable("tblNiroZaribKarKard");
+                    b.ToTable("tblNiroZaribKarKard", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsNoeKhakBardari", b =>
@@ -2660,7 +3301,7 @@ namespace RMS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("tblNoeKhakBardari");
+                    b.ToTable("tblNoeKhakBardari", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsNoeKhakBardariEzafeBaha", b =>
@@ -2705,7 +3346,7 @@ namespace RMS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("tblNoeKhakBardariEzafeBaha");
+                    b.ToTable("tblNoeKhakBardariEzafeBaha", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsNoeKhakBardari_NoeKhakBardariEzafeBaha", b =>
@@ -2728,7 +3369,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("NoeKhakBardariId");
 
-                    b.ToTable("tblNoeKhakBardari_NoeKhakBardariEzafeBaha");
+                    b.ToTable("tblNoeKhakBardari_NoeKhakBardariEzafeBaha", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsOperation", b =>
@@ -2744,6 +3385,9 @@ namespace RMS.Migrations
 
                     b.Property<string>("LatinName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("NoeFB")
+                        .HasColumnType("int");
 
                     b.Property<string>("OperationName")
                         .IsRequired()
@@ -2765,7 +3409,7 @@ namespace RMS.Migrations
                     b.HasIndex("Id", "Year")
                         .IsUnique();
 
-                    b.ToTable("tblOperation");
+                    b.ToTable("tblOperation", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsOperationAmelMoaser", b =>
@@ -2787,7 +3431,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("OperationId");
 
-                    b.ToTable("tblOperationAmelMoaser");
+                    b.ToTable("tblOperationAmelMoaser", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsOperationDetail", b =>
@@ -2813,17 +3457,23 @@ namespace RMS.Migrations
                     b.Property<decimal?>("MinValue")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int>("NoeFB")
+                        .HasColumnType("int");
+
                     b.Property<long>("OperationId")
                         .HasColumnType("bigint");
 
                     b.Property<bool>("UseMinForInsert")
                         .HasColumnType("bit");
 
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("OperationId");
 
-                    b.ToTable("tblOperationDetail");
+                    b.ToTable("tblOperationDetail", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsOperationHasAddedOperations", b =>
@@ -2849,7 +3499,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("OperationId");
 
-                    b.ToTable("tblOperationHasAddedOperations");
+                    b.ToTable("tblOperationHasAddedOperations", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsOperationHasAddedOperationsLevelNumber", b =>
@@ -2870,7 +3520,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("OperationHasAddedOperationsId");
 
-                    b.ToTable("tblOperationHasAddedOperationsLevelNumber");
+                    b.ToTable("tblOperationHasAddedOperationsLevelNumber", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsOperationHasAddedOperationsType", b =>
@@ -2891,7 +3541,7 @@ namespace RMS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("tblOperationHasAddedOperationsType");
+                    b.ToTable("tblOperationHasAddedOperationsType", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsOperation_ItemsFB", b =>
@@ -2902,12 +3552,21 @@ namespace RMS.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
+                    b.Property<bool?>("EnableDeleting")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("EnableEditing")
+                        .HasColumnType("bit");
+
                     b.Property<string>("ItemsFBShomareh")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NextOperation")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NoeFB")
+                        .HasColumnType("int");
 
                     b.Property<long>("OperationId")
                         .HasColumnType("bigint");
@@ -2920,7 +3579,7 @@ namespace RMS.Migrations
                     b.HasIndex("OperationId")
                         .IsUnique();
 
-                    b.ToTable("tblOperation_ItemsFB");
+                    b.ToTable("tblOperation_ItemsFB", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsOperationsOfHaml", b =>
@@ -2937,7 +3596,7 @@ namespace RMS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("tblOperationsOfHaml");
+                    b.ToTable("tblOperationsOfHaml", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsOperationsOfHamlAndItems", b =>
@@ -2969,7 +3628,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("OperationsOfHamlId");
 
-                    b.ToTable("tblOperationsOfHamlAndItems");
+                    b.ToTable("tblOperationsOfHamlAndItems", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsOperationsOfHaml_ItemsHasHaml", b =>
@@ -2992,7 +3651,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("OperationsOfHamlId");
 
-                    b.ToTable("tblOperationsOfHaml_ItemsHasHaml");
+                    b.ToTable("tblOperationsOfHaml_ItemsHasHaml", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsOstan", b =>
@@ -3009,7 +3668,7 @@ namespace RMS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("tblOstan");
+                    b.ToTable("tblOstan", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsPayKaniInfoForBarAvord", b =>
@@ -3053,7 +3712,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("BaravordUserId");
 
-                    b.ToTable("tblPayKaniInfoForBarAvord");
+                    b.ToTable("tblPayKaniInfoForBarAvord", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsPayKaniInfoForBarAvordDetails", b =>
@@ -3099,7 +3758,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("PayKaniInfoForBarAvordId");
 
-                    b.ToTable("tblPayKaniInfoForBarAvordDetails");
+                    b.ToTable("tblPayKaniInfoForBarAvordDetails", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsPayKaniInfoForBarAvordDetailsMore", b =>
@@ -3137,7 +3796,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("PayKaniInfoForBarAvordDetailsId");
 
-                    b.ToTable("tblPayKaniInfoForBarAvordDetailsMore");
+                    b.ToTable("tblPayKaniInfoForBarAvordDetailsMore", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsPayKaniInfoForBarAvordDetailsRizMetre", b =>
@@ -3173,7 +3832,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("RizMetreUserId");
 
-                    b.ToTable("tblPayKaniInfoForBarAvordDetailsRizMetre");
+                    b.ToTable("tblPayKaniInfoForBarAvordDetailsRizMetre", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsPayKaniInfoForBarAvordEzafeBaha", b =>
@@ -3209,7 +3868,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("PayKaniInfoForBarAvordId");
 
-                    b.ToTable("tblPayKaniInfoForBarAvordEzafeBaha");
+                    b.ToTable("tblPayKaniInfoForBarAvordEzafeBaha", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsPayKaniInfoForBarAvordEzafeBahaRizMetre", b =>
@@ -3245,7 +3904,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("RizMetreUserId");
 
-                    b.ToTable("tblPayKaniInfoForBarAvordEzafeBahaRizMetre");
+                    b.ToTable("tblPayKaniInfoForBarAvordEzafeBahaRizMetre", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsPayKaniInfoForBarAvordMore", b =>
@@ -3283,7 +3942,40 @@ namespace RMS.Migrations
 
                     b.HasIndex("PayKaniInfoForBarAvordId");
 
-                    b.ToTable("tblPayKaniInfoForBarAvordMore");
+                    b.ToTable("tblPayKaniInfoForBarAvordMore", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsPermission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Group")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Key")
+                        .IsUnique();
+
+                    b.ToTable("tblPermission", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsPolVaAbroBarAvord", b =>
@@ -3295,8 +3987,8 @@ namespace RMS.Migrations
                     b.Property<Guid>("BarAvordId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<double>("DahaneAbro")
-                        .HasColumnType("float");
+                    b.Property<decimal>("DahaneAbro")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("HadAksarErtefaKoole")
                         .HasColumnType("decimal(18,2)");
@@ -3348,7 +4040,46 @@ namespace RMS.Migrations
 
                     b.HasIndex("BarAvordId");
 
-                    b.ToTable("tblPolVaAbroBarAvord");
+                    b.ToTable("tblPolVaAbroBarAvord", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsPolVaAbroBarAvordRizMetre", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("InsertDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("PolDetailType")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("PolVaAbroBarAvordId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("RemoveDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("RizMetreId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserInserter")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserRemover")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("PolVaAbroBarAvordId");
+
+                    b.HasIndex("RizMetreId");
+
+                    b.ToTable("tblPolVaAbroBarAvordRizMetre", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsProject", b =>
@@ -3374,7 +4105,7 @@ namespace RMS.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("tblProject");
+                    b.ToTable("tblProject", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsProjectCalendar", b =>
@@ -3414,7 +4145,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("GeneralProjectTimingId");
 
-                    b.ToTable("tblProjectCalendar");
+                    b.ToTable("tblProjectCalendar", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsQuesForAbnieFani", b =>
@@ -3452,7 +4183,7 @@ namespace RMS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("tblQuesForAbnieFani");
+                    b.ToTable("tblQuesForAbnieFani", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsQuesForAbnieFaniValues", b =>
@@ -3494,7 +4225,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("QuestionForAbnieFaniId");
 
-                    b.ToTable("tblQuesForAbnieFaniValues");
+                    b.ToTable("tblQuesForAbnieFaniValues", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsRizKiloMetrazhOfHaml", b =>
@@ -3538,7 +4269,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("KiloMetrazhOfHamlId");
 
-                    b.ToTable("tblRizKiloMetrazhOfHaml");
+                    b.ToTable("tblRizKiloMetrazhOfHaml", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsRizMetreForBarAvordAddedBoard", b =>
@@ -3574,7 +4305,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("RizMetreId");
 
-                    b.ToTable("tblRizMetreForBarAvordAddedBoard");
+                    b.ToTable("tblRizMetreForBarAvordAddedBoard", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsRizMetreForBarAvordAddedBoardStand", b =>
@@ -3610,7 +4341,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("RizMetreId");
 
-                    b.ToTable("tblRizMetreForBarAvordAddedBoardStand");
+                    b.ToTable("tblRizMetreForBarAvordAddedBoardStand", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsRizMetreStar", b =>
@@ -3653,6 +4384,9 @@ namespace RMS.Migrations
                     b.Property<string>("ShomarehNew")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("TajmieItem")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal?>("Tedad")
                         .HasColumnType("decimal(18,4)");
 
@@ -3672,7 +4406,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("ItemFBStarId");
 
-                    b.ToTable("tblRizMetreStar");
+                    b.ToTable("tblRizMetreStar", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsRizMetreUsers", b =>
@@ -3730,6 +4464,9 @@ namespace RMS.Migrations
                     b.Property<string>("ShomarehNew")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("TajmieItem")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal?>("Tedad")
                         .HasColumnType("decimal(18,4)");
 
@@ -3758,7 +4495,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("OperationsOfHamlId");
 
-                    b.ToTable("tblRizMetreUsers");
+                    b.ToTable("tblRizMetreUsers", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsRizMetreUsersHistory", b =>
@@ -3820,7 +4557,22 @@ namespace RMS.Migrations
 
                     b.HasIndex("RizMetreUsersId");
 
-                    b.ToTable("tblRizMetreUsersHistory");
+                    b.ToTable("tblRizMetreUsersHistory", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsRolePermission", b =>
+                {
+                    b.Property<string>("RoleId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("PermissionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("RoleId", "PermissionId");
+
+                    b.HasIndex("PermissionId");
+
+                    b.ToTable("tblRolePermission", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsSegmentsFromGEODB", b =>
@@ -3859,7 +4611,51 @@ namespace RMS.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("tblSegmentsFromGEODB");
+                    b.ToTable("tblSegmentsFromGEODB", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsSetting", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool?>("BoolValue")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("InsertDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal?>("NumberValue")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("RemoveDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("SettingType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StringValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserInserter")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserRemover")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("VariableType")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("tblSetting", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsShahr", b =>
@@ -3881,7 +4677,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("OstanId");
 
-                    b.ToTable("tblShahr");
+                    b.ToTable("tblShahr", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsShomarehFBForQuesForAbnieFani", b =>
@@ -3903,7 +4699,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("QuesForAbnieFaniId");
 
-                    b.ToTable("tblShomarehFBForQuesForAbnieFani");
+                    b.ToTable("tblShomarehFBForQuesForAbnieFani", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsSubItemsAddingToFB", b =>
@@ -3944,7 +4740,200 @@ namespace RMS.Migrations
 
                     b.HasIndex("ItemsAddingToFBId");
 
-                    b.ToTable("tblSubItemsAddingToFB");
+                    b.ToTable("tblSubItemsAddingToFB", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsTadilIndexFosoul", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("CourseCode")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CourseType")
+                        .HasColumnType("int");
+
+                    b.Property<long>("FosoulId")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal>("IndexValue")
+                        .HasColumnType("decimal(18,3)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FosoulId");
+
+                    b.ToTable("tblTadilIndexFosoul", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsTadilIndexNoeFB", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("CourseCode")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CourseType")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("IndexValue")
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<int>("NoeFB")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("tblTadilIndexNoeFB", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsTajhizKargahDarsad", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BarAvordUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Darsad")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<DateTime?>("InsertDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("Meghdar")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<int>("NoeFB")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("RemoveDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UserInserter")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserRemover")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("BarAvordUserId");
+
+                    b.ToTable("tblTajhizKargahDarsad", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsTajmieFBItems", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("InsertDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ItemFBShomareh")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("RemoveDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("TajmieFosoulItemId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid?>("UserInserter")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserRemover")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<long>("Year")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("TajmieFosoulItemId");
+
+                    b.ToTable("tblTajmieFBItems", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsTajmieFosoul", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("FaslCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NoeFBId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("tblTajmieFosoul", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsTajmieFosoulItems", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("ItemCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MainItem")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Sharh")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("TajmieFosoulId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Vahed")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("calculateValueType")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TajmieFosoulId");
+
+                    b.ToTable("tblTajmieFosoulItems", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsUserDetail", b =>
@@ -3958,10 +4947,15 @@ namespace RMS.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CEOName")
+                    b.Property<Guid?>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CompanyName")
+                    b.Property<string>("LastName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NationalCode")
@@ -3974,15 +4968,70 @@ namespace RMS.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("userType")
-                        .HasColumnType("int");
-
                     b.HasKey("ID");
+
+                    b.HasIndex("CompanyId");
 
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("tblUserDetail");
+                    b.ToTable("tblUserDetail", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsUserNotification", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("BarAvordId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("InsertDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("RelateLink")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("RemoveDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ShortDes")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserInserter")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserRemover")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("notifyType")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("BarAvordId");
+
+                    b.ToTable("tblUserNotification", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsVahed", b =>
@@ -3999,7 +5048,410 @@ namespace RMS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("tblVahed");
+                    b.ToTable("tblVahed", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsWorkflow", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool?>("Auto")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("InsertDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSystem")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("OwnerUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("RemoveDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UserInserter")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserRemover")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("proccesType")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("tblWorkflow", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsWorkflowAction", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Controller")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("tblWorkflowAction", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsWorkflowAssignment", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("AssignDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("AssignedByUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CompletedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("InsertDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("RemoveDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("Result")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RoundNo")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<Guid?>("UserInserter")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserRemover")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("WorkflowInstanceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("WorkflowStepId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("WorkflowInstanceId");
+
+                    b.HasIndex("WorkflowStepId");
+
+                    b.ToTable("tblWorkflowAssignment", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsWorkflowHistory", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Action")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ActionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("InsertDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("RemoveDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("RoundNo")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<Guid?>("UserInserter")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserRemover")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("WorkflowInstanceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("WorkflowStepId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("WorkflowInstanceId");
+
+                    b.ToTable("tblWorkflowHistory", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsWorkflowInstance", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CurrentStepId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("EntityType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("InsertDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("RemoveDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("UserInserter")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserRemover")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("WorkflowId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CurrentStepId");
+
+                    b.HasIndex("WorkflowId");
+
+                    b.ToTable("tblWorkflowInstance", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsWorkflowStep", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("AllowReturn")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("InsertDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsFinal")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("MinimumRequiredResponses")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("NeedSelectReceiver")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("NextStepId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("PreviousStepId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ReceiverMode")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("RemoveDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("RequireForm")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("UserInserter")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserRemover")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("WorkflowActionId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("WorkflowId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("WorkflowActionId");
+
+                    b.HasIndex("WorkflowId");
+
+                    b.ToTable("tblWorkflowStep", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsWorkflowStepRole", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("InsertDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("RemoveDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<Guid?>("UserInserter")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserRemover")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("WorkflowStepId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("WorkflowStepId");
+
+                    b.ToTable("tblWorkflowStepRole", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsWorkflowStepUser", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("InsertDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("RemoveDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<Guid?>("UserInserter")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserRemover")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("WorkflowStepId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("WorkflowStepId");
+
+                    b.ToTable("tblWorkflowStepUser", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsZarayebFosoul", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("FaslId")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal?>("ZaribBalaSari")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<decimal?>("ZaribManteghe")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FaslId");
+
+                    b.ToTable("tblZarayebFosoul", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsZarayebTabdil", b =>
@@ -4039,7 +5491,7 @@ namespace RMS.Migrations
 
                     b.HasIndex("OperationsOfHamlId");
 
-                    b.ToTable("tblZarayebTabdil");
+                    b.ToTable("tblZarayebTabdil", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsZaribBalaSari", b =>
@@ -4070,7 +5522,106 @@ namespace RMS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("tblZaribBalaSari");
+                    b.ToTable("tblZaribBalaSari", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsZaribPishnahadiPaymanKar", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BarAvordUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CompanyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("InsertDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal?>("PishnahadPaymanKarTajhiz")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("RemoveDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UserInserter")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserRemover")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("ZaribJozTajhiz")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("BarAvordUserId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("tblZaribPishnahadiPaymanKar", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsZaribPishnahadiPaymanKarFosoul", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("BaravordFasl")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("BaravordFaslBaZarib")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("InsertDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("NoeFBId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("PishnahadPaymanKar")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("RemoveDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("UserInserter")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("UserRemover")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("ZaribJoz")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<Guid>("ZaribPishnahadiPaymanKarId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ZaribPishnahadiPaymanKarId");
+
+                    b.ToTable("tblZaribPishnahadiPaymanKarFosoul", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsZaribRoadType", b =>
@@ -4095,7 +5646,64 @@ namespace RMS.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("tblZaribRoadType");
+                    b.ToTable("tblZaribRoadType", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.StoredProceduresData.GetOperationNameHasValueDto", b =>
+                {
+                    b.Property<string>("MaxCodeAmelMoaser")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MaxMeghdarMeghias")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("OperationId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("OperationLatinName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("ParentId")
+                        .HasColumnType("bigint");
+
+                    b.ToTable("GetOperationNameHasValueDto", "dbo");
+                });
+
+            modelBuilder.Entity("RMS.Models.StoredProceduresData.OperationNameAnalizBahaWithOperationDto", b =>
+                {
+                    b.Property<string>("CodeAmel")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsAmelMoaser")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MashinTypeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("MeghdarMeghias")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("NoeMashinAlatName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OperationExceptOpNodeLatinName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ZaribKarKard")
+                        .HasColumnType("int");
+
+                    b.ToTable("OperationNameAnalizBahaWithOperationDto", "dbo");
                 });
 
             modelBuilder.Entity("RMS.Models.StoredProceduresData.QuesForAbnieFaniValuesDto", b =>
@@ -4122,7 +5730,7 @@ namespace RMS.Migrations
                     b.Property<decimal>("Value")
                         .HasColumnType("decimal(18,2)");
 
-                    b.ToTable("QuesForAbnieFaniValuesDto");
+                    b.ToTable("QuesForAbnieFaniValuesDto", "dbo");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -4449,6 +6057,121 @@ namespace RMS.Migrations
                     b.Navigation("RizMetreUser");
                 });
 
+            modelBuilder.Entity("RMS.Models.Entity.clsBarAvordKarfarma", b =>
+                {
+                    b.HasOne("RMS.Models.Entity.clsBaravordUser", "BarAvordUser")
+                        .WithMany()
+                        .HasForeignKey("BarAvordUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RMS.Models.Entity.clsCompany", "Company")
+                        .WithMany()
+                        .HasForeignKey("KarFarmaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BarAvordUser");
+
+                    b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsBarAvordMoshaver", b =>
+                {
+                    b.HasOne("RMS.Models.Entity.clsBaravordUser", "BarAvordUser")
+                        .WithMany()
+                        .HasForeignKey("BarAvordUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RMS.Models.Entity.clsCompany", "Company")
+                        .WithMany()
+                        .HasForeignKey("MoshaverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BarAvordUser");
+
+                    b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsBarAvordPaymanKar", b =>
+                {
+                    b.HasOne("RMS.Models.Entity.clsBaravordUser", "BarAvordUser")
+                        .WithMany()
+                        .HasForeignKey("BarAvordUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RMS.Models.Entity.clsCompany", "Company")
+                        .WithMany()
+                        .HasForeignKey("PayManKarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BarAvordUser");
+
+                    b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsBarAvordUserTajmie", b =>
+                {
+                    b.HasOne("RMS.Models.Entity.clsBaravordUser", "BaravordUser")
+                        .WithMany()
+                        .HasForeignKey("BarAvordUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RMS.Models.Entity.clsTajmieFosoulItems", "TajmieFosoulItem")
+                        .WithMany()
+                        .HasForeignKey("TajmieFosoulItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BaravordUser");
+
+                    b.Navigation("TajmieFosoulItem");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsBaravordUser", b =>
+                {
+                    b.HasOne("RMS.Models.Entity.clsBaravordUser", "BaravordUser")
+                        .WithMany()
+                        .HasForeignKey("ParentId");
+
+                    b.Navigation("BaravordUser");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsBaravordUserAccess", b =>
+                {
+                    b.HasOne("RMS.Models.Entity.clsBaravordUser", "BaravordUser")
+                        .WithMany()
+                        .HasForeignKey("BaravordUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BaravordUser");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsBaravordWorkflow", b =>
+                {
+                    b.HasOne("RMS.Models.Entity.clsBaravordUser", "BaravordUser")
+                        .WithMany()
+                        .HasForeignKey("BaravordUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RMS.Models.Entity.clsWorkflow", "Workflow")
+                        .WithMany()
+                        .HasForeignKey("WorkflowId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BaravordUser");
+
+                    b.Navigation("Workflow");
+                });
+
             modelBuilder.Entity("RMS.Models.Entity.clsBaravordZaribBalaSari", b =>
                 {
                     b.HasOne("RMS.Models.Entity.clsBaravordUser", "BaravordUser")
@@ -4480,6 +6203,17 @@ namespace RMS.Migrations
                         .IsRequired();
 
                     b.Navigation("Type");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsCompanyManagementHistory", b =>
+                {
+                    b.HasOne("RMS.Models.Entity.clsCompany", "Company")
+                        .WithMany("lstCompanyManagementHistory")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsConditionContext", b =>
@@ -4537,35 +6271,32 @@ namespace RMS.Migrations
                     b.Navigation("BaravordUser");
                 });
 
-            modelBuilder.Entity("RMS.Models.Entity.clsFosoulItem", b =>
-                {
-                    b.HasOne("RMS.Models.Entity.clsFosoul", "Fosoul")
-                        .WithMany()
-                        .HasForeignKey("FosoulId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Fosoul");
-                });
-
             modelBuilder.Entity("RMS.Models.Entity.clsGeneralProjectTiming", b =>
                 {
-                    b.HasOne("RMS.Models.Entity.clsProject", "Project")
+                    b.HasOne("RMS.Models.Entity.clsBaravordUser", "BaravordUser")
                         .WithMany()
-                        .HasForeignKey("ProjectId")
+                        .HasForeignKey("BaravordUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Project");
+                    b.Navigation("BaravordUser");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsItemFBStar", b =>
                 {
+                    b.HasOne("RMS.Models.Entity.clsBaravordUser", "BaravordUser")
+                        .WithMany()
+                        .HasForeignKey("BaravordId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("RMS.Models.Entity.clsVahed", "Vahed")
                         .WithMany()
                         .HasForeignKey("VahedId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("BaravordUser");
 
                     b.Navigation("Vahed");
                 });
@@ -4628,6 +6359,25 @@ namespace RMS.Migrations
                     b.Navigation("ConditionGroup");
 
                     b.Navigation("ItemsHasCondition_ConditionContext");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsItemsHasConditionAddedToFBRizMetre", b =>
+                {
+                    b.HasOne("RMS.Models.Entity.clsItemsHasConditionAddedToFB", "itemsHasConditionAddedToFB")
+                        .WithMany()
+                        .HasForeignKey("ItemsHasConditionAddedToFBId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RMS.Models.Entity.clsRizMetreUsers", "RizMetreUser")
+                        .WithMany()
+                        .HasForeignKey("RizMetreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("RizMetreUser");
+
+                    b.Navigation("itemsHasConditionAddedToFB");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsItemsHasCondition_ConditionContext", b =>
@@ -4740,6 +6490,46 @@ namespace RMS.Migrations
                     b.Navigation("BarAvordUser");
 
                     b.Navigation("OperationsOfHaml");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsMenuItem", b =>
+                {
+                    b.HasOne("RMS.Models.Entity.clsMenuItem", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Parent");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsMenuPermission", b =>
+                {
+                    b.HasOne("RMS.Models.Entity.clsMenuItem", "MenuItem")
+                        .WithMany("MenuPermissions")
+                        .HasForeignKey("MenuItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RMS.Models.Entity.clsPermission", "Permission")
+                        .WithMany("MenuPermissions")
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MenuItem");
+
+                    b.Navigation("Permission");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsNiroMasalehMashin", b =>
+                {
+                    b.HasOne("RMS.Models.Entity.clsVahed", "Vahed")
+                        .WithMany()
+                        .HasForeignKey("VahedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Vahed");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsNiroZaribKarKard", b =>
@@ -5003,6 +6793,25 @@ namespace RMS.Migrations
                     b.Navigation("BaravordUser");
                 });
 
+            modelBuilder.Entity("RMS.Models.Entity.clsPolVaAbroBarAvordRizMetre", b =>
+                {
+                    b.HasOne("RMS.Models.Entity.clsPolVaAbroBarAvord", "PolVaAbroBarAvord")
+                        .WithMany()
+                        .HasForeignKey("PolVaAbroBarAvordId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RMS.Models.Entity.clsRizMetreUsers", "RizMetreUsers")
+                        .WithMany()
+                        .HasForeignKey("RizMetreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PolVaAbroBarAvord");
+
+                    b.Navigation("RizMetreUsers");
+                });
+
             modelBuilder.Entity("RMS.Models.Entity.clsProjectCalendar", b =>
                 {
                     b.HasOne("RMS.Models.Entity.clsGeneralProjectTiming", "GeneralProjectTiming")
@@ -5121,6 +6930,25 @@ namespace RMS.Migrations
                     b.Navigation("RizMetreUsers");
                 });
 
+            modelBuilder.Entity("RMS.Models.Entity.clsRolePermission", b =>
+                {
+                    b.HasOne("RMS.Models.Entity.clsPermission", "Permission")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Permission");
+
+                    b.Navigation("Role");
+                });
+
             modelBuilder.Entity("RMS.Models.Entity.clsSegmentsFromGEODB", b =>
                 {
                     b.HasOne("RMS.Models.Entity.clsOperation", "Operation")
@@ -5173,15 +7001,205 @@ namespace RMS.Migrations
                     b.Navigation("ItemsAddingToFB");
                 });
 
+            modelBuilder.Entity("RMS.Models.Entity.clsTadilIndexFosoul", b =>
+                {
+                    b.HasOne("RMS.Models.Entity.clsFosoul", "Fosoul")
+                        .WithMany()
+                        .HasForeignKey("FosoulId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Fosoul");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsTajhizKargahDarsad", b =>
+                {
+                    b.HasOne("RMS.Models.Entity.clsBaravordUser", "BarAvordUser")
+                        .WithMany()
+                        .HasForeignKey("BarAvordUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BarAvordUser");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsTajmieFBItems", b =>
+                {
+                    b.HasOne("RMS.Models.Entity.clsTajmieFosoulItems", "TajmieFosoulItem")
+                        .WithMany()
+                        .HasForeignKey("TajmieFosoulItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TajmieFosoulItem");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsTajmieFosoulItems", b =>
+                {
+                    b.HasOne("RMS.Models.Entity.clsTajmieFosoul", "TajmieFosoul")
+                        .WithMany("TajmieFosoulItems")
+                        .HasForeignKey("TajmieFosoulId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TajmieFosoul");
+                });
+
             modelBuilder.Entity("RMS.Models.Entity.clsUserDetail", b =>
                 {
+                    b.HasOne("RMS.Models.Entity.clsCompany", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
                     b.HasOne("ApplicationUser", "User")
                         .WithOne("UserDetail")
                         .HasForeignKey("RMS.Models.Entity.clsUserDetail", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Company");
+
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsUserNotification", b =>
+                {
+                    b.HasOne("RMS.Models.Entity.clsBaravordUser", "baravordUser")
+                        .WithMany()
+                        .HasForeignKey("BarAvordId");
+
+                    b.Navigation("baravordUser");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsWorkflowAssignment", b =>
+                {
+                    b.HasOne("ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RMS.Models.Entity.clsWorkflowInstance", "WorkflowInstance")
+                        .WithMany()
+                        .HasForeignKey("WorkflowInstanceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RMS.Models.Entity.clsWorkflowStep", "WorkflowStep")
+                        .WithMany()
+                        .HasForeignKey("WorkflowStepId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+
+                    b.Navigation("WorkflowInstance");
+
+                    b.Navigation("WorkflowStep");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsWorkflowHistory", b =>
+                {
+                    b.HasOne("ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RMS.Models.Entity.clsWorkflowInstance", "WorkflowInstance")
+                        .WithMany()
+                        .HasForeignKey("WorkflowInstanceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+
+                    b.Navigation("WorkflowInstance");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsWorkflowInstance", b =>
+                {
+                    b.HasOne("RMS.Models.Entity.clsWorkflowStep", "CurrentStep")
+                        .WithMany()
+                        .HasForeignKey("CurrentStepId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("RMS.Models.Entity.clsWorkflow", "Workflow")
+                        .WithMany()
+                        .HasForeignKey("WorkflowId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CurrentStep");
+
+                    b.Navigation("Workflow");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsWorkflowStep", b =>
+                {
+                    b.HasOne("RMS.Models.Entity.clsWorkflowAction", "WorkflowAction")
+                        .WithMany()
+                        .HasForeignKey("WorkflowActionId");
+
+                    b.HasOne("RMS.Models.Entity.clsWorkflow", "Workflow")
+                        .WithMany("WorkflowSteps")
+                        .HasForeignKey("WorkflowId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Workflow");
+
+                    b.Navigation("WorkflowAction");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsWorkflowStepRole", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RMS.Models.Entity.clsWorkflowStep", "WorkflowStep")
+                        .WithMany("Roles")
+                        .HasForeignKey("WorkflowStepId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+
+                    b.Navigation("WorkflowStep");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsWorkflowStepUser", b =>
+                {
+                    b.HasOne("ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RMS.Models.Entity.clsWorkflowStep", "WorkflowStep")
+                        .WithMany("Users")
+                        .HasForeignKey("WorkflowStepId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+
+                    b.Navigation("WorkflowStep");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsZarayebFosoul", b =>
+                {
+                    b.HasOne("RMS.Models.Entity.clsFosoul", "Fosoul")
+                        .WithMany()
+                        .HasForeignKey("FaslId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Fosoul");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsZarayebTabdil", b =>
@@ -5193,6 +7211,34 @@ namespace RMS.Migrations
                         .IsRequired();
 
                     b.Navigation("OperationsOfHaml");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsZaribPishnahadiPaymanKar", b =>
+                {
+                    b.HasOne("RMS.Models.Entity.clsBaravordUser", "baravordUser")
+                        .WithMany()
+                        .HasForeignKey("BarAvordUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RMS.Models.Entity.clsCompany", "company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId");
+
+                    b.Navigation("baravordUser");
+
+                    b.Navigation("company");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsZaribPishnahadiPaymanKarFosoul", b =>
+                {
+                    b.HasOne("RMS.Models.Entity.clsZaribPishnahadiPaymanKar", "ZaribPishnahadiPaymanKar")
+                        .WithMany("lstZaribPishnahadiPaymanKarFosoul")
+                        .HasForeignKey("ZaribPishnahadiPaymanKarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ZaribPishnahadiPaymanKar");
                 });
 
             modelBuilder.Entity("ApplicationUser", b =>
@@ -5211,9 +7257,21 @@ namespace RMS.Migrations
                     b.Navigation("lstAKhInfoForEBRizMetre");
                 });
 
+            modelBuilder.Entity("RMS.Models.Entity.clsCompany", b =>
+                {
+                    b.Navigation("lstCompanyManagementHistory");
+                });
+
             modelBuilder.Entity("RMS.Models.Entity.clsKhakRiziEzafeBaha", b =>
                 {
                     b.Navigation("KhakRiziEzafeBahaRizMetres");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsMenuItem", b =>
+                {
+                    b.Navigation("Children");
+
+                    b.Navigation("MenuPermissions");
                 });
 
             modelBuilder.Entity("RMS.Models.Entity.clsOperation", b =>
@@ -5232,6 +7290,35 @@ namespace RMS.Migrations
             modelBuilder.Entity("RMS.Models.Entity.clsPayKaniInfoForBarAvordEzafeBaha", b =>
                 {
                     b.Navigation("lstPayKaniInfoForEBRizMetre");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsPermission", b =>
+                {
+                    b.Navigation("MenuPermissions");
+
+                    b.Navigation("RolePermissions");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsTajmieFosoul", b =>
+                {
+                    b.Navigation("TajmieFosoulItems");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsWorkflow", b =>
+                {
+                    b.Navigation("WorkflowSteps");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsWorkflowStep", b =>
+                {
+                    b.Navigation("Roles");
+
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("RMS.Models.Entity.clsZaribPishnahadiPaymanKar", b =>
+                {
+                    b.Navigation("lstZaribPishnahadiPaymanKarFosoul");
                 });
 #pragma warning restore 612, 618
         }

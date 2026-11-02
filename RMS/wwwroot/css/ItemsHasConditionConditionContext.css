@@ -1,0 +1,168 @@
+﻿.table-container {
+    height: calc(100vh - 570px);
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+
+.fixed-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+
+.table-container thead th {
+    position: sticky;
+    top: 0;
+    background: #343a40;
+    color: white;
+    z-index: 10;
+    text-align: center;
+}
+
+
+td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+
+.wrap-text {
+    white-space: normal;
+    word-break: break-word;
+}
+
+/*
+    /////////////////////////
+    tblItemsAddingToFB
+    /////////////////////////
+*/
+
+
+
+.detail-row {
+    background: #f8f9fa;
+}
+
+    .detail-row td {
+        padding: 15px;
+    }
+
+.detail-table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+    .detail-table th {
+        background: #ececec;
+        text-align: center;
+        font-size: 13px;
+    }
+
+    .detail-table td {
+        vertical-align: middle;
+        text-align: center;
+    }
+
+
+
+/* ردیف انتخاب شده */
+.main-row.active-row {
+    background: #dbeafe !important;
+    border-right: 4px solid #2563eb;
+    font-weight: 600;
+}
+
+/* هاور */
+.main-row:hover {
+    cursor: pointer;
+    background: #f5f9ff;
+}
+
+/* ردیف جزئیات */
+.detail-row {
+    background: #f8fbff;
+}
+
+/* هدر جدول فرزند */
+.detail-table thead th {
+    background: #2563eb !important;
+    color: #fff;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* عنوان بالای جدول فرزند */
+.detail-title {
+    background: #2563eb;
+    color: white;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 5px 5px 0 0;
+    margin-bottom: 0;
+}
+
+
+.selected-row {
+    background: #8aa8d1 !important;
+    font-weight: bold;
+}
+
+.groupRow {
+    cursor: pointer;
+}
+
+.conditionRow {
+    cursor: pointer;
+}
+
+    .groupRow:hover,
+    .conditionRow:hover {
+        background: #f8f9fa;
+    }
+
+
+
+.btn {
+    font-size: 14px;
+}
+
+.table td {
+    padding: 5px !important;
+}
+
+
+.group-body {
+    display: block;
+    height: 176px; /* تقریباً 4 ردیف */
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+    .group-body tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+    }
+
+#tblGroup thead,
+#tblGroup tfoot {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+
+.form-check-label {
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+}
+
+.card-body {
+    padding:0px;
+}
+
+.card {
+    margin-bottom:5px;
+}

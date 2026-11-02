@@ -1,0 +1,399 @@
+﻿<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>گزارشات</title>
+    <style>
+            body {
+                margin: 0;
+                background: #f2f2f2;
+            }
+
+            .container {
+                padding: 40px;
+                text-align: center;
+            }
+
+            .title {
+                display: inline-block;
+                background: #e6d7f5;
+                color: #5e35b1;
+                padding: 8px 20px;
+                border-radius: 20px;
+                font-weight: bold;
+                margin-bottom: 60px;
+            }
+
+            .items {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 100px;
+                flex-wrap: wrap;
+            }
+
+            .item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                cursor: pointer;
+            }
+
+            .icon {
+                width: 90px;
+                height: 90px;
+                background: #5e35b1;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 40px;
+                margin-bottom: 10px;
+                transition: 0.3s;
+            }
+
+            .item:hover .icon {
+                background: #4527a0;
+                transform: scale(1.05);
+            }
+
+            .label {
+                color: #5e35b1;
+                font-size: 14px;
+            }
+    </style>
+</head>
+<body>
+
+    <div class="container" style="margin-top:80px">
+        <div class="title">گزارشات</div>
+
+        <div class="dropdown">
+
+            <button type="button"
+                    class="btn btn-primary dropdown-toggle"
+                    id="btnTajmieReports"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false">
+
+                گزارش‌های تجمیعی
+            </button>
+
+
+            <div class="dropdown-menu p-3"
+                 style="min-width:280px;"
+                 id="tajmieReportMenu">
+
+                <div class="fw-bold mb-2">
+                    انتخاب گزارش
+                </div>
+
+                <div class="form-check mb-2">
+
+                    <input class="form-check-input tajmie-report-check"
+                           type="checkbox"
+                           value="1"
+                           id="chkReport1">
+
+                    <label class="form-check-label"
+                           for="chkReport1">
+
+                        گزارش یک سطحی
+
+                    </label>
+
+                </div>
+
+
+                <div class="form-check mb-2">
+
+                    <input class="form-check-input tajmie-report-check"
+                           type="checkbox"
+                           value="2"
+                           id="chkReport2">
+
+                    <label class="form-check-label"
+                           for="chkReport2">
+
+                        گزارش دو سطحی
+
+                    </label>
+
+                </div>
+
+
+                <div class="form-check mb-2">
+
+                    <input class="form-check-input tajmie-report-check"
+                           type="checkbox"
+                           value="3"
+                           id="chkReport3">
+
+                    <label class="form-check-label"
+                           for="chkReport3">
+
+                        گزارش سه سطحی
+
+                    </label>
+
+                </div>
+
+
+                <hr />
+
+
+                <button type="button"
+                        class="btn btn-success btn-sm w-100"
+                        id="btnShowTajmieReport">
+
+                    <i class="fa fa-file-pdf"></i>
+
+                    نمایش گزارش
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="items">
+            <div class="item" onclick="goToReport()">
+                <div class="icon">📘</div>
+                <div class="label">ریز متره</div>
+            </div>
+
+            <div class="item" onclick="goToDownloadPDF()">
+                <div class="icon">📘</div>
+                <div class="label">دانلود PDF ریز متره</div>
+            </div>
+
+            <div class="item" onclick="goToFinancialPDF()">
+                <div class="icon">📘</div>
+                <div class="label">دانلود PDF مالی</div>
+            </div>
+
+            <div class="item" onclick="goToFosoulForBarAvordPDF()">
+                <div class="icon">📘</div>
+                <div class="label">دانلود PDF فصول</div>
+            </div>
+
+            <div class="item" onclick="goToDownloadTadilPDF()">
+                <div class="icon">📘</div>
+                <div class="label">دانلود PDF تعدیل</div>
+            </div>
+
+            <div class="item" onclick="goToDownloadAllPDF()">
+                <div class="icon">📘</div>
+                <div class="label">دانلود PDF کلی</div>
+            </div>
+
+            <div class="item" onclick="goToDownloadNoteBookPDF()">
+                <div class="icon">📘</div>
+                <div class="label">دانلود PDF دفترچه‌ها</div>
+            </div>
+
+            <div class="item" onclick="goToTadilReport()">
+                <div class="icon">📘</div>
+                <div class="label">تعدیل</div>
+            </div>
+
+            <div class="item">
+                <div class="icon">📄</div>
+                <div class="label">خلاصه مالی فصول</div>
+            </div>
+
+            <div class="item">
+                <div class="icon">📑</div>
+                <div class="label">ضرایب</div>
+            </div>
+
+            <div class="item">
+                <div class="icon">📁</div>
+                <div class="label">اسناد مناقصه</div>
+            </div>
+        </div>
+
+        <div class="items" style="border-top:1px solid #ccc">
+            <div class="item" onclick="goToDownloadPDFTajmieRiz()">
+                <div class="icon">📘</div>
+                <div class="label">دانلود PDF تجمیعی ریز</div>
+            </div>
+            <div class="item" onclick="goToDownloadPDFTajmieFasl()">
+                <div class="icon">📘</div>
+                <div class="label">دانلود PDF تجمیعی فصل</div>
+            </div>
+            <div class="item" onclick="goToDownloadPDFTajmieAll()">
+                <div class="icon">📘</div>
+                <div class="label">دانلود PDF تجمیعی</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+               function goToReport()
+               {
+                   var BAId= $('#HDFBarAvordUserID').val();
+                   window.open(
+                     "/Report/ItemsWithRizMetre?BAId=" + encodeURIComponent(BAId),
+                     "_blank",
+                     "noopener,noreferrer"
+                 );
+               }
+
+               // function goToTadilReport()
+               // {
+               //     var BAId= $('#HDFBarAvordUserID').val();
+               //     window.open(
+               //       "/Report/Tadil?BAId=" + encodeURIComponent(BAId),
+               //       "_blank",
+               //       "noopener,noreferrer"
+               //   );
+               // }
+
+            function goToTadilReport() {
+
+                   var form = $('<form>', {
+                       method: 'POST',
+                       action: '/Report/Tadil',
+                       target: '_blank'
+                   });
+
+                   form.append($('<input>', {
+                       type: 'hidden',
+                       name: 'BAId',
+                       value: $('#HDFBarAvordUserID').val()
+                   }));
+
+                   form.append($('<input>', {
+                       type: 'hidden',
+                       name: 'CompanyId',
+                       value: $('#HDFCompanyID').val()
+                   }));
+
+                   form.append($('<input>', {
+                       type: 'hidden',
+                       name: 'Year',
+                       value: $('#HDFYear').val()
+                   }));
+
+                   $('body').append(form);
+                   form.submit();
+                   form.remove();
+               }
+
+
+                 function goToDownloadTadilPDF() {
+
+                   var form = $('<form>', {
+                       method: 'POST',
+                       action: '/Report/ExportTadilToPdf',
+                       target: '_blank'
+                   });
+
+                   form.append($('<input>', {
+                       type: 'hidden',
+                       name: 'BAId',
+                       value: $('#HDFBarAvordUserID').val()
+                   }));
+
+                   form.append($('<input>', {
+                       type: 'hidden',
+                       name: 'CompanyId',
+                       value: $('#HDFCompanyID').val()
+                   }));
+
+                   form.append($('<input>', {
+                       type: 'hidden',
+                       name: 'Year',
+                       value: $('#HDFYear').val()
+                   }));
+
+                   $('body').append(form);
+                   form.submit();
+                   form.remove();
+               }
+
+
+              function goToDownloadAllPDF() {
+                   var form = $('<form>', {
+                       method: 'POST',
+                       action: '/Report/ExportBaravordFullPdf',
+                       target: '_blank'
+                   });
+
+                   form.append($('<input>', {
+                       type: 'hidden',
+                       name: 'BAId',
+                       value: $('#HDFBarAvordUserID').val()
+                   }));
+
+                   $('body').append(form);
+                   form.submit();
+                   form.remove();
+               }
+
+               function goToDownloadNoteBookPDF() {
+                   var form = $('<form>', {
+                       method: 'POST',
+                        action: '/Report/ExportNoteBookPdf',
+                       target: '_blank'
+                   });
+
+                   form.append($('<input>', {
+                       type: 'hidden',
+                       name: 'BAId',
+                       value: $('#HDFBarAvordUserID').val()
+                   }));
+
+                   $('body').append(form);
+                   form.submit();
+                   form.remove();
+               }
+
+               function goToDownloadPDFTajmieRiz()
+               {
+                   var Year = parseInt($('#HDFYear').val());
+                   var BarAvordId= $('#HDFBarAvordUserID').val();
+
+                      window.location.href="/TajmieReport/GetPdfReportTajmieRiz?Year="+Year+"&BarAvordId="+BarAvordId;
+               }
+
+               function goToDownloadPDFTajmieFasl()
+               {
+                   var Year = parseInt($('#HDFYear').val());
+                   var BarAvordId= $('#HDFBarAvordUserID').val();
+
+                      window.location.href="/TajmieReport/GetPdfReportTajmieFasl?Year="+Year+"&BarAvordId="+BarAvordId;
+               }
+
+               function goToDownloadPDFTajmieAll()
+               {
+                   var Year = parseInt($('#HDFYear').val());
+                   var BarAvordId= $('#HDFBarAvordUserID').val();
+
+                      window.location.href="/TajmieReport/GetPdfReportTajmieAll?Year="+Year+"&BarAvordId="+BarAvordId;
+               }
+
+               function goToDownloadPDF()
+               {
+                   var BAId= $('#HDFBarAvordUserID').val();
+                   window.location.href="/Report/ExportRizMetrePdf?BAId="+BAId;
+               }
+
+               function goToFinancialPDF()
+               {
+                   var BAId= $('#HDFBarAvordUserID').val();
+                   window.location.href="/Report/ExportFinancialPdf?BAId="+BAId;
+               }
+
+               function goToFosoulForBarAvordPDF()
+               {
+                   var BAId= $('#HDFBarAvordUserID').val();
+                   window.location.href="/Report/ExportFosoulForBarAvordToPdf?BAId="+BAId;
+               }
+    </script>
+</body>
+</html>

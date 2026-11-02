@@ -13,6 +13,8 @@ public class clsKhakRiziEzafeBaha:clsBaseEntity
     public long EzafeBahaKhakRiziId { get; set; }
     public clsEzafeBahaKhakRizi EzafeBahaKhakRizi { get; set; }
 
+    public decimal? Meghdar { get; set; }
+
     public ICollection<clsKhakRiziEzafeBahaRizMetre> KhakRiziEzafeBahaRizMetres { get; set; }
 
 }

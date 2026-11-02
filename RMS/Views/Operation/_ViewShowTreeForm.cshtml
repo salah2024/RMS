@@ -2,97 +2,106 @@
 @model IEnumerable<clsOperation>
 
 <style type="text/css">
-	ul.tree, ul.tree ul {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-	}
+    ul.tree, ul.tree ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
 
-		ul.tree ul {
-			margin-right: 10px;
-		}
+        ul.tree ul {
+            margin-right: 10px;
+        }
 
-		ul.tree li {
-			margin: 0;
-			padding: 0 7px;
-			line-height: 1.5;
-			color: #369;
-			/*font-weight: bold;*/
-			border-right: 1px solid rgb(100,100,100);
-		}
+        ul.tree li {
+            margin: 0;
+            padding: 0 7px;
+            line-height: 1.5;
+            color: #369;
+            /*font-weight: bold;*/
+            border-right: 1px solid rgb(100,100,100);
+        }
 
-			ul.tree li:last-child {
-				border-right: none;
-			}
+            ul.tree li:last-child {
+                border-right: none;
+            }
 
-			ul.tree li:before {
-				position: relative;
-				top: -0.3em;
-				height: 1em;
-				width: 12px;
-				color: white;
-				border-bottom: 1px solid rgb(100,100,100);
-				content: "";
-				display: inline-block;
-				right: -7px;
-			}
+            ul.tree li:before {
+                position: relative;
+                top: -0.3em;
+                height: 1em;
+                width: 12px;
+                color: white;
+                border-bottom: 1px solid rgb(100,100,100);
+                content: "";
+                display: inline-block;
+                right: -7px;
+            }
 
-			ul.tree li:last-child:before {
-				border-right: 1px solid rgb(100,100,100);
-			}
-	/*.NewStyle {
-																													background-image: url() !important;
-																													width: 0px !important;
-																													height: 0px !important;
-																												}*/
+            ul.tree li:last-child:before {
+                border-right: 1px solid rgb(100,100,100);
+            }
 
-	.col-md-1 {
-		padding-left: 2px;
-		padding-right: 2px;
-	}
+    .col-md-1 {
+        padding-left: 2px;
+        padding-right: 2px;
+    }
 
-	.col-md-2 {
-		padding-left: 2px;
-		padding-right: 2px;
-	}
+    .col-md-2 {
+        padding-left: 2px;
+        padding-right: 2px;
+    }
 
-	.child-item {
-		font-size: 12px;
-		cursor: pointer;
-		padding: 2px 5px;
-		border-radius: 4px;
-		transition: background-color 0.3s;
-	}
+    .child-item {
+        font-size: 12px;
+        cursor: pointer;
+        padding: 2px 5px;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
 
-		.child-item:hover {
-			background-color: #96d0fd;
-		}
+        .child-item:hover {
+            background-color: #96d0fd;
+        }
 
 
-	.ActiveAddRelItemTab {
-		background-color: rgb(46, 112, 155);
-	}
+    .ActiveAddRelItemTab {
+        background-color: rgb(46, 112, 155);
+    }
 
-	.KMStyle {
-		color: #fff;
-		background-color: #c32f2f;
-		border-radius: 3px;
-		padding: 0px 10px;
-	}
+    .KMStyle {
+        color: #fff;
+        background-color: #c32f2f;
+        border-radius: 3px;
+        padding: 0px 10px;
+    }
 
-	.LegalOpStyle {
-		color: blue;
-	}
+    .LegalOpStyle {
+        color: blue;
+    }
 
-		.LegalOpStyle:hover {
-			text-decoration: underline;
-			cursor: pointer;
-		}
+        .LegalOpStyle:hover {
+            text-decoration: underline;
+            cursor: pointer;
+        }
 
 
-	#jstree li a {
-		cursor: pointer;
-	}
+    #jstree li a {
+        cursor: pointer;
+    }
+
+
+    .HamlTableStyle {
+        border: 1px solid #b6abbb;
+    }
+
+    .selectZaribMantaghe {
+        font-size: 14px !important;
+    }
+
+    .form-control{
+        direction:rtl;
+    }
+      
 
 </style>
 
@@ -107,6 +116,7 @@
 <link href="~/Scripts/jsTree/my-treeStyle.css" rel="stylesheet">
 
 <link href="~/Scripts/SelfStyle/BoardStyle.css" rel="stylesheet">
+<link href="~/Scripts/SelfStyle/AbnieFaniStyle.css" rel="stylesheet">
 <link href="~/Scripts/SelfStyle/ZaribBalaSariStyle.css" rel="stylesheet">
 <link href="~/Scripts/SelfStyle/ZaribMantegheStyle.css" rel="stylesheet">
 <link href="~/Scripts/SelfStyle/KhakBardariStyle.css" rel="stylesheet">
@@ -116,6 +126,8 @@
 <script src="~/Scripts/FaniSection/DrawingPol.js"></script>
 <script src="~/Scripts/FaniSection/DrawingPlan2.js"></script>
 <script src="~/Scripts/FaniSection/AbnieFani.js"></script>
+<script src="~/Scripts/FaniSection/AbnieFaniShowRizMetre.js"></script>
+<script src="~/Scripts/FaniSection/AssisAbnieFani.js"></script>
 <script src="~/Scripts/FaniSection/AmalyateKhaki.js"></script>
 <script src="~/Scripts/FaniSection/AmalyateKhaki2.js"></script>
 <script src="~/Scripts/FaniSection/AmalyateKhakiSumMaghadir.js"></script>
@@ -125,347 +137,344 @@
 <script src="~/Scripts/FaniSection/AssisScript2.js"></script>
 <script src="~/Scripts/FaniSection/KhakRizi.js"></script>
 <script src="~/Scripts/FaniSection/KhakRiziEdit.js"></script>
-<script src="~/Scripts/FaniSection/ChanelKani.js"></script>
 <script src="~/Scripts/FaniSection/PayKani.js"></script>
 <script src="~/Scripts/FaniSection/PayKaniEzafeBaha.js"></script>
+<script src="~/Scripts/FaniSection/ChanelKani.js"></script>
+<script src="~/Scripts/FaniSection/ChanelKaniEzafeBaha.js"></script>
 <script src="~/Scripts/FaniSection/Board.js"></script>
 <script src="~/Scripts/FaniSection/BoardStand.js"></script>
 <script src="~/Scripts/FaniSection/ZaribBalaSari.js"></script>
 <script src="~/Scripts/FaniSection/ZaribManteghe.js"></script>
+<script src="~/Scripts/FaniSection/CheckConditionContextRelated.js"></script>
 
 <script>
-	   $(document).ready(function () {
-		   ///////////
-		   GetViewBag();
-		   //ShowTree();
 
-		   //$('#html1').jstree({
-		   //    'core': {
-		   //        'data': [
-		   //           { "id": "ajson1", "parent": "#", "text": "Simple root node" },
-		   //           { "id": "ajson2", "parent": "#", "text": "Root node 2" },
-		   //           { "id": "ajson3", "parent": "ajson2", "text": "Child 1" },
-		   //           { "id": "ajson4", "parent": "ajson2", "text": "Child 2" }
-		   //        ]
-		   //    }
-		   //});
-	   });
+    $(document).ready(function () {
+    ///////////
+    GetViewBag();
+    //ShowTree();
 
-	function ShowConditionDes(ConditionContextId)
-	   {
-		   var vardata = new Object();
-		   vardata.ConditionContextId = ConditionContextId;
-
-		 $.ajax({
-		   type: "POST",
-		   url: "/BaseInfo/GetConditionDes",
-		   data: JSON.stringify(vardata),
-		   contentType: "application/json; charset=utf-8",
-		   dataType: "json",
-		   success: function (response) {
-			   debugger;
-				  $('#divConditionDesShow').html(response.des);
-				  $('#TitleConditionDesShow').html(response.titleDes);
-				  $('#aConditionDesShow').click();
-
-		   },
-		   error: function (response) {
-			   toastr.error('مشکل در حذف اضافه بها', 'خطا');
-		   }
-	   });
-	   }
-
-	   function GetViewBag() {
-		   $.ajax({
-			   type: "Get",
-			   url: "/BaseInfo/GetViewBag",
-			   data: JSON.stringify(''),
-			   contentType: "application/json; charset=utf-8",
-			   dataType: "json",
-			   success: function (response) {
-				   if(response!="NOK")
-				   {
-				   // var xmlDoc = $.parseXML(response);
-				   // var xml = $(xmlDoc);
-				   // Table1 = xml.find("Table1");
-				   // $.each(Table1, function () {
-					  //  $('#HDFBarAvordUserID').val($(this).find("BAId").text());
-					  //  $('#HDFYear').val($(this).find("Year").text());
-					  //  $('#HDFNoeFB').val($(this).find("NoeFB").text());
-				   // });
-
-				   viewBag=response.viewBag;
-				   lstNoeFBs=  response.lstNoeFBs;
-
-						 $('#HDFBarAvordUserID').val(viewBag.baId);
-						 $('#HDFYear').val(viewBag.year);
-						 $('#spanBarAvordName').html(viewBag.barAvordName);
-							let str = "";
-							let selectedId = null;
-
-							$.each(lstNoeFBs, function (index, item) {
-
-							// اولین رادیو انتخاب شود
-							let checked = index === 0 ? "checked" : "";
-
-							// اگر اولین آیتم است مقدارش را در متغیر ذخیره کن
-							if (index === 0) {
-							selectedId = item.id;
-							}
-
-						str += `
-							<label style="margin-right:10px;">
-							<input type="radio" name="radType" onchange="FBChange(${item.id})" value="${item.id}" ${checked}/>
-							${item.name}
-							</label>
-							`;
-							});
-
-							$('#HDFNoeFB').val(selectedId);
-							$('#divFB').html(str);
-
-							ShowTree();
-				   }
-				   else
-					  toastr.info('هیچ پروژه ای انتخاب نشده است', 'اطلاع');
-
-			   },
-			   error: function (response) {
-				   toastr.error('خطا', 'خطا');
-			   }
-		   });
-	   }
-	   /////////
-		function FBChange(selectedId)
-		{
-			$('#HDFNoeFB').val(selectedId);
-			ShowTree();
-		}
-	   //////////////
-	   function ShowTree() {
-		   plugin = ['wholerow'];
-		   var vardata = new Object();
-		   Year = $('#HDFYear').val();
-		   NoeFBId = $('#HDFNoeFB').val();
-		   BarAvordUserId = $('#HDFBarAvordUserID').val();
-
-		   vardata.Year =parseInt(Year);
-		   vardata.NoeFBId = parseInt(NoeFBId);
-		   vardata.BarAvordUserId = BarAvordUserId;
-		   vardata.OpName = '';
-		   $.ajax({
-			   type: "POST",
-			   url: "@Url.Action("GetTree")",
-			   data: JSON.stringify(vardata),
-			   contentType: "application/json; charset=utf-8",
-			   dataType: "json",
-			   success: function (data) {
+    //$('#html1').jstree({
+    //    'core': {
+    //        'data': [
+    //           { "id": "ajson1", "parent": "#", "text": "Simple root node" },
+    //           { "id": "ajson2", "parent": "#", "text": "Root node 2" },
+    //           { "id": "ajson3", "parent": "ajson2", "text": "Child 1" },
+    //           { "id": "ajson4", "parent": "ajson2", "text": "Child 2" }
+    //        ]
+    //    }
+    //});
+    });
 
 
 
-		var html= createTree(data,0);
 
-		$('#jstree').html(html);
+    function ShowConditionDes(ConditionContextId)
+    {
+    var vardata = new Object();
+    vardata.ConditionContextId = ConditionContextId;
+
+    $.ajax({
+    type: "POST",
+    url: "/BaseInfo/GetConditionDes",
+    data: JSON.stringify(vardata),
+    contentType: "application/json; charset=utf-8",
+    dataType: "json",
+    success: function (response) {
+    debugger;
+    $('#divConditionDesShow').html(response.des);
+    $('#TitleConditionDesShow').html(response.titleDes);
+    $('#aConditionDesShow').click();
+
+    },
+    error: function (response) {
+    toastr.error('مشکل در حذف اضافه بها', 'خطا');
+    }
+    });
+    }
+
+    function GetViewBag() {
+    $.ajax({
+    type: "Get",
+    url: "/BaseInfo/GetViewBag",
+    data: JSON.stringify(''),
+    contentType: "application/json; charset=utf-8",
+    dataType: "json",
+    success: function (response) {
+    if(response!="NOK")
+    {
+    // var xmlDoc = $.parseXML(response);
+    // var xml = $(xmlDoc);
+    // Table1 = xml.find("Table1");
+    // $.each(Table1, function () {
+    //  $('#HDFBarAvordUserID').val($(this).find("BAId").text());
+    //  $('#HDFYear').val($(this).find("Year").text());
+    //  $('#HDFNoeFB').val($(this).find("NoeFB").text());
+    // });
+    $('#spanProjectTitle').html(response.title);
+    viewBag=response.viewBag;
+    lstNoeFBs=  response.lstNoeFBs;
 
 
 
-	// $('#jstree')
-	//   .off('click.MenuAccordion')
-	//   .on('click.MenuAccordion', 'a', function (e) {
+    $('#HDFBarAvordUserID').val(viewBag.baId);
+    $('#HDFBAType').val(viewBag.baType);
+    $('#HDFYear').val(viewBag.year);
+    //$('#spanBarAvordName').html(viewBag.barAvordName);
+    let str = "";
+    let selectedId = null;
 
-	// 	e.preventDefault();
-	// 	e.stopPropagation();
-	// 	e.stopImmediatePropagation();
+    $.each(lstNoeFBs, function (index, item) {
 
-	// 	// 👈 این خط کلیدی است
-	// 	// اجازه نده onclick داخل html دوباره اجرا شود
-	// 	this.onclick = null;
+    // اولین رادیو انتخاب شود
+    let checked = index === 0 ? "checked" : "";
 
-	// 	var $a = $(this);
-	// 	var currentId = $a.attr('id');
-	// 	if (!currentId) return;
+    // اگر اولین آیتم است مقدارش را در متغیر ذخیره کن
+    if (index === 0) {
+        selectedId = item.id;
+    }
 
-	// 	// ⛔️ دیگر eval نمی‌کنیم
-	// 	// OperationClick همان onclick اصلی است که فقط یک‌بار اجرا شده
-
-	// 	var realId = currentId.replace('a','');
-	// 	var $target = $('#ula' + realId);
-	// 	if (!$target.length) return;
-
-	// 	var $allNodes = $('#jstree [id^="ula"]');
-	// 	var $ancestors = $a.parents('[id^="ula"]');
-
-	// 	if ($target.is(':visible')) {
-	// 		$target.find('[id^="ula"]').addBack().slideUp(500);
-	// 	} else {
-	// 		var $keepOpen = $ancestors.add($target);
-	// 		$allNodes.not($keepOpen).slideUp(500);
-	// 		$keepOpen.slideDown(500);
-	// 	}
-	// });
+    str += `
+    <label style="margin-right:10px;">
+    <input type="radio" name="radType" onchange="FBChange(${item.id})" value="${item.id}" ${checked}/>
+    ${item.name}
+    </label>
+    `;
+    });
 
 
-	$('#jstree li a').each(function () {
+    $('#HDFNoeFB').val(selectedId);
+    $('#divFB').html(str);
 
-		var $a = $(this);
+        ShowTree();
+        }
+        else
+        toastr.info('هیچ پروژه ای انتخاب نشده است', 'اطلاع');
 
-		$a.addClass('OpMenuStyle');
+        },
+        error: function (response) {
+        toastr.error('خطا', 'خطا');
+        }
+        });
+    }
+    /////////
+    function FBChange(selectedId)
+    {
+        $('#HDFNoeFB').val(selectedId);
+        ShowTree();
+    }
+    //////////////
+    function ShowTree() {
+    plugin = ['wholerow'];
+    var vardata = new Object();
+    Year = $('#HDFYear').val();
+    //NoeFBId = $('#HDFNoeFB').val();
+    BarAvordUserId = $('#HDFBarAvordUserID').val();
 
-		$a.off('click.MenuAccordion').on('click.MenuAccordion', function (e) {
+    vardata.Year =parseInt(Year);
+    //vardata.NoeFBId = parseInt(NoeFBId);
+    vardata.BarAvordUserId = BarAvordUserId;
+    vardata.OpName = '';
+    $.ajax({
+    type: "POST",
+        url: "@Url.Action("GetTree")",
+        data: JSON.stringify(vardata),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (data) {
 
-			e.preventDefault(); // جلوگیری از رفتار پیش‌فرض
+        NewOperation=data.newOperation;
+        BaravordType=data.baravordType;
 
-			var $this = $(this);
-			var currentId = $this.attr('id');
-			var $target = $('#ul' + currentId);
+    var html= createTree(NewOperation,0);
 
-			// 🔹 اجرای تابع onclick قبل از بازکردن نود
-			var inlineClick = $this.attr("onclick");
-			if (inlineClick) {
-				try {
-					eval(inlineClick);   // اجرای کد موجود در onclick
-				} catch (ex) {
-					console.error("Error in onclick:", ex);
-				}
-			}
+    $('#jstree').html(html);
 
-			if (!$target.length) return;
 
-			var $allNodes = $('#jstree [id^="ula"]');
-			var $ancestors = $this.parents('[id^="ula"]');
+    $('#jstree li a').each(function () {
 
-			if ($target.is(':visible')) {
-				$target.find('[id^="ula"]').addBack().slideUp(500);
-			} else {
-				var $keepOpen = $ancestors.add($target);
-				$allNodes.not($keepOpen).slideUp(500);
-				$keepOpen.slideDown(500);
-			}
-		});
+        var $a = $(this);
 
-	});
+        $a.addClass('OpMenuStyle');
 
-				   $('#jstree li ul').each(function () {
-					   $(this).hide();
-				   });
-				},
-			   error: function (response) {
-				   toastr('danger', 'خطا', 'مشکلی بوجود آمده، مجددا بعدا امتحان نمایید')
-			   }
-		   });
-	   }
+        $a.off('click.MenuAccordion').on('click.MenuAccordion', function (e) {
 
-	   //////////////
-	   function GetTreeForOneOperation() {
-		   debugger;
-		   plugin = ['wholerow'];
-		   var vardata = new Object();
-		   Year = $('#HDFYear').val();
-		   NoeFBId = $('#HDFNoeFB').val();
-		   BarAvordUserId = $('#HDFBarAvordUserID').val();
+        e.preventDefault(); // جلوگیری از رفتار پیش‌فرض
 
-		   vardata.Year = parseInt(Year);
-		   vardata.NoeFBId = parseInt(NoeFBId);
-		   vardata.BarAvordUserId = BarAvordUserId;
-		   vardata.OpName = 'transport';
-		   $.ajax({
-			   type: "POST",
-			   url: "@Url.Action("GetTreeForOneOperation")",
-			   data: JSON.stringify(vardata),
-			   contentType: "application/json; charset=utf-8",
-			   dataType: "json",
-			   success: function (data) {
-				   AllOperation=data.allOperation;
-				   OperationId=data.operationId;
-				   debugger;
-			   var html= createTree(AllOperation,OperationId);
+        var $this = $(this);
+        var currentId = $this.attr('id');
+        var $target = $('#ul' + currentId);
 
-				   $('#ula1404229').html(html);
-				   $('#ula1404229 li a').each(function () {
-					   $(this).addClass('OpMenuStyle');
-					   $(this).click(function () {
-						   CurrentId = $(this).attr('id');
-						   ParentId = $(this).parent().parent();
-						   $("#" + ParentId.attr('id') + " [id^='ula']").each(function () {
-							   if ($(this).attr('id') != ('ul'+CurrentId))
-								   $(this).slideUp(1000);
-						   });
-						   $('#ul' + $(this).attr('id')).toggle(1000);
-					   });
-				   });
-				   $('#ula1404229 li ul').each(function () {
-					   $(this).hide();
-				   });
-				},
-			   error: function (response) {
-				   toastr('danger', 'خطا', 'مشکلی بوجود آمده، مجددا بعدا امتحان نمایید')
-			   }
-		   });
-	   }
+    // 🔹 اجرای تابع onclick قبل از بازکردن نود
+        var inlineClick = $this.attr("onclick");
+        if (inlineClick) {
+        try {
+            eval(inlineClick);   // اجرای کد موجود در onclick
+        }
+        catch (ex) {
+            console.error("Error in onclick:", ex);
+        }
+     }
 
-	   function SetNoeFB(OpId,NoeFB,event)
-	   {
-		   if (event) {
-				event.stopPropagation();
-				event.preventDefault();
-			}
+    if (!$target.length) return;
 
-			$('#HDFNoeFB').val(NoeFB);
-			debugger;
-			return true;
-	   }
+    var $allNodes = $('#jstree [id^="ula"]');
+    var $ancestors = $this.parents('[id^="ula"]');
+
+    if ($target.is(':visible')) {
+        $target.find('[id^="ula"]').addBack().slideUp(500);
+    }
+    else {
+        var $keepOpen = $ancestors.add($target);
+            $allNodes.not($keepOpen).slideUp(500);
+             $keepOpen.slideDown(500);
+         }
+        });
+
+    });
+
+    $('#jstree li ul').each(function () {
+    $(this).hide();
+    });
+    },
+    error: function (response) {
+    toastr('danger', 'خطا', 'مشکلی بوجود آمده، مجددا بعدا امتحان نمایید')
+    }
+    });
+    }
+
+    //////////////
+    function GetTreeForOneOperation() {
+    debugger;
+    plugin = ['wholerow'];
+    var vardata = new Object();
+    Year = $('#HDFYear').val();
+    NoeFBId = $('#HDFNoeFB').val();
+
+
+    BarAvordUserId = $('#HDFBarAvordUserID').val();
+
+    vardata.Year = parseInt(Year);
+    vardata.NoeFBId = parseInt(NoeFBId);
+    vardata.BarAvordUserId = BarAvordUserId;
+    vardata.OpName = 'transport';
+    $.ajax({
+    type: "POST",
+    url: "@Url.Action("GetTreeForOneOperation")",
+    data: JSON.stringify(vardata),
+    contentType: "application/json; charset=utf-8",
+    dataType: "json",
+    success: function (data) {
+    AllOperation=data.allOperation;
+    OperationId=data.operationId;
+    debugger;
+    var html= createTree(AllOperation,OperationId);
+
+    $('#ula1404229').html(html);
+    $('#ula1404229 li a').each(function () {
+    $(this).addClass('OpMenuStyle');
+    $(this).click(function () {
+    CurrentId = $(this).attr('id');
+    ParentId = $(this).parent().parent();
+    $("#" + ParentId.attr('id') + " [id^='ula']").each(function () {
+    if ($(this).attr('id') != ('ul'+CurrentId))
+    $(this).slideUp(1000);
+    });
+    $('#ul' + $(this).attr('id')).toggle(1000);
+    });
+    });
+    $('#ula1404229 li ul').each(function () {
+    $(this).hide();
+    });
+    },
+    error: function (response) {
+    toastr('danger', 'خطا', 'مشکلی بوجود آمده، مجددا بعدا امتحان نمایید')
+    }
+    });
+    }
+
+    function SetNoeFB(OpId,NoeFB,event)
+    {
+    if (event) {
+    event.stopPropagation();
+    event.preventDefault();
+    }
+
+    $('#HDFNoeFB').val(NoeFB);
+
+
+    debugger;
+    return true;
+    }
 
 </script>
 
 <style>
-	.modal-scrollable {
-		z-index: 1041 !important;
-	}
+    .modal-scrollable {
+    z-index: 1041 !important;
+    }
 
-	.RMCollectStyle {
-		max-height: 300px;
-		overflow: auto;
-		padding-left: 0px;
-		padding-right: 0px;
-	}
+    .RMCollectStyle {
+    max-height: 300px;
+    overflow: auto;
+    padding-left: 0px;
+    padding-right: 0px;
+    }
 
-	.RMMJozStyle {
-		background-color: #e19302;
-		color: #fff;
-		text-align: center;
-		border-radius: 3px;
-	}
+    .RMMJozStyle {
+    background-color: #ccc;
+    color: #000;
+    text-align: center;
+    border-radius: 3px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    width: 100px;
+    font-size: 18px;
+    font-family: 'BMitra';
+    height: 22px;
+    }
 
-	.displayNone {
-		display: none;
-	}
+    .RMRowStyle {
+    font-size: 18px;
+    font-family: 'BMitra';
+    color: #000;
+    }
 
-	.col-md-1, .col-md-2 {
-		padding-left: 1px;
-		padding-right: 1px;
-	}
+    .spanDesForEzafeBahaStyle {
+    color: #000;
+    font-size: 18px;
+    font-family: 'BMitra';
+    }
 
-	.col-md-12 {
-		padding-left: 0px;
-		padding-right: 0px;
-	}
+    .displayNone {
+    display: none;
+    }
 
-	.TextEdit {
-		border: 1px solid #e9ddee !important;
-	}
+    .col-md-1, .col-md-2 {
+    padding-left: 1px;
+    padding-right: 1px;
+    }
 
-	.form-control {
-		border: none;
-		text-align: center;
-	}
+    .col-md-12 {
+    padding-left: 0px;
+    padding-right: 0px;
+    }
 
-	.form-control_1 {
-		border: 1px solid #ccc;
-		text-align: center;
-	}
+    .TextEdit {
+    border: 1px solid #dfaef5 !important;
+    }
+
+    .form-control {
+    text-align: center;
+    }
+
+    .form-control_1 {
+    border: 1px solid #ccc;
+    text-align: center;
+    }
 </style>
 
-<div class="col-12" style="border-bottom: 1px solid #d2a8ff;padding-bottom: 10px;">
+@* <div class="col-12" style="border-bottom: 1px solid #d2a8ff;padding-bottom: 10px;">
 	<div class="row">
 		<div class="col-1">
 			برآورد:
@@ -474,7 +483,7 @@
 			<span id="spanBarAvordName"></span>
 		</div>
 	</div>
-</div>
+</div> *@
 
 @* <div class="row">
 	<div class="col-12">
@@ -486,33 +495,33 @@
 	</div>
 </div> *@
 
-<div id="jstree" style="margin:20px">
+<div id="jstree" style="margin:20px;margin-top:10px;">
 </div>
 
 <a id="aShow" style="display:none" data-toggle="modal" href="#FormShow"></a>
 <div class="modal fade" id="FormShow" tabindex="-1" role="dialog"
-	 aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h2 class="modal-title" id="largeModalLabel">ریز متره</h2>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<div class="form-horizontal popStyle" id="divShowRizMetre">
-				</div>
-			</div>
-			@*<div class="modal-footer">
+     aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="largeModalLabel">ریز متره</h2>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal popStyle" id="divShowRizMetre">
+                </div>
+            </div>
+            @*<div class="modal-footer">
                         <button type="button" class="btn btn-secondary"
                                 data-dismiss="modal">
                             لغو
                         </button>
                         <button type="button" class="btn btn-primary">باشه</button>
                     </div>*@
-		</div>
-	</div>
+        </div>
+    </div>
 </div>
 
 @*<div id="FormShow" class="modal fade" tabindex="-1" data-width="70%" style="direction:rtl">
@@ -531,28 +540,28 @@
 
 <a id="aKhakiShow" style="display:none" data-toggle="modal" href="#KhakiShow"></a>
 <div class="modal fade" id="KhakiShow" tabindex="-1" role="dialog"
-	 aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h2 class="modal-title" id="largeModalLabel">عملیات خاکی با ماشین - خاکبرداری</h2>
-				<button id="btnCloseFormCUB" type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<div class="form-horizontal popStyle" id="divShowKhaki">
-				</div>
-			</div>
-			@*<div class="modal-footer">
+     aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="largeModalLabel">عملیات خاکی با ماشین - خاکبرداری</h2>
+                <button id="btnCloseFormCUB" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal popStyle" id="divShowKhaki">
+                </div>
+            </div>
+            @*<div class="modal-footer">
                         <button type="button" class="btn btn-secondary"
                                 data-dismiss="modal">
                             لغو
                         </button>
                         <button type="button" class="btn btn-primary">باشه</button>
                     </div>*@
-		</div>
-	</div>
+        </div>
+    </div>
 </div>
 
 @*<div id="KhakiShow" class="modal fade" tabindex="-1" data-width="80%" style="direction:rtl">
@@ -571,55 +580,55 @@
 
 <a id="aGharzehShow" style="display:none" data-toggle="modal" href="#GharzehShow"></a>
 <div class="modal fade" id="GharzehShow" tabindex="-1" role="dialog"
-	 aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h2 class="modal-title" id="largeModalLabel">عملیات خاکی با ماشین - قرضه</h2>
-				<button id="btnCloseFormCUB" type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<div class="form-horizontal popStyle" id="divShowGharzeh">
-				</div>
-			</div>
-			@*<div class="modal-footer">
+     aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="largeModalLabel">عملیات خاکی با ماشین - قرضه</h2>
+                <button id="btnCloseFormCUB" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal popStyle" id="divShowGharzeh">
+                </div>
+            </div>
+            @*<div class="modal-footer">
                         <button type="button" class="btn btn-secondary"
                                 data-dismiss="modal">
                             لغو
                         </button>
                         <button type="button" class="btn btn-primary">باشه</button>
                     </div>*@
-		</div>
-	</div>
+        </div>
+    </div>
 </div>
 
 
 <a id="aConditionDesShow" style="display:none" data-toggle="modal" href="#ConditionDesShow"></a>
 <div class="modal fade" id="ConditionDesShow" tabindex="-1" role="dialog"
-	 aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h2 class="modal-title" id="TitleConditionDesShow" style="padding-top: 20px;color: #0b5394;font-size: 16px;"></h2>
-				<button id="btnCloseFormCUB" type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<div class="form-horizontal popStyle" id="divConditionDesShow">
-				</div>
-			</div>
-			@*<div class="modal-footer">
+     aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="TitleConditionDesShow" style="padding-top: 20px;color: #0b5394;font-size: 16px;"></h2>
+                <button id="btnCloseFormCUB" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal popStyle" id="divConditionDesShow">
+                </div>
+            </div>
+            @*<div class="modal-footer">
                         <button type="button" class="btn btn-secondary"
                                 data-dismiss="modal">
                             لغو
                         </button>
                         <button type="button" class="btn btn-primary">باشه</button>
                     </div>*@
-		</div>
-	</div>
+        </div>
+    </div>
 </div>
 @*<div id="GharzehShow" class="modal fade" tabindex="-1" data-width="80%" style="direction:rtl">
             <div class="modal-header">
@@ -637,28 +646,28 @@
 
 <a id="aKhakRiziShow" style="display:none" data-toggle="modal" href="#KhakRiziShow"></a>
 <div class="modal fade" id="KhakRiziShow" tabindex="-1" role="dialog"
-	 aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h2 class="modal-title" id="largeModalLabel">عملیات خاکی با ماشین - خاکریزی</h2>
-				<button id="btnCloseFormCUB" type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<div class="form-horizontal popStyle" id="divShowKhakRizi">
-				</div>
-			</div>
-			@*<div class="modal-footer">
+     aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="largeModalLabel">عملیات خاکی با ماشین - خاکریزی</h2>
+                <button id="btnCloseFormCUB" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal popStyle" id="divShowKhakRizi">
+                </div>
+            </div>
+            @*<div class="modal-footer">
                         <button type="button" class="btn btn-secondary"
                                 data-dismiss="modal">
                             لغو
                         </button>
                         <button type="button" class="btn btn-primary">باشه</button>
                     </div>*@
-		</div>
-	</div>
+        </div>
+    </div>
 </div>
 @*<div id="KhakRiziShow" class="modal fade" tabindex="-1" data-width="80%" style="direction:rtl">
             <div class="modal-header">
@@ -676,28 +685,28 @@
 
 <a id="aPayKaniShow" style="display:none" data-toggle="modal" href="#PayKaniShow"></a>
 <div class="modal fade" id="PayKaniShow" tabindex="-1" role="dialog"
-	 aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h2 class="modal-title" id="largeModalLabel">عملیات خاکی با ماشین - پی کنی</h2>
-				<button id="btnCloseFormCUB" type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<div class="form-horizontal popStyle" id="divShowPayKani">
-				</div>
-			</div>
-			@*<div class="modal-footer">
+     aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="largeModalLabel">عملیات خاکی با ماشین - پی کنی</h2>
+                <button id="btnCloseFormCUB" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal popStyle" id="divShowPayKani">
+                </div>
+            </div>
+            @*<div class="modal-footer">
                         <button type="button" class="btn btn-secondary"
                                 data-dismiss="modal">
                             لغو
                         </button>
                         <button type="button" class="btn btn-primary">باشه</button>
                     </div>*@
-		</div>
-	</div>
+        </div>
+    </div>
 </div>
 
 @*<div id="PayKaniShow" class="modal fade" tabindex="-1" data-width="80%" style="direction:rtl">
@@ -716,28 +725,28 @@
 
 <a id="aRizeshBardariShow" style="display:none" data-toggle="modal" href="#RizeshBardariShow"></a>
 <div class="modal fade" id="RizeshBardariShow" tabindex="-1" role="dialog"
-	 aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h2 class="modal-title" id="largeModalLabel">عملیات خاکی با ماشین - ریزش برداری</h2>
-				<button id="btnCloseFormCUB" type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<div class="form-horizontal popStyle" id="divShowRizeshBardari">
-				</div>
-			</div>
-			@*<div class="modal-footer">
+     aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="largeModalLabel">عملیات خاکی با ماشین - ریزش برداری</h2>
+                <button id="btnCloseFormCUB" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal popStyle" id="divShowRizeshBardari">
+                </div>
+            </div>
+            @*<div class="modal-footer">
                         <button type="button" class="btn btn-secondary"
                                 data-dismiss="modal">
                             لغو
                         </button>
                         <button type="button" class="btn btn-primary">باشه</button>
                     </div>*@
-		</div>
-	</div>
+        </div>
+    </div>
 </div>
 
 @*<div id="RizeshBardariShow" class="modal fade" tabindex="-1" data-width="80%" style="direction:rtl">
@@ -756,53 +765,53 @@
 
 <a id="aAbnieShow" style="display:none" data-toggle="modal" href="#AbnieShow"></a>
 <div class="modal fade" id="AbnieShow" tabindex="-1" role="dialog"
-	 aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h2 class="modal-title" id="largeModalLabel">پل و آبرو</h2>
-				<button id="btnCloseFormCUB" type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<div class="form-horizontal popStyle" id="divShowAbnie">
-				</div>
-			</div>
-			@*<div class="modal-footer">
+     aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="largeModalLabel">پل و آبرو</h2>
+                <button id="btnCloseFormCUB" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal popStyle" id="divShowAbnie">
+                </div>
+            </div>
+            @*<div class="modal-footer">
                         <button type="button" class="btn btn-secondary"
                                 data-dismiss="modal">
                             لغو
                         </button>
                         <button type="button" class="btn btn-primary">باشه</button>
                     </div>*@
-		</div>
-	</div>
+        </div>
+    </div>
 </div>
 <a id="aExistAbnieShow" style="display:none" data-toggle="modal" href="#ExistAbnieShow"></a>
 <div class="modal fade" id="ExistAbnieShow" tabindex="-1" role="dialog"
-	 aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h2 class="modal-title" id="largeModalLabel">پل و آبرو ثبت شده</h2>
-				<button id="btnCloseFormExistAbnie" type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<div class="form-horizontal popStyle" id="divViewExistingPol" style="overflow: auto;max-height: 400px;">
-				</div>
-			</div>
-			@*<div class="modal-footer">
+     aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="largeModalLabel">پل و آبرو ثبت شده</h2>
+                <button id="btnCloseFormExistAbnie" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal popStyle" id="divViewExistingPol" style="overflow: auto;max-height: 400px;">
+                </div>
+            </div>
+            @*<div class="modal-footer">
                         <button type="button" class="btn btn-secondary"
                                 data-dismiss="modal">
                             لغو
                         </button>
                         <button type="button" class="btn btn-primary">باشه</button>
                     </div>*@
-		</div>
-	</div>
+        </div>
+    </div>
 </div>
 
 @*<div id="AbnieShow" class="modal fade" tabindex="-1" data-width="80%" style="direction:rtl">
@@ -821,78 +830,78 @@
 
 <a id="aViewNextRutin" class="" data-toggle="modal" href="#PopupViewNextRutin"></a>
 <div class="modal fade" id="PopupViewNextRutin" tabindex="-1" role="dialog"
-	 aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button id="btnCloseFormCUB" type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<div id="divNextRutin">
-				</div>
-			</div>
-			@*<div class="modal-footer">
+     aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button id="btnCloseFormCUB" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="divNextRutin">
+                </div>
+            </div>
+            @*<div class="modal-footer">
                         <button type="button" class="btn btn-secondary"
                                 data-dismiss="modal">
                             لغو
                         </button>
                         <button type="button" class="btn btn-primary">باشه</button>
                     </div>*@
-		</div>
-	</div>
+        </div>
+    </div>
 </div>
 
 <a id="aViewNextRutinSecondLevel" class="" data-toggle="modal" href="#PopupViewNextRutinSecondLevel"></a>
 <div class="modal fade" id="PopupViewNextRutinSecondLevel" tabindex="-1" role="dialog" style="z-index:5000"
-	 aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button id="btnCloseFormCUB" type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<div id="divNextRutinSecondLevel">
-				</div>
-			</div>
-			@*<div class="modal-footer">
+     aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button id="btnCloseFormCUB" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="divNextRutinSecondLevel">
+                </div>
+            </div>
+            @*<div class="modal-footer">
                         <button type="button" class="btn btn-secondary"
                                 data-dismiss="modal">
                             لغو
                         </button>
                         <button type="button" class="btn btn-primary">باشه</button>
                     </div>*@
-		</div>
-	</div>
+        </div>
+    </div>
 </div>
 
 
 <a id="aViewNextRutinTreeView" class="" data-toggle="modal" href="#PopupViewNextRutinTreeView"></a>
 <div class="modal fade" id="PopupViewNextRutinTreeView" tabindex="-1" role="dialog"
-	 aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button id="btnCloseFormCUB" type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<div id="jsTree1">
-				</div>
-			</div>
-			@*<div class="modal-footer">
+     aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button id="btnCloseFormCUB" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="jsTree1">
+                </div>
+            </div>
+            @*<div class="modal-footer">
                         <button type="button" class="btn btn-secondary"
                                 data-dismiss="modal">
                             لغو
                         </button>
                         <button type="button" class="btn btn-primary">باشه</button>
                     </div>*@
-		</div>
-	</div>
+        </div>
+    </div>
 </div>
 
 @*<div id="PopupViewNextRutin" class="modal fade" tabindex="-1" data-width="90%">
@@ -915,26 +924,26 @@
 
 <a id="aFirstQuestionPol" class="displayNone" data-toggle="modal" href="#FirstQuestionPol"></a>
 <div class="modal fade" id="FirstQuestionPol" tabindex="-1" role="dialog"
-	 aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h2 class="modal-title" id="largeModalLabel">موارد مورد نظر را انتخاب نمایید</h2>
-				<button id="btnCloseFormCUB" type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="row PageHeaderStyle" style="margin-right: 0px; margin-left: 0px;">
-				<div class="col-md-3" style="padding-left: 5px">
-					<button type="button" class="btn blue btn-default" onclick="ConfirmFirstQuestionPol()">تایید</button>
-				</div>
-			</div>
-			<div class="modal-body">
-				<div id="divFirstQuestionPol" class="popStyle">
-				</div>
-			</div>
-		</div>
-	</div>
+     aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="largeModalLabel">موارد مورد نظر را انتخاب نمایید</h2>
+                <button id="btnCloseFormCUB" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="row PageHeaderStyle" style="margin-right: 0px; margin-left: 0px;">
+                <div class="col-md-3" style="padding-left: 5px">
+                    <button type="button" class="btn blue btn-default" onclick="ConfirmFirstQuestionPol()">تایید</button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div id="divFirstQuestionPol" class="popStyle">
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @*<div id="FirstQuestionPol" class="modal fade" tabindex="-1" data-width="70%">
@@ -957,68 +966,68 @@
 
 <a id="aViewExistingPolForPayKani" class="displayNone" data-toggle="modal" href="#ViewExistingPolForPayKani"></a>
 <div class="modal fade" id="ViewExistingPolForPayKani" tabindex="-1" role="dialog"
-	 aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h2 class="modal-title" id="largeModalLabel">مشاهده و انتخاب پل/آبرو موجود</h2>
-				<button id="btnCloseExistingPolForPayKani" type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="row PageHeaderStyle" style="margin-right: 0px; margin-left: 0px;">
-				<div class="col-md-3" style="padding-left: 5px">
-					<button type="button" class="btn blue btn-default" onclick="SelectSelcectionPolOrAbroForPayKani()">انتخاب پل/آبرو</button>
-				</div>
-			</div>
-			<div class="modal-body">
-				<div id="divViewExistingPolForPayKani">
-				</div>
-			</div>
-			@*<div class="modal-footer">
+     aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="largeModalLabel">مشاهده و انتخاب پل/آبرو موجود</h2>
+                <button id="btnCloseExistingPolForPayKani" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="row PageHeaderStyle" style="margin-right: 0px; margin-left: 0px;">
+                <div class="col-md-3" style="padding-left: 5px">
+                    <button type="button" class="btn blue btn-default" onclick="SelectSelcectionPolOrAbroForPayKani()">انتخاب پل/آبرو</button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div id="divViewExistingPolForPayKani">
+                </div>
+            </div>
+            @*<div class="modal-footer">
                         <button type="button" class="btn btn-secondary"
                                 data-dismiss="modal">
                             لغو
                         </button>
                         <button type="button" class="btn btn-primary">باشه</button>
                     </div>*@
-		</div>
-	</div>
+        </div>
+    </div>
 </div>
 
 
 <a id="aViewExistingKMAmalyateKhaki" class="displayNone" data-toggle="modal" href="#ViewExistingKMAmalyateKhaki"></a>
 <div class="modal fade" id="ViewExistingKMAmalyateKhaki" tabindex="-1" role="dialog"
-	 aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h2 class="modal-title" id="largeModalLabel">مشاهده و انتخاب کیلومتراژ موجود</h2>
-				<button id="btnCloseExistingKMAmalyateKhaki" type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="row PageHeaderStyle" style="margin-right: 0px; margin-left: 0px;">
-				<div class="col-md-3" style="padding-left: 5px">
-					<button type="button" class="btn blue btn-default" onclick="SelectSelcectionKMKhakBardari()">انتخاب کیلومتراژ</button>
-				</div>
-				<div class="col-md-4">
-					<button id="btnDeleteKMAmalyateKhaki" type="button" class="btn red btn-default" onclick="DelExistingKMAmalyateKhakiClick();" disabled="disabled">حذف کیلومتراژ انتخابی</button>
-				</div>
-			</div>
-			<div class="modal-body">
-				<div id="divViewExistingKMAmalyateKhaki">
-				</div>
-			</div>
-			@*<div class="modal-footer">
+     aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="largeModalLabel">مشاهده و انتخاب کیلومتراژ موجود</h2>
+                <button id="btnCloseExistingKMAmalyateKhaki" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="row PageHeaderStyle" style="margin-right: 0px; margin-left: 0px;">
+                <div class="col-md-3" style="padding-left: 5px">
+                    <button type="button" class="btn blue btn-default" onclick="SelectSelcectionKMKhakBardari()">انتخاب کیلومتراژ</button>
+                </div>
+                <div class="col-md-4">
+                    <button id="btnDeleteKMAmalyateKhaki" type="button" class="btn red btn-default" onclick="DelExistingKMAmalyateKhakiClick();" disabled="disabled">حذف کیلومتراژ انتخابی</button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div id="divViewExistingKMAmalyateKhaki">
+                </div>
+            </div>
+            @*<div class="modal-footer">
                         <button type="button" class="btn btn-secondary"
                                 data-dismiss="modal">
                             لغو
                         </button>
                         <button type="button" class="btn btn-primary">باشه</button>
                     </div>*@
-		</div>
-	</div>
+        </div>
+    </div>
 </div>
 @*<div id="ViewExistingPolForPayKani" class="modal fade" tabindex="-1" data-width="50%">
             <div class="modal-header">
@@ -1038,8 +1047,10 @@
             </div>
         </div>*@
 <input type="hidden" id="HDFOperationId" name="name" value="" />
+<input type="hidden" id="HDFPayKani" name="name" value="" />
 <input type="hidden" id="HDFItemsFBShomareh" name="name" value="" />
 <input type="hidden" id="HDFBarAvordUserID" name="name" value="" />
+<input type="hidden" id="HDFBAType" name="name" value="" />
 <input type="hidden" id="HDFFBID" name="name" value="" />
 <input type="hidden" id="HDFIsFromAddedOperation" name="name" value="" />
 <input type="hidden" id="HDFOperationIdN" name="name" value="" />

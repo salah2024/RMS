@@ -1,4 +1,4 @@
-﻿function sumKolNew(ActivityLength) {
+﻿function sumKolNew(ActivityLength,KMNum) {
     debugger;
     var result = [];
     JamKolKhDetail = 0;
@@ -13,34 +13,36 @@
     JamKolHaml = 0;
     JamKolDarsadHaml = 0;
 
+    strKMNum = KMNum == 0 ? '' : KMNum + "_";
+
     for (let i = 0; i < ActivityLength; i++) {
-        currentKhDetail = $.trim($('#txtKhDetail' + (i + 1)).val());
+        currentKhDetail = $.trim($('#txtKhDetail' + strKMNum + (i + 1)).val());
         if (currentKhDetail != '') {
             KhDetail = parseFloat(currentKhDetail);
             KhDetail = isNaN(KhDetail) ? 0 : KhDetail;
             JamKolKhDetail += KhDetail;
         }
-        currentDarsadKhDetail = $.trim($('#txtDarsad' + (i + 1)).val());
+        currentDarsadKhDetail = $.trim($('#txtDarsad' + strKMNum + (i + 1)).val());
         if (currentDarsadKhDetail != '') {
             DarsadKhDetail = parseFloat(currentDarsadKhDetail);
             DarsadKhDetail = isNaN(DarsadKhDetail) ? 0 : DarsadKhDetail;
             JamKolDarsadKhDetail += DarsadKhDetail;
         }
-        currentVarizi = $.trim($('#txtVarizi' + (i + 1)).val());
+        currentVarizi = $.trim($('#txtVarizi' + strKMNum + (i + 1)).val());
         if (currentVarizi != '') {
             Varizi = parseFloat(currentVarizi);
             Varizi = isNaN(Varizi) ? 0 : Varizi;
             JamKolVarizi += Varizi;
         }
         
-        currentReUseHajm = $.trim($('#txtReUseHajm' + (i + 1)).val());
+        currentReUseHajm = $.trim($('#txtReUseHajm' + strKMNum + (i + 1)).val());
         if (currentReUseHajm != '') {
             ReUseHajm = parseFloat(currentReUseHajm);
             ReUseHajm = isNaN(ReUseHajm) ? 0 : ReUseHajm;
             JamKolReUseHajm += ReUseHajm;
         }
 
-        currentHaml = $.trim($('#txtHaml' + (i + 1)).val());
+        currentHaml = $.trim($('#txtHaml' + strKMNum + (i + 1)).val());
         if (currentHaml != '') {
             Haml = parseFloat(currentHaml);
             Haml = isNaN(Haml) ? 0 : Haml;

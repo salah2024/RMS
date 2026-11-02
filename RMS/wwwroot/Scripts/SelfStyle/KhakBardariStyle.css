@@ -1,7 +1,7 @@
 ﻿.khakbardari-container {
     direction: rtl; /* چون متن فارسیه */
     margin: 20px 0;
-    font-family: Vazirmatn, Tahoma, sans-serif;
+    /*font-family: Vazirmatn, Tahoma, sans-serif;*/
 }
 
 .khakbardari-box {
@@ -89,7 +89,7 @@
     margin-right: 0px;
     margin-left: 0px;
     border-radius: 5px 5px 0px 0px;
-    padding: 10px 0px;
+    padding: 4px 0px;
 }
 
 
@@ -105,7 +105,7 @@
 }
 
 .ExistKMHeaderStyle {
-    background-color: #e4d4ff;
+    background-color: #d5cae9;
     padding-top: 5px;
     margin-right: 0px;
     margin-left: 0px;

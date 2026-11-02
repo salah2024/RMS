@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using static RMS.Models.Common.EnumForEntity;
 
 namespace RMS.Models.Entity;
 
@@ -28,14 +29,15 @@ public class clsItemsHasCondition_ConditionContext
     public bool IsShow { get; set; }
 
     [ForeignKey("ItemsHasCondition_ConditionContext")]
-    public long? ParentId { get; set; }
+    public long? ParentId { get; set; } = 0;
     public clsItemsHasCondition_ConditionContext ItemsHasCondition_ConditionContext { get; set; }
 
     public bool MoveToRel { get; set; }
 
     public bool ViewCheckAllRecords { get; set; }
     public int Year { get; set; }
-    public int EnteringCount { get; set; }
+    public NoeFehrestBaha? NoeFB { get; set; }
+    public int EnteringCount { get; set; } = 0;
 
     /// <summary>
     /// ورود توضیحات برای بخش مقادیر وارده
@@ -49,5 +51,18 @@ public class clsItemsHasCondition_ConditionContext
     /// خودش اضافه بها را اضافه میکند نیاز به تیک زدن چک باکس نیست
     /// </summary>
     public bool? AutoSelecting { get; set; }
+
+    /// <summary>
+    /// در صورتی که این فیلد دارای مقدار باشد
+    /// شرطهای وابسته به شرط جاری هستند و ممکن است چندین 
+    /// شرط باشد که با _ از هم جدا میشوند
+    /// هر کدام از مقادیر آیدی 
+    /// ItemHasCondition_ConditionContext
+    /// دیگری است 
+    /// بایستی آیدی هایی که در آن هستن نیز بعنوان 
+    /// شرطهای وابسته بررسی گردد ، طوری که انگار آن شرط نیز تیک
+    /// خورده و یا برعکس آنتیک شده است
+    /// </summary>
+    public string? IHC_CC_Related { get; set; }
 
 }

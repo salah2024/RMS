@@ -109,3 +109,360 @@ th, td {
 
 
 
+#tableWrapper {
+    width: 100%;
+}
+
+.fixed-table .tbody .tbodyFosoul {
+    scrollbar-width: thin; /* auto | thin | none */
+    scrollbar-color: #999 #f1f1f1; /* thumb track */
+}
+
+
+    .fixed-table .tbody .tbodyFosoul::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    .fixed-table .tbody .tbodyFosoul::-webkit-scrollbar-thumb {
+        background: #999;
+        border-radius: 10px;
+    }
+
+        .fixed-table .tbody .tbodyFosoul::-webkit-scrollbar-thumb:hover {
+            background: #777;
+        }
+
+
+
+
+.fixed-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+    /* هدر ثابت */
+    .fixed-table thead,
+    .fixed-table tfoot {
+        display: table;
+        width: calc(100% - 10px);
+        table-layout: fixed;
+    }
+
+    /* فقط بدنه اسکرول بخورد */
+    .fixed-table .tbody {
+        display: block;
+        height: calc(100vh - 260px);
+        overflow-y: auto;
+        overflow-x: hidden;
+        width: 100%;
+    }
+
+    .fixed-table .tbodyFosoul {
+        display: block;
+        max-height: 400px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        width: 100%;
+    }
+
+        /* ردیف‌های tbody */
+        .fixed-table .tbody tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+    /* جلوگیری از به‌هم‌ریختگی */
+    .fixed-table th,
+    .fixed-table td {
+        vertical-align: middle;
+        word-break: break-word;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ===========================
+   Accordion
+=========================== */
+
+.accordion {
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0,0,0,.08);
+}
+
+.chapter {
+    border-bottom: 1px solid #e8e8e8;
+}
+
+    .chapter:last-child {
+        border-bottom: none;
+    }
+
+.chapter-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 18px 22px;
+    background: linear-gradient(135deg,#1976d2,#1565c0);
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    transition: .3s;
+}
+
+    .chapter-title:hover {
+        background: linear-gradient(135deg,#1565c0,#0d47a1);
+    }
+
+.icon {
+    font-size: 18px;
+    transition: .3s;
+}
+
+.chapter-content {
+    display: none;
+    padding: 25px;
+    background: #fff;
+}
+
+.open .chapter-content {
+    display: block;
+}
+
+.open .icon {
+    transform: rotate(90deg);
+}
+
+.chapter-content h3 {
+    margin-top: 0;
+    color: #1565c0;
+}
+
+.chapter-content p {
+    margin: 10px 0;
+    text-align: justify;
+}
+
+
+
+/* ===========================
+   Summary
+=========================== */
+
+.summary {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 22px;
+    cursor: pointer;
+    background: #fafafa;
+    font-size: 18px;
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+    transition: .3s;
+}
+
+    .summary:hover {
+        background: #eef5ff;
+    }
+
+
+/* ===========================
+   Notes
+=========================== */
+
+.note {
+    position: relative;
+    margin-bottom: 18px;
+    padding: 15px 65px 15px 15px;
+    -------- background: #fafcff;
+    border-left: 5px solid #1976d2;
+    border-right: 5px solid #1976d2;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,.05);
+    transition: .25s;
+}
+
+    .note:hover {
+        background: #eef5ff;
+        transform: translateY(-2px);
+    }
+
+.number {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg,#1976d2,#0d47a1);
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.note p {
+    margin: 0;
+    direction: rtl;
+    text-align: justify;
+    line-height: 2;
+}
+
+
+/* ===========================
+   Tables
+=========================== */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    background: #fff;
+    border: 4px double #000; /* کادر دور جدول دو خط */
+
+    box-shadow: 0 4px 15px rgba(0,0,0,.05);
+}
+
+
+
+caption {
+    caption-side: top;
+    padding: 10px;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+th,
+td {
+    border: 1px solid #666;
+    padding: 0px;
+    text-align: center;
+    vertical-align: middle;
+    word-break: break-word;
+}
+
+th {
+    background: #f0f4f8;
+    font-weight: bold;
+}
+
+.thWhite {
+    background: white;
+}
+
+.hashed {
+    background-image: repeating-linear-gradient( 135deg, #000 0, #000 1px, #fff 1px, #fff 10px );
+}
+
+.vertical-text,
+.vertical-header {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    white-space: nowrap;
+    font-weight: bold;
+}
+
+.subtext {
+    display: block;
+    margin-top: 2px;
+    font-size: 10px;
+    color: #555;
+}
+
+
+
+/* ===========================
+   Complex Header
+=========================== */
+
+.complex-header {
+    position: relative;
+    min-width: 120px;
+    height: 130px;
+}
+
+.main-title {
+    position: absolute;
+    top: 20px;
+    left: 10px;
+    right: 10px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.side-vertical {
+    position: absolute;
+    right: -18px;
+    top: 10px;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.bottom-label {
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+
+/* ===========================
+   Math
+=========================== */
+
+.math-container {
+    direction: ltr;
+    text-align: left;
+    display: flex;
+    justify-content: flex-start;
+    margin: 10px 0;
+}
+
+
+/* ===========================
+   Responsive
+=========================== */
+
+@media (max-width:768px) {
+
+    .container {
+        padding: 12px;
+    }
+
+    .chapter-title {
+        font-size: 18px;
+    }
+
+    table {
+        font-size: 13px;
+    }
+
+    th,
+    td {
+        padding: 6px;
+    }
+}

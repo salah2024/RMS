@@ -1,0 +1,207 @@
+﻿
+<link href="~/css/ConditionContext.css" rel="stylesheet" />
+
+<div class="container-fluid">
+
+    <div class="card shadow-sm mb-3">
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <div class="col-md-2 mb-3">
+
+                    <label>سال</label>
+
+                    <select id="cmbYear" class="form-control">
+                        <option value="1404" selected>1404</option>
+                        <option value="1403">1403</option>
+                        <option value="1402">1402</option>
+                    </select>
+
+                </div>
+
+                <div class="col-md-3 mb-3">
+
+                    <label>فهرست بها</label>
+
+                    <select id="cmbNoeFB" class="form-control">
+
+                        <option value="232" selected>راهداری</option>
+                        <option value="233">ابنیه</option>
+                        <option value="234">راه و باند</option>
+                        <option value="235">برقی</option>
+                        <option value="236">مکانیکی</option>
+                        <option value="237">مرمت</option>
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-7 mb-3">
+
+                    <label>گروه</label>
+
+                    <select id="cmbGroup"
+                            class="form-control">
+                    </select>
+
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-12 mb-3">
+
+                    <input id="txtContext" placeholder="متن"
+                           type="text"
+                           rows="4"
+                           class="form-control" />
+
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                @* <div class="col-md-2"> 
+
+                    <div class="form-check mt-4">
+
+                        <input id="chkHasDes"
+                               type="checkbox"
+                               class="form-check-input" />
+
+                        <label class="form-check-label">
+
+                            دارای توضیح
+
+                        </label>
+
+                    </div>
+
+                </div>*@
+
+                <div class="col-md-6">
+
+                    <input id="txtTitleDes" placeholder="عنوان توضیح"
+                           class="form-control" />
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <input id="txtRel" placeholder="شرط مرتبط"
+                           class="form-control" />
+
+                </div>
+
+            </div>
+
+            <div class="row mt-3">
+
+                <div class="col-md-10">
+
+                    <textarea id="txtDes" placeholder="متن توضیح"
+                              rows="2"
+                              class="form-control"></textarea>
+
+                </div>
+
+                <div class="col-md-2 d-flex align-items-end">
+
+                    <button id="btnSave"
+                            class="btn btn-success w-100"
+                            type="button">
+
+                        <i class="fa fa-save"></i>
+
+                        ثبت
+
+                    </button>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card shadow-sm">
+
+        <div class="card-header">
+
+            <div class="row">
+
+                <div class="col-md-6">
+
+                    <strong>
+
+                        لیست شرایط
+
+                    </strong>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <input id="txtSearch"
+                           class="form-control"
+                           placeholder="جستجو..." />
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="card-body p-0">
+
+            <div class="table-container">
+
+                <table class="table table-bordered table-hover mb-0 fixed-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th style="width:60px">ردیف</th>
+
+                            <th style="width:180px">گروه</th>
+
+                            <th>متن</th>
+
+                            <th style="width:250px">توضیحات</th>
+
+                            <th style="width:140px">عملیات</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tblBody">
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+        <div class="card-footer">
+
+            <ul id="pagination"
+                class="pagination justify-content-center mb-0">
+            </ul>
+
+        </div>
+
+    </div>
+
+</div>
+
+<input id="hfId"
+       type="hidden"
+       value="0" />
+
+<script src="~/js/ConditionContext.js"></script>

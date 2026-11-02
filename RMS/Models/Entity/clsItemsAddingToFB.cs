@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using static RMS.Models.Common.EnumForEntity;
 
 namespace RMS.Models.Entity;
 
@@ -27,5 +28,6 @@ public class clsItemsAddingToFB
 
     public string? FieldsAdding { get; set; }
     public int Year { get; set; }
+    public NoeFehrestBaha? NoeFB { get; set; }
     public string? CharacterPlus { get; set; }
 }

@@ -5,6 +5,7 @@ namespace RMS.Controllers.ItemFBStar.Dto;
 public class ConfirmRizMetreItemFBStarDto
 {
     public string Sharh { get; set; }
+    public string? TajmieItem { get; set; }
     public decimal? Tedad { get; set; }
     public decimal? Tool { get; set; }
     public decimal? Arz { get; set; }

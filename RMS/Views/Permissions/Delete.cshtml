@@ -1,0 +1,23 @@
+﻿@using RMS.Models.Entity
+@model clsPermission
+
+<div style="margin-top:70px">
+
+    <h2>حذف Permission</h2>
+
+    <p>آیا مطمئن هستید؟</p>
+
+    <ul>
+        <li><b>Group:</b> @Model.Group</li>
+        <li><b>Key:</b> @Model.Key</li>
+        <li><b>Title:</b> @Model.Title</li>
+    </ul>
+
+    <form asp-action="DeleteConfirmed" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@Model.Id" />
+
+        <button type="submit">بله، حذف شود</button>
+        <a asp-action="Index">خیر</a>
+    </form>
+</div>

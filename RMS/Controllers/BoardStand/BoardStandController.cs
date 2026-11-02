@@ -12,6 +12,7 @@ using static RMS.Models.Common.BoardEnum;
 using static RMS.Models.Common.EnumForEntity;
 
 namespace RMS.Controllers.BoardStand;
+
 public class BoardStandController(ApplicationDbContext context) : Controller
 {
     private readonly ApplicationDbContext _context = context;
@@ -23,9 +24,11 @@ public class BoardStandController(ApplicationDbContext context) : Controller
                 .ToList();
 
         Guid BaravordId = request.BaravordId;
+        NoeFehrestBaha NoeFBId = request.NoeFBId;
+
         List<BarAvordAddedBoardStandDto> lstBarAvordAddedBoardStand =
             _context.BarAvordAddedBoardStands.Include(x => x.boardStandItems)
-            .Where(x => x.BarAvordId == BaravordId).Select(x => new BarAvordAddedBoardStandDto
+            .Where(x => x.BarAvordId == BaravordId && x.NoeFBId == NoeFBId).Select(x => new BarAvordAddedBoardStandDto
             {
                 BoardStandType = x.boardStandItems.BoardStandType,
                 Tedad = x.Tedad
@@ -40,7 +43,7 @@ public class BoardStandController(ApplicationDbContext context) : Controller
         return new JsonResult(result);
     }
 
-    public JsonResult SaveBoardStand([FromBody] BoardStandDto request)
+    public async Task<JsonResult> SaveBoardStand([FromBody] BoardStandDto request)
     {
         Guid BaravordId = request.BaravordId;
         NoeFehrestBaha NoeFBId = request.NoeFBId;
@@ -50,12 +53,12 @@ public class BoardStandController(ApplicationDbContext context) : Controller
 
 
         ///حذف قبلی ها
-        List<Guid> lstBoardStandItemIds = _context.BoardStandItemses.Where(x => x.BoardStandType == BoardStandType).Select(x => x.ID).ToList();
+        List<Guid> lstBoardStandItemIds = await _context.BoardStandItemses.Where(x => x.BoardStandType == BoardStandType).Select(x => x.ID).ToListAsync();
 
-        List<clsBarAvordAddedBoardStand> lstBarAvordAddedBoardStand = _context.BarAvordAddedBoardStands.Where(x => x.BarAvordId == BaravordId && lstBoardStandItemIds.Contains(x.BoardStandItemId)).ToList();
+        List<clsBarAvordAddedBoardStand> lstBarAvordAddedBoardStand = await _context.BarAvordAddedBoardStands.Where(x => x.BarAvordId == BaravordId && x.NoeFBId == NoeFBId && lstBoardStandItemIds.Contains(x.BoardStandItemId)).ToListAsync();
 
-        List<clsRizMetreForBarAvordAddedBoardStand> RizMetreForBarAvordAddedBoardStands = _context.RizMetreForBarAvordAddedBoardStands.Include(x => x.BarAvordAddedBoardStand)
-            .Where(x => x.BarAvordAddedBoardStand.BarAvordId == BaravordId && lstBoardStandItemIds.Contains(x.BarAvordAddedBoardStand.BoardStandItemId)).ToList();
+        List<clsRizMetreForBarAvordAddedBoardStand> RizMetreForBarAvordAddedBoardStands = await _context.RizMetreForBarAvordAddedBoardStands.Include(x => x.BarAvordAddedBoardStand)
+            .Where(x => x.BarAvordAddedBoardStand.BarAvordId == BaravordId && lstBoardStandItemIds.Contains(x.BarAvordAddedBoardStand.BoardStandItemId)).ToListAsync();
 
         _context.RizMetreForBarAvordAddedBoardStands.RemoveRange(RizMetreForBarAvordAddedBoardStands);
 
@@ -63,7 +66,7 @@ public class BoardStandController(ApplicationDbContext context) : Controller
 
         //var entities = lstRizMetreForBarAvordAddedBoardStandIds.Select(id => new clsRizMetreUsers { ID = id }).ToList();
 
-        List<clsRizMetreUsers> entities = _context.RizMetreUserses.Where(x => lstRizMetreForBarAvordAddedBoardStandIds.Contains(x.ID)).ToList();
+        List<clsRizMetreUsers> entities = await _context.RizMetreUserses.Where(x => lstRizMetreForBarAvordAddedBoardStandIds.Contains(x.ID)).ToListAsync();
 
         _context.RizMetreUserses.RemoveRange(entities);
         _context.BarAvordAddedBoardStands.RemoveRange(lstBarAvordAddedBoardStand);
@@ -80,11 +83,13 @@ public class BoardStandController(ApplicationDbContext context) : Controller
             {
                 DeleteHamlDto deleteHaml = new DeleteHamlDto
                 {
+                    RIzMetreId = entity.ID,
                     BarAvordId = BaravordId,
                     FBShomareh = FB.Shomareh,
                     RMShomareh = entity.Shomareh,
+                    NoeFBId = NoeFBId
                 };
-                HamlCommon.DeleteHaml(deleteHaml, context);
+               await HamlCommon.DeleteHaml(deleteHaml, context);
             }
         }
 
@@ -93,14 +98,14 @@ public class BoardStandController(ApplicationDbContext context) : Controller
 
         //درج جدید
         long Shomareh = 0;
-        clsRizMetreUsers? RM = _context.RizMetreUserses.Include(x => x.FB).OrderByDescending(x => x.Shomareh).FirstOrDefault(x => x.FB.BarAvordId == BaravordId);
+        clsRizMetreUsers? RM = await _context.RizMetreUserses.Include(x => x.FB).OrderByDescending(x => x.Shomareh).FirstOrDefaultAsync(x => x.FB.BarAvordId == BaravordId);
         if (RM != null)
         {
             Shomareh = RM.Shomareh;
         }
         Shomareh++;
 
-        List<clsBoardStandItems> lstBoardStandItems = _context.BoardStandItemses.Where(x => x.Year == Year && x.BoardStandType == BoardStandType).ToList();
+        List<clsBoardStandItems> lstBoardStandItems = await _context.BoardStandItemses.Where(x => x.Year == Year && x.BoardStandType == BoardStandType).ToListAsync();
         if (lstBoardStandItems.Count != 0)
         {
             foreach (var item in lstBoardStandItems)
@@ -111,19 +116,20 @@ public class BoardStandController(ApplicationDbContext context) : Controller
                     clsBarAvordAddedBoardStand barAvordAddedBoardStand = new clsBarAvordAddedBoardStand
                     {
                         BarAvordId = BaravordId,
+                        NoeFBId = NoeFBId,
                         BoardStandItemId = item.ID,
                         Tedad = Tedad
                     };
                     _context.BarAvordAddedBoardStands.Add(barAvordAddedBoardStand);
 
-                    clsFB? FBUsers = _context.FBs.FirstOrDefault(x => x.BarAvordId == BaravordId && x.Shomareh == strAddedItem);
+                    clsFB? FBUsers = await _context.FBs.FirstOrDefaultAsync(x => x.BarAvordId == BaravordId && x.Shomareh == strAddedItem && x.NoeFBId == NoeFBId);
                     Guid FBId = new Guid();
                     if (FBUsers == null)
                     {
                         clsFB FBSave = new clsFB();
                         FBSave.BarAvordId = BaravordId;
                         FBSave.Shomareh = strAddedItem;
-                        FBSave.BahayeVahedZarib = 0;
+                        //FBSave.BahayeVahedZarib = 0;
                         FBSave.NoeFBId = NoeFBId;
                         _context.FBs.Add(FBSave);
                         _context.SaveChanges();
@@ -134,6 +140,7 @@ public class BoardStandController(ApplicationDbContext context) : Controller
 
                     clsRizMetreUsers RizMetreUsers = new clsRizMetreUsers();
                     RizMetreUsers.Shomareh = Shomareh;
+                    RizMetreUsers.ShomarehNew = Shomareh.ToString();
                     RizMetreUsers.Sharh = item.Sharh;
 
                     RizMetreUsers.Tedad = item.Tedad * Tedad;
@@ -188,12 +195,13 @@ public class BoardStandController(ApplicationDbContext context) : Controller
                         BarAvordUserId = BaravordId,
                         Year = Year,
                         ItemFBShomareh = strAddedItem,
+                        NoeFBId = NoeFBId,
                         //BarAvordHamlId = gBarAvordHamlId,
                         Shomareh = Shomareh,
                         MeghdarJoz = dMeghdarJoz,
                         LevelNumber = 1
                     };
-                    HamlCommon.SaveHaml(requestSaveHaml, context);
+                    await  HamlCommon.SaveHaml(requestSaveHaml, context);
 
                     Shomareh++;
 
@@ -205,16 +213,18 @@ public class BoardStandController(ApplicationDbContext context) : Controller
         return new JsonResult("OK");
     }
 
-    public JsonResult DeleteBoardStand([FromBody] BoardStandForDeleteDto request)
+    public async Task<JsonResult> DeleteBoardStand([FromBody] BoardStandForDeleteDto request)
     {
         try
         {
             Guid BaravordId = request.BaravordId;
+            NoeFehrestBaha NoeFBId = request.NoeFBId;
+
             int BoardStandType = request.BoardStandType;
 
             List<Guid> lstBoardStandItemIds = _context.BoardStandItemses.Where(x => x.BoardStandType == BoardStandType).Select(x => x.ID).ToList();
 
-            List<clsBarAvordAddedBoardStand> lstBarAvordAddedBoardStand = _context.BarAvordAddedBoardStands.Where(x => x.BarAvordId == BaravordId && lstBoardStandItemIds.Contains(x.BoardStandItemId)).ToList();
+            List<clsBarAvordAddedBoardStand> lstBarAvordAddedBoardStand = _context.BarAvordAddedBoardStands.Where(x => x.BarAvordId == BaravordId && x.NoeFBId == NoeFBId && lstBoardStandItemIds.Contains(x.BoardStandItemId)).ToList();
 
             List<clsRizMetreForBarAvordAddedBoardStand> RizMetreForBarAvordAddedBoardStands = _context.RizMetreForBarAvordAddedBoardStands.Include(x => x.BarAvordAddedBoardStand)
                 .Where(x => x.BarAvordAddedBoardStand.BarAvordId == BaravordId && lstBoardStandItemIds.Contains(x.BarAvordAddedBoardStand.BoardStandItemId)).ToList();
@@ -240,14 +250,16 @@ public class BoardStandController(ApplicationDbContext context) : Controller
                 {
                     DeleteHamlDto deleteHaml = new DeleteHamlDto
                     {
+                        RIzMetreId=entity.ID,
                         BarAvordId = BaravordId,
                         FBShomareh = FB.Shomareh,
                         RMShomareh = entity.Shomareh,
+                        NoeFBId = NoeFBId
                     };
-                    HamlCommon.DeleteHaml(deleteHaml, context);
+                    await HamlCommon.DeleteHaml(deleteHaml, context);
                 }
             }
-            _context.SaveChanges();
+           await _context.SaveChangesAsync();
 
             return new JsonResult("OK");
         }
@@ -265,7 +277,9 @@ public class BoardStandController(ApplicationDbContext context) : Controller
         int Year = request.Year;
         List<int> lstBoardStandType = request.lstBoardStandType;
 
-        List<ItemFBShomarehForGetAndShowAddItemsFieldsDto> lstItemFields = _context.ItemsFieldses.Where(x => x.NoeFB == NoeFB).Select(x => new ItemFBShomarehForGetAndShowAddItemsFieldsDto
+        List<ItemFBShomarehForGetAndShowAddItemsFieldsDto> lstItemFields = 
+            _context.ItemsFieldses.Where(x => x.NoeFB == NoeFB)
+            .Select(x => new ItemFBShomarehForGetAndShowAddItemsFieldsDto
         {
             Shomareh = x.ItemShomareh,
             FieldType = x.FieldType,
@@ -278,7 +292,7 @@ public class BoardStandController(ApplicationDbContext context) : Controller
         foreach (var BoardStandType in lstBoardStandType)
         {
             List<Guid> lstBoardStandItemIds = _context.BoardStandItemses.Where(x => x.Year == Year && x.BoardStandType == BoardStandType).Select(x => x.ID).ToList();
-            List<clsBarAvordAddedBoardStand> lstbarAvordAddedBoardStand = _context.BarAvordAddedBoardStands.Where(x => x.BarAvordId == BaravordId && lstBoardStandItemIds.Contains(x.BoardStandItemId)).ToList();
+            List<clsBarAvordAddedBoardStand> lstbarAvordAddedBoardStand = _context.BarAvordAddedBoardStands.Where(x => x.BarAvordId == BaravordId && x.NoeFBId == NoeFB && lstBoardStandItemIds.Contains(x.BoardStandItemId)).ToList();
             if (lstbarAvordAddedBoardStand.Count != 0)
             {
                 foreach (var barAvordAddedBoardStand in lstbarAvordAddedBoardStand)

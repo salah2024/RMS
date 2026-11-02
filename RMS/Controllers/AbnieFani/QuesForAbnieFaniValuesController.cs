@@ -20,91 +20,89 @@ namespace RMS.Controllers.AbnieFani
         }
         public JsonResult ConfirmQuesForAbnieFaniValues([FromBody] ConfirmQuesForAbnieFaniValuesInputDto request)
         {
-            try
+            //try
+            //{
+            Guid PolVaAbroId = request.PolVaAbroId;
+            string QuesVal = request.QuesVal;
+            //DataTable DtAbnieFaniQueries = tblQuesForAbnieFani.ListWithParameterQuesForAbnieFaniValues("_PolVaAbroId='" + PolVaAbroId + "'");
+
+            string strParam1 = "PolVaAbroId='" + PolVaAbroId + "'";
+            var QuesForAbnieFaniValuesParam = new SqlParameter("@Parameter", strParam1);
+
+            var QuesForAbnieFaniValues = _context.Set<QuesForAbnieFaniValuesDto>()
+                .FromSqlRaw("EXEC QuesForAbnieFaniValuesListWithParameter @Parameter", QuesForAbnieFaniValuesParam)
+                .ToList();
+
+            DataTable DtAbnieFaniQueries = clsConvert.ToDataTable(QuesForAbnieFaniValues);
+
+            //DataTable DtAbnieFaniQueries = clsAbnieFaniQueries.ListWithParameterQuesForAbnieFaniValues("PolVaAbroId=" + PolVaAbroId);
+            if (DtAbnieFaniQueries.Rows.Count != 0)
             {
-                Guid PolVaAbroId = request.PolVaAbroId;
-                string QuesVal = request.QuesVal;
-                //DataTable DtAbnieFaniQueries = tblQuesForAbnieFani.ListWithParameterQuesForAbnieFaniValues("_PolVaAbroId='" + PolVaAbroId + "'");
-
-                string strParam1 = "PolVaAbroId='" + PolVaAbroId + "'";
-                var QuesForAbnieFaniValuesParam = new SqlParameter("@Parameter", strParam1);
-
-                var QuesForAbnieFaniValues = _context.Set<QuesForAbnieFaniValuesDto>()
-                    .FromSqlRaw("EXEC QuesForAbnieFaniValuesListWithParameter @Parameter", QuesForAbnieFaniValuesParam)
-                    .ToList();
-
-                DataTable DtAbnieFaniQueries = clsConvert.ToDataTable(QuesForAbnieFaniValues);
-
-                //DataTable DtAbnieFaniQueries = clsAbnieFaniQueries.ListWithParameterQuesForAbnieFaniValues("PolVaAbroId=" + PolVaAbroId);
-                if (DtAbnieFaniQueries.Rows.Count != 0)
+                clsQuesForAbnieFaniValues QuesForAbnieFaniValues1 = _context.QuesForAbnieFaniValuess.Where(x => x.PolVaAbroId == PolVaAbroId).FirstOrDefault();
+                _context.QuesForAbnieFaniValuess.Remove(QuesForAbnieFaniValues1);
+                _context.SaveChanges();
+                //clsAbnieFaniQueries.DeleteQuesForAbnieFaniValuesWithParameter("PolVaAbroId=" + PolVaAbroId);
+            }
+            //clsAbnieFaniQueries AbnieFaniQueries = new clsAbnieFaniQueries();
+            clsQuesForAbnieFani AbnieFaniQueries = new clsQuesForAbnieFani();
+            string[] strSplit = QuesVal.Split(',');
+            string strValue = "";
+            string strId = "";
+            string strShomarehFBSelectedId = "";
+            for (int i = 0; i < strSplit.Length - 1; i++)
+            {
+                string[] strSplitSplit = strSplit[i].Split('_');
+                for (int j = 0; j < strSplitSplit.Length; j++)
                 {
-                    clsQuesForAbnieFaniValues QuesForAbnieFaniValues1 = _context.QuesForAbnieFaniValuess.Where(x => x.PolVaAbroId == PolVaAbroId).FirstOrDefault();
-                    _context.QuesForAbnieFaniValuess.Remove(QuesForAbnieFaniValues1);
-                    _context.SaveChanges();
-                    //clsAbnieFaniQueries.DeleteQuesForAbnieFaniValuesWithParameter("PolVaAbroId=" + PolVaAbroId);
-                }
-                //clsAbnieFaniQueries AbnieFaniQueries = new clsAbnieFaniQueries();
-                clsQuesForAbnieFani AbnieFaniQueries = new clsQuesForAbnieFani();
-                string[] strSplit = QuesVal.Split(',');
-                string strValue = "";
-                string strId = "";
-                string strShomarehFBSelectedId = "";
-                for (int i = 0; i < strSplit.Length - 1; i++)
-                {
-                    string[] strSplitSplit = strSplit[i].Split('_');
-                    for (int j = 0; j < strSplitSplit.Length; j++)
+                    string strType = strSplitSplit[j].ToString().Substring(0, 2);
+                    string strVal = strSplitSplit[j].ToString().Substring(2, strSplitSplit[j].ToString().Length - 2);
+                    switch (strType)
                     {
-                        string strType = strSplitSplit[j].ToString().Substring(0, 2);
-                        string strVal = strSplitSplit[j].ToString().Substring(2, strSplitSplit[j].ToString().Length - 2);
-                        switch (strType)
-                        {
-                            case "id":
-                                {
-                                    strId = strVal;
-                                    break;
-                                }
-                            case "vl":
-                                {
-                                    strValue = strVal;
-                                    break;
-                                }
-                            case "qu":
-                                {
-                                    strShomarehFBSelectedId = strVal;
-                                    break;
-                                }
-                            default:
+                        case "id":
+                            {
+                                strId = strVal;
                                 break;
-                        }
+                            }
+                        case "vl":
+                            {
+                                strValue = strVal;
+                                break;
+                            }
+                        case "qu":
+                            {
+                                strShomarehFBSelectedId = strVal;
+                                break;
+                            }
+                        default:
+                            break;
                     }
-
-                    clsQuesForAbnieFaniValues QuesForAbnieFaniValues2 = new clsQuesForAbnieFaniValues();
-                    QuesForAbnieFaniValues2.QuestionForAbnieFaniId = long.Parse(strId);
-                    QuesForAbnieFaniValues2.Value = decimal.Parse(strValue);
-                    QuesForAbnieFaniValues2.ShomarehFBSelectedId = int.Parse(strShomarehFBSelectedId);
-                    QuesForAbnieFaniValues2.PolVaAbroId = PolVaAbroId;
-                    _context.QuesForAbnieFaniValuess.Add(QuesForAbnieFaniValues2);
-                    _context.SaveChanges();
-
-                    //AbnieFaniQueries.Save(int.Parse(strId), decimal.Parse(strValue), int.Parse(strShomarehFBSelectedId), PolVaAbroId);
                 }
-                return new JsonResult("OK_");
+                clsQuesForAbnieFaniValues QuesForAbnieFaniValues2 = new clsQuesForAbnieFaniValues();
+                QuesForAbnieFaniValues2.QuestionForAbnieFaniId = long.Parse(strId);
+                QuesForAbnieFaniValues2.Value = decimal.Parse(strValue);
+                QuesForAbnieFaniValues2.ShomarehFBSelectedId = strShomarehFBSelectedId == "" ? 1 : int.Parse(strShomarehFBSelectedId);
+                QuesForAbnieFaniValues2.PolVaAbroId = PolVaAbroId;
+                _context.QuesForAbnieFaniValuess.Add(QuesForAbnieFaniValues2);
+                //AbnieFaniQueries.Save(int.Parse(strId), decimal.Parse(strValue), int.Parse(strShomarehFBSelectedId), PolVaAbroId);
             }
-            catch (Exception)
-            {
-                return new JsonResult("NOK_");
-            }
+            _context.SaveChanges();
+            return new JsonResult("OK_");
+            //}
+            //catch (Exception)
+            //{
+            //    return new JsonResult("NOK_");
+            //}
         }
 
         public JsonResult DeleteEzafeBahaForAbnieFaniPol([FromBody] DeleteEzafeBahaForAbnieFaniPolInputDto request)
         {
 
-			Guid BarAvordUserID = request.BarAvordUserID;
-			Guid PolVaAbroId = request.PolVaAbroId;
-			long QuestionId = request.QuestionId;
-			string ItemFBForDel = request.ItemFBForDel.Trim();
+            Guid BarAvordUserID = request.BarAvordUserID;
+            Guid PolVaAbroId = request.PolVaAbroId;
+            long QuestionId = request.QuestionId;
+            string ItemFBForDel = request.ItemFBForDel.Trim();
 
-			//ItemFBForDel = ItemFBForDel.Trim();
+            //ItemFBForDel = ItemFBForDel.Trim();
             bool blnCheck = false;
             try
             {

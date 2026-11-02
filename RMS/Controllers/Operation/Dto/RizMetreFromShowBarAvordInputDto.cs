@@ -5,6 +5,7 @@ namespace RMS.Controllers.Operation.Dto;
 public class RizMetreFromShowBarAvordInputDto
 {
     public string Sharh { get; set; }
+    public string TajmieItem { get; set; }
     public decimal? Tedad { get; set; }
     public decimal? Tool { get; set; }
     public decimal? Arz { get; set; }
@@ -15,4 +16,12 @@ public class RizMetreFromShowBarAvordInputDto
     public int Year { get; set; }   
     public Guid BarAvordUserId { get; set; }
     public NoeFehrestBaha NoeFBId { get; set; }
+}
+public class JameCurrentFaslDto
+{
+    public int Year { get; set; }   
+    public Guid BarAvordUserId { get; set; }
+    public NoeFehrestBaha NoeFBId { get; set; }
+    public string Shomareh { get; set; }
+    public string Code { get; set; }
 }
