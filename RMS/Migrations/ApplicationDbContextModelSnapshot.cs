@@ -497,6 +497,9 @@ namespace RMS.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("NoeFBId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("RemoveDateTime")
                         .HasColumnType("datetime2");
 
@@ -1390,6 +1393,9 @@ namespace RMS.Migrations
 
                     b.Property<DateTime?>("InsertDateTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsComplete")
+                        .HasColumnType("bit");
 
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("bit");
@@ -3680,11 +3686,18 @@ namespace RMS.Migrations
                     b.Property<Guid>("BaravordUserId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("FromKM")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("InsertDateTime")
                         .HasColumnType("datetime2");
 
                     b.Property<bool?>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<int>("KMNum")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -3695,6 +3708,10 @@ namespace RMS.Migrations
 
                     b.Property<DateTime?>("RemoveDateTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("ToKM")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");

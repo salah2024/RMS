@@ -56,7 +56,7 @@ function formatNumber(num) {
     return Number(num).toLocaleString('fa-IR'); // یا 'en-US' برای کاما
 }
 
-function PayKaniClick(OpId, Type) {
+function PayKaniClick111(OpId, Type) {
 
     debugger;
     $('#HDFOperationId').val(OpId);
@@ -77,12 +77,12 @@ function PayKaniClick(OpId, Type) {
 <div class="row">
  <div class="col-12" style="direction: ltr;">
     <div class="col-md-1 action-col">
-     <button type="button" id="btnSavePayKani"
+        <button type="button" id="btnSavePayKani"
             onclick="SavePayKaniInfo1('${BarAvordUserId}',${Type})"
             class="ButtonRowsSaveStyle">
             <i id="iSave" class="fa fa-save SaveRMUStyle"></i>
         </button>
-    </div><!--col-md-2 action-col -->
+    </div>
  </div><!--col-12 -->
 </div><!--row -->
 
@@ -119,6 +119,38 @@ function PayKaniClick(OpId, Type) {
 
     //ShowSelctionPayKani(1, 0, BarAvordUserId, 0, 0, 0, 0, 0);
 }
+
+// function DelPayKaniInfo(BarAvordUserId)
+// {
+//     Year = $('#HDFYear').val();
+
+//     var vardata = new Object();
+//     vardata.BarAvordUserId = BarAvordUserId;
+
+
+//     debugger;
+//     $.ajax({
+//         type: "POST",
+//         url: "/PayKaniInfoForBarAvords/DeletePayKaniInfoForBarAvord",
+//         data: JSON.stringify(vardata),
+//         contentType: "application/json; charset=utf-8",
+//         dataType: "json",
+//         success: function (response) {
+//             debugger;
+//             info = response.split('_');
+//             if (info[0] == "OK") {
+//                 toastr.success('اطلاعات پی کنی بدرستی حذف گردید', 'ثبت');
+//             }
+//             else {
+//                 toastr.error('مشکل در حذف اطلاعات', 'خطا');
+//                 $('#ContainerWaiting').hide();
+//             }
+//         },
+//         error: function (response) {
+//             toastr.error('مشکل در حذف اطلاعات', 'خطا');
+//         }
+//     });
+// }
 
 function ViewPayKaniInfo(BarAvordId, Type) {
 
@@ -251,8 +283,6 @@ function ViewPayKaniInfo(BarAvordId, Type) {
 
 
             $.each(KMPayKaniBarAvordDetails, function () {
-
-                debugger;
 
                 strKMAK += `
         <div class="container-fluid" style="width:100%;margin:0;padding:0;">
@@ -818,6 +848,7 @@ function SumAllDetailsPayKani() {
 }
 
 function SavePayKaniInfo1(BarAvordUserId, Type) {
+    debugger;
     AddOrEdit = $('#HDFStateAmalyateKhakiSaveOrEdit').val();
     if (AddOrEdit == 'Edit') {
         UpdatePayKaniInfo(BarAvordUserId, Type);
@@ -1062,7 +1093,6 @@ function UpdatePayKaniInfo(BarAvordUserId, Type) {
         vardata.NoeFBId = NoeFB;
         vardata.Type = Type;
 
-        debugger;
 
         $.ajax({
             type: "POST",

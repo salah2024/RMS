@@ -108,7 +108,7 @@ public class AmalyateKhakiCommon
                             MeghdarJoz = AmalyateKhakiInfoForBarAvordDetailsMore.Value;
                             clsRizMetreUsers RizMetre = new clsRizMetreUsers();
                             RizMetre.Shomareh = Shomareh++;
-                            RizMetre.Sharh = item.NoeKhakBardariName + " - " + "حمل به دپو";
+                            RizMetre.Sharh = item.NoeKhakBardariName + " - " + "پخش در محل دپو";
                             RizMetre.Tedad = null;
                             RizMetre.Tool = null;
                             RizMetre.Arz = null;
@@ -174,36 +174,36 @@ public class AmalyateKhakiCommon
                     {
                         //decimal? d1 = 0;
                         //decimal? d2 = 0;
-                        //AmalyateKhakiInfoForBarAvordDetailsMore =
-                        //             item.lstAmalyateKhakiInfoForBarAvordDetailsMore.FirstOrDefault(x => x.Name.ToLower() == "haml");
-                        //if (AmalyateKhakiInfoForBarAvordDetailsMore != null)
-                        //{
-                        //    MeghdarJoz = AmalyateKhakiInfoForBarAvordDetailsMore.Value;
-                        //    clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-                        //    RizMetre.Shomareh = Shomareh++;
-                        //    RizMetre.Sharh = item.NoeKhakBardariName + " - " + "حمل به دپو";
-                        //    RizMetre.Tedad = null;
-                        //    RizMetre.Tool = null;
-                        //    RizMetre.Arz = null;
-                        //    RizMetre.Ertefa = null;
-                        //    RizMetre.Vazn = null;
-                        //    RizMetre.Des = "";
-                        //    RizMetre.FBId = gFBId;
-                        //    RizMetre.OperationsOfHamlId = 1;
-                        //    RizMetre.Type = "2";
-                        //    RizMetre.ForItem = "";
-                        //    RizMetre.UseItem = "";
-                        //    RizMetre.MeghdarJoz = MeghdarJoz;
-                        //    _context.RizMetreUserses.Add(RizMetre);
+                        AmalyateKhakiInfoForBarAvordDetailsMore =
+                                     item.lstAmalyateKhakiInfoForBarAvordDetailsMore.FirstOrDefault(x => x.Name.ToLower() == "haml");
+                        if (AmalyateKhakiInfoForBarAvordDetailsMore != null)
+                        {
+                            MeghdarJoz = AmalyateKhakiInfoForBarAvordDetailsMore.Value;
+                            clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                            RizMetre.Shomareh = Shomareh++;
+                            RizMetre.Sharh = item.NoeKhakBardariName + " - " + "بارگیری جهت حمل به دپو";
+                            RizMetre.Tedad = null;
+                            RizMetre.Tool = null;
+                            RizMetre.Arz = null;
+                            RizMetre.Ertefa = null;
+                            RizMetre.Vazn = null;
+                            RizMetre.Des = "";
+                            RizMetre.FBId = gFBId;
+                            RizMetre.OperationsOfHamlId = 1;
+                            RizMetre.Type = "2";
+                            RizMetre.ForItem = "";
+                            RizMetre.UseItem = "";
+                            RizMetre.MeghdarJoz = MeghdarJoz;
+                            _context.RizMetreUserses.Add(RizMetre);
 
-                        //    clsAmalyateKhakiInfoForBarAvordEzafeBahaRizMetre AmalyateKhakiInfoForBarAvordEzafeBahaRizMetre
-                        //        = new clsAmalyateKhakiInfoForBarAvordEzafeBahaRizMetre
-                        //        {
-                        //            AmalyateKhakiInfoForBarAvordEzafeBahaId = amalyateKhakiInfoForBarAvordEzafeBaha.ID,
-                        //            RizMetreUserId = RizMetre.ID
-                        //        };
-                        //    _context.AmalyateKhakiInfoForBarAvordEzafeBahaRizMetres.Add(AmalyateKhakiInfoForBarAvordEzafeBahaRizMetre);
-                        //}
+                            clsAmalyateKhakiInfoForBarAvordEzafeBahaRizMetre AmalyateKhakiInfoForBarAvordEzafeBahaRizMetre
+                                = new clsAmalyateKhakiInfoForBarAvordEzafeBahaRizMetre
+                                {
+                                    AmalyateKhakiInfoForBarAvordEzafeBahaId = amalyateKhakiInfoForBarAvordEzafeBaha.ID,
+                                    RizMetreUserId = RizMetre.ID
+                                };
+                            _context.AmalyateKhakiInfoForBarAvordEzafeBahaRizMetres.Add(AmalyateKhakiInfoForBarAvordEzafeBahaRizMetre);
+                        }
 
 
                         AmalyateKhakiInfoForBarAvordDetailsMore =
@@ -213,7 +213,7 @@ public class AmalyateKhakiCommon
                             MeghdarJoz = AmalyateKhakiInfoForBarAvordDetailsMore.Value;
                             clsRizMetreUsers RizMetre = new clsRizMetreUsers();
                             RizMetre.Shomareh = Shomareh++;
-                            RizMetre.Sharh = item.NoeKhakBardariName + " - " + "حمل خاکریزی";
+                            RizMetre.Sharh = item.NoeKhakBardariName + " - " + "بارگیری جهت حمل به خاکریزی";
                             RizMetre.Tedad = null;
                             RizMetre.Tool = null;
                             RizMetre.Arz = null;

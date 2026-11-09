@@ -13,8 +13,7 @@ public class DeleteEzafeBahaAKhDto
 public class DeleteEzafeBahaPKDto
 {
     public long NoeKhakBardariEzafeBahaId { get; set; }
+    public Guid PayKaniInfoForBarAvordId { get; set; }
     public Guid BarAvordUserId { get; set; }
-    public NoeFehrestBaha NoeFBId { get; set; }
     public long Year { get; set; }
-    public int Type { get; set; }
 }

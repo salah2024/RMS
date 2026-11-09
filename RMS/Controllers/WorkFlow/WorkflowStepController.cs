@@ -326,47 +326,24 @@ public class WorkflowStepController(ApplicationDbContext context, IWorkflowStepQ
             .OrderBy(x => x.ActionDate)
             .ToListAsync();
 
+        // دریافت کاربران تعریف‌شده برای هر مرحله
+        var stepUsers = await _context.WorkflowStepUsers
+            .Include(x => x.User)
+                .ThenInclude(x => x.UserDetail)
+                    .ThenInclude(x => x.Company)
+            .Where(x =>
+                steps.Select(s => s.ID).Contains(x.WorkflowStepId) &&
+                (x.IsDeleted == false || x.IsDeleted == null))
+            .ToListAsync();
 
-        // 9. تشکیل لیست ترکیبی مراحل و دورهای اجرا
+        // 9. تشکیل لیست مراحل؛ هر مرحله فقط یک بار
 
-        var roundKeys = new HashSet<(Guid StepId, int RoundNo)>();
+        var roundKeys = new HashSet<Guid>();
 
-        // مراحل دارای ارجاع
-        foreach (var item in assignments)
-        {
-            roundKeys.Add((
-                item.WorkflowStepId,
-                item.RoundNo
-            ));
-        }
-
-        // مراحل دارای تاریخچه
-        foreach (var item in histories)
-        {
-            roundKeys.Add((
-                item.WorkflowStepId,
-                item.RoundNo
-            ));
-        }
-
-        // مرحله جاری
-        roundKeys.Add((
-            instance.CurrentStepId,
-            currentRoundNo
-        ));
-
-        // مراحل آینده یا مراحل بدون سابقه
         foreach (var step in steps)
         {
-            if (!roundKeys.Any(x => x.StepId == step.ID))
-            {
-                roundKeys.Add((
-                    step.ID,
-                    0
-                ));
-            }
+            roundKeys.Add(step.ID);
         }
-
 
         // 10. ساخت خروجی اصلی
         var result = new WorkflowTimelineDto
@@ -384,30 +361,36 @@ public class WorkflowStepController(ApplicationDbContext context, IWorkflowStepQ
 
         // 11. ساخت اطلاعات هر مرحله در هر دور اجرا
 
-        foreach (var key in roundKeys
-            .OrderBy(x =>
-                steps.FirstOrDefault(s => s.ID == x.StepId)?.Order ?? 0)
-            .ThenBy(x => x.RoundNo))
+        foreach (var stepId in roundKeys.OrderBy(x =>
+            steps.First(s => s.ID == x).Order))
         {
-            var step = steps.FirstOrDefault(x => x.ID == key.StepId);
+            var step = steps.FirstOrDefault(x => x.ID == stepId);
 
             if (step == null)
                 continue;
 
+            // آخرین دور ثبت‌شده برای این مرحله
+            int stepRoundNo = Math.Max(
+                assignments
+                    .Where(x => x.WorkflowStepId == step.ID)
+                    .Select(x => (int?)x.RoundNo)
+                    .Max() ?? 0,
 
-            // ارجاعات این مرحله در این دور
+                histories
+                    .Where(x => x.WorkflowStepId == step.ID)
+                    .Select(x => (int?)x.RoundNo)
+                    .Max() ?? 0
+            );
+
+            // تمام ارجاعات این مرحله
             var stepAssignments = assignments
-                .Where(x =>
-                    x.WorkflowStepId == step.ID &&
-                    x.RoundNo == key.RoundNo)
+                .Where(x => x.WorkflowStepId == step.ID)
                 .ToList();
 
-
-            // تاریخچه این مرحله در این دور
+            // تمام تاریخچه‌های این مرحله
             var stepHistories = histories
-                .Where(x =>
-                    x.WorkflowStepId == step.ID &&
-                    x.RoundNo == key.RoundNo)
+                .Where(x => x.WorkflowStepId == step.ID)
+                .OrderBy(x => x.ActionDate)
                 .ToList();
 
 
@@ -419,14 +402,41 @@ public class WorkflowStepController(ApplicationDbContext context, IWorkflowStepQ
             {
                 statusTitle = "شروع نشده";
             }
-            else if (stepAssignments.Any(x => !x.IsCompleted))
+            else if (stepAssignments.Any(x =>
+                !x.IsCompleted ||
+                x.Result == WorkflowAssignmentResult.Pending))
             {
                 statusTitle = "در انتظار اقدام";
+            }
+            else if (stepAssignments.Any(x =>
+                x.Result == WorkflowAssignmentResult.Rejected))
+            {
+                statusTitle = "رد شده";
+            }
+            else if (stepAssignments.Any(x =>
+                x.Result == WorkflowAssignmentResult.RevisionRequested))
+            {
+                statusTitle = "درخواست اصلاح";
+            }
+            else if (stepAssignments.Any(x =>
+                x.Result == WorkflowAssignmentResult.Cancelled))
+            {
+                statusTitle = "لغو شده";
             }
             else
             {
                 statusTitle = "اقدامات تکمیل شده";
             }
+
+            // کاربران تعریف‌شده برای این مرحله
+            var definedUsers = stepUsers
+                .Where(x => x.WorkflowStepId == step.ID)
+                .ToList();
+
+            // فقط اگر دقیقاً یک کاربر تعریف شده باشد، قبل از ارجاع نمایش داده شود
+            var showDefinedUser =
+                definedUsers.Count == 1 &&
+                stepAssignments.Count == 0;
 
 
             // 13. ساخت DTO مرحله
@@ -438,18 +448,23 @@ public class WorkflowStepController(ApplicationDbContext context, IWorkflowStepQ
 
                 Order = step.Order,
 
-                RoundNo = key.RoundNo == 0
-                    ? null
-                    : key.RoundNo,
+                RoundNo = stepRoundNo == 0 ? null : stepRoundNo,
 
-                IsCurrent =
-                    step.ID == instance.CurrentStepId &&
-                    key.RoundNo == currentRoundNo,
+                IsCurrent = step.ID == instance.CurrentStepId,
 
                 IsFinal = step.IsFinal,
 
                 StatusTitle = statusTitle,
 
+                PotentialReceivers = showDefinedUser
+    ? definedUsers.Select(x => new WorkflowPotentialReceiverDto
+    {
+        UserId = x.UserId,
+        FullName = x.User?.FullName ?? "",
+        CompanyName = x.User?.UserDetail?.Company?.CompanyName ?? "",
+        IsAssigned = false
+    }).ToList()
+    : new List<WorkflowPotentialReceiverDto>(),
 
                 // 14. گیرندگان مرحله
                 Assignments = stepAssignments
@@ -468,9 +483,15 @@ public class WorkflowStepController(ApplicationDbContext context, IWorkflowStepQ
 
                         Result = x.Result,
 
-                        ResultTitle = x.IsCompleted
-                            ? x.Result?.ToString() ?? "تکمیل شده"
-                            : "در انتظار اقدام",
+                        ResultTitle = x.Result switch
+                        {
+                            WorkflowAssignmentResult.Pending => "در انتظار اقدام",
+                            WorkflowAssignmentResult.Submitted => "ارسال شده",
+                            WorkflowAssignmentResult.RevisionRequested => "درخواست اصلاح",
+                            WorkflowAssignmentResult.Rejected => "رد شده",
+                            WorkflowAssignmentResult.Cancelled => "لغو شده",
+                            _ => "نامشخص"
+                        },
 
                         Comment = x.Comment ?? "",
 
@@ -515,9 +536,8 @@ public class WorkflowStepController(ApplicationDbContext context, IWorkflowStepQ
 
         // 16. مرتب سازی نهایی
         result.Steps = result.Steps
-            .OrderBy(x => x.Order)
-            .ThenBy(x => x.RoundNo ?? 0)
-            .ToList();
+    .OrderBy(x => x.Order)
+    .ToList();
 
 
         return new JsonResult(result);

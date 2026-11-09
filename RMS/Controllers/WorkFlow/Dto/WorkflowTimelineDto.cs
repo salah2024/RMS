@@ -43,6 +43,17 @@ public class WorkflowStepTimelineDto
 
     public List<WorkflowHistoryTimelineDto> Histories { get; set; }
         = new();
+
+    public List<WorkflowPotentialReceiverDto> PotentialReceivers { get; set; }
+    = new List<WorkflowPotentialReceiverDto>();
+}
+
+public class WorkflowPotentialReceiverDto
+{
+    public string UserId { get; set; }
+    public string FullName { get; set; }
+    public string CompanyName { get; set; }
+    public bool IsAssigned { get; set; }
 }
 
 

@@ -737,13 +737,14 @@ function GharzehClick(OpId) {
 }
 
 function PayKaniClick(OpId, event) {
+
     if (event) {
         event.stopPropagation();
         event.preventDefault();
     }
 
     BarAvordUserID = $('#HDFBarAvordUserID').val();
-    PayKaniWithBarAvordClick(OpId, BarAvordUserID);
+    PayKaniWithBarAvordIdClick(OpId, BarAvordUserID);
 }
 
 function spanOnClick(Id, ConditionGroupId) {

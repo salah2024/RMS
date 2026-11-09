@@ -374,6 +374,7 @@ function SaveGharzehInfo(BarAvordUserId) {
 ////////////////////
 ///////////////////
 function PayKaniWithBarAvordClick(OpId, BarAvordUserId) {
+    alert('d');
     str = '';
     str += '<div class=\'row\' style=\'margin-top:3px;\'><div class=\'col-md-3 row\'><a class=\'NewPolStyle\' onclick=\"ShowExistingPolForPayKani('+"'" + BarAvordUserId +"'"+ ')\">لیست پلهای موجود</a></div>';
     str += '</div>';

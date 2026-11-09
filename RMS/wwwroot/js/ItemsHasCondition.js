@@ -2,7 +2,7 @@
 
     $("#cmbYear").val("1404");
 
-    $("#cmbNoeFB").val("234");
+    $("#cmbNoeFB").val("21");
 
     LoadData();
 

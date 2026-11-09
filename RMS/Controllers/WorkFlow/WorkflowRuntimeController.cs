@@ -46,20 +46,12 @@ public class WorkflowRuntimeController : Controller
                     x.proccesType ==
                     ProccesType.BarAvordAvalieh);
 
-        clsBarAvordProjectionWorkFlow? barAvordProjectionWorkFlow1 = await _context.BarAvordProjectionWorkFlows.FirstOrDefaultAsync(x => x.BarAvordUserId == EntityId);
-        if (barAvordProjectionWorkFlow1 != null)
+        clsBarAvordProjectionWorkFlow barAvordProjectionWorkFlow = new clsBarAvordProjectionWorkFlow
         {
-            barAvordProjectionWorkFlow1.proccesType = ProccesType.BarAvordAvalieh;
-        }
-        else
-        {
-            clsBarAvordProjectionWorkFlow barAvordProjectionWorkFlow = new clsBarAvordProjectionWorkFlow
-            {
-                BarAvordUserId = EntityId,
-                proccesType = ProccesType.BarAvordAvalieh
-            };
-            _context.BarAvordProjectionWorkFlows.Add(barAvordProjectionWorkFlow);
-        }
+            BarAvordUserId = EntityId,
+            proccesType = ProccesType.BarAvordAvalieh
+        };
+        _context.BarAvordProjectionWorkFlows.Add(barAvordProjectionWorkFlow);
 
 
         await _workflowRuntimeService.StartWorkflowAsync(
@@ -115,7 +107,7 @@ public class WorkflowRuntimeController : Controller
 
         ProccesType currentProccesType = (ProccesType)proccesType;
 
-        clsBarAvordProjectionWorkFlow? barAvordProjectionWorkFlow = await _context.BarAvordProjectionWorkFlows.FirstOrDefaultAsync(x => x.BarAvordUserId == entityId);
+        clsBarAvordProjectionWorkFlow? barAvordProjectionWorkFlow = await _context.BarAvordProjectionWorkFlows.FirstOrDefaultAsync(x => x.BarAvordUserId == entityId && x.IsComplete == false);
         if (barAvordProjectionWorkFlow != null)
         {
             currentProccesType = (ProccesType)barAvordProjectionWorkFlow.proccesType;

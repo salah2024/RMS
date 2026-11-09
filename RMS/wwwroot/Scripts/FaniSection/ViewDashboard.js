@@ -1286,6 +1286,7 @@ function PersianDate(value) {
 
 
 
+
 function RenderWorkflow(data) {
 
     if (!data || !data.steps || data.steps.length === 0) {
@@ -1303,9 +1304,10 @@ function RenderWorkflow(data) {
 
     let totalSteps = data.steps.length;
 
-    let completedSteps = data.steps.filter(x =>
-        x.assignments.length > 0 &&
-        x.assignments.every(a => a.isCompleted)
+    let completedSteps = data.steps.filter(step =>
+        step.assignments &&
+        step.assignments.length > 0 &&
+        step.assignments.every(a => a.isCompleted)
     ).length;
 
     let percent = totalSteps > 0
@@ -1334,28 +1336,36 @@ function RenderWorkflow(data) {
 
     data.steps.forEach((step, index) => {
 
+        let assignments = step.assignments || [];
+        let histories = step.histories || [];
+        let potentialReceivers = step.potentialReceivers || [];
+
         let current = step.isCurrent ? "current" : "";
 
+        // وضعیت ظاهری مرحله
         let statusCss = "pending";
         let statusIcon = "○";
 
-        if (step.assignments.length > 0 &&
-            step.assignments.every(x => x.isCompleted)) {
-
+        if (step.statusTitle === "اقدامات تکمیل شده") {
             statusCss = "completed";
             statusIcon = "✓";
-
+        }
+        else if (step.statusTitle === "رد شده") {
+            statusCss = "rejected";
+            statusIcon = "✕";
+        }
+        else if (step.statusTitle === "درخواست اصلاح") {
+            statusCss = "revision";
+            statusIcon = "↻";
         }
         else if (step.isCurrent) {
-
             statusCss = "in-progress";
             statusIcon = "●";
-
         }
 
         let roundText = step.roundNo != null
-            ? `دور ${step.roundNo.toLocaleString('fa-IR')}`
-            : "بدون ارجاع";
+            ? `مرحله ${step.order.toLocaleString('fa-IR')} - دور ${step.roundNo.toLocaleString('fa-IR')}`
+            : `مرحله ${step.order.toLocaleString('fa-IR')}`;
 
         html += `
             <div class="workflow-step ${current}">
@@ -1365,7 +1375,7 @@ function RenderWorkflow(data) {
                     <div class="step-header">
 
                         <span class="round-badge">
-                            مرحله ${step.order.toLocaleString('fa-IR')}
+                            ${roundText}
                         </span>
 
                         <span class="round-number">
@@ -1375,11 +1385,13 @@ function RenderWorkflow(data) {
                     </div>
 
                     <div class="step-title">
+
                         <span class="step-status-icon ${statusCss}">
                             ${statusIcon}
                         </span>
 
                         <h4>${step.stepTitle}</h4>
+
                     </div>
 
                     <div class="step-status ${statusCss}">
@@ -1387,8 +1399,64 @@ function RenderWorkflow(data) {
                     </div>
         `;
 
+        // =====================================
+        // افراد تعیین شده برای ارجاع
+        // فقط وقتی هنوز ارجاع واقعی وجود ندارد
+        // =====================================
+
+        if (assignments.length === 0 && potentialReceivers.length > 0) {
+
+            html += `
+                <div class="assignment-list">
+
+                    <div class="section-title">
+                        <i class="fa fa-users"></i>
+                        فرد تعیین‌شده برای ارجاع
+                    </div>
+            `;
+
+            potentialReceivers.forEach(user => {
+
+                html += `
+                    <div class="assignment-item waiting">
+
+                        <div class="assignment-user">
+
+                            <div class="user-icon">
+                                <i class="fa fa-user"></i>
+                            </div>
+
+                            <div class="user-info">
+
+                                <div class="user-name">
+                                    ${user.fullName}
+                                </div>
+
+                                <div class="company">
+                                    ${user.companyName || ""}
+                                </div>
+
+                            </div>
+
+                            <span class="user-status">
+                                در انتظار ارجاع
+                            </span>
+
+                        </div>
+
+                    </div>
+                `;
+
+            });
+
+            html += `</div>`;
+        }
+
+        // =====================================
         // گیرندگان واقعی مرحله
-        if (step.assignments && step.assignments.length > 0) {
+        // =====================================
+
+        if (assignments.length > 0) {
 
             html += `
                 <div class="assignment-list">
@@ -1399,41 +1467,55 @@ function RenderWorkflow(data) {
                     </div>
             `;
 
-            step.assignments.forEach(user => {
+            assignments.forEach(user => {
 
                 let userCss = "waiting";
                 let userIcon = "fa-clock";
                 let userStatus = "در انتظار اقدام";
 
-                if (user.isCompleted) {
+                // مقادیر واقعی WorkflowAssignmentResult
+                switch (user.result) {
 
-                    if (user.result != null) {
+                    case 1: // Pending
+                        userCss = "waiting";
+                        userIcon = "fa-clock";
+                        userStatus = "در انتظار اقدام";
+                        break;
 
-                        // مقادیر Enum را مطابق تعریف واقعی تنظیم کن
-                        let result = user.result;
-
-                        if (result == 1) {
-                            userCss = "approved";
-                            userIcon = "fa-check-circle";
-                            userStatus = "تأیید شده";
-                        }
-                        else if (result == 2) {
-                            userCss = "rejected";
-                            userIcon = "fa-times-circle";
-                            userStatus = "رد شده";
-                        }
-                        else {
-                            userCss = "completed";
-                            userIcon = "fa-check";
-                            userStatus = user.resultTitle;
-                        }
-
-                    }
-                    else {
+                    case 2: // Submitted
                         userCss = "completed";
-                        userIcon = "fa-check";
-                        userStatus = user.resultTitle || "تکمیل شده";
-                    }
+                        userIcon = "fa-paper-plane";
+                        userStatus = "ارسال شده";
+                        break;
+
+                    case 3: // RevisionRequested
+                        userCss = "revision";
+                        userIcon = "fa-refresh";
+                        userStatus = "درخواست اصلاح";
+                        break;
+
+                    case 4: // Rejected
+                        userCss = "rejected";
+                        userIcon = "fa-times-circle";
+                        userStatus = "رد شده";
+                        break;
+
+                    case 5: // Cancelled
+                        userCss = "cancelled";
+                        userIcon = "fa-ban";
+                        userStatus = "لغو شده";
+                        break;
+
+                    default:
+                        userStatus = user.resultTitle || "نامشخص";
+                        break;
+                }
+
+                // اگر هنوز تکمیل نشده، وضعیت انتظار اقدام است
+                if (!user.isCompleted) {
+                    userCss = "waiting";
+                    userIcon = "fa-clock";
+                    userStatus = "در انتظار اقدام";
                 }
 
                 html += `
@@ -1497,7 +1579,7 @@ function RenderWorkflow(data) {
             html += `</div>`;
 
         }
-        else if (!step.isCurrent) {
+        else if (potentialReceivers.length === 0 && !step.isCurrent) {
 
             html += `
                 <div class="no-assignment">
@@ -1507,8 +1589,11 @@ function RenderWorkflow(data) {
 
         }
 
+        // =====================================
         // تاریخچه اقدامات
-        if (step.histories && step.histories.length > 0) {
+        // =====================================
+
+        if (histories.length > 0) {
 
             html += `
                 <div class="history-list">
@@ -1519,7 +1604,7 @@ function RenderWorkflow(data) {
                     </div>
             `;
 
-            step.histories.forEach(history => {
+            histories.forEach(history => {
 
                 let actionInfo = ActionInfo(history.action);
 
@@ -1544,10 +1629,11 @@ function RenderWorkflow(data) {
                                 ${history.actionDateShamsi || ""}
                             </div>
 
-                            ${history.comment
-                        ? `<div class="history-comment">${history.comment}</div>`
-                        : ""
-                    }
+                            ${
+                                history.comment
+                                    ? `<div class="history-comment">${history.comment}</div>`
+                                    : ""
+                            }
 
                         </div>
 

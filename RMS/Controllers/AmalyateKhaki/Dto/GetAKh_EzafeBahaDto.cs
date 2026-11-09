@@ -13,9 +13,8 @@ public class GetAKh_EzafeBahaDto
 
 public class GetPK_EzafeBahaDto
 {
-    public Guid BarAvordId { get; set; }
+    public Guid PayKaniInfoForBarAvordId { get; set; }
     public long NoeKhakBardariEzafeBahaId { get; set; }
     public long Year { get; set; }
     public NoeFehrestBaha NoeFB { get; set; }
-    public int Type { get; set; }
 }

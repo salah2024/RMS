@@ -136,7 +136,7 @@ function DeleteKhEzafeBaha(EzafeBahaId, KMExistingId, KMNum) {
             $('#ViewAKhBEzafeBahaRizMetre' + EzafeBahaId).slideUp();
         },
         error: function (response) {
-            toastr.error('مشکل در درج اضافه بها', 'خطا');
+            toastr.error('مشکل در حذف اضافه بها', 'خطا');
             $('#ContainerWaiting').hide();
         }
     });

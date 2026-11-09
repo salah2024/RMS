@@ -124,7 +124,7 @@ public class BaravordUserController(ApplicationDbContext context, UserManager<Ap
                 string strNoeFB = "";
                 foreach (string noeFB in NoeFBs)
                 {
-                    NoeFehrestBaha NoeFB = (NoeFehrestBaha) int.Parse(noeFB);
+                    NoeFehrestBaha NoeFB = (NoeFehrestBaha)int.Parse(noeFB);
                     switch (NoeFB)
                     {
                         case NoeFehrestBaha.RahDari:
@@ -178,7 +178,7 @@ public class BaravordUserController(ApplicationDbContext context, UserManager<Ap
 
 
     [HttpPost]
-    public async Task<JsonResult> PishnahadGhyamatWorkFlow(Guid entityId,List<string>? selectedUsers = null)
+    public async Task<JsonResult> PishnahadGhyamatWorkFlow(Guid entityId, List<string>? selectedUsers = null)
     {
         //--------------------------------------------------
         // Workflow
@@ -204,20 +204,13 @@ public class BaravordUserController(ApplicationDbContext context, UserManager<Ap
         if (workflow != null)
         {
 
-            clsBarAvordProjectionWorkFlow? barAvordProjectionWorkFlow1 = await _context.BarAvordProjectionWorkFlows.FirstOrDefaultAsync(x => x.BarAvordUserId == entityId);
-            if (barAvordProjectionWorkFlow1 != null)
+            clsBarAvordProjectionWorkFlow barAvordProjectionWorkFlow = new clsBarAvordProjectionWorkFlow
             {
-                barAvordProjectionWorkFlow1.proccesType = ProccesType.PishnahadGhaimat;
-            }
-            else
-            {
-                clsBarAvordProjectionWorkFlow barAvordProjectionWorkFlow = new clsBarAvordProjectionWorkFlow
-                {
-                    BarAvordUserId = entityId,
-                    proccesType = ProccesType.PishnahadGhaimat
-                };
-                _context.BarAvordProjectionWorkFlows.Add(barAvordProjectionWorkFlow);
-            }
+                BarAvordUserId = entityId,
+                proccesType = ProccesType.PishnahadGhaimat
+            };
+            _context.BarAvordProjectionWorkFlows.Add(barAvordProjectionWorkFlow);
+
 
             await _workflowRuntimeService.StartWorkflowAsync(
                 workflow.ID,

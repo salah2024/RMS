@@ -356,6 +356,62 @@ function ShowSelctionKhakBardari(IsNew, KMExistingId, KMNum, BarAvordId, FromKM,
 </div>`;
             //////////////
             $('#ViewKhakBardariNew').html(strSSKB);
+            //////////////////////////
+            /////////////////
+
+            // Enter در حجم خاکبرداری
+            $('#ViewKhakBardariNew').on('keydown.khakFocus',
+                'input[id^="txtKhDetail"]', function (e) {
+
+                    if (e.key !== 'Enter') return;
+
+                    let i = parseInt(this.id.replace('txtKhDetail', ''));
+                    let value = $.trim($(this).val());
+
+                    if (value === '' || parseFloat(value) === 0) {
+
+                        e.preventDefault();
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+
+                        $('#txtDarsad' + i).focus();
+
+                        return false;
+                    }
+                });
+
+
+            // Enter در درصد اصلی خاکبرداری
+            $('#ViewKhakBardariNew').on('keydown.khakFocus',
+                'input[id^="txtDarsad"]', function (e) {
+
+                    if (e.key !== 'Enter') return;
+
+                    // فقط درصد اصلی، نه درصد حمل و واریزه
+                    if (!/^txtDarsad\d+$/.test(this.id)) return;
+
+                    let i = parseInt(this.id.replace('txtDarsad', ''));
+                    let value = $.trim($(this).val());
+
+                    if (value === '' || parseFloat(value) === 0) {
+
+                        e.preventDefault();
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+
+                        let next = $('#txtKhDetail' + (i + 1));
+
+                        if (next.length) {
+                            next.focus();
+                        }
+
+                        return false;
+                    }
+                });
+
+
+            ////////////////////////
+            /////////////
 
             $('#ViewKhakBardariNew input[type="text"]').change(function () {
 

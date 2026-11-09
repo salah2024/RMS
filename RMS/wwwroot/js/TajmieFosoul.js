@@ -5,8 +5,8 @@ var itemEditId = 0;
 
 $(document).ready(function () {
     
-    $("#cmbNoeFB").val("234");
-    $("#cmbNoeFBInsert").val("234");
+    $("#cmbNoeFB").val("21");
+    $("#cmbNoeFBInsert").val("21");
 
     LoadData();
 
@@ -526,12 +526,12 @@ function GetInsertRow() {
         <select id="cmbNoeFBInsert"
                 class="form-control">
 
-            <option value="232">راهداری</option>
-            <option value="233">ابنیه</option>
-            <option value="234">راه، راه آهن و باند فرودگاه</option>
-            <option value="235">تأسیسات برقی</option>
-            <option value="236">تأسیسات مکانیکی</option>
-            <option value="237">مرمت آثار تاریخی</option>
+            <option value="22">راهداری</option>
+            <option value="11">ابنیه</option>
+            <option value="21">راه، راه آهن و باند فرودگاه</option>
+            <option value="13">تأسیسات برقی</option>
+            <option value="12">تأسیسات مکانیکی</option>
+            <option value="16">مرمت آثار تاریخی</option>
 
         </select>
 
@@ -634,12 +634,12 @@ function BuildInsertRow() {
         <select id="cmbNoeFBInsert"
                 class="form-control">
 
-            <option value="232">راهداری</option>
-            <option value="233">ابنیه</option>
-            <option value="234">راه، راه‌آهن و باند فرودگاه</option>
-            <option value="235">تأسیسات برقی</option>
-            <option value="236">تأسیسات مکانیکی</option>
-            <option value="237">مرمت آثار تاریخی</option>
+            <option value="22">راهداری</option>
+            <option value="11">ابنیه</option>
+            <option value="21">راه، راه‌آهن و باند فرودگاه</option>
+            <option value="13">تأسیسات برقی</option>
+            <option value="12">تأسیسات مکانیکی</option>
+            <option value="16">مرمت آثار تاریخی</option>
 
         </select>
 

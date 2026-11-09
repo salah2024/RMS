@@ -541,7 +541,7 @@ function GetRizMetreWithFBId(LevelNumber) {
                     PayKani = $('#HDFPayKani').val().split('_');
                     if (PayKani[0] == 'true') {
                         if (PayKani[1] == 2) {
-                            PayKaniClick(Operation, PayKani[1]);
+                            PayKaniWithBarAvordIdClick(Operation, PayKani[1]);
                         }
                         else if (PayKani[1] == 3) {
                             ChanelKaniClick(Operation, PayKani[1]);

@@ -1233,12 +1233,12 @@ function renderTable(data, Stars, Code, ItemId, faslAsli) {
 		<td style="text-align:center;width:4%">${riz.shomarehNew == null ? '' : toPersianDigits(riz.shomarehNew)}</td>
         <td style="text-align:center;width:6%"><span>${toPersianDigits(riz.tajmieItem)}</span></td>
 		<td style="width:22%"><span>${toPersianDigits(riz.sharh)}</span></td>
-		<td style="text-align:center;width:7%"><span>${riz.tedad == null ? '' : toPersianDigits(riz.tedad)}</span></td>
-		<td style="text-align:center;width:7%"><span>${riz.tool == null ? '' : toPersianDigits(riz.tool)}</span></td>
-		<td style="text-align:center;width:7%"><span>${riz.arz == null ? '' : toPersianDigits(riz.arz)}</span></td>
-		<td style="text-align:center;width:7%"><span>${riz.ertefa == null ? '' : toPersianDigits(riz.ertefa)}</span></td>
-		<td style="text-align:center;width:7%"><span>${riz.vazn == null ? '' : toPersianDigits(riz.vazn)}</span></td>
-		<td style="text-align:center;width:7%"><span id="spanMeghdarJoz">${riz.meghdarJoz == null ? '' : toPersianDigits(riz.meghdarJoz)}</span></td>
+		<td style="text-align:center;width:7%"><span>${riz.tedad == null ? '' : formatNumber(riz.tedad)}</span></td>
+		<td style="text-align:center;width:7%"><span>${riz.tool == null ? '' : formatNumber(riz.tool)}</span></td>
+		<td style="text-align:center;width:7%"><span>${riz.arz == null ? '' : formatNumber(riz.arz)}</span></td>
+		<td style="text-align:center;width:7%"><span>${riz.ertefa == null ? '' : formatNumber(riz.ertefa)}</span></td>
+		<td style="text-align:center;width:7%"><span>${riz.vazn == null ? '' : formatNumber(riz.vazn)}</span></td>
+		<td style="text-align:center;width:7%"><span id="spanMeghdarJoz">${riz.meghdarJoz == null ? '' : formatNumber(riz.meghdarJoz)}</span></td>
 		<td style="width:20%"><span>${toPersianDigits(riz.des ?? '')}</span></td>
 		<td style="text-align:center;width:7%">
 			<i class="fa fa-trash DelRMUStyle" onclick="event.stopPropagation();DeleteRizMetre(this,'${riz.id}','${item.itemFbShomareh}','${rizId}','${item.fbId}','${Code}')"></i>
@@ -1484,12 +1484,12 @@ function renderTable(data, Stars, Code, ItemId, faslAsli) {
             <span>${riz.tajmieItem == null ? '' : toPersianDigits(riz.tajmieItem)}</span>
         </td>
 		<td style="width:22%"><span>${toPersianDigits(riz.sharh)}</span></td>
-		<td style="text-align:center;width:7%"><span>${riz.tedad == null ? '' : toPersianDigits(riz.tedad)}</span></td>
-		<td style="text-align:center;width:7%"><span>${riz.tool == null ? '' : toPersianDigits(riz.tool)}</span></td>
-		<td style="text-align:center;width:7%"><span>${riz.arz == null ? '' : toPersianDigits(riz.arz)}</span></td>
-		<td style="text-align:center;width:7%"><span>${riz.ertefa == null ? '' : toPersianDigits(riz.ertefa)}</span></td>
-		<td style="text-align:center;width:7%"><span>${riz.vazn == null ? '' : toPersianDigits(riz.vazn)}</span></td>
-		<td style="text-align:center;width:7%"><span id="spanMeghdarJozStar">${riz.meghdarJoz == null ? '' : toPersianDigits(riz.meghdarJoz)}</span></td>
+		<td style="text-align:center;width:7%"><span>${riz.tedad == null ? '' : formatNumber(riz.tedad)}</span></td>
+		<td style="text-align:center;width:7%"><span>${riz.tool == null ? '' : formatNumber(riz.tool)}</span></td>
+		<td style="text-align:center;width:7%"><span>${riz.arz == null ? '' : formatNumber(riz.arz)}</span></td>
+		<td style="text-align:center;width:7%"><span>${riz.ertefa == null ? '' : formatNumber(riz.ertefa)}</span></td>
+		<td style="text-align:center;width:7%"><span>${riz.vazn == null ? '' : formatNumber(riz.vazn)}</span></td>
+		<td style="text-align:center;width:7%"><span id="spanMeghdarJozStar">${riz.meghdarJoz == null ? '' : formatNumber(riz.meghdarJoz)}</span></td>
 		<td style="width:20%"><span>${toPersianDigits(riz.des ?? '')}</span></td>
 		<td style="text-align:center;width:7%">
 			<i class="fa fa-trash DelRMUStyle" onclick="event.stopPropagation();DeleteRizMetreStar($(this),'${riz.id}','${item.shomareh}','${rizId}','${Code}')"></i>
@@ -2177,6 +2177,7 @@ function UpdateRizMetreFromRow(el, rizMetreId, Shomareh, rizId1, FBId, Code) {
                     let num = parseFloat(info[1]);
                     //let bahayeVahedFasl1 = parseFloat(convertPersianToEnglish(bahayeVahedFasl.text()));
 
+                    debugger;
                     el.parent().parent().find('#spanMeghdarJoz').html(formatNumber(parseFloat(num).toFixed(2)));
 
                     var meghdarFasl = $('#meghdarFasl_' + Shomareh);
@@ -2833,14 +2834,14 @@ function GetCurrentRizMetreUsers(Shomareh, rizId, FBId, Code) {
                 rizRowsHtml += rizMetreUsers.map(riz => `
                     <tr class="riz-row-data" data-id="${riz.id}" data-itemsFields='${JSON.stringify(lstItemsFields).replace(/"/g, '&quot;')}' onclick="EditRizMetreRow(this,'${riz.id}','${Shomareh}','${rizId}','${FBId}','${Code}')" style="cursor:pointer;">
 					<td style="text-align:center;width:4%">${toPersianDigits(riz.shomarehNew)}</td>
-					<td style="width:6%"><span>${toPersianDigits(riz.tajmieItem)}</span></td>
-					<td style="width:22%"><span>${toPersianDigits(riz.sharh)}</span></td>
-					<td style="text-align:center;width:7%"><span>${riz.tedad == null ? '' : toPersianDigits(riz.tedad)}</span></td>
-					<td style="text-align:center;width:7%"><span>${riz.tool == null ? '' : toPersianDigits(riz.tool)}</span></td>
-					<td style="text-align:center;width:7%"><span>${riz.arz == null ? '' : toPersianDigits(riz.arz)}</span></td>
-					<td style="text-align:center;width:7%"><span>${riz.ertefa == null ? '' : toPersianDigits(riz.ertefa)}</span></td>
-					<td style="text-align:center;width:7%"><span>${riz.vazn == null ? '' : toPersianDigits(riz.vazn)}</span></td>
-					<td style="text-align:center;width:7%"><span id="spanMeghdarJoz">${riz.meghdarJoz == null ? '' : toPersianDigits(riz.meghdarJoz)}</span></td>
+					<td style="width:6%"><span>${formatNumber(riz.tajmieItem)}</span></td>
+					<td style="width:22%"><span>${formatNumber(riz.sharh)}</span></td>
+					<td style="text-align:center;width:7%"><span>${riz.tedad == null ? '' : formatNumber(riz.tedad)}</span></td>
+					<td style="text-align:center;width:7%"><span>${riz.tool == null ? '' : formatNumber(riz.tool)}</span></td>
+					<td style="text-align:center;width:7%"><span>${riz.arz == null ? '' : formatNumber(riz.arz)}</span></td>
+					<td style="text-align:center;width:7%"><span>${riz.ertefa == null ? '' : formatNumber(riz.ertefa)}</span></td>
+					<td style="text-align:center;width:7%"><span>${riz.vazn == null ? '' : formatNumber(riz.vazn)}</span></td>
+					<td style="text-align:center;width:7%"><span id="spanMeghdarJoz">${riz.meghdarJoz == null ? '' : formatNumber(riz.meghdarJoz)}</span></td>
 					<td style="width:20%"><span>${toPersianDigits(riz.des ?? '')}</span></td>
                     <td style="text-align:center;width:7%"><i class="fa fa-trash DelRMUStyle" onclick="event.stopPropagation();DeleteRizMetre(this,'${riz.id}','${Shomareh}','${rizId}','${FBId}','${Code}')"></i></td>
                     </tr>

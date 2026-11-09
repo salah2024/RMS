@@ -19,5 +19,9 @@ public class clsPayKaniInfoForBarAvord : clsBaseEntity
     /// 2-پی کنی
     /// 3-کانال کنی
     /// </summary>
-    public int Type { get; set; }   
+    public int Type { get; set; }
+    public string FromKM { get; set; }
+    public string ToKM { get; set; }
+    public int KMNum { get; set; }
+
 }

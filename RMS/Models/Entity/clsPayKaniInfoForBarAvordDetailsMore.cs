@@ -9,5 +9,5 @@ public class clsPayKaniInfoForBarAvordDetailsMore:clsBaseEntity
     public Guid PayKaniInfoForBarAvordDetailsId { get; set; }
     public clsPayKaniInfoForBarAvordDetails PayKaniInfoForBarAvordDetails { get; set; }
     public string Name { get; set; }
-    public decimal Value { get; set; }
+    public decimal? Value { get; set; }
 }

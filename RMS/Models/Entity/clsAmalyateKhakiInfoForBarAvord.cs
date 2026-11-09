@@ -10,11 +10,8 @@ public class clsAmalyateKhakiInfoForBarAvord : clsBaseEntity
     [ForeignKey("BaravordUser")]
     public Guid BaravordUserId { get; set; }
     public clsBaravordUser BaravordUser { get; set; }
-    ///<summary>
-    //1- خاکبرداری
-    //2- خاکریزی
-    //3- پی کنی
-    ///</summary>
+    public NoeFehrestBaha NoeFBId { get; set; }
+
     public NoeAmalyatKhaki Type { get; set; }
     public string FromKM { get; set; }
     public string ToKM { get; set; }

@@ -297,6 +297,17 @@ public class WorkflowRuntimeService
 
         assignment.IsCompleted = true;
 
+        clsWorkflowInstance? workflowInstance = await _context.WorkflowInstances.FirstOrDefaultAsync(x => x.ID == workflowInstanceId);
+        if (workflowInstance!=null)
+        {
+            clsBarAvordProjectionWorkFlow? barAvordProjectionWorkFlow= await _context.BarAvordProjectionWorkFlows.FirstOrDefaultAsync(x => x.BarAvordUserId == workflowInstance.EntityId);
+            if (barAvordProjectionWorkFlow!=null)
+            {
+                barAvordProjectionWorkFlow.IsComplete = true;
+            }
+        }
+
+
         assignment.CompletedDate = DateTime.Now;
 
         assignment.Comment = comment;
