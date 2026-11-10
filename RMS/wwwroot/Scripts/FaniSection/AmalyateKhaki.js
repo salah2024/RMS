@@ -843,7 +843,7 @@ function ShowExistingKMKhakBardari(BarAvordUserId) {
 
         <div class="col-md-3" style="text-align:center">
 
-            <button class="ButtonRowsViewStyle" title="مشاهده" onclick="ViewKhakBardariInfo('${KMExistingId}'` + ',' + `${KMNum}` + ',' + `'${BarAvordUserId}')">
+            <button class="ButtonRowsViewStyle" id="btnViewKhakBardariInfo${KMNum}" title="مشاهده" onclick="ViewKhakBardariInfo('${KMExistingId}'` + ',' + `${KMNum}` + ',' + `'${BarAvordUserId}')">
                 <i class="fa fa-eye ViewRMUStyle"></i>
             </button>
         
@@ -2964,7 +2964,6 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
             $('#txtHajmKhakBardari' + KMNum).off('change').change(function () {
                 debugger;
 
-
                 let HKB = parseFloat($(this).val());
 
                 if (!$.isNumeric(HKB) || HKB <= 0) {
@@ -2973,8 +2972,6 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
                     return;
                 }
 
-                $('#MainViewKhakBardariNew').slideDown(500);
-                $('#divKhakBardariInfoDetails').show();
                 $(this).removeClass('blinking');
 
                 let totalAssigned = 0;
@@ -3030,6 +3027,10 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
                 }
 
                 UpdateKhakBardariInfo(KMExistingId, BarAvordId, KMNum);
+
+                //$('#MainViewKhakBardari' + KMNum).slideDown(500);
+                //$('#divKhakBardariInfoDetails').show();
+
 
             });
 
@@ -4096,26 +4097,7 @@ function UpdateKhakBardariInfo(KMKhakBardariId, BarAvordUserId, KMNum) {
     else {
         $('#txtHajmKhakBardari' + KMNum).removeClass('blinking');
     }
-    ////////////////
-    //var KM = $('#txtFromKMForKhakbardari' + KMNum).val();
-    //var KMSplit = KM.split('+');
-    //if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
-    //    $('#txtFromKMForKhakbardari' + KMNum).addClass('blinking');
-    //    check = true;
-    //}
-    //else {
-    //    $('#txtFromKMForKhakbardari' + KMNum).removeClass('blinking');
-    //}
-    /////////////////
-    //var KM = $('#txtToKMForKhakbardari' + KMNum).val();
-    //var KMSplit = KM.split('+');
-    //if (KMSplit.length != 2 || KMSplit[1].length != 3 || KMSplit[0].length > 3) {
-    //    $('#txtToKMForKhakbardari' + KMNum).addClass('blinking');
-    //    check = true;
-    //}
-    //else {
-    //    $('#txtToKMForKhakbardari' + KMNum).removeClass('blinking');
-    //}
+    
     /////////////
     var KME = parseFloat($('#txtToKMForKhakbardari' + KMNum).val());//.replace('+', ''));
     var KMS = parseFloat($('#txtFromKMForKhakbardari' + KMNum).val());//.replace('+', ''));
@@ -4206,7 +4188,8 @@ function UpdateKhakBardariInfo(KMKhakBardariId, BarAvordUserId, KMNum) {
                 info = response.split('_');
                 if (info[0] == "OK") {
                     toastr.success('اطلاعات متراژ بدرستی ویرایش گردید', 'ثبت');
-                    $('#MainViewKhakBardari' + KMNum).slideUp(500);
+                    //$('#MainViewKhakBardari' + KMNum).slideUp(500);
+                    $('#btnViewKhakBardariInfo'+KMNum).click();
                     $('#divExistKMHeader' + KMNum).click();
                     $('#ContainerWaiting').hide();
                     //$('#ViewKhakBardariEzafeBaha' + KMNum).html('');

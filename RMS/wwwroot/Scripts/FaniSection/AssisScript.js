@@ -747,6 +747,17 @@ function PayKaniClick(OpId, event) {
     PayKaniWithBarAvordIdClick(OpId, BarAvordUserID);
 }
 
+function ChanelKaniClick(OpId, event) {
+
+    if (event) {
+        event.stopPropagation();
+        event.preventDefault();
+    }
+
+    BarAvordUserID = $('#HDFBarAvordUserID').val();
+    ChanelKaniWithBarAvordIdClick(OpId, BarAvordUserID);
+}
+
 function spanOnClick(Id, ConditionGroupId) {
 
     $("div[id^='divShowRizMetre']").not('#divShowRizMetre' + Id).slideUp(500);

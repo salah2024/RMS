@@ -791,7 +791,7 @@ function ShowExistingKMPayKani(BarAvordUserId) {
             </button>
         
             <button type="button" title="ویرایش"
-                onclick="UpdatePayKaniInfo('${KMExistingId}'` + ',' + `'${BarAvordUserId}'` + ',' + `${KMNum})" onclick="event.stopPropagation();"
+                onclick="UpdatePayKaniInfo('${KMExistingId}'` + ',' + `'${BarAvordUserId}'` + ',' + `${KMNum}` + `,2)" onclick="event.stopPropagation();"
                 class="ButtonRowsSaveStyle">
                     <i id="iSave" class="fa fa-save SaveRMUStyle"></i>
             </button>
@@ -2126,9 +2126,87 @@ function ViewPayKaniInfo(KMExistingId, KMNum, BarAvordId) {
             });
 
 
-            $('#txtHajmPK' + KMNum).off('change').change(function () {
-                debugger;
+            // $('#txtHajmPK' + KMNum).off('change').change(function () {
+            //     debugger;
 
+
+            //     let HKB = parseFloat($(this).val());
+
+            //     if (!$.isNumeric(HKB) || HKB <= 0) {
+            //         toastr.info('حجم پی کنی وارد شده نامعتبر میباشد', 'اطلاع');
+            //         $(this).addClass('blinking');
+            //         return;
+            //     }
+
+            //     $('#MainViewPayKaniNew').slideDown(500);
+            //     $('#divPayKaniInfoDetails').show();
+            //     $(this).removeClass('blinking');
+
+            //     let totalAssigned = 0;
+            //     let lastIndex = -1;
+
+            //     for (let i = 1; i <= ActivityLength; i++) {
+            //         let Darsad = parseFloat($('#txtPKDarsad' + KMNum + "_" + i).val()) || 0;
+
+            //         if (Darsad > 0) {
+            //             let KhDetail = (Darsad / 100 * HKB);
+
+            //             // حجم اصلی
+            //             $('#txtPKDetail' + KMNum + "_" + i).val(KhDetail.toFixed(2));
+
+            //             // درصدهای مرتبط
+            //             let dVarizi = parseFloat($('#txtPKDarsadVarizi' + KMNum + "_" + i).val()) || 0;
+            //             let dReUse = parseFloat($('#txtPKReUseDarsad' + KMNum + "_" + i).val()) || 0;
+            //             let dHaml = parseFloat($('#txtPKDarsadHaml' + KMNum + "_" + i).val()) || 0;
+
+            //             // محاسبه حجم هر بخش
+            //             let vVarizi = (dVarizi / 100) * KhDetail;
+            //             let vReUse = (dReUse / 100) * KhDetail;
+            //             let vHaml = (dHaml / 100) * KhDetail;
+
+            //             // ست کردن نتایج
+            //             $('#txtPKVarizi' + KMNum + "_" + i).val(vVarizi.toFixed(2));
+            //             $('#txtPKReUseHajm' + KMNum + "_" + i).val(vReUse.toFixed(2));
+            //             $('#txtPKHaml' + KMNum + "_" + i).val(vHaml.toFixed(2));
+
+            //             totalAssigned += parseFloat(KhDetail.toFixed(2));
+            //             lastIndex = i;
+            //         }
+            //     }
+
+            //     // جبران خطای رندینگ روی آخرین ردیف
+            //     if (lastIndex > -1) {
+            //         let diff = HKB - totalAssigned;
+            //         if (Math.abs(diff) >= 0.01) {
+            //             let lastVal = parseFloat($('#txtPKDetail' + KMNum + "_" + lastIndex).val()) || 0;
+            //             let newVal = lastVal + diff;
+
+            //             $('#txtPKDetail' + KMNum + "_" + lastIndex).val(newVal.toFixed(2));
+
+            //             // بروزرسانی دوباره بخش‌های وابسته به این ردیف
+            //             let dVarizi = parseFloat($('#txtPKDarsadVarizi' + KMNum + "_" + lastIndex).val()) || 0;
+            //             let dReUse = parseFloat($('#txtPKReUseDarsad' + KMNum + "_" + lastIndex).val()) || 0;
+            //             let dHaml = parseFloat($('#txtPKDarsadHaml' + KMNum + "_" + lastIndex).val()) || 0;
+
+            //             $('#txtPKVarizi' + KMNum + "_" + lastIndex).val(((dVarizi / 100) * newVal).toFixed(2));
+            //             $('#txtPKReUseHajm' + KMNum + "_" + lastIndex).val(((dReUse / 100) * newVal).toFixed(2));
+            //             $('#txtPKHaml' + KMNum + "_" + lastIndex).val(((dHaml / 100) * newVal).toFixed(2));
+            //         }
+            //     }
+
+            //     UpdatePayKaniInfo(KMExistingId, BarAvordId, KMNum);
+
+            // });
+
+
+
+
+            ////////////////
+            //////////////
+
+
+
+            $('#txtHajmPayKani' + KMNum).off('change').on('change', function () {
 
                 let HKB = parseFloat($(this).val());
 
@@ -2138,65 +2216,122 @@ function ViewPayKaniInfo(KMExistingId, KMNum, BarAvordId) {
                     return;
                 }
 
-                $('#MainViewPayKaniNew').slideDown(500);
-                $('#divPayKaniInfoDetails').show();
                 $(this).removeClass('blinking');
 
                 let totalAssigned = 0;
                 let lastIndex = -1;
 
                 for (let i = 1; i <= ActivityLength; i++) {
-                    let Darsad = parseFloat($('#txtPKDarsad' + KMNum + "_" + i).val()) || 0;
 
-                    if (Darsad > 0) {
-                        let KhDetail = (Darsad / 100 * HKB);
+                    let darsad = parseFloat(
+                        $('#txtPKDarsad' + KMNum + '_' + i).val()
+                    ) || 0;
 
-                        // حجم اصلی
-                        $('#txtPKDetail' + KMNum + "_" + i).val(KhDetail.toFixed(2));
+                    if (darsad > 0) {
 
-                        // درصدهای مرتبط
-                        let dVarizi = parseFloat($('#txtPKDarsadVarizi' + KMNum + "_" + i).val()) || 0;
-                        let dReUse = parseFloat($('#txtPKReUseDarsad' + KMNum + "_" + i).val()) || 0;
-                        let dHaml = parseFloat($('#txtPKDarsadHaml' + KMNum + "_" + i).val()) || 0;
+                        // حجم جدید فعالیت بر اساس درصد آن
+                        let khDetail = (darsad / 100) * HKB;
 
-                        // محاسبه حجم هر بخش
-                        let vVarizi = (dVarizi / 100) * KhDetail;
-                        let vReUse = (dReUse / 100) * KhDetail;
-                        let vHaml = (dHaml / 100) * KhDetail;
+                        $('#txtPKDetail' + KMNum + '_' + i)
+                            .val(khDetail.toFixed(2));
 
-                        // ست کردن نتایج
-                        $('#txtPKVarizi' + KMNum + "_" + i).val(vVarizi.toFixed(2));
-                        $('#txtPKReUseHajm' + KMNum + "_" + i).val(vReUse.toFixed(2));
-                        $('#txtPKHaml' + KMNum + "_" + i).val(vHaml.toFixed(2));
+                        // درصدهای قبلی جزئیات
+                        let dVarizi = parseFloat(
+                            $('#txtPKDarsadVarizi' + KMNum + '_' + i).val()
+                        ) || 0;
 
-                        totalAssigned += parseFloat(KhDetail.toFixed(2));
+                        let dReUse = parseFloat(
+                            $('#txtPKReUseDarsad' + KMNum + '_' + i).val()
+                        ) || 0;
+
+                        let dHaml = parseFloat(
+                            $('#txtPKDarsadHaml' + KMNum + '_' + i).val()
+                        ) || 0;
+
+                        // محاسبه حجم‌های جدید
+                        let vVarizi = (dVarizi / 100) * khDetail;
+                        let vReUse = (dReUse / 100) * khDetail;
+                        let vHaml = (dHaml / 100) * khDetail;
+
+                        // ثبت مقادیر
+                        $('#txtPKVarizi' + KMNum + '_' + i)
+                            .val(vVarizi.toFixed(2));
+
+                        $('#txtPKReUseHajm' + KMNum + '_' + i)
+                            .val(vReUse.toFixed(2));
+
+                        $('#txtPKHaml' + KMNum + '_' + i)
+                            .val(vHaml.toFixed(2));
+
+                        totalAssigned += parseFloat(khDetail.toFixed(2));
                         lastIndex = i;
                     }
                 }
 
-                // جبران خطای رندینگ روی آخرین ردیف
-                if (lastIndex > -1) {
+                // اصلاح اختلاف ناشی از گرد کردن
+                if (lastIndex > 0) {
+
                     let diff = HKB - totalAssigned;
+
                     if (Math.abs(diff) >= 0.01) {
-                        let lastVal = parseFloat($('#txtPKDetail' + KMNum + "_" + lastIndex).val()) || 0;
+
+                        let lastVal = parseFloat(
+                            $('#txtPKDetail' + KMNum + '_' + lastIndex).val()
+                        ) || 0;
+
                         let newVal = lastVal + diff;
 
-                        $('#txtPKDetail' + KMNum + "_" + lastIndex).val(newVal.toFixed(2));
+                        $('#txtPKDetail' + KMNum + '_' + lastIndex)
+                            .val(newVal.toFixed(2));
 
-                        // بروزرسانی دوباره بخش‌های وابسته به این ردیف
-                        let dVarizi = parseFloat($('#txtPKDarsadVarizi' + KMNum + "_" + lastIndex).val()) || 0;
-                        let dReUse = parseFloat($('#txtPKReUseDarsad' + KMNum + "_" + lastIndex).val()) || 0;
-                        let dHaml = parseFloat($('#txtPKDarsadHaml' + KMNum + "_" + lastIndex).val()) || 0;
+                        let dVarizi = parseFloat(
+                            $('#txtPKDarsadVarizi' + KMNum + '_' + lastIndex).val()
+                        ) || 0;
 
-                        $('#txtPKVarizi' + KMNum + "_" + lastIndex).val(((dVarizi / 100) * newVal).toFixed(2));
-                        $('#txtPKReUseHajm' + KMNum + "_" + lastIndex).val(((dReUse / 100) * newVal).toFixed(2));
-                        $('#txtPKHaml' + KMNum + "_" + lastIndex).val(((dHaml / 100) * newVal).toFixed(2));
+                        let dReUse = parseFloat(
+                            $('#txtPKReUseDarsad' + KMNum + '_' + lastIndex).val()
+                        ) || 0;
+
+                        let dHaml = parseFloat(
+                            $('#txtPKDarsadHaml' + KMNum + '_' + lastIndex).val()
+                        ) || 0;
+
+                        $('#txtPKVarizi' + KMNum + '_' + lastIndex)
+                            .val(((dVarizi / 100) * newVal).toFixed(2));
+
+                        $('#txtPKReUseHajm' + KMNum + '_' + lastIndex)
+                            .val(((dReUse / 100) * newVal).toFixed(2));
+
+                        $('#txtPKHaml' + KMNum + '_' + lastIndex)
+                            .val(((dHaml / 100) * newVal).toFixed(2));
                     }
                 }
 
-                UpdatePayKaniInfo(KMExistingId, BarAvordId, KMNum);
+                // به‌روزرسانی جمع کل‌ها
+                let SumKol = sumKolNewPK(ActivityLength, KMNum);
+
+                $('#spantotalKhDetail' + KMNum)
+                    .html(toPersianDigits(SumKol[0].toFixed(2)));
+
+                $('#spantotalDarsadKhDetail' + KMNum)
+                    .html(toPersianDigits(SumKol[1].toFixed(0)) + ' %');
+
+                $('#spantotalVarizi' + KMNum)
+                    .html(toPersianDigits(SumKol[2].toFixed(2)));
+
+                $('#spantotalReUseHajm' + KMNum)
+                    .html(toPersianDigits(SumKol[3].toFixed(2)));
+
+                $('#spantotalHaml' + KMNum)
+                    .html(toPersianDigits(SumKol[4].toFixed(2)));
+
+                // ثبت اطلاعات
+                UpdatePayKaniInfo(KMExistingId, BarAvordId, KMNum,2);
 
             });
+
+            ///////////////////
+            /////////////
 
             debugger;
 
@@ -3032,7 +3167,7 @@ function SavePayKaniInfo(BarAvordUserId, Type) {
         toastr.info('موارد مشخص شده دارای مقادیر نامعتبر میباشند', 'اطلاع');
 }
 
-function UpdatePayKaniInfo(KMPayKaniId, BarAvordUserId, KMNum) {
+function UpdatePayKaniInfo(KMPayKaniId, BarAvordUserId, KMNum,Type) {
 
 
     debugger;
@@ -3115,6 +3250,7 @@ function UpdatePayKaniInfo(KMPayKaniId, BarAvordUserId, KMNum) {
         vardata.lstItems = dataList;
         vardata.Year = Year;
         vardata.NoeFBId = NoeFBId;
+        vardata.Type = Type;
 
 
         htmlShowWaiting = ShowWaiting();

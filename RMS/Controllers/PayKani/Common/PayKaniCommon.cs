@@ -373,8 +373,8 @@ public class PayKaniCommon
         int Num = request.KMNum;
 
 
-        try
-        {
+        //try
+        //{
 
 
             /////
@@ -436,11 +436,53 @@ public class PayKaniCommon
             }
 
             return true;
-        }
-        catch (Exception)
-        {
-            return false;
-        }
+        //}
+        //catch (Exception)
+        //{
+        //    return false;
+        //}
+    }
+
+    public async Task<bool> DeletePayKaniInfoEBForBarAvord(DeleteEzafeBahaPKDto request, ApplicationDbContext _context)
+    {
+        //try
+        //{
+
+            List<long> noeKhB = await _context.NoeKhakBardari_NoeKhakBardariEzafeBahas
+                                .Where(x => x.NoeKhakBardariEzafeBahaId == request.NoeKhakBardariEzafeBahaId).Select(x => x.NoeKhakBardariId).ToListAsync();
+
+            clsPayKaniInfoForBarAvordEzafeBaha? payKaniInfoForBarAvordEzafeBaha = await
+                _context.PayKaniInfoForBarAvordEzafeBahas.FirstOrDefaultAsync(x => x.NoeKhakBardariEzafeBahaId == request.NoeKhakBardariEzafeBahaId
+                                                                            && x.PayKaniInfoForBarAvordId == request.PayKaniInfoForBarAvordId);
+
+
+            if (payKaniInfoForBarAvordEzafeBaha != null)
+            {
+                _context.PayKaniInfoForBarAvordEzafeBahas.Remove(payKaniInfoForBarAvordEzafeBaha);
+
+                List<clsPayKaniInfoForBarAvordEzafeBahaRizMetre> lstlstPKForBERizMetre =
+                    await _context.PayKaniInfoForBarAvordEzafeBahaRizMetres.Where(x => x.PayKaniInfoForBarAvordEzafeBahaId == payKaniInfoForBarAvordEzafeBaha.ID).ToListAsync();
+
+                _context.PayKaniInfoForBarAvordEzafeBahaRizMetres.RemoveRange(lstlstPKForBERizMetre);
+
+                List<Guid> lstRMIds = lstlstPKForBERizMetre.Select(x => x.RizMetreUserId).ToList();
+                List<clsRizMetreUsers> lstRM = await _context.RizMetreUserses.Where(x => lstRMIds.Contains(x.ID)).ToListAsync();
+                _context.RizMetreUserses.RemoveRange(lstRM);
+
+                //List<clsPayKaniInfoForBarAvordEzafeBahaHamlRizMetre> lstAKhHamlRizMetre = await
+                //    _context.AmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetres.Where(x => x.AmalyateKhakiInfoForBarAvordEzafeBahaId == payKaniInfoForBarAvordEzafeBaha.ID).ToListAsync();
+                //_context.AmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetres.RemoveRange(lstAKhHamlRizMetre);
+
+                //List<clsRizMetreUsers> lstRizMetreHaml = await _context.RizMetreUserses.Where(x => lstAKhHamlRizMetre.Select(x => x.RizMetreId).Contains(x.ID)).ToListAsync();
+                //_context.RizMetreUserses.RemoveRange(lstRizMetreHaml);
+            }
+
+            return true;
+        //}
+        //catch (Exception)
+        //{
+        //    return false;
+        //}
     }
 
 }

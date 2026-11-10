@@ -404,7 +404,7 @@ public class ShowBarAvordCommon
                 }).ToList();
 
             userBarAvordOutPutFiltered = userBarAvordOutPutFiltered
-            .Concat(barAvordOnlyInFbItems)
+            .Concat(barAvordOnlyInFbItems).DistinctBy(x => x.FBId)
             .OrderBy(x => x.ItemFbShomareh)
             .ToList();
 

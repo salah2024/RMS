@@ -55,7 +55,7 @@ function formatNumberChanelKani(num) {
     if (num == 0) return '';
     return Number(num).toLocaleString('fa-IR'); // یا 'en-US' برای کاما
 }
-function ChanelKaniClick(OpId, Type) {
+function ChanelKaniClick111(OpId, Type) {
 
     $('#HDFOperationId').val(OpId);
     ForItem = $('#HDFItemsFBShomareh').val();

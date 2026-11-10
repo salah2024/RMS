@@ -187,7 +187,7 @@ namespace RMS.Controllers.Report.RizMetre
             List<RizMetreForReportDto> lstFehrestBahas =
                 (from f in fehrest
                  join i in allItemsWithRizMetre
-                 on f.Shomareh equals i.ItemShomareh
+                 on f.Shomareh equals i.ItemShomareh.Substring(0,6)
                  where f.Sal == i.Year
                     && f.NoeFB == (NoeFehrestBaha)i.NoeFB
                  select new RizMetreForReportDto
@@ -204,7 +204,7 @@ namespace RMS.Controllers.Report.RizMetre
                      NoeFBName = i.NoeFBName,
                      Year = i.Year,
                      ItemShomareh = i.ItemShomareh,
-                     ShomarehMain = f.ShomarehMain,
+                     ShomarehMain = i.ItemShomareh,
                      ItemSharh = f.Sharh,
                      Vahed = f.Vahed,
                      BahayeVahedNew = i.BahayeVahedNew,
@@ -898,7 +898,7 @@ namespace RMS.Controllers.Report.RizMetre
             List<RizMetreForReportDto> lstFehrestBahas =
                 (from f in fehrest
                  join i in allItemsWithRizMetre
-                 on f.ShomarehMain equals i.ItemShomareh
+                 on f.ShomarehMain equals i.ItemShomareh.Substring(0,6)
                  where f.Sal == i.Year
                     && f.NoeFB == (NoeFehrestBaha)i.NoeFB
                  select new RizMetreForReportDto
@@ -915,7 +915,7 @@ namespace RMS.Controllers.Report.RizMetre
                      NoeFBName = i.NoeFBName,
                      Year = i.Year,
                      ItemShomareh = i.ItemShomareh,
-                     ShomarehMain = f.ShomarehMain,
+                     ShomarehMain = f.ShomarehMain!= i.ItemShomareh? i.ItemShomareh: f.ShomarehMain,
                      ItemSharh = f.Sharh,
                      Vahed = f.Vahed,
                      BahayeVahedNew = i.BahayeVahedNew,
@@ -1194,7 +1194,7 @@ namespace RMS.Controllers.Report.RizMetre
             var items =
                 (from f in fehrest
                  join r in allItemsWithRizMetre1
-                 on f.ShomarehMain equals r.ShomarehMain
+                 on f.ShomarehMain equals r.ShomarehMain.Substring(0,6)
 
                  where
                      f.NoeFB == (NoeFehrestBaha)r.NoeFB &&
@@ -1205,7 +1205,7 @@ namespace RMS.Controllers.Report.RizMetre
                      NoeFB = r.NoeFB,
                      NoeFBName = r.NoeFBName,
                      ItemShomareh = r.ItemShomareh,
-                     ShomarehMain = f.ShomarehMain,
+                     ShomarehMain = f.ShomarehMain!= r.ItemShomareh? r.ItemShomareh: f.ShomarehMain,
 
                      ItemSharh = f.Sharh,
 
@@ -2060,7 +2060,7 @@ namespace RMS.Controllers.Report.RizMetre
             var items =
                 (from f in fehrest
                  join r in allItemsWithRizMetre1
-                 on f.ShomarehMain equals r.ShomarehMain
+                 on f.ShomarehMain equals r.ShomarehMain.Substring(0, 6)
 
                  where
                      f.NoeFB == (NoeFehrestBaha)r.NoeFB &&
@@ -2071,7 +2071,7 @@ namespace RMS.Controllers.Report.RizMetre
                      NoeFB = r.NoeFB,
                      NoeFBName = r.NoeFBName,
                      ItemShomareh = r.ItemShomareh,
-                     ShomarehMain = f.ShomarehMain,
+                     ShomarehMain = f.ShomarehMain!= r.ItemShomareh? r.ItemShomareh: f.ShomarehMain,
 
                      ItemSharh = f.Sharh,
 
@@ -2400,7 +2400,7 @@ namespace RMS.Controllers.Report.RizMetre
             List<RizMetreForReportDto> lstFehrestBahas =
                 (from f in fehrest
                  join i in allItemsWithRizMetre
-                 on f.ShomarehMain equals i.ItemShomareh
+                 on f.ShomarehMain equals i.ItemShomareh.Substring(0, 6)
                  where f.Sal == i.Year
                     && f.NoeFB == (NoeFehrestBaha)i.NoeFB
                  select new RizMetreForReportDto
@@ -2417,7 +2417,7 @@ namespace RMS.Controllers.Report.RizMetre
                      NoeFBName = i.NoeFBName,
                      Year = i.Year,
                      ItemShomareh = i.ItemShomareh,
-                     ShomarehMain = f.ShomarehMain,
+                     ShomarehMain = f.ShomarehMain!= i.ItemShomareh? i.ItemShomareh: f.ShomarehMain,
                      ItemSharh = f.Sharh,
                      Vahed = f.Vahed,
                      BahayeVahedNew = i.BahayeVahedNew,

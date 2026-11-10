@@ -13,7 +13,11 @@
   <ItemGroup>
     <Content Remove="Views\Report\ReportRizMetreAndItems.cshtml" />
     <Content Remove="Views\Shared\__Layout.cshtml" />
+    <Content Remove="wwwroot\Scripts\FaniSection\ChanelKani.js" />
+    <Content Remove="wwwroot\Scripts\FaniSection\ChanelKaniEzafeBaha.js" />
     <Content Remove="wwwroot\Scripts\FaniSection\ChanelKaniOld.js" />
+    <Content Remove="wwwroot\Scripts\FaniSection\PayKani.js" />
+    <Content Remove="wwwroot\Scripts\FaniSection\PayKaniEzafeBaha.js" />
     <Content Remove="wwwroot\Scripts\FaniSection\PayKaniOld.js" />
   </ItemGroup>
 

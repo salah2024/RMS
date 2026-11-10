@@ -129,11 +129,17 @@ function DeleteKhEzafeBaha(EzafeBahaId, KMExistingId, KMNum) {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (response) {
-            toastr.success('حذف اضافه بها بدرستی صورت گرفت', 'موفقیت');
+            if (response == "OK") {
+                toastr.success('حذف اضافه بها بدرستی صورت گرفت', 'موفقیت');
 
-            $('#ContainerWaiting').hide();
-            //ShowEzafeBahaRizMetre(EzafeBahaId, KMExistingId);
-            $('#ViewAKhBEzafeBahaRizMetre' + EzafeBahaId).slideUp();
+                $('#ContainerWaiting').hide();
+                //ShowEzafeBahaRizMetre(EzafeBahaId, KMExistingId);
+                $('#ViewAKhBEzafeBahaRizMetre' + EzafeBahaId).slideUp();
+            }
+            else {
+                toastr.error('مشکل در حذف اضافه بها', 'خطا');
+                $('#ContainerWaiting').hide();
+            }
         },
         error: function (response) {
             toastr.error('مشکل در حذف اضافه بها', 'خطا');

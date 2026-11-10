@@ -444,18 +444,6 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
                         Value = dHKB
                     });
 
-                    //List<clsAmalyateKhakiInfoForBarAvordDetails> lstAmalyateKhakiInfoForBarAvordDetails = _context.AmalyateKhakiInfoForBarAvordDetailses.Where(x => x.AmalyateKhakiInfoForBarAvordId == KMKhakBardariId).ToList();
-
-                    //List<Guid> lstAmalyateKhakiInfoForBarAvordDetailIds = lstAmalyateKhakiInfoForBarAvordDetails.Select(x => x.ID).ToList();
-                    //List<clsAmalyateKhakiInfoForBarAvordDetailsRizMetre> lstAmalyateKhakiInfoForBarAvordDetailsRizMetres
-                    //    = _context.AmalyateKhakiInfoForBarAvordDetailsRizMetres.Where(x => lstAmalyateKhakiInfoForBarAvordDetailIds.Contains(x.AmalyateKhakiInfoForBarAvordDetailsId)).ToList();
-
-                    //if (lstAmalyateKhakiInfoForBarAvordDetails.Count != 0)
-                    //{
-                    //    _context.AmalyateKhakiInfoForBarAvordDetailses.RemoveRange(lstAmalyateKhakiInfoForBarAvordDetails);
-                    //    _context.AmalyateKhakiInfoForBarAvordDetailsRizMetres.RemoveRange(lstAmalyateKhakiInfoForBarAvordDetailsRizMetres);
-                    //}
-
                     /////////////
                     ///
 
@@ -631,8 +619,23 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
                             _context.AmalyateKhakiInfoForBarAvordEzafeBahas.Where(x => x.AmalyateKhakiInfoForBarAvordId == currentAmalyateKhakiInfoForBarAvord.ID).ToList();
 
                     /////حذف اضافه بهاهای قبلی
-                    //_context.AmalyateKhakiInfoForBarAvordEzafeBahas.RemoveRange(lstAKhForBEB);
 
+                    foreach (var item in lstAKhForBEB)
+                    {
+                        DeleteEzafeBahaAKhDto requestDel = new DeleteEzafeBahaAKhDto
+                        {
+                            AmalyateKhakiInfoForBarAvordId = item.AmalyateKhakiInfoForBarAvordId,
+                            BarAvordUserId = BarAvordUserId,
+                            NoeKhakBardariEzafeBahaId = item.NoeKhakBardariEzafeBahaId
+                        };
+
+
+                        AmalyateKhakiCommon amalyateKhakiCommon = new AmalyateKhakiCommon();
+                        bool blnCheck = await amalyateKhakiCommon.DeleteAmalyateKhakiInfoEBForBarAvord(requestDel, _context);
+                    }
+                    await _context.SaveChangesAsync();
+
+                    ///درج اضافه بهای جدید
                     SaveEzafeBahaAKhDto request2 = new SaveEzafeBahaAKhDto
                     {
                         AmalyateKhakiInfoForBarAvordId = currentAmalyateKhakiInfoForBarAvord.ID,
@@ -640,6 +643,19 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
                         NoeFBId = NoeFBId,
                         Year = Year
                     };
+
+                    List<long> lstAKh = lstAKhForBEB.Select(x => x.NoeKhakBardariEzafeBahaId).ToList();
+
+                    foreach (var item in lstAKh)
+                    {
+                        AmalyateKhakiCommon common = new AmalyateKhakiCommon();
+                        request2.NoeKhakBardariEzafeBahaId = item;
+                        await common.SaveEzafeBahaAKh(request2, context);
+
+                    }
+
+
+                    //AmalyateKhakiCommon.DeleteAmalyateKhakiInfoForBarAvord();
 
                     /////حذف حمل های درج شده
                     //List<clsAmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetre> lstAmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetres =
@@ -651,19 +667,7 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
 
                     //await _context.SaveChangesAsync();
 
-                    List<long> lstAKh = lstAKhForBEB.Select(x => x.NoeKhakBardariEzafeBahaId).ToList();
 
-                    foreach (var item in lstAKh)
-                    {
-                        AmalyateKhakiCommon common = new AmalyateKhakiCommon();
-                        request2.NoeKhakBardariEzafeBahaId = item;
-                        await common.SaveEzafeBahaAKh(request2, context);
-
-                        //if ()
-                        //    return new JsonResult("OK");
-                        //else
-                        //    return new JsonResult("نوع اضافه بها یافت نشد");
-                    }
                 }
 
                 await _context.SaveChangesAsync();
@@ -1209,53 +1213,49 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
 
     }
 
-    public JsonResult DeleteEzafeBahaAKh([FromBody] DeleteEzafeBahaAKhDto request)
+    public async Task<JsonResult> DeleteEzafeBahaAKh([FromBody] DeleteEzafeBahaAKhDto request)
     {
-        List<long> noeKhB = _context.NoeKhakBardari_NoeKhakBardariEzafeBahas
-                            .Where(x => x.NoeKhakBardariEzafeBahaId == request.NoeKhakBardariEzafeBahaId).Select(x => x.NoeKhakBardariId).ToList();
+        //List<long> noeKhB = await _context.NoeKhakBardari_NoeKhakBardariEzafeBahas
+        //                    .Where(x => x.NoeKhakBardariEzafeBahaId == request.NoeKhakBardariEzafeBahaId).Select(x => x.NoeKhakBardariId).ToListAsync();
 
-        clsAmalyateKhakiInfoForBarAvordEzafeBaha? amalyateKhakiInfoForBarAvordEzafeBaha =
-            _context.AmalyateKhakiInfoForBarAvordEzafeBahas.FirstOrDefault(x => x.NoeKhakBardariEzafeBahaId == request.NoeKhakBardariEzafeBahaId
-                                                                        && x.AmalyateKhakiInfoForBarAvordId == request.AmalyateKhakiInfoForBarAvordId);
+        //clsAmalyateKhakiInfoForBarAvordEzafeBaha? amalyateKhakiInfoForBarAvordEzafeBaha = await
+        //    _context.AmalyateKhakiInfoForBarAvordEzafeBahas.FirstOrDefaultAsync(x => x.NoeKhakBardariEzafeBahaId == request.NoeKhakBardariEzafeBahaId
+        //                                                                && x.AmalyateKhakiInfoForBarAvordId == request.AmalyateKhakiInfoForBarAvordId);
 
-        //List<AmalyateKhakiInfoForBarAvordDetailsInsertedDto> lstAKhForBDRizmetre =
-        //    _context.AmalyateKhakiInfoForBarAvordDetailsRizMetres.Include(x => x.AmalyateKhakiInfoForBarAvordDetails)
-        //     .Where(x => x.AmalyateKhakiInfoForBarAvordDetails.AmalyateKhakiInfoForBarAvordId == request.AmalyateKhakiInfoForBarAvordId
-        //                 && noeKhB.Contains(x.AmalyateKhakiInfoForBarAvordDetails.NoeKhakBardariId))
-        //     .Select(x => new AmalyateKhakiInfoForBarAvordDetailsInsertedDto
-        //     {
-        //         RizMetreId = x.RizMetreUserId,
-        //         AmalyateKhakiInfoForBarAvordDetailId = x.AmalyateKhakiInfoForBarAvordDetailsId,
-        //         AmalyateKhakiInfoForBarAvordId = x.AmalyateKhakiInfoForBarAvordDetails.AmalyateKhakiInfoForBarAvordId,
-        //         NoeKhakBardariId = x.AmalyateKhakiInfoForBarAvordDetails.NoeKhakBardariId
-        //     }).ToList();
 
-        //List<Guid> lstAmalyateKhakiInfoForBarAvordIds = lstAKhForBDRizmetre.Select(x => x.AmalyateKhakiInfoForBarAvordId).ToList();
+        //if (amalyateKhakiInfoForBarAvordEzafeBaha != null)
+        //{
+        //    _context.AmalyateKhakiInfoForBarAvordEzafeBahas.Remove(amalyateKhakiInfoForBarAvordEzafeBaha);
 
-        //List<clsAmalyateKhakiInfoForBarAvordEzafeBaha> lstAKhForBE =
-        //    _context.AmalyateKhakiInfoForBarAvordEzafeBahas.Where(x => lstAmalyateKhakiInfoForBarAvordIds.Contains(x.AmalyateKhakiInfoForBarAvordId)).ToList();
+        //    List<clsAmalyateKhakiInfoForBarAvordEzafeBahaRizMetre> lstlstAKhForBERizMetre =
+        //        await _context.AmalyateKhakiInfoForBarAvordEzafeBahaRizMetres.Where(x => x.AmalyateKhakiInfoForBarAvordEzafeBahaId == amalyateKhakiInfoForBarAvordEzafeBaha.ID).ToListAsync();
 
-        //_context.AmalyateKhakiInfoForBarAvordEzafeBahas.RemoveRange(lstAKhForBE);
+        //    _context.AmalyateKhakiInfoForBarAvordEzafeBahaRizMetres.RemoveRange(lstlstAKhForBERizMetre);
 
-        if (amalyateKhakiInfoForBarAvordEzafeBaha != null)
+        //    List<Guid> lstRMIds = lstlstAKhForBERizMetre.Select(x => x.RizMetreUserId).ToList();
+        //    List<clsRizMetreUsers> lstRM = await _context.RizMetreUserses.Where(x => lstRMIds.Contains(x.ID)).ToListAsync();
+        //    _context.RizMetreUserses.RemoveRange(lstRM);
+
+        //    List<clsAmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetre> lstAKhHamlRizMetre = await
+        //        _context.AmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetres.Where(x => x.AmalyateKhakiInfoForBarAvordEzafeBahaId == amalyateKhakiInfoForBarAvordEzafeBaha.ID).ToListAsync();
+        //    _context.AmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetres.RemoveRange(lstAKhHamlRizMetre);
+
+        //    List<clsRizMetreUsers> lstRizMetreHaml = await _context.RizMetreUserses.Where(x => lstAKhHamlRizMetre.Select(x => x.RizMetreId).Contains(x.ID)).ToListAsync();
+        //    _context.RizMetreUserses.RemoveRange(lstRizMetreHaml);
+        //}
+
+
+        AmalyateKhakiCommon amalyateKhakiCommon = new AmalyateKhakiCommon();
+        bool blnCheck = await amalyateKhakiCommon.DeleteAmalyateKhakiInfoEBForBarAvord(request, _context);
+
+        if (blnCheck)
         {
-            _context.AmalyateKhakiInfoForBarAvordEzafeBahas.Remove(amalyateKhakiInfoForBarAvordEzafeBaha);
-            List<clsAmalyateKhakiInfoForBarAvordEzafeBahaRizMetre> lstlstAKhForBERizMetre =
-                _context.AmalyateKhakiInfoForBarAvordEzafeBahaRizMetres.Where(x => x.AmalyateKhakiInfoForBarAvordEzafeBahaId == amalyateKhakiInfoForBarAvordEzafeBaha.ID).ToList();
+            await _context.SaveChangesAsync();
 
-            _context.AmalyateKhakiInfoForBarAvordEzafeBahaRizMetres.RemoveRange(lstlstAKhForBERizMetre);
-
-            List<clsAmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetre> lstAKhHamlRizMetre =
-                _context.AmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetres.Where(x => x.AmalyateKhakiInfoForBarAvordEzafeBahaId == amalyateKhakiInfoForBarAvordEzafeBaha.ID).ToList();
-            _context.AmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetres.RemoveRange(lstAKhHamlRizMetre);
-
-            List<clsRizMetreUsers> lstRizMetreHaml = _context.RizMetreUserses.Where(x => lstAKhHamlRizMetre.Select(x => x.RizMetreId).Contains(x.ID)).ToList();
-            _context.RizMetreUserses.RemoveRange(lstRizMetreHaml);
+            return new JsonResult("OK");
         }
-
-        _context.SaveChanges();
-
-        return new JsonResult("OK");
+        else
+            return new JsonResult("NOK");
     }
 
     public JsonResult OverLowKMCheck(OverLowKMCheckDto request)

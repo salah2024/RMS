@@ -471,14 +471,16 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
     [HttpPost]
     public async Task<JsonResult> UpdatePayKaniInfoForBarAvord([FromBody] UpdatePayKaniInfoForBarAvordDto request)
     {
-        //try
-        //{
+       // try
+       //{
         Guid BarAvordUserId = request.BarAvordUserId;
         NoeFehrestBaha NoeFBId = request.NoeFBId;
         long FromKM = request.FromKM;
         long ToKM = request.ToKM;
         string HKB = request.HKB;
         Guid KMPayKaniId = request.KMPayKaniId;
+        int Type = request.Type;
+
         long Year = request.Year;
         int Num = request.KMNum;
 
@@ -492,7 +494,7 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
             Year = Year,
         };
 
-        clsPayKaniInfoForBarAvord? currentPayKaniInfoForBarAvord = _context.PayKaniInfoForBarAvords.FirstOrDefault(x => x.BaravordUserId == BarAvordUserId && x.KMNum == Num);
+        clsPayKaniInfoForBarAvord? currentPayKaniInfoForBarAvord = _context.PayKaniInfoForBarAvords.FirstOrDefault(x => x.BaravordUserId == BarAvordUserId && x.KMNum == Num && x.Type==Type);
 
 
         /////////
@@ -688,15 +690,31 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
                         }
                     }
                 }
-
                 /////
                 /////دریافت اضافه بهاهای درج شده
                 /////
 
-                List<clsPayKaniInfoForBarAvordEzafeBaha> lstAKhForBEB =
+                List<clsPayKaniInfoForBarAvordEzafeBaha> lstPKForBEB =
                         _context.PayKaniInfoForBarAvordEzafeBahas.Where(x => x.PayKaniInfoForBarAvordId == currentPayKaniInfoForBarAvord.ID).ToList();
 
+                /////حذف اضافه بهاهای قبلی
 
+                foreach (var item in lstPKForBEB)
+                {
+                    DeleteEzafeBahaPKDto requestDel = new DeleteEzafeBahaPKDto
+                    {
+                        PayKaniInfoForBarAvordId = item.PayKaniInfoForBarAvordId,
+                        BarAvordUserId = BarAvordUserId,
+                        NoeKhakBardariEzafeBahaId = item.NoeKhakBardariEzafeBahaId
+                    };
+
+
+                    PayKaniCommon payKaniCommon1 = new PayKaniCommon();
+                    bool blnCheck = await payKaniCommon1.DeletePayKaniInfoEBForBarAvord(requestDel, _context);
+                }
+                _context.SaveChanges();
+
+                ///درج اضافه بهای جدید
                 SaveEzafeBahaPayKaniDto request2 = new SaveEzafeBahaPayKaniDto
                 {
                     PayKaniInfoForBarAvordId = currentPayKaniInfoForBarAvord.ID,
@@ -705,10 +723,9 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
                     Year = Year
                 };
 
+                List<long> lstPK = lstPKForBEB.Select(x => x.NoeKhakBardariEzafeBahaId).ToList();
 
-                List<long> lstAKh = lstAKhForBEB.Select(x => x.NoeKhakBardariEzafeBahaId).ToList();
-
-                foreach (var item in lstAKh)
+                foreach (var item in lstPK)
                 {
                     PayKaniCommon common = new PayKaniCommon();
                     request2.NoeKhakBardariEzafeBahaId = item;
@@ -717,12 +734,12 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
                 }
             }
 
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
 
         }
         return new JsonResult("OK_");
         //}
-        //catch (Exception)
+        //catch (Exception e)
         //{
         //    return new JsonResult("NOK_");
         //}
@@ -1202,32 +1219,17 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
     [HttpPost]
     public async Task<JsonResult> DeleteEzafeBahaPK([FromBody] DeleteEzafeBahaPKDto request)
     {
-        List<long> noeKhB = _context.NoeKhakBardari_NoeKhakBardariEzafeBahas
-                            .Where(x => x.NoeKhakBardariEzafeBahaId == request.NoeKhakBardariEzafeBahaId).Select(x => x.NoeKhakBardariId).ToList();
+        PayKaniCommon payKaniCommon = new PayKaniCommon();
+        bool blnCheck = await payKaniCommon.DeletePayKaniInfoEBForBarAvord(request, _context);
 
-        clsPayKaniInfoForBarAvordEzafeBaha? PayKaniInfoForBarAvordEzafeBaha =
-            _context.PayKaniInfoForBarAvordEzafeBahas.FirstOrDefault(x => x.NoeKhakBardariEzafeBahaId == request.NoeKhakBardariEzafeBahaId
-                                                                        && x.PayKaniInfoForBarAvordId == request.PayKaniInfoForBarAvordId);
-
-        if (PayKaniInfoForBarAvordEzafeBaha != null)
+        if (blnCheck)
         {
-            _context.PayKaniInfoForBarAvordEzafeBahas.Remove(PayKaniInfoForBarAvordEzafeBaha);
-            List<clsPayKaniInfoForBarAvordEzafeBahaRizMetre> lstlstPKForBERizMetre =
-                _context.PayKaniInfoForBarAvordEzafeBahaRizMetres.Where(x => x.PayKaniInfoForBarAvordEzafeBahaId == PayKaniInfoForBarAvordEzafeBaha.ID).ToList();
+            await _context.SaveChangesAsync();
 
-            _context.PayKaniInfoForBarAvordEzafeBahaRizMetres.RemoveRange(lstlstPKForBERizMetre);
-
-            //List<clsPayKaniInfoForBarAvordEzafeBahaHamlRizMetre> lstPKHamlRizMetre =
-            //    _context.PayKaniInfoForBarAvordEzafeBahaHamlRizMetres.Where(x => x.PayKaniInfoForBarAvordEzafeBahaId == PayKaniInfoForBarAvordEzafeBaha.ID).ToList();
-            //_context.PayKaniInfoForBarAvordEzafeBahaHamlRizMetres.RemoveRange(lstAKhHamlRizMetre);
-
-            //List<clsRizMetreUsers> lstRizMetreHaml = _context.RizMetreUserses.Where(x => lstAKhHamlRizMetre.Select(x => x.RizMetreId).Contains(x.ID)).ToList();
-            //_context.RizMetreUserses.RemoveRange(lstRizMetreHaml);
+            return new JsonResult("OK");
         }
-
-       await _context.SaveChangesAsync();
-
-        return new JsonResult("OK");
+        else
+            return new JsonResult("NOK");
     }
 
     [HttpPost]
