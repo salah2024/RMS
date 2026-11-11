@@ -816,19 +816,19 @@ function ShowExistingKMPayKani(BarAvordUserId) {
     <!-- از متراژ -->
     
     <div class="col-md-2">
-      <input type="text" class="form-control_1 PayKaniTextStyle  input-sm text-center" id="txtFromKMForPayKani${KMNum}" value="${FromKM}" onclick="event.stopPropagation();"/>
+      <input type="text" class="form-control_1 PayKaniTextStyle  input-sm text-center" id="txtFromKMForPayKani${KMNum}" value="${FromKM}" onclick="this.select(); event.stopPropagation();"/>
     </div>
 
     <!-- تا متراژ -->
     
     <div class="col-md-2">
-      <input type="text" class="form-control_1 PayKaniTextStyle input-sm text-center" id="txtToKMForPayKani${KMNum}" value="${ToKM}" onclick="event.stopPropagation();"/>
+      <input type="text" class="form-control_1 PayKaniTextStyle input-sm text-center" id="txtToKMForPayKani${KMNum}" value="${ToKM}" onclick="this.select(); event.stopPropagation();"/>
     </div>
 
     <!-- حجم پی کنی -->
     
     <div class="col-md-2">
-      <input type="text" class="form-control_1 PayKaniTextStyle input-sm text-center" id="txtHajmPayKani${KMNum}" value="${Value}" onclick="event.stopPropagation();"/>
+      <input type="text" class="form-control_1 PayKaniTextStyle input-sm text-center" id="txtHajmPayKani${KMNum}" value="${Value}" onclick="this.select(); event.stopPropagation();"/>
     </div>
 
         <div class="col-md-3" style="text-align:center">
