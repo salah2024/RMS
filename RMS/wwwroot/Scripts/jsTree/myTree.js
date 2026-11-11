@@ -287,6 +287,7 @@ function onCheckBoxChange(obj) {
             OperationId = $('#HDFOperationId').val();
             if (OperationId && OperationId.trim() !== '') {
                 GetRizMetreWithFBId(1);
+                GetItemsAddedAndRelForRizMetre(1);
             }
 
             toastr.success('ثبت بدرستی انجام گرفت', 'موفقیت');
