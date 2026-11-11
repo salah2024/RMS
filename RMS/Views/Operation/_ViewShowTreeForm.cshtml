@@ -272,8 +272,17 @@
                 var $this = $(this);
                 var inlineClick = $this.attr('onclick');
                 if (inlineClick) {
-                    try { eval(inlineClick); }
-                    catch (ex) { console.error('Error in tree node action:', ex); }
+                    try {
+                        eval(inlineClick);
+
+                        // اگر تابع اصلی گره رویداد را مدیریت کرده باشد،
+                        // دیگر نباید محتوای پنل آن با درخواست زیرشاخه جایگزین شود.
+                        if (e.isDefaultPrevented && e.isDefaultPrevented()) return;
+                        if (e.defaultPrevented) return;
+                    }
+                    catch (ex) {
+                        console.error('Error in tree node action:', ex);
+                    }
                 }
 
                 var nodeId = $this.attr('id');
