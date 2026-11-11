@@ -275,20 +275,22 @@
                     // فراخوانی‌هایی که پارامتر event ندارند، توسط خود onclick اجرا شده‌اند؛
                     // اجرای مجدد آن‌ها با eval باعث ارسال درخواست تکراری و تداخل با محتوای پنل می‌شود.
                     var receivesEvent = /(?:,|\()\s*e\s*(?:,|\))/.test(inlineClick);
-                    if (!receivesEvent) return;
+                    if (receivesEvent) {
+                        try {
+                            // فقط فراخوانی‌هایی که پارامتر event دارند نیاز به اجرای دستی دارند.
+                            eval(inlineClick);
 
-                    try {
-                        // در فراخوانی‌هایی که e دارند، آن‌ها را در scope همین رویداد اجرا می‌کنیم.
-                        eval(inlineClick);
-
-                        // اگر تابع اصلی گره رویداد را مدیریت کرده باشد،
-                        // دیگر نباید محتوای پنل آن با درخواست زیرشاخه جایگزین شود.
-                        if (e.isDefaultPrevented && e.isDefaultPrevented()) return;
-                        if (e.defaultPrevented) return;
+                            // اگر تابع اصلی گره رویداد را مدیریت کرده باشد،
+                            // دیگر نباید محتوای پنل آن با درخواست زیرشاخه جایگزین شود.
+                            if (e.isDefaultPrevented && e.isDefaultPrevented()) return;
+                            if (e.defaultPrevented) return;
+                        }
+                        catch (ex) {
+                            console.error('Error in tree node action:', ex);
+                        }
                     }
-                    catch (ex) {
-                        console.error('Error in tree node action:', ex);
-                    }
+                    // فراخوانی‌های بدون event قبلاً توسط onclick خود مرورگر اجرا شده‌اند؛
+                    // اجرای مجدد لازم نیست، اما باید اجازه دهیم زیرشاخه lazy-load شود.
                 }
 
                 var nodeId = $this.attr('id');
