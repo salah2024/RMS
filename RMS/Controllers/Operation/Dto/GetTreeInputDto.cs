@@ -8,6 +8,7 @@ namespace RMS.Controllers.Operation.Dto
         //public NoeFehrestBaha NoeFBId { get; set; }
         public Guid BarAvordUserId { get; set; }
         public string OpName { get; set; }
+        public long? ParentId { get; set; }
     }
     public class GetTreeInputForOneDto
     {
