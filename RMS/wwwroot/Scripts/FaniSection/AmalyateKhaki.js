@@ -1,5 +1,54 @@
 ﻿ActivityLength = 0;
 
+/* انتخاب مقدار ورودی‌ها با کلیک؛ شامل ورودی‌های داینامیک */
+$(document)
+    .off('click.khakBardariSelectInput', '#ViewKhakBardariNew input[type="text"], [id^="ViewKhakBardari"] input[type="text"], #divKhakBardariInfoDetails input[type="text"], input[id^="txtFromKMForKhakbardari"], input[id^="txtToKMForKhakbardari"], input[id^="txtHajmKhakBardari"]')
+    .on('click.khakBardariSelectInput', '#ViewKhakBardariNew input[type="text"], [id^="ViewKhakBardari"] input[type="text"], #divKhakBardariInfoDetails input[type="text"], input[id^="txtFromKMForKhakbardari"], input[id^="txtToKMForKhakbardari"], input[id^="txtHajmKhakBardari"]', function () {
+        if (!this.disabled && !this.readOnly) this.select();
+    });
+
+/* جلوگیری از درخواست تکراری و مدیریت وضعیت دکمه‌ها */
+const khakBardariPendingRequests = Object.create(null);
+let khakBardariActiveRequestCount = 0;
+
+function beginKhakBardariRequest(requestKey, buttonElement) {
+    if (khakBardariPendingRequests[requestKey]) return false;
+    const $button = buttonElement ? $(buttonElement) : $();
+    if ($button.length && $button.prop('disabled')) return false;
+    if ($button.length) {
+        $button.data('khakBardariOriginalHtml', $button.html());
+        $button.data('khakBardariOriginalCursor', $button.css('cursor'));
+        $button.data('khakBardariOriginalOpacity', $button.css('opacity'));
+        $button.prop('disabled', true).attr('aria-busy', 'true')
+            .addClass('KhakBardariButtonLoading')
+            .css({ cursor: 'wait', opacity: 0.7 })
+            .html('<i class="fa fa-spinner fa-spin" aria-hidden="true"></i><span class="sr-only"> در حال انجام...</span>');
+    }
+    khakBardariPendingRequests[requestKey] = $button;
+    khakBardariActiveRequestCount++;
+    $('#ContainerWaiting').show();
+    return true;
+}
+
+function endKhakBardariRequest(requestKey) {
+    const $button = khakBardariPendingRequests[requestKey];
+    if ($button && $button.length) {
+        const originalHtml = $button.data('khakBardariOriginalHtml');
+        const originalCursor = $button.data('khakBardariOriginalCursor');
+        const originalOpacity = $button.data('khakBardariOriginalOpacity');
+        if (originalHtml !== undefined) $button.html(originalHtml);
+        $button.prop('disabled', false).removeAttr('aria-busy')
+            .removeClass('KhakBardariButtonLoading')
+            .css({ cursor: originalCursor || '', opacity: originalOpacity || '' })
+            .removeData('khakBardariOriginalHtml')
+            .removeData('khakBardariOriginalCursor')
+            .removeData('khakBardariOriginalOpacity');
+    }
+    delete khakBardariPendingRequests[requestKey];
+    khakBardariActiveRequestCount = Math.max(0, khakBardariActiveRequestCount - 1);
+    if (khakBardariActiveRequestCount === 0) $('#ContainerWaiting').hide();
+}
+
 function KhakBardariMashinWithBarAvordIdClick(OpId, BarAvordUserId) {
     str = "";
     debugger;
@@ -15,14 +64,14 @@ function KhakBardariMashinWithBarAvordIdClick(OpId, BarAvordUserId) {
     <div class="row khakbardari-box">
 
     <!-- از متراژ -->
-    <div class="col-md-1">
-        <i class="fa fa-plus" style="font-size: 20px;color: green;"></i>
+    <div class="col-md-1 d-flex align-items-center justify-content-center" style="min-width:0;padding:4px 8px;box-sizing:border-box;overflow:hidden;">
+        <i class="fa fa-plus" aria-hidden="true" style="display:inline-block;font-size:18px;line-height:1;color:#198754;margin:0;"></i>
     </div>
-    <div class="col-md-1 label-col">
+    <div class="col-md-1 label-col" style="padding-inline-start:8px;box-sizing:border-box;">
       <span>از متراژ:</span>
     </div>
     <div class="col-md-1">
-      <input type="text" class="form-control_1 khakbardariTextStyle input-sm text-center" id="txtFromKMForKhakbardari" value="0"/>
+      <input type="text" class="form-control_1 khakbardariTextStyle input-sm text-center" id="txtFromKMForKhakbardari" value="0" onclick="this.select();"/>
     </div>
 
     <!-- تا متراژ -->
@@ -30,7 +79,7 @@ function KhakBardariMashinWithBarAvordIdClick(OpId, BarAvordUserId) {
       <span>تا متراژ:</span>
     </div>
     <div class="col-md-1">
-      <input type="text" class="form-control_1 khakbardariTextStyle input-sm text-center" id="txtToKMForKhakbardari" value="0"/>
+      <input type="text" class="form-control_1 khakbardariTextStyle input-sm text-center" id="txtToKMForKhakbardari" value="0" onclick="this.select();"/>
     </div>
 
     <!-- حجم خاکبرداری -->
@@ -38,7 +87,7 @@ function KhakBardariMashinWithBarAvordIdClick(OpId, BarAvordUserId) {
       <span>حجم خاکبرداری:</span>
     </div>
     <div class="col-md-1">
-      <input type="text" class="form-control_1 khakbardariTextStyle input-sm text-center" id="txtHajmKhakBardari" value="0"/>
+      <input type="text" class="form-control_1 khakbardariTextStyle input-sm text-center" id="txtHajmKhakBardari" value="0" onclick="this.select();"/>
     </div>
     <div class="col-md-1 unit-col">
       <span>مترمکعب</span>
@@ -56,7 +105,7 @@ function KhakBardariMashinWithBarAvordIdClick(OpId, BarAvordUserId) {
 
  <div class="col-md-1 action-col">
      <button type="button"
-            onclick="SaveKhakBardariInfo('${BarAvordUserId}'` + ',' + `'Add')"
+            onclick="SaveKhakBardariInfo('${BarAvordUserId}'` + ',' + `'Add', this)"
             class="ButtonRowsSaveStyle">
             <i id="iSave" class="fa fa-save SaveRMUStyle"></i>
      </button>
@@ -826,19 +875,19 @@ function ShowExistingKMKhakBardari(BarAvordUserId) {
     <!-- از متراژ -->
     
     <div class="col-md-2">
-      <input type="text" class="form-control_1 khakbardariTextStyle  input-sm text-center" id="txtFromKMForKhakbardari${KMNum}" value="${FromKM}" onclick="event.stopPropagation();"/>
+      <input type="text" class="form-control_1 khakbardariTextStyle  input-sm text-center" id="txtFromKMForKhakbardari${KMNum}" value="${FromKM}" onclick="this.select(); event.stopPropagation();"/>
     </div>
 
     <!-- تا متراژ -->
     
     <div class="col-md-2">
-      <input type="text" class="form-control_1 khakbardariTextStyle input-sm text-center" id="txtToKMForKhakbardari${KMNum}" value="${ToKM}" onclick="event.stopPropagation();"/>
+      <input type="text" class="form-control_1 khakbardariTextStyle input-sm text-center" id="txtToKMForKhakbardari${KMNum}" value="${ToKM}" onclick="this.select(); event.stopPropagation();"/>
     </div>
 
     <!-- حجم خاکبرداری -->
     
     <div class="col-md-2">
-      <input type="text" class="form-control_1 khakbardariTextStyle input-sm text-center" id="txtHajmKhakBardari${KMNum}" value="${Value}" onclick="event.stopPropagation();"/>
+      <input type="text" class="form-control_1 khakbardariTextStyle input-sm text-center" id="txtHajmKhakBardari${KMNum}" value="${Value}" onclick="this.select(); event.stopPropagation();"/>
     </div>
 
         <div class="col-md-3" style="text-align:center">
@@ -848,12 +897,12 @@ function ShowExistingKMKhakBardari(BarAvordUserId) {
             </button>
         
             <button type="button" title="ویرایش"
-                onclick="UpdateKhakBardariInfo('${KMExistingId}'` + ',' + `'${BarAvordUserId}'` + ',' + `${KMNum})" onclick="event.stopPropagation();"
+                onclick="event.stopPropagation(); UpdateKhakBardariInfo('${KMExistingId}'` + ',' + `'${BarAvordUserId}'` + ',' + `${KMNum}, this)"
                 class="ButtonRowsSaveStyle">
                     <i id="iSave" class="fa fa-save SaveRMUStyle"></i>
             </button>
 
-            <button class="ButtonRowsViewStyle" title="حذف" onclick="DeleteKhakBardariInfo('${KMExistingId}'` + ',' + `${KMNum}` + ',' + `'${BarAvordUserId}')">
+            <button class="ButtonRowsViewStyle" title="حذف" onclick="DeleteKhakBardariInfo('${KMExistingId}'` + ',' + `${KMNum}` + ',' + `'${BarAvordUserId}', this)">
                 <i class="fa fa-trash DelRMUStyle"></i>
             </button>
         
@@ -2297,9 +2346,9 @@ function AutoFillThirdColumnForEdit(KMNum, i, khDetail, changedId) {
 //     // حالت‌های تک‌ورودی: فعلاً کاری نکن (تا وقتی دومی پر بشه)
 // }
 
-function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
+function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId, forceReload) {
     //$('#HDFStateAmalyateKhakiSaveOrEdit').val('Edit');
-    if ($('#MainViewKhakBardari' + KMNum).is(':visible')) {
+    if (!forceReload && $('#MainViewKhakBardari' + KMNum).is(':visible')) {
         $('#MainViewKhakBardari' + KMNum).slideUp(500);
         //$('#ViewRizMetreKH' + KMNum).slideUp(500);
         return
@@ -2628,7 +2677,7 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId) {
             debugger;
 
 
-            $('div[id^="MainViewKhakBardari"]').slideUp();
+            if (!forceReload) $('div[id^="MainViewKhakBardari"]').not('#MainViewKhakBardari' + KMNum).slideUp();
             //$('div[id^="ViewRizMetreKH"]').slideUp();
 
             $('#ViewKhakBardari' + KMNum).html(strKMAK);
@@ -3907,7 +3956,7 @@ function CheckValuesOfKhakBardariDetailsForEdit(KMNum) {
 // }
 
 
-function SaveKhakBardariInfo(BarAvordUserId, Type) {
+function SaveKhakBardariInfo(BarAvordUserId, Type, buttonElement) {
 
     debugger;
     check = false;
@@ -3965,7 +4014,7 @@ function SaveKhakBardariInfo(BarAvordUserId, Type) {
 
     debugger;
 
-    check = SumAllDetailsKhakBardari();
+    check = SumAllDetailsKhakBardari() || check;
 
     //if (check) {
     //    toastr.info('مجموع احجام وارد شده بایستی با حجم کل برابر باشد', 'اطلاع');
@@ -4015,12 +4064,8 @@ function SaveKhakBardariInfo(BarAvordUserId, Type) {
         vardata.NoeFBId = NoeFBId;
 
 
-        htmlShowWaiting = ShowWaiting();
-        if (htmlShowWaiting != '')
-            $('#MainViewKhakBardariNew').append(htmlShowWaiting);
-        else
-            $('#ContainerWaiting').show();
-
+        const requestKey = 'save:' + BarAvordUserId;
+        if (!beginKhakBardariRequest(requestKey, buttonElement)) return;
 
         $.ajax({
             type: "POST",
@@ -4075,7 +4120,9 @@ function SaveKhakBardariInfo(BarAvordUserId, Type) {
             },
             error: function (response) {
                 toastr.error('مشکل در ثبت اطلاعات متراژ', 'خطا');
-                $('#ContainerWaiting').hide();
+            },
+            complete: function () {
+                endKhakBardariRequest(requestKey);
             }
         });
     }
@@ -4083,7 +4130,7 @@ function SaveKhakBardariInfo(BarAvordUserId, Type) {
         toastr.info('موارد مشخص شده دارای مقادیر نامعتبر میباشند', 'اطلاع');
 }
 
-function UpdateKhakBardariInfo(KMKhakBardariId, BarAvordUserId, KMNum) {
+function UpdateKhakBardariInfo(KMKhakBardariId, BarAvordUserId, KMNum, buttonElement) {
 
 
     debugger;
@@ -4121,7 +4168,7 @@ function UpdateKhakBardariInfo(KMKhakBardariId, BarAvordUserId, KMNum) {
             $(this).removeClass('blinking');
     });
 
-    check = SumAllDetailsKhakBardariForEdit(KMNum);
+    check = SumAllDetailsKhakBardariForEdit(KMNum) || check;
     //if (check) {
     //    toastr.info('حجم کل خاکبرداری صحیح نمیباشد', 'اطلاع');
     //}
@@ -4170,11 +4217,8 @@ function UpdateKhakBardariInfo(KMKhakBardariId, BarAvordUserId, KMNum) {
         vardata.NoeFBId = NoeFBId;
 
 
-        htmlShowWaiting = ShowWaiting();
-        if (htmlShowWaiting != '')
-            $('#MainViewKhakBardari' + KMNum).append(htmlShowWaiting);
-        else
-            $('#ContainerWaiting').show();
+        const requestKey = 'record:' + KMKhakBardariId;
+        if (!beginKhakBardariRequest(requestKey, buttonElement)) return;
 
         debugger;
         $.ajax({
@@ -4187,12 +4231,10 @@ function UpdateKhakBardariInfo(KMKhakBardariId, BarAvordUserId, KMNum) {
                 debugger;
                 info = response.split('_');
                 if (info[0] == "OK") {
-                    toastr.success('اطلاعات متراژ بدرستی ویرایش گردید', 'ثبت');
-                    //$('#MainViewKhakBardari' + KMNum).slideUp(500);
-                    $('#btnViewKhakBardariInfo'+KMNum).click();
-                    $('#divExistKMHeader' + KMNum).click();
-                    $('#ContainerWaiting').hide();
-                    //$('#ViewKhakBardariEzafeBaha' + KMNum).html('');
+                    toastr.success('اطلاعات متراژ بدرستی ویرایش گردید', 'ویرایش');
+
+                    // دریافت مجدد اطلاعات ذخیره‌شده بدون بستن پنل ویرایش
+                    ViewKhakBardariInfo(KMKhakBardariId, KMNum, BarAvordUserId, true);
 
                 }
                 else {
@@ -4202,7 +4244,9 @@ function UpdateKhakBardariInfo(KMKhakBardariId, BarAvordUserId, KMNum) {
             },
             error: function (response) {
                 toastr.error('مشکل در ویرایش اطلاعات متراژ', 'خطا');
-                $('#ContainerWaiting').hide();
+            },
+            complete: function () {
+                endKhakBardariRequest(requestKey);
             }
         });
     }
@@ -4210,7 +4254,7 @@ function UpdateKhakBardariInfo(KMKhakBardariId, BarAvordUserId, KMNum) {
         toastr.info('موارد مشخص شده دارای مقادیر نامعتبر میباشند', 'اطلاع');
 }
 
-function DeleteKhakBardariInfo(KMKhakBardariId, KMNum, BarAvordUserId) {
+function DeleteKhakBardariInfo(KMKhakBardariId, KMNum, BarAvordUserId, buttonElement) {
 
     Year = $('#HDFYear').val();
 
@@ -4221,7 +4265,9 @@ function DeleteKhakBardariInfo(KMKhakBardariId, KMNum, BarAvordUserId) {
     vardata.KMNum = KMNum;
 
 
-    debugger;
+    const requestKey = 'record:' + KMKhakBardariId;
+    if (!beginKhakBardariRequest(requestKey, buttonElement)) return;
+
     $.ajax({
         type: "POST",
         url: "/AmalyateKhakiInfoForBarAvords/DeleteKhakBardariInfoForBarAvord",
@@ -4242,7 +4288,9 @@ function DeleteKhakBardariInfo(KMKhakBardariId, KMNum, BarAvordUserId) {
         },
         error: function (response) {
             toastr.error('مشکل در حذف اطلاعات', 'خطا');
-            $('#ContainerWaiting').hide();
+        },
+        complete: function () {
+            endKhakBardariRequest(requestKey);
         }
     });
 
