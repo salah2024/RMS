@@ -387,7 +387,7 @@ function ShowSelctionPayKani(IsNew, KMExistingId, KMNum, BarAvordId, FromKM, ToK
                 // مقادیر اصلی ردیف
                 let PKDetail = parseFloat($("#txtPKDetail" + i).val()) || 0;
 
-                //if (PKDetail != null || PKDetail != 0) {
+                //if (PKDetail > 0) {
                 if (PKDetail > 0) {
                     $("#txtPKVarizi" + i).prop('disabled') ? '' : $("#txtPKVarizi" + i).val() != "" ? $("#txtPKVarizi" + i).removeClass('blinking') : $("#txtPKVarizi" + i).addClass('blinking');
                     $("#txtPKReUseHajm" + i).prop('disabled') ? '' : $("#txtPKReUseHajm" + i).val() != "" ? $("#txtPKReUseHajm" + i).removeClass('blinking') : $("#txtPKReUseHajm" + i).addClass('blinking');
@@ -2055,7 +2055,7 @@ function ViewPayKaniInfo(KMExistingId, KMNum, BarAvordId) {
 
                 AutoFillThirdColumnPKForEdit(KMNum, i, PKDetail, changedId);
 
-                SumKol = sumKolNewPK(9, KMNum);
+                SumKol = sumKolNewPK(ActivityLength, KMNum);
                 $('#spantotalPKDetail' + KMNum).html(toPersianDigits(SumKol[0].toFixed(2)));
                 $('#spantotalDarsadPKDetail'+KMNum).html(toPersianDigits(SumKol[1].toFixed(0)) + " % ");
 
@@ -2076,8 +2076,7 @@ function ViewPayKaniInfo(KMExistingId, KMNum, BarAvordId) {
 
 
             // $('#txtHajmPK' + KMNum).off('change').change(function () {
-            //     debugger;
-
+            
 
             //     let HKB = parseFloat($(this).val());
 
