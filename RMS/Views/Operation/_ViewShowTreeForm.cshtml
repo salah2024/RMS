@@ -263,117 +263,6 @@
         $('#HDFNoeFB').val(selectedId);
         ShowTree();
     }
-    // بارگذاری تنبل زیرشاخه‌ها؛ هر شاخه فقط هنگام باز شدن از سرور دریافت می‌شود
-    function bindLazyTreeEvents() {
-        $('#jstree')
-            .off('click.MenuAccordion', 'a[id^="a"]')
-            .on('click.MenuAccordion', 'a[id^="a"]', function (e) {
-                e.preventDefault();
-                var $this = $(this);
-                var inlineClick = $this.attr('onclick');
-                if (inlineClick) {
-                    // فراخوانی‌هایی که پارامتر event ندارند، توسط خود onclick اجرا شده‌اند؛
-                    // اجرای مجدد آن‌ها با eval باعث ارسال درخواست تکراری و تداخل با محتوای پنل می‌شود.
-                    var receivesEvent = /(?:,|\()\s*e\s*(?:,|\))/.test(inlineClick);
-                    if (receivesEvent) {
-                        try {
-                            // فقط فراخوانی‌هایی که پارامتر event دارند نیاز به اجرای دستی دارند.
-                            eval(inlineClick);
-
-                            // اگر تابع اصلی گره رویداد را مدیریت کرده باشد،
-                            // دیگر نباید محتوای پنل آن با درخواست زیرشاخه جایگزین شود.
-                            if (e.isDefaultPrevented && e.isDefaultPrevented()) return;
-                            if (e.defaultPrevented) return;
-                        }
-                        catch (ex) {
-                            console.error('Error in tree node action:', ex);
-                        }
-                    }
-                    // فراخوانی‌های بدون event قبلاً توسط onclick خود مرورگر اجرا شده‌اند؛
-                    // اجرای مجدد لازم نیست، اما باید اجازه دهیم زیرشاخه lazy-load شود.
-                }
-
-                var nodeId = $this.attr('id');
-                var $target = $('#ul' + nodeId);
-
-                // گره‌های نهاییِ فهرست‌بها از div با شناسه ula برای نمایش محتوای
-                // تابع اصلی استفاده می‌کنند؛ این div نباید به‌عنوان زیرشاخه بارگذاری شود.
-                if (!$target.length || !$target.is('ul')) return;
-
-                var parentId = nodeId.substring(1);
-                var $allNodes = $('#jstree [id^="ula"]');
-                var $ancestors = $this.parents('[id^="ula"]');
-
-                if ($target.is(':visible')) {
-                    $target.find('[id^="ula"]').addBack().slideUp(250);
-                    return;
-                }
-
-                var $keepOpen = $ancestors.add($target);
-                $allNodes.not($keepOpen).slideUp(250);
-
-                if ($target.data('loaded') === true) {
-                    $target.stop(true, true).slideDown(250);
-                    return;
-                }
-
-                loadTreeChildren(parentId, $target);
-            });
-    }
-
-    function loadTreeChildren(parentId, $target, isRetry) {
-        if (!$target || !$target.length || $target.data('loading') === true) return;
-        if ($target.data('loaded') === true && isRetry !== true) return;
-
-        $target.data('loading', true)
-            .stop(true, true)
-            .html('<li class="tree-loading" style="color:#777;padding:6px 12px;border:0;"><i class="fa fa-spinner fa-spin"></i> در حال بارگذاری...</li>')
-            .slideDown(150);
-
-        var requestData = {
-            Year: parseInt($('#HDFYear').val()),
-            BarAvordUserId: $('#HDFBarAvordUserID').val(),
-            OpName: '',
-            ParentId: parseInt(parentId)
-        };
-
-        $.ajax({
-            type: 'POST',
-            url: '@Url.Action("GetTree")',
-            data: JSON.stringify(requestData),
-            contentType: 'application/json; charset=utf-8',
-            dataType: 'json',
-            success: function (data) {
-                if (!data || data === 'NOK') {
-                    $target.data('loading', false);
-                    $target.html('<li style="color:#b94a48;padding:6px 12px;border:0;">دریافت اطلاعات ناموفق بود؛ <a href="#" onclick="retryTreeChildren(\'' + parentId + '\'); return false;">تلاش مجدد</a></li>');
-                    return;
-                }
-
-                var childItems = data.newOperation || [];
-                $target.html(createTree(childItems));
-                $target.find('a[id^="a"]').addClass('OpMenuStyle');
-                // زیرشاخه‌های سطح بعد تا زمان کلیک روی همان شاخه بسته بمانند
-                $target.find('li > ul').hide();
-                $target.data('loading', false).data('loaded', true);
-
-                if (childItems.length === 0) {
-                    $target.html('<li style="color:#888;padding:5px 10px;border:0;">موردی برای نمایش وجود ندارد</li>');
-                }
-
-                $target.stop(true, true).slideDown(200);
-            },
-            error: function () {
-                $target.data('loading', false);
-                $target.html('<li style="color:#b94a48;padding:6px 12px;border:0;">خطا در دریافت زیرشاخه‌ها؛ <a href="#" onclick="retryTreeChildren(\'' + parentId + '\'); return false;">تلاش مجدد</a></li>');
-            }
-        });
-    }
-
-    function retryTreeChildren(parentId) {
-        loadTreeChildren(parentId, $('#ula' + parentId), true);
-    }
-
     //////////////
     function ShowTree() {
     plugin = ['wholerow'];
@@ -397,13 +286,56 @@
         NewOperation=data.newOperation;
         BaravordType=data.baravordType;
 
-    var html = createTree(NewOperation);
+    var html= createTree(NewOperation,0);
 
     $('#jstree').html(html);
-    $('#jstree li a').addClass('OpMenuStyle');
-    bindLazyTreeEvents();
 
-    $('#jstree li ul').hide();
+
+    $('#jstree li a').each(function () {
+
+        var $a = $(this);
+
+        $a.addClass('OpMenuStyle');
+
+        $a.off('click.MenuAccordion').on('click.MenuAccordion', function (e) {
+
+        e.preventDefault(); // جلوگیری از رفتار پیش‌فرض
+
+        var $this = $(this);
+        var currentId = $this.attr('id');
+        var $target = $('#ul' + currentId);
+
+    // 🔹 اجرای تابع onclick قبل از بازکردن نود
+        var inlineClick = $this.attr("onclick");
+        if (inlineClick) {
+        try {
+            eval(inlineClick);   // اجرای کد موجود در onclick
+        }
+        catch (ex) {
+            console.error("Error in onclick:", ex);
+        }
+     }
+
+    if (!$target.length) return;
+
+    var $allNodes = $('#jstree [id^="ula"]');
+    var $ancestors = $this.parents('[id^="ula"]');
+
+    if ($target.is(':visible')) {
+        $target.find('[id^="ula"]').addBack().slideUp(500);
+    }
+    else {
+        var $keepOpen = $ancestors.add($target);
+            $allNodes.not($keepOpen).slideUp(500);
+             $keepOpen.slideDown(500);
+         }
+        });
+
+    });
+
+    $('#jstree li ul').each(function () {
+    $(this).hide();
+    });
     },
     error: function (response) {
     toastr('danger', 'خطا', 'مشکلی بوجود آمده، مجددا بعدا امتحان نمایید')
