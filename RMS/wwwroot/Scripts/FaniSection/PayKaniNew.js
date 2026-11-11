@@ -3235,10 +3235,9 @@ $.ajax({
             success: function (response) {
                 info = response.split('_');
                 if (info[0] == "OK") {
-                    toastr.success('اطلاعات متراژ بدرستی ویرایش گردید', 'ثبت');
-                    $('#MainViewPayKani' + KMNum).slideUp(500);
-                    $('#divExistKMHeader' + KMNum).click();
-//$('#ViewPayKaniEzafeBaha' + KMNum).html('');
+                    // مقادیر سربرگ همین حالا در ورودی‌های صفحه قرار دارند؛
+                    // جزئیات را باز نگه می‌داریم تا نتیجه ویرایش بلافاصله دیده شود.
+                    toastr.success('اطلاعات متراژ بدرستی ویرایش گردید', 'ویرایش');
 
                 }
                 else {
