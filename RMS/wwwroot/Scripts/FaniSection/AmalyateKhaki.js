@@ -2681,6 +2681,53 @@ function ViewKhakBardariInfo(KMExistingId, KMNum, BarAvordId, forceReload) {
             //$('div[id^="ViewRizMetreKH"]').slideUp();
 
             $('#ViewKhakBardari' + KMNum).html(strKMAK);
+
+            // هدایت کلید Enter در حالت ویرایش، مشابه ثبت کیلومتراژ جدید
+            const $editView = $('#ViewKhakBardari' + KMNum);
+            $editView
+                .off('keydown.khakEditFocus')
+                .on('keydown.khakEditFocus', 'input[id^="txtKhDetail' + KMNum + '_"]', function (e) {
+                    if (e.key !== 'Enter') return;
+
+                    const match = this.id.match(/^txtKhDetail\d+_(\d+)$/);
+                    if (!match) return;
+
+                    const rowIndex = parseInt(match[1], 10);
+                    const value = $.trim($(this).val());
+
+                    if (value === '' || parseFloat(value) === 0) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+
+                        $('#txtDarsad' + KMNum + '_' + rowIndex).focus().select();
+                        return false;
+                    }
+                })
+                .on('keydown.khakEditFocus', 'input[id^="txtDarsad' + KMNum + '_"]', function (e) {
+                    if (e.key !== 'Enter') return;
+
+                    // فقط درصد اصلی خاکبرداری؛ درصد حمل و واریزه شامل این شرط نیست
+                    const match = this.id.match(/^txtDarsad\d+_(\d+)$/);
+                    if (!match) return;
+
+                    const rowIndex = parseInt(match[1], 10);
+                    const value = $.trim($(this).val());
+
+                    if (value === '' || parseFloat(value) === 0) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+
+                        const $next = $('#txtKhDetail' + KMNum + '_' + (rowIndex + 1));
+                        if ($next.length && !$next.prop('disabled')) {
+                            $next.focus().select();
+                        }
+
+                        return false;
+                    }
+                });
+
             $('#MainViewKhakBardari' + KMNum).slideDown();
 
             HajmKhakBardari = $('#txtHajmKhakBardari' + KMNum).val();
