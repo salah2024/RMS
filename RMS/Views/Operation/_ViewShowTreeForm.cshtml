@@ -332,7 +332,7 @@
 
                 var childItems = data.newOperation || [];
                 $target.html(createTree(childItems));
-                $target.find('li > a').addClass('OpMenuStyle');
+                $target.find('a[id^="a"]').addClass('OpMenuStyle');
                 // زیرشاخه‌های سطح بعد تا زمان کلیک روی همان شاخه بسته بمانند
                 $target.find('li > ul').hide();
                 $target.data('loading', false).data('loaded', true);
