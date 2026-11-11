@@ -75,10 +75,14 @@ function PayKaniWithBarAvordIdClick(OpId,BarAvordUserId) {
     <div class="row PayKani-box">
 
     <!-- از متراژ -->
-    <div class="col-md-1">
-        <i class="fa fa-plus" style="font-size: 20px;color: green;"></i>
+    <div class="col-md-1 d-flex align-items-center justify-content-center"
+         style="min-width:0;padding:4px 8px;box-sizing:border-box;overflow:hidden;">
+        <i class="fa fa-plus"
+           aria-hidden="true"
+           style="display:inline-block;font-size:18px;line-height:1;color:#198754;margin:0;"></i>
     </div>
-    <div class="col-md-1 label-col">
+    <div class="col-md-1 label-col"
+         style="padding-inline-start:8px;box-sizing:border-box;">
       <span>از متراژ:</span>
     </div>
     <div class="col-md-1">
