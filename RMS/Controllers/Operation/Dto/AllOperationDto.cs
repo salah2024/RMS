@@ -7,6 +7,7 @@ public class AllOperationDto
     public long ID { get; set; }
     public long order { get; set; }
     public long? ParentId { get; set; }
+    public bool HasChildren { get; set; }
     public string OperationName { get; set; }
     public string? LatinName { get; set; }
     public string FunctionCall { get; set; }
