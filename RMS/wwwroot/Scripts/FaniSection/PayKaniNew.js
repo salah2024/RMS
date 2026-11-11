@@ -12,10 +12,13 @@ function beginPayKaniRequest(requestKey, buttonElement) {
 
     if ($button.length) {
         $button.data('payKaniOriginalHtml', $button.html());
+        $button.data('payKaniOriginalCursor', $button.css('cursor'));
+        $button.data('payKaniOriginalOpacity', $button.css('opacity'));
         $button
             .prop('disabled', true)
             .attr('aria-busy', 'true')
             .addClass('PayKaniButtonLoading')
+            .css({ cursor: 'wait', opacity: 0.7 })
             .html('<i class="fa fa-spinner fa-spin" aria-hidden="true"></i><span class="sr-only"> در حال انجام...</span>');
     }
 
@@ -34,9 +37,15 @@ function endPayKaniRequest(requestKey) {
 
         $button
             .removeData('payKaniOriginalHtml')
+            .removeData('payKaniOriginalCursor')
+            .removeData('payKaniOriginalOpacity')
             .prop('disabled', false)
             .removeAttr('aria-busy')
-            .removeClass('PayKaniButtonLoading');
+            .removeClass('PayKaniButtonLoading')
+            .css({
+                cursor: $button.data('payKaniOriginalCursor') || '',
+                opacity: $button.data('payKaniOriginalOpacity') || ''
+            });
     }
 
     delete payKaniPendingRequests[requestKey];
@@ -805,7 +814,7 @@ function ShowExistingKMPayKani(BarAvordUserId) {
 
         <div class="col-md-3" style="text-align:center">
 
-            <button class="ButtonRowsViewStyle" title="مشاهده" onclick="ViewPayKaniInfo('${KMExistingId}'` + ',' + `${KMNum}` + ',' + `'${BarAvordUserId}')">
+            <button type="button" class="ButtonRowsViewStyle" title="مشاهده" onclick="ViewPayKaniInfo('${KMExistingId}'` + ',' + `${KMNum}` + ',' + `'${BarAvordUserId}')">
                 <i class="fa fa-eye ViewRMUStyle"></i>
             </button>
         
@@ -815,7 +824,7 @@ function ShowExistingKMPayKani(BarAvordUserId) {
                     <i id="iSave" class="fa fa-save SaveRMUStyle"></i>
             </button>
 
-            <button class="ButtonRowsViewStyle" title="حذف" onclick="event.stopPropagation();DeletePayKaniInfo('${KMExistingId}'` + ',' + `${KMNum}` + ',' + `'${BarAvordUserId}', this)">
+            <button type="button" class="ButtonRowsViewStyle" title="حذف" onclick="event.stopPropagation();DeletePayKaniInfo('${KMExistingId}'` + ',' + `${KMNum}` + ',' + `'${BarAvordUserId}', this)">
                 <i class="fa fa-trash DelRMUStyle"></i>
             </button>
         
