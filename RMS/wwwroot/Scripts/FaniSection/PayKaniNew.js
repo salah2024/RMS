@@ -3,7 +3,6 @@
 function PayKaniWithBarAvordIdClick(OpId,BarAvordUserId) {
 
     str = "";
-    debugger;
     str += `
 
   <div class="col-12" id="divExistingKMPK">
@@ -80,7 +79,6 @@ function PayKaniWithBarAvordIdClick(OpId,BarAvordUserId) {
         .off('keydown.PayKani')
         .on('keydown.PayKani', '.PayKaniTextStyle', function (e) {
             if (e.key === 'Enter') {
-                debugger;
                 e.preventDefault(); // جلوگیری از submit فرم
 
                 const inputs = $('.PayKaniTextStyle');
@@ -364,8 +362,6 @@ function ShowSelctionPayKani(IsNew, KMExistingId, KMNum, BarAvordId, FromKM, ToK
 
             $('#ViewPayKaniNew input[type="text"]').change(function () {
 
-                debugger;
-
                 let changedId = $(this).attr("id");
                 let i = changedId.match(/\d+/) ? changedId.match(/\d+/)[0] : ""; // شماره ردیف
                 let HajmPayKani = parseFloat($.trim($('#txtHajmPayKani').val()));
@@ -597,9 +593,7 @@ function ShowSelctionPayKani(IsNew, KMExistingId, KMNum, BarAvordId, FromKM, ToK
 
                 $('#MainViewPayKaniNew').slideDown(500);
 
-                debugger;
                 $(this).closest('ul').find('.StyleMainViewPayKani').each(function () {
-                    debugger;
                     $(this).slideUp(500);
                 });
 
@@ -639,25 +633,6 @@ function ShowSelctionPayKani(IsNew, KMExistingId, KMNum, BarAvordId, FromKM, ToK
                     (HKB * dHaml / 100).toFixed(2)
                 );
 
-                // جبران خطای رندینگ روی آخرین ردیف
-                if (lastIndex > -1) {
-                    let diff = HKB - totalAssigned;
-                    if (Math.abs(diff) >= 0.01) {
-                        let lastVal = parseFloat($('#txtPKDetail' + lastIndex).val()) || 0;
-                        let newVal = lastVal + diff;
-
-                        $('#txtPKDetail' + lastIndex).val(newVal.toFixed(2));
-
-                        // بروزرسانی دوباره بخش‌های وابسته به این ردیف
-                        let dVarizi = parseFloat($('#txtPKDarsadVarizi' + lastIndex).val()) || 0;
-                        let dReUse = parseFloat($('#txtPKReUseDarsad' + lastIndex).val()) || 0;
-                        let dHaml = parseFloat($('#txtPKDarsadHaml' + lastIndex).val()) || 0;
-
-                        $('#txtPKVarizi' + lastIndex).val(((dVarizi / 100) * newVal).toFixed(2));
-                        $('#txtPKReUseHajm' + lastIndex).val(((dReUse / 100) * newVal).toFixed(2));
-                        $('#txtPKHaml' + lastIndex).val(((dHaml / 100) * newVal).toFixed(2));
-                    }
-                }
             });
 
             $('#txtFromKMForPayKani').change(function () {
@@ -746,11 +721,7 @@ function ShowExistingKMPayKani(BarAvordUserId) {
                 </div>`;
 
                 lastKM = 0;
-                debugger;
-
                 $.each(KMPayKaniBarAvord, function () {
-                    debugger;
-
                     KMExistingId = this.id;
                     FromKM = this.fromKM;
                     ToKM = this.toKM;
@@ -857,11 +828,7 @@ function AutoFillThirdColumnPK(KMNum, PKDetail, changedId) {
         return isNaN(number) ? 0 : number;
     };
 
-    const hasValue = function ($input) {
-        return $.trim($input.val()) !== "";
-    };
-
-    const clamp = function (value, min, max) {
+const clamp = function (value, min, max) {
         return Math.max(min, Math.min(max, value));
     };
 
@@ -999,7 +966,7 @@ function AutoFillThirdColumnPK(KMNum, PKDetail, changedId) {
     // 3. تغییر درصد ReUse
     // =========================================================
 
-    if (changedId && changedId.includes("ReUseDarsadPK")) {
+    if (changedId && changedId.includes("ReUseDarsad")) {
 
         let reusePercent = clamp(
             toNumber($dr.val()),
@@ -1150,11 +1117,7 @@ function AutoFillThirdColumnPKForEdit(KMNum, i, PKDetail, changedId) {
     const $h = $("#txtPKHaml" + KMNum + "_" + i);
     const $dh = $("#txtPKDarsadHaml" + KMNum + "_" + i);
 
-    const hasVal = ($input) => {
-        return $.trim($input.val()) !== "";
-    };
-
-    const clamp = (x, min, max) => {
+const clamp = (x, min, max) => {
         return Math.max(min, Math.min(max, x));
     };
 
@@ -1619,8 +1582,6 @@ function ViewPayKaniInfo(KMExistingId, KMNum, BarAvordId) {
     vardata.Year = Year;
     vardata.Type = 2;
 
-    debugger;
-
     $.ajax({
         type: "POST",
         url: "/PayKaniInfoForBarAvords/GetDetailsOfKMPayKaniInfoWithKMPayKaniId",
@@ -1634,7 +1595,6 @@ function ViewPayKaniInfo(KMExistingId, KMNum, BarAvordId) {
             lstPKInfoRizMetre = response.lstPayKaniInfoRizMetre;
             lstItemFBShomarehForGet = response.lstItemFBShomarehForGet;
 
-            debugger;
             Value = 0;
             strKMAK = `
 
@@ -1752,8 +1712,6 @@ function ViewPayKaniInfo(KMExistingId, KMNum, BarAvordId) {
         ${this.title}
       </span>
     </div>`;
-
-                debugger;
 
                 let result = KMPayKaniBarAvordDetailsMore.filter(x => x.payKaniInfoForBarAvordDetailsId === this.id);
 
@@ -1932,9 +1890,6 @@ function ViewPayKaniInfo(KMExistingId, KMNum, BarAvordId) {
 </div>`;
 
 
-            debugger;
-
-
             $('div[id^="MainViewPayKani"]').slideUp();
             //$('div[id^="ViewRizMetreKH"]').slideUp();
 
@@ -1945,7 +1900,6 @@ function ViewPayKaniInfo(KMExistingId, KMNum, BarAvordId) {
 
 
             $('#ViewPayKani' + KMNum + ' input[type="text"]').off('change').change(function () {
-                debugger;
                 let changedId = $(this).attr("id");
                 let i = changedId.split("_")[1];
                 let HajmPayKani = parseFloat($.trim($('#txtHajmPayKani' + KMNum).val()));
@@ -2012,8 +1966,6 @@ function ViewPayKaniInfo(KMExistingId, KMNum, BarAvordId) {
                 }
 
                 if (changedId.includes("txtPKDarsad" + KMNum)) {
-                    debugger;
-
                     var Zarb = parseFloat($(this).val()) || 0;
                     // مجموع درصد همه ردیف‌ها منهای همین ردیف
                     let SumOther = ReturnSumAllDardadForEdit(KMNum) - Zarb;
@@ -2041,8 +1993,6 @@ function ViewPayKaniInfo(KMExistingId, KMNum, BarAvordId) {
                     && !changedId.includes("Varizi" + KMNum)
                     && !changedId.includes("ReUse" + KMNum)
                     && !changedId.includes("Haml" + KMNum)) {
-                    debugger;
-
                     let dVal = parseFloat($(this).val()) || 0;
 
                     // مجموع درصد همه ردیف‌ها منهای همین ردیف
@@ -2106,7 +2056,6 @@ function ViewPayKaniInfo(KMExistingId, KMNum, BarAvordId) {
                 AutoFillThirdColumnPKForEdit(KMNum, i, PKDetail, changedId);
 
                 SumKol = sumKolNewPK(9, KMNum);
-                debugger;
                 $('#spantotalPKDetail' + KMNum).html(toPersianDigits(SumKol[0].toFixed(2)));
                 $('#spantotalDarsadPKDetail'+KMNum).html(toPersianDigits(SumKol[1].toFixed(0)) + " % ");
 
@@ -2333,8 +2282,6 @@ function ViewPayKaniInfo(KMExistingId, KMNum, BarAvordId) {
             ///////////////////
             /////////////
 
-            debugger;
-
             ShowRizMetrePK(KMExistingId, lstPKInfoRizMetre, lstItemFBShomarehForGet, KMNum);
 
 
@@ -2393,8 +2340,6 @@ function ViewPayKaniInfo(KMExistingId, KMNum, BarAvordId) {
 }
 
 function ShowRizMetrePK(KMExistingId, lstPKInfoRizMetre, lstItemFBShomarehForGet, KMNum) {
-    debugger;
-
     var str = '';
 
     // ساخت HTML بر اساس lstItemFBShomarehForGet
@@ -2527,7 +2472,6 @@ function ShowRizMetrePK(KMExistingId, lstPKInfoRizMetre, lstItemFBShomarehForGet
         $targetDivRizMetrePK = $('#ViewRizMetrePK' + KMNum);
 
         $targetDivRizMetrePK.html(str);
-        debugger;
         $targetDivRizMetrePK.slideDown();
 
 
@@ -2552,7 +2496,6 @@ function ShowRizMetrePK(KMExistingId, lstPKInfoRizMetre, lstItemFBShomarehForGet
             /* ENTER PRESSED */
             if (e.keyCode == 13) {
                 /* FOCUS ELEMENT */
-                    alert('sss');
                 var inputs = $(this).parent().parent().find("input[Type=text].HasEnteringValue,button,a");
                 var idx = inputs.index(this);
                 if (idx == inputs.length - 1) {
@@ -2678,8 +2621,6 @@ function SumAllDetailsPayKaniForEditPK(KMNum) {
 
 
 function CheckValuesOfPayKaniDetails() {
-    debugger;
-
     checkValues = false;
 
     // حداکثر اختلاف مجاز
@@ -2698,13 +2639,9 @@ function CheckValuesOfPayKaniDetails() {
     };
 
     // آیا دو عدد با در نظر گرفتن تلورانس برابر هستند؟
-    const isEqual = (a, b) => {
-        return Math.abs(a - b) <= TOLERANCE;
-    };
-
-    // پاک کردن خطاهای یک ردیف
+// پاک کردن خطاهای یک ردیف
     const clearRowErrors = (i) => {
-        const currentRow = $('#txtDarsadHaml' + i)
+        const currentRow = $('#txtPKDarsadHaml' + i)
             .closest('.AmalyatKhakiRowStyle');
 
         currentRow.removeClass('errorRow');
@@ -2774,7 +2711,6 @@ function CheckValuesOfPayKaniDetails() {
 
             checkValues = true;
 
-            return true;
         }
 
         // بررسی مقادیر منفی یا بزرگ‌تر از مقدار کل
@@ -2837,19 +2773,13 @@ function CheckValuesOfPayKaniDetails() {
 
 
 function CheckValuesOfPayKaniDetailsForEditPK(KMNum) {
-    debugger;
-
     checkValues = false;
 
     // حداکثر اختلاف مجاز
     const TOLERANCE = 0.01;
 
     // مقایسه دو عدد اعشاری با تلورانس
-    const isEqual = (a, b) => {
-        return Math.abs(a - b) <= TOLERANCE;
-    };
-
-    // گرفتن مقدار عددی از input
+// گرفتن مقدار عددی از input
     const getValue = (id) => {
         const value = parseFloat($('#' + id).val());
         return isNaN(value) ? 0 : value;
@@ -3012,7 +2942,6 @@ function CheckValuesOfPayKaniDetailsForEditPK(KMNum) {
 
 function SavePayKaniInfo(BarAvordUserId, Type) {
 
-    debugger;
     check = false;
     //////////
     HKB = $('#txtHajmPayKani').val();
@@ -3037,19 +2966,7 @@ function SavePayKaniInfo(BarAvordUserId, Type) {
     }
 
     ///////////////
-    $('#divPayKaniInfoDetails input[type="text"]').each(function () {
-        ////////////
-        if (!$.isNumeric($(this).val())) {
-            $(this).addClass('blinking');
-            check = true;
-        }
-        else
-            $(this).removeClass('blinking');
-    });
-
-    debugger;
-
-    check = SumAllDetailsPayKani();
+check = SumAllDetailsPayKani() || check;
 
     //if (check) {
     //    toastr.info('مجموع احجام وارد شده بایستی با حجم کل برابر باشد', 'اطلاع');
@@ -3061,15 +2978,11 @@ function SavePayKaniInfo(BarAvordUserId, Type) {
     //if (check1) {
     //toastr.info('احجام وارد شده درست نمی باشند', 'اطلاع');
     //}
-    debugger;
-
     if (!check1 && !check) {
 
         let dataList = [];
 
         for (let i = 1; i <= ActivityLength; i++) {
-            debugger;
-
             let obj = {
                 DetailValue: $('#txtPKDetail' + i).val(),
                 DarsadValue: $('#txtPKDarsad' + i).val(),
@@ -3086,7 +2999,6 @@ function SavePayKaniInfo(BarAvordUserId, Type) {
         }
 
 
-        debugger;
         NoeFBId = parseInt($('#HDFNoeFB').val());
 
         var vardata = new Object();
@@ -3170,7 +3082,6 @@ function SavePayKaniInfo(BarAvordUserId, Type) {
 function UpdatePayKaniInfo(KMPayKaniId, BarAvordUserId, KMNum,Type) {
 
 
-    debugger;
     check = false;
     //////////
     HKB = $('#txtHajmPayKani' + KMNum).val();
@@ -3195,17 +3106,7 @@ function UpdatePayKaniInfo(KMPayKaniId, BarAvordUserId, KMNum,Type) {
     }
 
     ///////////////
-    $('#divPayKaniInfoDetails input[type="text"]').each(function () {
-        ////////////
-        if (!$.isNumeric($(this).val())) {
-            $(this).addClass('blinking');
-            check = true;
-        }
-        else
-            $(this).removeClass('blinking');
-    });
-
-    check = SumAllDetailsPayKaniForEditPK(KMNum);
+check = SumAllDetailsPayKaniForEditPK(KMNum) || check;
     //if (check) {
     //    toastr.info('حجم کل پی کنی صحیح نمیباشد', 'اطلاع');
     //}
@@ -3214,8 +3115,6 @@ function UpdatePayKaniInfo(KMPayKaniId, BarAvordUserId, KMNum,Type) {
     //if (check1) {
     //    toastr.info('مشکل در مقادیر وارده', 'اطلاع');
     //}
-    debugger;
-
     if (!check1 && !check) {
 
         let dataList = [];
@@ -3259,7 +3158,6 @@ function UpdatePayKaniInfo(KMPayKaniId, BarAvordUserId, KMNum,Type) {
         else
             $('#ContainerWaiting').show();
 
-        debugger;
         $.ajax({
             type: "POST",
             url: "/payKaniInfoForBarAvords/UpdatePayKaniInfoForBarAvord",
@@ -3267,7 +3165,6 @@ function UpdatePayKaniInfo(KMPayKaniId, BarAvordUserId, KMNum,Type) {
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (response) {
-                debugger;
                 info = response.split('_');
                 if (info[0] == "OK") {
                     toastr.success('اطلاعات متراژ بدرستی ویرایش گردید', 'ثبت');
@@ -3303,7 +3200,6 @@ function DeletePayKaniInfo(KMPayKaniId, KMNum, BarAvordUserId) {
     vardata.KMNum = KMNum;
 
 
-    debugger;
     $.ajax({
         type: "POST",
         url: "/payKaniInfoForBarAvords/DeletePayKaniInfoForBarAvord",
@@ -3311,7 +3207,6 @@ function DeletePayKaniInfo(KMPayKaniId, KMNum, BarAvordUserId) {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (response) {
-            debugger;
             info = response.split('_');
             if (info[0] == "OK") {
                 toastr.success('اطلاعات متراژ بدرستی حذف گردید', 'ثبت');
@@ -3332,7 +3227,6 @@ function DeletePayKaniInfo(KMPayKaniId, KMNum, BarAvordUserId) {
 
 
 function sumKolNewPK(ActivityLength, KMNum) {
-    debugger;
     var result = [];
     JamKolKhDetail = 0;
     JamKolDarsadKhDetail = 0;
