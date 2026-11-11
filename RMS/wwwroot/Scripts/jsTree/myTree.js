@@ -283,6 +283,12 @@ function onCheckBoxChange(obj) {
                 $(this).slideUp();
             });
 
+            // پس از تغییر محدودیت فاصله حمل، Grid نیز مانند تغییر ورودی‌های حمل تازه‌سازی شود
+            OperationId = $('#HDFOperationId').val();
+            if (OperationId && OperationId.trim() !== '') {
+                GetRizMetreWithFBId(1);
+            }
+
             toastr.success('ثبت بدرستی انجام گرفت', 'موفقیت');
 
         },
