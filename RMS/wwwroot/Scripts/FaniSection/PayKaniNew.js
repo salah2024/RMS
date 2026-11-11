@@ -98,7 +98,7 @@ function PayKaniWithBarAvordIdClick(OpId,BarAvordUserId) {
       <span>از متراژ:</span>
     </div>
     <div class="col-md-1">
-      <input type="text" class="form-control_1 PayKaniTextStyle input-sm text-center" id="txtFromKMForPayKani" value="0"/>
+      <input type="text" class="form-control_1 PayKaniTextStyle input-sm text-center" id="txtFromKMForPayKani" value="0" onclick="this.select();"/>
     </div>
 
     <!-- تا متراژ -->
@@ -106,7 +106,7 @@ function PayKaniWithBarAvordIdClick(OpId,BarAvordUserId) {
       <span>تا متراژ:</span>
     </div>
     <div class="col-md-1">
-      <input type="text" class="form-control_1 PayKaniTextStyle input-sm text-center" id="txtToKMForPayKani" value="0"/>
+      <input type="text" class="form-control_1 PayKaniTextStyle input-sm text-center" id="txtToKMForPayKani" value="0" onclick="this.select();"/>
     </div>
 
     <!-- حجم پی کنی -->
@@ -114,7 +114,7 @@ function PayKaniWithBarAvordIdClick(OpId,BarAvordUserId) {
       <span>حجم پی کنی:</span>
     </div>
     <div class="col-md-1">
-      <input type="text" class="form-control_1 PayKaniTextStyle input-sm text-center" id="txtHajmPayKani" value="0"/>
+      <input type="text" class="form-control_1 PayKaniTextStyle input-sm text-center" id="txtHajmPayKani" value="0" onclick="this.select();"/>
     </div>
     <div class="col-md-1 unit-col">
       <span>مترمکعب</span>
