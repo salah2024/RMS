@@ -278,7 +278,10 @@
 
                 var nodeId = $this.attr('id');
                 var $target = $('#ul' + nodeId);
-                if (!$target.length) return;
+
+                // گره‌های نهاییِ فهرست‌بها از div با شناسه ula برای نمایش محتوای
+                // تابع اصلی استفاده می‌کنند؛ این div نباید به‌عنوان زیرشاخه بارگذاری شود.
+                if (!$target.length || !$target.is('ul')) return;
 
                 var parentId = nodeId.substring(1);
                 var $allNodes = $('#jstree [id^="ula"]');
