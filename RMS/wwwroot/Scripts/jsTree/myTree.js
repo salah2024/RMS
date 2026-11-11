@@ -1,8 +1,11 @@
 ﻿var gParents = [];
-function createTree(data) {
+function createTree(data, parentId) {
 
     var html = "";
-    var children = data || [];
+    var isLazyMode = typeof parentId === 'undefined';
+    var children = isLazyMode
+        ? (data || [])
+        : (data || []).filter(function (item) { return item.parentId == parentId; });
 
     if (children.length > 0) {
 
@@ -47,7 +50,9 @@ function createTree(data) {
                         <span id="span${id}"></span>
                         </a>
                         <span id="spanOpShomareh${id}"></span>
-                        ${item.hasChildren ? `<ul style="margin-top:5px" id="ula${id}"></ul>` : ''} </li>`;
+                        ${isLazyMode
+                            ? (item.hasChildren ? `<ul style="margin-top:5px" id="ula${id}"></ul>` : '')
+                            : `<ul style="margin-top:5px" id="ula${id}">${createTree(data, id)}</ul>`} </li>`;
                     }
                     else {
                         html += `
@@ -57,7 +62,9 @@ function createTree(data) {
                         <span id="span${id}"></span>
                         </a>
                         <span id="spanOpShomareh${id}"></span>
-                        ${item.hasChildren ? `<ul style="margin-top:5px" id="ula${id}"></ul>` : ''} </li>`;
+                        ${isLazyMode
+                            ? (item.hasChildren ? `<ul style="margin-top:5px" id="ula${id}"></ul>` : '')
+                            : `<ul style="margin-top:5px" id="ula${id}"></ul>`} </li>`;
                     }
                 }
                 else {
@@ -108,7 +115,9 @@ function createTree(data) {
                            <span id="span${id}"></span></a>
 
                                     </div>
-                      ${item.hasChildren ? `<ul id="ula${id}"></ul>` : ''} </li>`;
+                      ${isLazyMode
+                            ? (item.hasChildren ? `<ul id="ula${id}"></ul>` : '')
+                            : `<ul id="ula${id}">${createTree(data, id)}</ul>`} </li>`;
 
 
 
