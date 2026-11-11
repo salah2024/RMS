@@ -266,8 +266,8 @@
     // بارگذاری تنبل زیرشاخه‌ها؛ هر شاخه فقط هنگام باز شدن از سرور دریافت می‌شود
     function bindLazyTreeEvents() {
         $('#jstree')
-            .off('click.MenuAccordion', 'li > a')
-            .on('click.MenuAccordion', 'li > a', function (e) {
+            .off('click.MenuAccordion', 'a[id^="a"]')
+            .on('click.MenuAccordion', 'a[id^="a"]', function (e) {
                 e.preventDefault();
                 var $this = $(this);
                 var inlineClick = $this.attr('onclick');
