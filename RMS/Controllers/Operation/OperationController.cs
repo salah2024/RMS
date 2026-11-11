@@ -48,7 +48,11 @@ public class OperationController(ApplicationDbContext context) : Controller
             ////////////////////////////////////////////////////////
 
             List<AllOperationDto> operationNull = _context.Operations
-                    .Where(x => x.Year == request.Year && x.NoeFB == null)
+                    .Where(x => x.Year == request.Year
+                        && x.NoeFB == null
+                        && (request.ParentId.HasValue
+                            ? x.ParentId == request.ParentId
+                            : (x.ParentId == null || x.ParentId == 0)))
                     .Select(x => new AllOperationDto
                     {
                         ID = x.Id,
@@ -102,7 +106,11 @@ public class OperationController(ApplicationDbContext context) : Controller
 
                 var baseRows = (
                     from op in _context.Operations
-                    where op.Year == request.Year && op.NoeFB == (NoeFehrestBaha)NoeItem
+                    where op.Year == request.Year
+                           && op.NoeFB == (NoeFehrestBaha)NoeItem
+                           && (request.ParentId.HasValue
+                               ? op.ParentId == request.ParentId
+                               : (op.ParentId == null || op.ParentId == 0))
                     join od in _context.OperationDetails
                         on op.Id equals od.OperationId into odGroup
                     from od in odGroup.DefaultIfEmpty()
@@ -220,6 +228,21 @@ public class OperationController(ApplicationDbContext context) : Controller
                 }
                 else
                     NewOperation.Add(item);
+            }
+
+            // شناسه شاخه‌هایی که در سطح فعلی فرزند دارند، با یک Query استخراج می‌شود
+            var currentOperationIds = NewOperation.Select(x => x.ID).Distinct().ToList();
+            var parentIdsWithChildren = _context.Operations
+                .Where(x => x.Year == request.Year
+                    && x.ParentId.HasValue
+                    && currentOperationIds.Contains(x.ParentId.Value))
+                .Select(x => x.ParentId.Value)
+                .Distinct()
+                .ToHashSet();
+
+            foreach (var operationItem in NewOperation)
+            {
+                operationItem.HasChildren = parentIdsWithChildren.Contains(operationItem.ID);
             }
 
             var Result = new
