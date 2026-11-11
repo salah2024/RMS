@@ -1,5 +1,45 @@
 ﻿ActivityLength = 0;
 
+/* کنترل عملیات در حال اجرا و جلوگیری از ارسال درخواست تکراری */
+const payKaniPendingRequests = Object.create(null);
+
+function beginPayKaniRequest(requestKey, buttonElement) {
+    if (payKaniPendingRequests[requestKey]) return false;
+
+    const $button = buttonElement ? $(buttonElement) : $();
+    if ($button.length && $button.prop('disabled')) return false;
+
+    if ($button.length) {
+        $button.data('payKaniOriginalHtml', $button.html());
+        $button
+            .prop('disabled', true)
+            .attr('aria-busy', 'true')
+            .addClass('PayKaniButtonLoading')
+            .html('<i class="fa fa-spinner fa-spin" aria-hidden="true"></i><span class="sr-only"> در حال انجام...</span>');
+    }
+
+    payKaniPendingRequests[requestKey] = $button;
+    return true;
+}
+
+function endPayKaniRequest(requestKey) {
+    const $button = payKaniPendingRequests[requestKey];
+
+    if ($button && $button.length) {
+        const originalHtml = $button.data('payKaniOriginalHtml');
+        if (originalHtml !== undefined) $button.html(originalHtml);
+
+        $button
+            .removeData('payKaniOriginalHtml')
+            .prop('disabled', false)
+            .removeAttr('aria-busy')
+            .removeClass('PayKaniButtonLoading');
+    }
+
+    delete payKaniPendingRequests[requestKey];
+}
+
+
 function PayKaniWithBarAvordIdClick(OpId,BarAvordUserId) {
 
     str = "";
@@ -56,7 +96,7 @@ function PayKaniWithBarAvordIdClick(OpId,BarAvordUserId) {
 
  <div class="col-md-1 action-col">
      <button type="button" id="btnSavePayKaniInfo"
-            onclick="SavePayKaniInfo('${BarAvordUserId}'` + ',' + `'Add')"
+            onclick="SavePayKaniInfo('${BarAvordUserId}'` + ',' + `'Add', this)"
             class="ButtonRowsSaveStyle">
             <i id="iSave" class="fa fa-save SaveRMUStyle"></i>
      </button>
@@ -762,12 +802,12 @@ function ShowExistingKMPayKani(BarAvordUserId) {
             </button>
         
             <button type="button" title="ویرایش"
-                onclick="UpdatePayKaniInfo('${KMExistingId}'` + ',' + `'${BarAvordUserId}'` + ',' + `${KMNum}` + `,2)" onclick="event.stopPropagation();"
+                onclick="event.stopPropagation();UpdatePayKaniInfo('${KMExistingId}'` + ',' + `'${BarAvordUserId}'` + ',' + `${KMNum}` + `,2, this)"
                 class="ButtonRowsSaveStyle">
                     <i id="iSave" class="fa fa-save SaveRMUStyle"></i>
             </button>
 
-            <button class="ButtonRowsViewStyle" title="حذف" onclick="DeletePayKaniInfo('${KMExistingId}'` + ',' + `${KMNum}` + ',' + `'${BarAvordUserId}')">
+            <button class="ButtonRowsViewStyle" title="حذف" onclick="event.stopPropagation();DeletePayKaniInfo('${KMExistingId}'` + ',' + `${KMNum}` + ',' + `'${BarAvordUserId}', this)">
                 <i class="fa fa-trash DelRMUStyle"></i>
             </button>
         
@@ -2939,7 +2979,7 @@ function CheckValuesOfPayKaniDetailsForEditPK(KMNum) {
     return checkValues;
 }
 
-function SavePayKaniInfo(BarAvordUserId, Type) {
+function SavePayKaniInfo(BarAvordUserId, Type, buttonElement) {
 
     check = false;
     //////////
@@ -3025,6 +3065,11 @@ function SavePayKaniInfo(BarAvordUserId, Type) {
             $('#ContainerWaiting').show();
 
 
+        const requestKey = 'save:' + BarAvordUserId;
+        if (!beginPayKaniRequest(requestKey, buttonElement)) return;
+
+        $('#ContainerWaiting').show();
+
         $.ajax({
             type: "POST",
             url: "/payKaniInfoForBarAvords/SavePayKaniInfoForBarAvord",
@@ -3079,6 +3124,10 @@ function SavePayKaniInfo(BarAvordUserId, Type) {
             error: function (response) {
                 toastr.error('مشکل در ثبت اطلاعات متراژ', 'خطا');
                 $('#ContainerWaiting').hide();
+            },
+            complete: function () {
+                $('#ContainerWaiting').hide();
+                endPayKaniRequest(requestKey);
             }
         });
     }
@@ -3086,7 +3135,7 @@ function SavePayKaniInfo(BarAvordUserId, Type) {
         toastr.info('موارد مشخص شده دارای مقادیر نامعتبر میباشند', 'اطلاع');
 }
 
-function UpdatePayKaniInfo(KMPayKaniId, BarAvordUserId, KMNum,Type) {
+function UpdatePayKaniInfo(KMPayKaniId, BarAvordUserId, KMNum, Type, buttonElement) {
 
 
     check = false;
@@ -3173,6 +3222,11 @@ function UpdatePayKaniInfo(KMPayKaniId, BarAvordUserId, KMNum,Type) {
         else
             $('#ContainerWaiting').show();
 
+        const requestKey = 'record:' + KMPayKaniId;
+        if (!beginPayKaniRequest(requestKey, buttonElement)) return;
+
+        $('#ContainerWaiting').show();
+
         $.ajax({
             type: "POST",
             url: "/payKaniInfoForBarAvords/UpdatePayKaniInfoForBarAvord",
@@ -3197,6 +3251,10 @@ function UpdatePayKaniInfo(KMPayKaniId, BarAvordUserId, KMNum,Type) {
             error: function (response) {
                 toastr.error('مشکل در ویرایش اطلاعات متراژ', 'خطا');
                 $('#ContainerWaiting').hide();
+            },
+            complete: function () {
+                $('#ContainerWaiting').hide();
+                endPayKaniRequest(requestKey);
             }
         });
     }
@@ -3204,7 +3262,7 @@ function UpdatePayKaniInfo(KMPayKaniId, BarAvordUserId, KMNum,Type) {
         toastr.info('موارد مشخص شده دارای مقادیر نامعتبر میباشند', 'اطلاع');
 }
 
-function DeletePayKaniInfo(KMPayKaniId, KMNum, BarAvordUserId) {
+function DeletePayKaniInfo(KMPayKaniId, KMNum, BarAvordUserId, buttonElement) {
 
     Year = $('#HDFYear').val();
 
@@ -3214,6 +3272,11 @@ function DeletePayKaniInfo(KMPayKaniId, KMNum, BarAvordUserId) {
     vardata.Year = Year;
     vardata.KMNum = KMNum;
 
+
+    const requestKey = 'record:' + KMPayKaniId;
+    if (!beginPayKaniRequest(requestKey, buttonElement)) return;
+
+    $('#ContainerWaiting').show();
 
     $.ajax({
         type: "POST",
@@ -3235,6 +3298,10 @@ function DeletePayKaniInfo(KMPayKaniId, KMNum, BarAvordUserId) {
         error: function (response) {
             toastr.error('مشکل در حذف اطلاعات', 'خطا');
             $('#ContainerWaiting').hide();
+        },
+        complete: function () {
+            $('#ContainerWaiting').hide();
+            endPayKaniRequest(requestKey);
         }
     });
 
