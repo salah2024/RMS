@@ -1,5 +1,54 @@
 ﻿ActivityLength = 0;
 
+/* انتخاب خودکار مقدار ورودی‌ها با کلیک؛ شامل ورودی‌های داینامیک */
+$(document)
+    .off('click.chanelKaniSelectInput', '#ViewChanelKaniNew input[type="text"], [id^="ViewChanelKani"] input[type="text"], #divChanelKaniInfoDetails input[type="text"], input[id^="txtFromKMForChanelKani"], input[id^="txtToKMForChanelKani"], input[id^="txtHajmChanelKani"]')
+    .on('click.chanelKaniSelectInput', '#ViewChanelKaniNew input[type="text"], [id^="ViewChanelKani"] input[type="text"], #divChanelKaniInfoDetails input[type="text"], input[id^="txtFromKMForChanelKani"], input[id^="txtToKMForChanelKani"], input[id^="txtHajmChanelKani"]', function () {
+        if (!this.disabled && !this.readOnly) this.select();
+    });
+
+/* جلوگیری از ارسال درخواست تکراری و مدیریت وضعیت دکمه‌ها */
+const chanelKaniPendingRequests = Object.create(null);
+let chanelKaniActiveRequestCount = 0;
+
+function beginChanelKaniRequest(requestKey, buttonElement) {
+    if (chanelKaniPendingRequests[requestKey]) return false;
+    const $button = buttonElement ? $(buttonElement) : $();
+    if ($button.length && $button.prop('disabled')) return false;
+    if ($button.length) {
+        $button.data('chanelKaniOriginalHtml', $button.html());
+        $button.data('chanelKaniOriginalCursor', $button.css('cursor'));
+        $button.data('chanelKaniOriginalOpacity', $button.css('opacity'));
+        $button.prop('disabled', true).attr('aria-busy', 'true')
+            .addClass('ChanelKaniButtonLoading')
+            .css({ cursor: 'wait', opacity: 0.7 })
+            .html('<i class="fa fa-spinner fa-spin" aria-hidden="true"></i><span class="sr-only"> در حال انجام...</span>');
+    }
+    chanelKaniPendingRequests[requestKey] = $button;
+    chanelKaniActiveRequestCount++;
+    $('#ContainerWaiting').show();
+    return true;
+}
+
+function endChanelKaniRequest(requestKey) {
+    const $button = chanelKaniPendingRequests[requestKey];
+    if ($button && $button.length) {
+        const originalHtml = $button.data('chanelKaniOriginalHtml');
+        const originalCursor = $button.data('chanelKaniOriginalCursor');
+        const originalOpacity = $button.data('chanelKaniOriginalOpacity');
+        if (originalHtml !== undefined) $button.html(originalHtml);
+        $button.prop('disabled', false).removeAttr('aria-busy')
+            .removeClass('ChanelKaniButtonLoading')
+            .css({ cursor: originalCursor || '', opacity: originalOpacity || '' })
+            .removeData('chanelKaniOriginalHtml')
+            .removeData('chanelKaniOriginalCursor')
+            .removeData('chanelKaniOriginalOpacity');
+    }
+    delete chanelKaniPendingRequests[requestKey];
+    chanelKaniActiveRequestCount = Math.max(0, chanelKaniActiveRequestCount - 1);
+    if (chanelKaniActiveRequestCount === 0) $('#ContainerWaiting').hide();
+}
+
 function ChanelKaniWithBarAvordIdClick(OpId,BarAvordUserId) {
 
     str = "";
@@ -16,14 +65,14 @@ function ChanelKaniWithBarAvordIdClick(OpId,BarAvordUserId) {
     <div class="row ChanelKani-box">
 
     <!-- از متراژ -->
-    <div class="col-md-1">
-        <i class="fa fa-plus" style="font-size: 20px;color: green;"></i>
+    <div class="col-md-1 d-flex align-items-center justify-content-center" style="min-width:0;padding:4px 8px;box-sizing:border-box;overflow:hidden;">
+        <i class="fa fa-plus" aria-hidden="true" style="display:inline-block;font-size:18px;line-height:1;color:#198754;margin:0;"></i>
     </div>
-    <div class="col-md-1 label-col">
+    <div class="col-md-1 label-col" style="padding-inline-start:8px;box-sizing:border-box;">
       <span>از متراژ:</span>
     </div>
     <div class="col-md-1">
-      <input type="text" class="form-control_1 ChanelKaniTextStyle input-sm text-center" id="txtFromKMForChanelKani" value="0"/>
+      <input type="text" class="form-control_1 ChanelKaniTextStyle input-sm text-center" id="txtFromKMForChanelKani" value="0" onclick="this.select();"/>
     </div>
 
     <!-- تا متراژ -->
@@ -31,7 +80,7 @@ function ChanelKaniWithBarAvordIdClick(OpId,BarAvordUserId) {
       <span>تا متراژ:</span>
     </div>
     <div class="col-md-1">
-      <input type="text" class="form-control_1 ChanelKaniTextStyle input-sm text-center" id="txtToKMForChanelKani" value="0"/>
+      <input type="text" class="form-control_1 ChanelKaniTextStyle input-sm text-center" id="txtToKMForChanelKani" value="0" onclick="this.select();"/>
     </div>
 
     <!-- حجم کانال کنی -->
@@ -39,7 +88,7 @@ function ChanelKaniWithBarAvordIdClick(OpId,BarAvordUserId) {
       <span>حجم کانال کنی:</span>
     </div>
     <div class="col-md-1">
-      <input type="text" class="form-control_1 ChanelKaniTextStyle input-sm text-center" id="txtHajmChanelKani" value="0"/>
+      <input type="text" class="form-control_1 ChanelKaniTextStyle input-sm text-center" id="txtHajmChanelKani" value="0" onclick="this.select();"/>
     </div>
     <div class="col-md-1 unit-col">
       <span>مترمکعب</span>
@@ -57,7 +106,7 @@ function ChanelKaniWithBarAvordIdClick(OpId,BarAvordUserId) {
 
  <div class="col-md-1 action-col">
      <button type="button" id="btnSaveChanelKaniInfo"
-            onclick="SaveChanelKaniInfo('${BarAvordUserId}'` + ',' + `'Add')"
+            onclick="SaveChanelKaniInfo('${BarAvordUserId}'` + ',' + `'Add', this)"
             class="ButtonRowsSaveStyle">
             <i id="iSave" class="fa fa-save SaveRMUStyle"></i>
      </button>
@@ -769,19 +818,19 @@ function ShowExistingKMChanelKani(BarAvordUserId) {
     <!-- از متراژ -->
     
     <div class="col-md-2">
-      <input type="text" class="form-control_1 ChanelKaniTextStyle  input-sm text-center" id="txtFromKMForChanelKani${KMNum}" value="${FromKM}" onclick="event.stopPropagation();"/>
+      <input type="text" class="form-control_1 ChanelKaniTextStyle  input-sm text-center" id="txtFromKMForChanelKani${KMNum}" value="${FromKM}" onclick="this.select(); event.stopPropagation();"/>
     </div>
 
     <!-- تا متراژ -->
     
     <div class="col-md-2">
-      <input type="text" class="form-control_1 ChanelKaniTextStyle input-sm text-center" id="txtToKMForChanelKani${KMNum}" value="${ToKM}" onclick="event.stopPropagation();"/>
+      <input type="text" class="form-control_1 ChanelKaniTextStyle input-sm text-center" id="txtToKMForChanelKani${KMNum}" value="${ToKM}" onclick="this.select(); event.stopPropagation();"/>
     </div>
 
     <!-- حجم کانال کنی -->
     
     <div class="col-md-2">
-      <input type="text" class="form-control_1 ChanelKaniTextStyle input-sm text-center" id="txtHajmChanelKani${KMNum}" value="${Value}" onclick="event.stopPropagation();"/>
+      <input type="text" class="form-control_1 ChanelKaniTextStyle input-sm text-center" id="txtHajmChanelKani${KMNum}" value="${Value}" onclick="this.select(); event.stopPropagation();"/>
     </div>
 
         <div class="col-md-3" style="text-align:center">
@@ -791,12 +840,12 @@ function ShowExistingKMChanelKani(BarAvordUserId) {
             </button>
         
             <button type="button" title="ویرایش"
-                onclick="UpdateChanelKaniInfo('${KMExistingId}'` + ',' + `'${BarAvordUserId}'` + ',' + `${KMNum}`+ `,3)" onclick="event.stopPropagation();"
+                onclick="event.stopPropagation(); UpdateChanelKaniInfo('${KMExistingId}'` + ',' + `'${BarAvordUserId}'` + ',' + `${KMNum}`+ `,3, this)"
                 class="ButtonRowsSaveStyle">
                     <i id="iSave" class="fa fa-save SaveRMUStyle"></i>
             </button>
 
-            <button class="ButtonRowsViewStyle" title="حذف" onclick="DeleteChanelKaniInfo('${KMExistingId}'` + ',' + `${KMNum}` + ',' + `'${BarAvordUserId}')">
+            <button class="ButtonRowsViewStyle" title="حذف" onclick="DeleteChanelKaniInfo('${KMExistingId}'` + ',' + `${KMNum}` + ',' + `'${BarAvordUserId}', this)">
                 <i class="fa fa-trash DelRMUStyle"></i>
             </button>
         
@@ -1601,9 +1650,9 @@ function AutoFillThirdColumnChKForEdit(KMNum, i, ChKDetail, changedId) {
 
 
 
-function ViewChanelKaniInfo(KMExistingId, KMNum, BarAvordId) {
+function ViewChanelKaniInfo(KMExistingId, KMNum, BarAvordId, forceReload) {
 
-    if ($('#MainViewChanelKani' + KMNum).is(':visible')) {
+    if (!forceReload && $('#MainViewChanelKani' + KMNum).is(':visible')) {
         $('#MainViewChanelKani' + KMNum).slideUp(500);
 
         return
@@ -1935,7 +1984,7 @@ function ViewChanelKaniInfo(KMExistingId, KMNum, BarAvordId) {
             debugger;
 
 
-            $('div[id^="MainViewChanelKani"]').slideUp();
+            if (!forceReload) $('div[id^="MainViewChanelKani"]').not('#MainViewChanelKani' + KMNum).slideUp();
             //$('div[id^="ViewRizMetreKH"]').slideUp();
 
             $('#ViewChanelKani' + KMNum).html(strKMAK);
@@ -2931,7 +2980,7 @@ function CheckValuesOfChanelKaniDetailsForEditChK(KMNum) {
     return checkValues;
 }
 
-function SaveChanelKaniInfo(BarAvordUserId, Type) {
+function SaveChanelKaniInfo(BarAvordUserId, Type, buttonElement) {
 
     debugger;
     check = false;
@@ -2970,7 +3019,7 @@ function SaveChanelKaniInfo(BarAvordUserId, Type) {
 
     debugger;
 
-    check = SumAllDetailsChanelKani();
+    check = SumAllDetailsChanelKani() || check;
 
     //if (check) {
     //    toastr.info('مجموع احجام وارد شده بایستی با حجم کل برابر باشد', 'اطلاع');
@@ -3020,12 +3069,8 @@ function SaveChanelKaniInfo(BarAvordUserId, Type) {
         vardata.NoeFBId = NoeFBId;
 
 
-        htmlShowWaiting = ShowWaiting();
-        if (htmlShowWaiting != '')
-            $('#MainViewChanelKaniNew').append(htmlShowWaiting);
-        else
-            $('#ContainerWaiting').show();
-
+        const requestKey = 'save:' + BarAvordUserId;
+        if (!beginChanelKaniRequest(requestKey, buttonElement)) return;
 
         $.ajax({
             type: "POST",
@@ -3080,7 +3125,9 @@ function SaveChanelKaniInfo(BarAvordUserId, Type) {
             },
             error: function (response) {
                 toastr.error('مشکل در ثبت اطلاعات متراژ', 'خطا');
-                $('#ContainerWaiting').hide();
+            },
+            complete: function () {
+                endChanelKaniRequest(requestKey);
             }
         });
     }
@@ -3088,7 +3135,7 @@ function SaveChanelKaniInfo(BarAvordUserId, Type) {
         toastr.info('موارد مشخص شده دارای مقادیر نامعتبر میباشند', 'اطلاع');
 }
 
-function UpdateChanelKaniInfo(KMChanelKaniId, BarAvordUserId, KMNum,Type) {
+function UpdateChanelKaniInfo(KMChanelKaniId, BarAvordUserId, KMNum, Type, buttonElement) {
 
 
     debugger;
@@ -3126,7 +3173,7 @@ function UpdateChanelKaniInfo(KMChanelKaniId, BarAvordUserId, KMNum,Type) {
             $(this).removeClass('blinking');
     });
 
-    check = SumAllDetailsChanelKaniForEditChK(KMNum);
+    check = SumAllDetailsChanelKaniForEditChK(KMNum) || check;
     //if (check) {
     //    toastr.info('حجم کل پی کنی صحیح نمیباشد', 'اطلاع');
     //}
@@ -3174,13 +3221,9 @@ function UpdateChanelKaniInfo(KMChanelKaniId, BarAvordUserId, KMNum,Type) {
         vardata.Type = Type;
 
 
-        htmlShowWaiting = ShowWaiting();
-        if (htmlShowWaiting != '')
-            $('#MainViewChanelKani' + KMNum).append(htmlShowWaiting);
-        else
-            $('#ContainerWaiting').show();
+        const requestKey = 'record:' + KMChanelKaniId;
+        if (!beginChanelKaniRequest(requestKey, buttonElement)) return;
 
-        debugger;
         $.ajax({
             type: "POST",
             url: "/PayKaniInfoForBarAvords/UpdatePayKaniInfoForBarAvord",
@@ -3191,11 +3234,10 @@ function UpdateChanelKaniInfo(KMChanelKaniId, BarAvordUserId, KMNum,Type) {
                 debugger;
                 info = response.split('_');
                 if (info[0] == "OK") {
-                    toastr.success('اطلاعات متراژ بدرستی ویرایش گردید', 'ثبت');
-                    $('#MainViewChanelKani' + KMNum).slideUp(500);
-                    $('#divExistKMHeader' + KMNum).click();
-                    $('#ContainerWaiting').hide();
-                    //$('#ViewChanelKaniEzafeBaha' + KMNum).html('');
+                    toastr.success('اطلاعات متراژ بدرستی ویرایش گردید', 'ویرایش');
+
+                    // دریافت مجدد جزئیات ذخیره‌شده، بدون بستن پنل ویرایش
+                    ViewChanelKaniInfo(KMChanelKaniId, KMNum, BarAvordUserId, true);
 
                 }
                 else {
@@ -3205,7 +3247,9 @@ function UpdateChanelKaniInfo(KMChanelKaniId, BarAvordUserId, KMNum,Type) {
             },
             error: function (response) {
                 toastr.error('مشکل در ویرایش اطلاعات متراژ', 'خطا');
-                $('#ContainerWaiting').hide();
+            },
+            complete: function () {
+                endChanelKaniRequest(requestKey);
             }
         });
     }
@@ -3213,7 +3257,7 @@ function UpdateChanelKaniInfo(KMChanelKaniId, BarAvordUserId, KMNum,Type) {
         toastr.info('موارد مشخص شده دارای مقادیر نامعتبر میباشند', 'اطلاع');
 }
 
-function DeleteChanelKaniInfo(KMChanelKaniId, KMNum, BarAvordUserId) {
+function DeleteChanelKaniInfo(KMChanelKaniId, KMNum, BarAvordUserId, buttonElement) {
 
     Year = $('#HDFYear').val();
 
@@ -3224,7 +3268,9 @@ function DeleteChanelKaniInfo(KMChanelKaniId, KMNum, BarAvordUserId) {
     vardata.KMNum = KMNum;
 
 
-    debugger;
+    const requestKey = 'record:' + KMChanelKaniId;
+    if (!beginChanelKaniRequest(requestKey, buttonElement)) return;
+
     $.ajax({
         type: "POST",
         url: "/PayKaniInfoForBarAvords/DeletePayKaniInfoForBarAvord",
@@ -3245,7 +3291,9 @@ function DeleteChanelKaniInfo(KMChanelKaniId, KMNum, BarAvordUserId) {
         },
         error: function (response) {
             toastr.error('مشکل در حذف اطلاعات', 'خطا');
-            $('#ContainerWaiting').hide();
+        },
+        complete: function () {
+            endChanelKaniRequest(requestKey);
         }
     });
 
