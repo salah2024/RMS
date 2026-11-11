@@ -274,7 +274,7 @@
                 if (inlineClick) {
                     // فراخوانی‌هایی که پارامتر event ندارند، توسط خود onclick اجرا شده‌اند؛
                     // اجرای مجدد آن‌ها با eval باعث ارسال درخواست تکراری و تداخل با محتوای پنل می‌شود.
-                    var receivesEvent = /(?:,|\\()\\s*e\\s*(?:,|\\))/.test(inlineClick);
+                    var receivesEvent = /(?:,|\()\s*e\s*(?:,|\))/.test(inlineClick);
                     if (!receivesEvent) return;
 
                     try {
