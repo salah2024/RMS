@@ -2965,7 +2965,15 @@ function SavePayKaniInfo(BarAvordUserId, Type) {
     }
 
     ///////////////
-check = SumAllDetailsPayKani() || check;
+// ورودی خالی معادل صفر است؛ اما متن غیرعددی نباید ذخیره شود.
+    $('#divPayKaniInfoDetails input[type="text"]').each(function () {
+        const value = $.trim($(this).val());
+        const invalid = value !== '' && !$.isNumeric(value);
+        $(this).toggleClass('blinking', invalid);
+        check = check || invalid;
+    });
+
+    check = SumAllDetailsPayKani() || check;
 
     //if (check) {
     //    toastr.info('مجموع احجام وارد شده بایستی با حجم کل برابر باشد', 'اطلاع');
@@ -3105,7 +3113,15 @@ function UpdatePayKaniInfo(KMPayKaniId, BarAvordUserId, KMNum,Type) {
     }
 
     ///////////////
-check = SumAllDetailsPayKaniForEditPK(KMNum) || check;
+// فقط ورودی‌های فرم کیلومتراژ جاری بررسی شوند.
+    $('#ViewPayKani' + KMNum + ' input[type="text"]').each(function () {
+        const value = $.trim($(this).val());
+        const invalid = value !== '' && !$.isNumeric(value);
+        $(this).toggleClass('blinking', invalid);
+        check = check || invalid;
+    });
+
+    check = SumAllDetailsPayKaniForEditPK(KMNum) || check;
     //if (check) {
     //    toastr.info('حجم کل پی کنی صحیح نمیباشد', 'اطلاع');
     //}
