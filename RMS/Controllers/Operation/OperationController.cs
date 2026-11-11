@@ -89,21 +89,6 @@ public class OperationController(ApplicationDbContext context) : Controller
             foreach (var item in NoeFBs)
             {
                 int NoeItem = int.Parse(item);
-                var ShomarehItems = (from op_Item in _context.Operation_ItemsFBs
-                                     join FB in _context.FehrestBahas
-                                     on op_Item.ItemsFBShomareh.Substring(0, 6) equals FB.Shomareh.Trim()
-                                     select new
-                                     {
-                                         ItemsFBShomareh = op_Item.ItemsFBShomareh,
-                                         ItemsFBShomarehMain = op_Item.ItemsFBShomareh,
-                                         OperationId = op_Item.OperationId,
-                                         Sharh = FB.Sharh,
-                                         Year = FB.Sal,
-                                         NoeFB = FB.NoeFB,
-                                         Vahed = FB.Vahed,
-                                         BahayeVahed = FB.BahayeVahed,
-                                     }).Where(x => x.Year == request.Year && x.NoeFB == (NoeFehrestBaha)NoeItem);
-
                 var baseRows = (
                     from op in _context.Operations
                     where op.Year == request.Year
@@ -116,6 +101,25 @@ public class OperationController(ApplicationDbContext context) : Controller
                     from od in odGroup.DefaultIfEmpty()
                     select new { op, od }
                 ).ToList();
+
+                // فقط اطلاعات فهرست‌بهای مربوط به همین سطح درخت دریافت شود
+                var operationIdsForLevel = baseRows.Select(x => x.op.Id).Distinct().ToList();
+
+                var ShomarehItems = (from op_Item in _context.Operation_ItemsFBs
+                                     join FB in _context.FehrestBahas
+                                     on op_Item.ItemsFBShomareh.Substring(0, 6) equals FB.Shomareh.Trim()
+                                     where operationIdsForLevel.Contains(op_Item.OperationId)
+                                     select new
+                                     {
+                                         ItemsFBShomareh = op_Item.ItemsFBShomareh,
+                                         ItemsFBShomarehMain = op_Item.ItemsFBShomareh,
+                                         OperationId = op_Item.OperationId,
+                                         Sharh = FB.Sharh,
+                                         Year = FB.Sal,
+                                         NoeFB = FB.NoeFB,
+                                         Vahed = FB.Vahed,
+                                         BahayeVahed = FB.BahayeVahed,
+                                     }).Where(x => x.Year == request.Year && x.NoeFB == (NoeFehrestBaha)NoeItem);
 
                 var siLookup = ShomarehItems.ToLookup(s => s.OperationId);
 
