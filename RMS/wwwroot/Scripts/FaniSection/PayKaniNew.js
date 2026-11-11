@@ -1,5 +1,17 @@
 ﻿ActivityLength = 0;
 
+/* با کلیک روی فیلدهای عددی، مقدار برای ورود سریع انتخاب شود.
+   Delegated binding برای ورودی‌هایی که به‌صورت پویا ساخته می‌شوند. */
+$(document)
+    .off('click.payKaniSelectInput', '#ViewPayKaniNew input[type="text"], [id^="ViewPayKani"] input[type="text"], #divPayKaniInfoDetails input[type="text"]')
+    .on('click.payKaniSelectInput', '#ViewPayKaniNew input[type="text"], [id^="ViewPayKani"] input[type="text"], #divPayKaniInfoDetails input[type="text"]', function () {
+        if (!this.disabled && !this.readOnly) {
+            this.select();
+        }
+    });
+
+
+
 /* کنترل عملیات در حال اجرا و جلوگیری از ارسال درخواست تکراری */
 const payKaniPendingRequests = Object.create(null);
 let payKaniActiveRequestCount = 0;
