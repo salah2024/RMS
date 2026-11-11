@@ -48,11 +48,7 @@ public class OperationController(ApplicationDbContext context) : Controller
             ////////////////////////////////////////////////////////
 
             List<AllOperationDto> operationNull = _context.Operations
-                    .Where(x => x.Year == request.Year
-                        && x.NoeFB == null
-                        && (request.ParentId.HasValue
-                            ? x.ParentId == request.ParentId
-                            : (x.ParentId == null || x.ParentId == 0)))
+                    .Where(x => x.Year == request.Year && x.NoeFB == null)
                     .Select(x => new AllOperationDto
                     {
                         ID = x.Id,
@@ -89,26 +85,9 @@ public class OperationController(ApplicationDbContext context) : Controller
             foreach (var item in NoeFBs)
             {
                 int NoeItem = int.Parse(item);
-                var baseRows = (
-                    from op in _context.Operations
-                    where op.Year == request.Year
-                           && op.NoeFB == (NoeFehrestBaha)NoeItem
-                           && (request.ParentId.HasValue
-                               ? op.ParentId == request.ParentId
-                               : (op.ParentId == null || op.ParentId == 0))
-                    join od in _context.OperationDetails
-                        on op.Id equals od.OperationId into odGroup
-                    from od in odGroup.DefaultIfEmpty()
-                    select new { op, od }
-                ).ToList();
-
-                // فقط اطلاعات فهرست‌بهای مربوط به همین سطح درخت دریافت شود
-                var operationIdsForLevel = baseRows.Select(x => x.op.Id).Distinct().ToList();
-
                 var ShomarehItems = (from op_Item in _context.Operation_ItemsFBs
                                      join FB in _context.FehrestBahas
                                      on op_Item.ItemsFBShomareh.Substring(0, 6) equals FB.Shomareh.Trim()
-                                     where operationIdsForLevel.Contains(op_Item.OperationId)
                                      select new
                                      {
                                          ItemsFBShomareh = op_Item.ItemsFBShomareh,
@@ -120,6 +99,15 @@ public class OperationController(ApplicationDbContext context) : Controller
                                          Vahed = FB.Vahed,
                                          BahayeVahed = FB.BahayeVahed,
                                      }).Where(x => x.Year == request.Year && x.NoeFB == (NoeFehrestBaha)NoeItem);
+
+                var baseRows = (
+                    from op in _context.Operations
+                    where op.Year == request.Year && op.NoeFB == (NoeFehrestBaha)NoeItem
+                    join od in _context.OperationDetails
+                        on op.Id equals od.OperationId into odGroup
+                    from od in odGroup.DefaultIfEmpty()
+                    select new { op, od }
+                ).ToList();
 
                 var siLookup = ShomarehItems.ToLookup(s => s.OperationId);
 
@@ -232,21 +220,6 @@ public class OperationController(ApplicationDbContext context) : Controller
                 }
                 else
                     NewOperation.Add(item);
-            }
-
-            // شناسه شاخه‌هایی که در سطح فعلی فرزند دارند، با یک Query استخراج می‌شود
-            var currentOperationIds = NewOperation.Select(x => x.ID).Distinct().ToList();
-            var parentIdsWithChildren = _context.Operations
-                .Where(x => x.Year == request.Year
-                    && x.ParentId.HasValue
-                    && currentOperationIds.Contains(x.ParentId.Value))
-                .Select(x => x.ParentId.Value)
-                .Distinct()
-                .ToHashSet();
-
-            foreach (var operationItem in NewOperation)
-            {
-                operationItem.HasChildren = parentIdsWithChildren.Contains(operationItem.ID);
             }
 
             var Result = new
