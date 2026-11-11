@@ -1,10 +1,8 @@
 ﻿var gParents = [];
-function createTree(data, parentId) {
+function createTree(data) {
 
     var html = "";
-    var children = data.filter(function (item) {
-        return item.parentId == parentId;
-    });
+    var children = data || [];
 
     if (children.length > 0) {
 
@@ -49,9 +47,7 @@ function createTree(data, parentId) {
                         <span id="span${id}"></span>
                         </a>
                         <span id="spanOpShomareh${id}"></span>
-                        <ul style="margin-top:5px" id="ula${id}">`;
-                        html += createTree(data, id);
-                        html += `</ul></li>`;
+                        ${item.hasChildren ? `<ul style="margin-top:5px" id="ula${id}"></ul>` : ''} </li>`;
                     }
                     else {
                         html += `
@@ -61,8 +57,7 @@ function createTree(data, parentId) {
                         <span id="span${id}"></span>
                         </a>
                         <span id="spanOpShomareh${id}"></span>
-                        <ul style="margin-top:5px" id="ula${id}">`;
-                        html += `</ul></li>`;
+                        ${item.hasChildren ? `<ul style="margin-top:5px" id="ula${id}"></ul>` : ''} </li>`;
                     }
                 }
                 else {
@@ -113,9 +108,7 @@ function createTree(data, parentId) {
                            <span id="span${id}"></span></a>
 
                                     </div>
-                      <ul id="ula${id}">`;
-                        html += createTree(data, id); // Recursive call
-                        html += `</ul></li>`;
+                      ${item.hasChildren ? `<ul id="ula${id}"></ul>` : ''} </li>`;
 
 
 
