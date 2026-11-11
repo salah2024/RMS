@@ -33,19 +33,22 @@ function endPayKaniRequest(requestKey) {
 
     if ($button && $button.length) {
         const originalHtml = $button.data('payKaniOriginalHtml');
+        const originalCursor = $button.data('payKaniOriginalCursor');
+        const originalOpacity = $button.data('payKaniOriginalOpacity');
+
         if (originalHtml !== undefined) $button.html(originalHtml);
 
         $button
-            .removeData('payKaniOriginalHtml')
-            .removeData('payKaniOriginalCursor')
-            .removeData('payKaniOriginalOpacity')
             .prop('disabled', false)
             .removeAttr('aria-busy')
             .removeClass('PayKaniButtonLoading')
             .css({
-                cursor: $button.data('payKaniOriginalCursor') || '',
-                opacity: $button.data('payKaniOriginalOpacity') || ''
-            });
+                cursor: originalCursor || '',
+                opacity: originalOpacity || ''
+            })
+            .removeData('payKaniOriginalHtml')
+            .removeData('payKaniOriginalCursor')
+            .removeData('payKaniOriginalOpacity');
     }
 
     delete payKaniPendingRequests[requestKey];
