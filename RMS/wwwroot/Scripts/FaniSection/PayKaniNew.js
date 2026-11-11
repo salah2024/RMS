@@ -1924,15 +1924,15 @@ function ViewPayKaniInfo(KMExistingId, KMNum, BarAvordId) {
                 // مقادیر اصلی ردیف
                 PKDetail = parseFloat($("#txtPKDetail" + KMNum + "_" + i).val()) || 0;
 
-                if (PKDetail != null || PKDetail != 0) {
+                if (PKDetail > 0) {
 
                     $("#txtPKVarizi" + KMNum + "_" + i).prop('disabled') ? '' : $("#txtPKVarizi" + KMNum + "_" + i).val() != "" ? $("#txtPKVarizi" + KMNum + "_" + i).removeClass('blinking') : $("#txtPKVarizi" + KMNum + "_" + i).addClass('blinking');
                     $("#txtPKReUseHajm" + KMNum + "_" + i).prop('disabled') ? '' : $("#txtPKReUseHajm" + KMNum + "_" + i).val() != "" ? $("#txtPKReUseHajm" + KMNum + "_" + i).removeClass('blinking') : $("#txtPKReUseHajm" + KMNum + "_" + i).addClass('blinking');
                     $("#txtPKHaml" + KMNum + "_" + i).prop('disabled') ? '' : $("#txtPKHaml" + KMNum + "_" + i).val() != "" ? $("#txtPKHaml" + KMNum + "_" + i).removeClass('blinking') : $("#txtPKHaml" + KMNum + "_" + i).addClass('blinking');
 
-                    $("#txtPKDarsadVarizi" + i).prop('disabled') ? '' : $("#txtPKDarsadVarizi" + KMNum + "_" + i).val() != "" ? $("#txtPKDarsadVarizi" + KMNum + "_" + i).removeClass('blinking') : $("#txtPKDarsadVarizi" + KMNum + "_" + i).addClass('blinking');
-                    $("#txtPKReUseDarsad" + i).prop('disabled') ? '' : $("#txtPKReUseDarsad" + KMNum + "_" + i).val() != "" ? $("#txtPKReUseDarsad" + KMNum + "_" + i).removeClass('blinking') : $("#txtPKReUseDarsad" + KMNum + "_" + i).addClass('blinking');
-                    $("#txtPKDarsadHaml" + i).prop('disabled') ? '' : $("#txtPKDarsadHaml" + KMNum + "_" + i).val() != "" ? $("#txtPKDarsadHaml" + KMNum + "_" + i).removeClass('blinking') : $("#txtPKDarsadHaml" + KMNum + "_" + i).addClass('blinking');
+                    $("#txtPKDarsadVarizi" + KMNum + "_" + i).prop('disabled') ? '' : $("#txtPKDarsadVarizi" + KMNum + "_" + i).val() != "" ? $("#txtPKDarsadVarizi" + KMNum + "_" + i).removeClass('blinking') : $("#txtPKDarsadVarizi" + KMNum + "_" + i).addClass('blinking');
+                    $("#txtPKReUseDarsad" + KMNum + "_" + i).prop('disabled') ? '' : $("#txtPKReUseDarsad" + KMNum + "_" + i).val() != "" ? $("#txtPKReUseDarsad" + KMNum + "_" + i).removeClass('blinking') : $("#txtPKReUseDarsad" + KMNum + "_" + i).addClass('blinking');
+                    $("#txtPKDarsadHaml" + KMNum + "_" + i).prop('disabled') ? '' : $("#txtPKDarsadHaml" + KMNum + "_" + i).val() != "" ? $("#txtPKDarsadHaml" + KMNum + "_" + i).removeClass('blinking') : $("#txtPKDarsadHaml" + KMNum + "_" + i).addClass('blinking');
                 }
 
                 let varizi = parseFloat($("#txtPKVarizi" + KMNum + "_" + i).val()) || 0;
