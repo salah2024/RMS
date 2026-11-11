@@ -288,8 +288,10 @@ function onCheckBoxChange(obj) {
             OperationId = $('#HDFOperationId').val();
             if (OperationId && OperationId.trim() !== '') {
                 GetRizMetreWithFBId(1);
-                GetItemsAddedAndRelForRizMetre(1);
             }
+
+            // این تابع شناسه عملیات را متناسب با حالت عادی یا عملیات اضافه انتخاب می‌کند
+            GetItemsAddedAndRelForRizMetre(1);
 
             toastr.success('ثبت بدرستی انجام گرفت', 'موفقیت');
 
