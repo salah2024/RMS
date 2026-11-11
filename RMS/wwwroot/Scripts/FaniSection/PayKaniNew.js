@@ -1628,12 +1628,11 @@ const clamp = (x, min, max) => {
 
 
 
-function ViewPayKaniInfo(KMExistingId, KMNum, BarAvordId) {
+function ViewPayKaniInfo(KMExistingId, KMNum, BarAvordId, forceReload) {
 
-    if ($('#MainViewPayKani' + KMNum).is(':visible')) {
+    if (!forceReload && $('#MainViewPayKani' + KMNum).is(':visible')) {
         $('#MainViewPayKani' + KMNum).slideUp(500);
-
-        return
+        return;
     }
 
     $('#ViewPayKaniEzafeBaha' + KMNum).html('');
@@ -3235,9 +3234,10 @@ $.ajax({
             success: function (response) {
                 info = response.split('_');
                 if (info[0] == "OK") {
-                    // مقادیر سربرگ همین حالا در ورودی‌های صفحه قرار دارند؛
-                    // جزئیات را باز نگه می‌داریم تا نتیجه ویرایش بلافاصله دیده شود.
                     toastr.success('اطلاعات متراژ بدرستی ویرایش گردید', 'ویرایش');
+
+                    // دریافت مجدد جزئیات ذخیره‌شده، بدون بستن پنل ویرایش
+                    ViewPayKaniInfo(KMPayKaniId, KMNum, BarAvordUserId, true);
 
                 }
                 else {
