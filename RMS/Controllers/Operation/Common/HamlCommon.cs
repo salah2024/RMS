@@ -175,7 +175,7 @@ public static class HamlCommon
                         ///
 
                         clsBarAvordHaml? barAvordHamlCurrent =
-                                        await _context.BarAvordHamls.FirstOrDefaultAsync(x => x.BarAvordId == BarAvordUserId && x.NoeFBId == NoeFBId && x.FBShomarehHaml.Trim() == strItemHamlFB.Trim() && x.FBShomareh == ItemFBShomareh);
+                                        await _context.BarAvordHamls.FirstOrDefaultAsync(x => x.BarAvordId == BarAvordUserId && x.NoeFBId == NoeFBId && x.FBShomarehHaml.Trim() == strItemHamlFB.Trim());// && x.FBShomareh == ItemFBShomareh);
 
                         decimal? dTedad = null;
                         if (barAvordHamlCurrent != null)

@@ -275,6 +275,7 @@ function onCheckBoxChange(obj) {
                 afbShomarehHaml = this.fbShomarehHaml;
                 aValueBase = this.valueBase == 0 ? null : this.valueBase;
                 aValue = this.value == 0 ? null : this.value;
+
                 $('#spanOpShomareh' + afbShomarehHaml).parent().parent().find('input').val(aValueBase);
                 $('#spanOpShomareh' + afbShomarehHaml).parent().parent().find('span[id^="span-"]').html(aValue);
             });
