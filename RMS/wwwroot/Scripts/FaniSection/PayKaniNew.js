@@ -2,6 +2,7 @@
 
 /* کنترل عملیات در حال اجرا و جلوگیری از ارسال درخواست تکراری */
 const payKaniPendingRequests = Object.create(null);
+let payKaniActiveRequestCount = 0;
 
 function beginPayKaniRequest(requestKey, buttonElement) {
     if (payKaniPendingRequests[requestKey]) return false;
@@ -19,6 +20,8 @@ function beginPayKaniRequest(requestKey, buttonElement) {
     }
 
     payKaniPendingRequests[requestKey] = $button;
+    payKaniActiveRequestCount++;
+    $('#ContainerWaiting').show();
     return true;
 }
 
@@ -37,6 +40,11 @@ function endPayKaniRequest(requestKey) {
     }
 
     delete payKaniPendingRequests[requestKey];
+    payKaniActiveRequestCount = Math.max(0, payKaniActiveRequestCount - 1);
+
+    if (payKaniActiveRequestCount === 0) {
+        $('#ContainerWaiting').hide();
+    }
 }
 
 
@@ -3058,19 +3066,9 @@ function SavePayKaniInfo(BarAvordUserId, Type, buttonElement) {
         vardata.NoeFBId = NoeFBId;
 
 
-        htmlShowWaiting = ShowWaiting();
-        if (htmlShowWaiting != '')
-            $('#MainViewPayKaniNew').append(htmlShowWaiting);
-        else
-            $('#ContainerWaiting').show();
-
-
-        const requestKey = 'save:' + BarAvordUserId;
+const requestKey = 'save:' + BarAvordUserId;
         if (!beginPayKaniRequest(requestKey, buttonElement)) return;
-
-        $('#ContainerWaiting').show();
-
-        $.ajax({
+$.ajax({
             type: "POST",
             url: "/payKaniInfoForBarAvords/SavePayKaniInfoForBarAvord",
             data: JSON.stringify(vardata),
@@ -3111,23 +3109,17 @@ function SavePayKaniInfo(BarAvordUserId, Type, buttonElement) {
                     $('#MainViewPayKaniNew').slideUp(500);
 
                     ShowExistingKMPayKani(BarAvordUserId);
-
-                    $('#ContainerWaiting').hide();
-
-                    toastr.success('اطلاعات متراژ بدرستی ثبت گردید', 'ثبت');
+toastr.success('اطلاعات متراژ بدرستی ثبت گردید', 'ثبت');
                 }
                 else {
                     toastr.error('مشکل در ثبت اطلاعات متراژ', 'خطا');
-                    $('#ContainerWaiting').hide();
-                }
+}
             },
             error: function (response) {
                 toastr.error('مشکل در ثبت اطلاعات متراژ', 'خطا');
-                $('#ContainerWaiting').hide();
-            },
+},
             complete: function () {
-                $('#ContainerWaiting').hide();
-                endPayKaniRequest(requestKey);
+endPayKaniRequest(requestKey);
             }
         });
     }
@@ -3216,18 +3208,9 @@ function UpdatePayKaniInfo(KMPayKaniId, BarAvordUserId, KMNum, Type, buttonEleme
         vardata.Type = Type;
 
 
-        htmlShowWaiting = ShowWaiting();
-        if (htmlShowWaiting != '')
-            $('#MainViewPayKani' + KMNum).append(htmlShowWaiting);
-        else
-            $('#ContainerWaiting').show();
-
-        const requestKey = 'record:' + KMPayKaniId;
+const requestKey = 'record:' + KMPayKaniId;
         if (!beginPayKaniRequest(requestKey, buttonElement)) return;
-
-        $('#ContainerWaiting').show();
-
-        $.ajax({
+$.ajax({
             type: "POST",
             url: "/payKaniInfoForBarAvords/UpdatePayKaniInfoForBarAvord",
             data: JSON.stringify(vardata),
@@ -3239,22 +3222,18 @@ function UpdatePayKaniInfo(KMPayKaniId, BarAvordUserId, KMNum, Type, buttonEleme
                     toastr.success('اطلاعات متراژ بدرستی ویرایش گردید', 'ثبت');
                     $('#MainViewPayKani' + KMNum).slideUp(500);
                     $('#divExistKMHeader' + KMNum).click();
-                    $('#ContainerWaiting').hide();
-                    //$('#ViewPayKaniEzafeBaha' + KMNum).html('');
+//$('#ViewPayKaniEzafeBaha' + KMNum).html('');
 
                 }
                 else {
                     toastr.error('مشکل در ویرایش اطلاعات متراژ', 'خطا');
-                    $('#ContainerWaiting').hide();
-                }
+}
             },
             error: function (response) {
                 toastr.error('مشکل در ویرایش اطلاعات متراژ', 'خطا');
-                $('#ContainerWaiting').hide();
-            },
+},
             complete: function () {
-                $('#ContainerWaiting').hide();
-                endPayKaniRequest(requestKey);
+endPayKaniRequest(requestKey);
             }
         });
     }
@@ -3275,10 +3254,7 @@ function DeletePayKaniInfo(KMPayKaniId, KMNum, BarAvordUserId, buttonElement) {
 
     const requestKey = 'record:' + KMPayKaniId;
     if (!beginPayKaniRequest(requestKey, buttonElement)) return;
-
-    $('#ContainerWaiting').show();
-
-    $.ajax({
+$.ajax({
         type: "POST",
         url: "/payKaniInfoForBarAvords/DeletePayKaniInfoForBarAvord",
         data: JSON.stringify(vardata),
@@ -3292,16 +3268,13 @@ function DeletePayKaniInfo(KMPayKaniId, KMNum, BarAvordUserId, buttonElement) {
             }
             else {
                 toastr.error('مشکل در حذف اطلاعات', 'خطا');
-                $('#ContainerWaiting').hide();
-            }
+}
         },
         error: function (response) {
             toastr.error('مشکل در حذف اطلاعات', 'خطا');
-            $('#ContainerWaiting').hide();
-        },
+},
         complete: function () {
-            $('#ContainerWaiting').hide();
-            endPayKaniRequest(requestKey);
+endPayKaniRequest(requestKey);
         }
     });
 
