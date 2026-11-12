@@ -62,7 +62,7 @@ public class OperationController(ApplicationDbContext context) : Controller
         var itemRows = (
             from opItem in _context.Operation_ItemsFBs
             join fb in _context.FehrestBahas
-                on opItem.ItemsFBShomareh.Substring(0, 6) equals fb.Shomare.Trim()
+                on opItem.ItemsFBShomareh.Substring(0, 6) equals fb.Shomareh.Trim()
             where operationIds.Contains(opItem.OperationId)
                   && fb.Sal == request.Year
                   && fb.NoeFB.HasValue && allowedNoeFBs.Contains(fb.NoeFB.Value)
