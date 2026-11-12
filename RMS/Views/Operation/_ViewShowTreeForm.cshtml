@@ -152,33 +152,6 @@
     $(document).ready(function () {
     ///////////
     GetViewBag();
-
-    var treeSearchTimer = null;
-    $(document).off('input.TreeSearch', '#txtTreeSearch')
-        .on('input.TreeSearch', '#txtTreeSearch', function () {
-            var value = $.trim($(this).val());
-
-            clearTimeout(treeSearchTimer);
-            if (value.length === 0) {
-                ShowTree();
-                return;
-            }
-
-            if (value.length < 4) {
-                $('#jstree').html('<div class="text-muted p-2">برای جستجو حداقل ۴ حرف یا رقم وارد کنید.</div>');
-                return;
-            }
-
-            treeSearchTimer = setTimeout(function () {
-                SearchTree(value);
-            }, 350);
-        });
-
-    $(document).off('click.TreeSearch', '#btnClearTreeSearch')
-        .on('click.TreeSearch', '#btnClearTreeSearch', function () {
-            $('#txtTreeSearch').val('');
-            ShowTree();
-        });
     //ShowTree();
 
     //$('#html1').jstree({
@@ -344,91 +317,6 @@
         });
     }
 
-
-    function BindTreeEvents() {
-        $('#jstree')
-            .off('click.MenuAccordion', 'a[id^="a"]')
-            .on('click.MenuAccordion', 'a[id^="a"]', function (e) {
-                e.preventDefault();
-
-                var $this = $(this);
-                var currentId = $this.attr('id').substring(1);
-                var inlineClick = $this.data('tree-inline-click');
-                var $target = $('#ula' + currentId);
-                if (!$target.length) return;
-
-                // تابع اختصاصی شاخه‌ها در حالت جستجو نیز باید اجرا شود؛
-                // بعضی شاخه‌ها (مانند ابنیه فنی) زیرشاخه‌های خود را با همین تابع بارگذاری می‌کنند.
-                if (inlineClick) {
-                    try {
-                        new Function('e', 'event', inlineClick).call(this, e, e);
-                    } catch (ex) {
-                        console.error('Error in tree node action:', ex);
-                    }
-                }
-
-                if ($target.is('ul')) {
-                    var $branches = $('#jstree ul[id^="ula"]');
-                    var $ancestors = $this.parents('ul[id^="ula"]');
-
-                    if ($target.is(':visible')) {
-                        $target.find('ul[id^="ula"]').addBack().slideUp(250);
-                        return;
-                    }
-
-                    $branches.not($ancestors).not($target).slideUp(250);
-
-                    if ($target.attr('data-tree-lazy') === 'true' &&
-                        $target.data('tree-loaded') !== true) {
-                        LoadTreeChildren(currentId, $target);
-                    }
-
-                    $target.slideDown(250);
-                } else if ($target.is('div')) {
-                    var panelWasVisible = $target.is(':visible');
-                    $('#jstree div[id^="ula"]').not($target).slideUp(250);
-                    $target.toggle(!panelWasVisible);
-                }
-            });
-    }
-
-    function SearchTree(searchText) {
-        var vardata = {
-            Year: parseInt($('#HDFYear').val()),
-            BarAvordUserId: $('#HDFBarAvordUserID').val(),
-            SearchText: searchText
-        };
-
-        $('#jstree').html('<div class="text-center text-muted p-3">در حال جستجو در درخت...</div>');
-
-        $.ajax({
-            type: "POST",
-            url: "@Url.Action("SearchTree")",
-            data: JSON.stringify(vardata),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (data) {
-                if (!data || !data.newOperation || data.newOperation.length === 0) {
-                    $('#jstree').html('<div class="text-center text-muted p-3">موردی با این عبارت پیدا نشد.</div>');
-                    return;
-                }
-
-                // فقط مسیر شاخه‌های منتهی به نتیجه برگردانده می‌شود؛
-                // درخت اصلی همچنان به‌صورت Lazy Load باقی می‌ماند.
-                $('#jstree').data('tree-search-mode', true)
-                    .html(createTree(data.newOperation, 0, false, true));
-                InitializeTreeLinks($('#jstree'));
-                BindTreeEvents();
-
-                // مسیرهای منتهی به نتیجه در حالت جستجو باز باشند.
-                $('#jstree ul[id^="ula"]').show();
-            },
-            error: function () {
-                $('#jstree').html('<div class="text-danger p-3">خطا در جستجوی درخت. دوباره تلاش کنید.</div>');
-            }
-        });
-    }
-
     function ShowTree() {
         var vardata = {
             Year: parseInt($('#HDFYear').val()),
@@ -451,11 +339,52 @@
 
                 NewOperation = data.newOperation;
                 BaravordType = data.baravordType;
-                $('#jstree').data('tree-search-mode', false)
-                    .html(createTree(NewOperation, 0, true));
+                $('#jstree').html(createTree(NewOperation, 0, true));
                 InitializeTreeLinks($('#jstree'));
 
-                BindTreeEvents();
+                $('#jstree')
+                    .off('click.MenuAccordion', 'a[id^="a"]')
+                    .on('click.MenuAccordion', 'a[id^="a"]', function (e) {
+                        e.preventDefault();
+
+                        var $this = $(this);
+                        var currentId = $this.attr('id').substring(1);
+                        var inlineClick = $this.data('tree-inline-click');
+
+                        if (inlineClick) {
+                            try {
+                                new Function('e', 'event', inlineClick).call(this, e, e);
+                            } catch (ex) {
+                                console.error('Error in tree node action:', ex);
+                            }
+                        }
+
+                        var $target = $('#ula' + currentId);
+                        if (!$target.length) return;
+
+                        if ($target.is('ul')) {
+                            var $branches = $('#jstree ul[id^="ula"]');
+                            var $ancestors = $this.parents('ul[id^="ula"]');
+
+                            if ($target.is(':visible')) {
+                                $target.find('ul[id^="ula"]').addBack().slideUp(250);
+                                return;
+                            }
+
+                            $branches.not($ancestors).not($target).slideUp(250);
+
+                            if ($target.attr('data-tree-lazy') === 'true' &&
+                                $target.data('tree-loaded') !== true) {
+                                LoadTreeChildren(currentId, $target);
+                            }
+
+                            $target.slideDown(250);
+                        } else if ($target.is('div')) {
+                            var panelWasVisible = $target.is(':visible');
+                            $('#jstree div[id^="ula"]').not($target).slideUp(250);
+                            $target.toggle(!panelWasVisible);
+                        }
+                    });
 
                 $('#jstree ul[id^="ula"]').hide();
             },
@@ -617,14 +546,6 @@
 	</div>
 </div> *@
 
-<div id="tree-search-wrapper" style="margin:10px 20px 0 20px;display:flex;gap:6px;align-items:center;">
-    <input type="text" id="txtTreeSearch" class="form-control"
-           placeholder="جستجو در شرح شاخه یا شماره فهرست‌بها..."
-           autocomplete="off" style="max-width:450px;text-align:right;" />
-    <button type="button" id="btnClearTreeSearch" class="btn btn-outline-secondary"
-            title="پاک کردن جستجو">×</button>
-    <small class="text-muted">حداقل ۴ حرف یا رقم وارد کنید</small>
-</div>
 <div id="jstree" style="margin:20px;margin-top:10px;">
 </div>
 
