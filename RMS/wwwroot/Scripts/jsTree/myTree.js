@@ -1,5 +1,5 @@
 ﻿var gParents = [];
-function createTree(data, parentId, lazyMode, searchMode) {
+function createTree(data, parentId, lazyMode) {
 
     var html = "";
     var children = data.filter(function (item) {
@@ -53,7 +53,7 @@ function createTree(data, parentId, lazyMode, searchMode) {
                             html += `<ul style="margin-top:5px" id="ula${id}" data-tree-lazy="${item.hasChildren ? 'true' : 'false'}" data-tree-loaded="false"></ul></li>`;
                         } else {
                             html += `<ul style="margin-top:5px" id="ula${id}">`;
-                            html += createTree(data, id, false, searchMode);
+                            html += createTree(data, id, false);
                             html += `</ul></li>`;
                         }
                     }
@@ -65,11 +65,7 @@ function createTree(data, parentId, lazyMode, searchMode) {
                         <span id="span${id}"></span>
                         </a>
                         <span id="spanOpShomareh${id}"></span>
-                        <ul style="margin-top:5px" id="ula${id}" data-tree-dynamic="true">`;
-                        if (searchMode) {
-                            html += createTree(data, id, false, true);
-                        }
-                        html += `</ul></li>`;
+                        <ul style="margin-top:5px" id="ula${id}" data-tree-dynamic="true"></ul></li>`;
                     }
                 }
                 else {
