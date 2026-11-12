@@ -48,7 +48,10 @@ public class OperationController(ApplicationDbContext context) : Controller
             ////////////////////////////////////////////////////////
 
             List<AllOperationDto> operationNull = _context.Operations
-                    .Where(x => x.Year == request.Year && x.NoeFB == null)
+                    .Where(x => x.Year == request.Year && x.NoeFB == null &&
+                        (request.ParentId == null || request.ParentId == 0
+                            ? (x.ParentId == null || x.ParentId == 0)
+                            : x.ParentId == request.ParentId))
                     .Select(x => new AllOperationDto
                     {
                         ID = x.Id,
@@ -103,6 +106,9 @@ public class OperationController(ApplicationDbContext context) : Controller
                 var baseRows = (
                     from op in _context.Operations
                     where op.Year == request.Year && op.NoeFB == (NoeFehrestBaha)NoeItem
+                          && (request.ParentId == null || request.ParentId == 0
+                              ? (op.ParentId == null || op.ParentId == 0)
+                              : op.ParentId == request.ParentId)
                     join od in _context.OperationDetails
                         on op.Id equals od.OperationId into odGroup
                     from od in odGroup.DefaultIfEmpty()
@@ -221,6 +227,25 @@ public class OperationController(ApplicationDbContext context) : Controller
                 else
                     NewOperation.Add(item);
             }
+
+            var currentNodeIds = NewOperation
+                .Where(x => string.IsNullOrWhiteSpace(x.ItemsFBShomareh))
+                .Select(x => x.ID)
+                .Distinct()
+                .ToList();
+
+            var parentIdsWithChildren = currentNodeIds.Count == 0
+                ? new List<long>()
+                : _context.Operations
+                    .Where(x => x.Year == request.Year
+                        && x.ParentId.HasValue
+                        && currentNodeIds.Contains(x.ParentId.Value))
+                    .Select(x => x.ParentId.Value)
+                    .Distinct()
+                    .ToList();
+
+            foreach (var node in NewOperation)
+                node.HasChildren = parentIdsWithChildren.Contains(node.ID);
 
             var Result = new
             {
