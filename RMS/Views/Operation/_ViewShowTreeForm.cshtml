@@ -357,11 +357,9 @@
                 var $target = $('#ula' + currentId);
                 if (!$target.length) return;
 
-                // در نتایج جستجو، شاخه‌های دارای زیرشاخه فقط باید باز/بسته شوند.
-                // اجرای تابع اختصاصی روی همان کلیک، باز شدن زیرشاخه را مختل می‌کرد.
-                // برای پنل‌های محتوایی (div) همچنان تابع اختصاصی اجرا می‌شود.
-                var isSearchMode = $('#jstree').data('tree-search-mode') === true;
-                if (inlineClick && (!isSearchMode || !$target.is('ul'))) {
+                // تابع اختصاصی شاخه‌ها در حالت جستجو نیز باید اجرا شود؛
+                // بعضی شاخه‌ها (مانند ابنیه فنی) زیرشاخه‌های خود را با همین تابع بارگذاری می‌کنند.
+                if (inlineClick) {
                     try {
                         new Function('e', 'event', inlineClick).call(this, e, e);
                     } catch (ex) {
