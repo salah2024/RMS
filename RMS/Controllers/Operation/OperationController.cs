@@ -66,6 +66,7 @@ public class OperationController(ApplicationDbContext context) : Controller
             where operationIds.Contains(opItem.OperationId)
                   && fb.Sal == request.Year
                   && fb.NoeFB.HasValue && allowedNoeFBs.Contains(fb.NoeFB.Value)
+                  && (opItem.ItemsFBShomareh.Contains(term) || fb.Sharh.Contains(term))
             select new { opItem.OperationId, opItem.ItemsFBShomareh, fb.Sharh, fb.NoeFB }
         ).ToList();
 
