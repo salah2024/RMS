@@ -65,7 +65,7 @@ public class OperationController(ApplicationDbContext context) : Controller
                 on opItem.ItemsFBShomareh.Substring(0, 6) equals fb.Shomare.Trim()
             where operationIds.Contains(opItem.OperationId)
                   && fb.Sal == request.Year
-                  && allowedNoeFBs.Contains(fb.NoeFB)
+                  && fb.NoeFB.HasValue && allowedNoeFBs.Contains(fb.NoeFB.Value)
             select new { opItem.OperationId, opItem.ItemsFBShomareh, fb.Sharh, fb.NoeFB }
         ).ToList();
 
@@ -78,7 +78,7 @@ public class OperationController(ApplicationDbContext context) : Controller
         var visibleHamlItems = _context.RizMetreUserses
             .Include(x => x.FB)
             .Where(x => x.FB.BarAvordId == request.BarAvordUserId)
-            .Select(x => new { x.FB.Shomare, x.FB.NoeFBId })
+            .Select(x => new { x.FB.Shomareh, x.FB.NoeFBId })
             .Distinct()
             .ToList();
 
@@ -156,7 +156,7 @@ public class OperationController(ApplicationDbContext context) : Controller
 
             operationDetails.TryGetValue(op.Id, out var detail);
             if (detail?.CheckData == true &&
-                !visibleHamlItems.Any(x => x.Shomare == item.ItemsFBShomareh && x.NoeFBId == item.NoeFB))
+                !visibleHamlItems.Any(x => x.Shomareh == item.ItemsFBShomareh && x.NoeFBId == item.NoeFB))
                 continue;
 
             AddAncestorChain(op.ParentId);
