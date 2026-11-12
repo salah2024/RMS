@@ -35,7 +35,7 @@ public class OperationController(ApplicationDbContext context) : Controller
     public JsonResult SearchTree([FromBody] SearchTreeInputDto request)
     {
         string term = (request.SearchText ?? "").Trim();
-        if (term.Length < 2)
+        if (term.Length < 4)
             return new JsonResult(new { NewOperation = new List<AllOperationDto>() });
 
         clsBaravordUser? baravordUser = _context.BaravordUsers
