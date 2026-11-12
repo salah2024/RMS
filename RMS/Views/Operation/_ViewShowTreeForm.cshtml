@@ -414,7 +414,7 @@
 
                 // فقط مسیر شاخه‌های منتهی به نتیجه برگردانده می‌شود؛
                 // درخت اصلی همچنان به‌صورت Lazy Load باقی می‌ماند.
-                $('#jstree').html(createTree(data.newOperation, 0, false));
+                $('#jstree').html(createTree(data.newOperation, 0, false, true));
                 InitializeTreeLinks($('#jstree'));
                 BindTreeEvents();
 
