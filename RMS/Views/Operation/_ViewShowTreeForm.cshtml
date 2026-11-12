@@ -164,8 +164,8 @@
                 return;
             }
 
-            if (value.length < 2) {
-                $('#jstree').html('<div class="text-muted p-2">برای جستجو حداقل ۲ حرف یا رقم وارد کنید.</div>');
+            if (value.length < 4) {
+                $('#jstree').html('<div class="text-muted p-2">برای جستجو حداقل ۴ حرف یا رقم وارد کنید.</div>');
                 return;
             }
 
@@ -354,17 +354,20 @@
                 var $this = $(this);
                 var currentId = $this.attr('id').substring(1);
                 var inlineClick = $this.data('tree-inline-click');
+                var $target = $('#ula' + currentId);
+                if (!$target.length) return;
 
-                if (inlineClick) {
+                // در نتایج جستجو، شاخه‌های دارای زیرشاخه فقط باید باز/بسته شوند.
+                // اجرای تابع اختصاصی روی همان کلیک، باز شدن زیرشاخه را مختل می‌کرد.
+                // برای پنل‌های محتوایی (div) همچنان تابع اختصاصی اجرا می‌شود.
+                var isSearchMode = $('#jstree').data('tree-search-mode') === true;
+                if (inlineClick && (!isSearchMode || !$target.is('ul'))) {
                     try {
                         new Function('e', 'event', inlineClick).call(this, e, e);
                     } catch (ex) {
                         console.error('Error in tree node action:', ex);
                     }
                 }
-
-                var $target = $('#ula' + currentId);
-                if (!$target.length) return;
 
                 if ($target.is('ul')) {
                     var $branches = $('#jstree ul[id^="ula"]');
@@ -414,7 +417,8 @@
 
                 // فقط مسیر شاخه‌های منتهی به نتیجه برگردانده می‌شود؛
                 // درخت اصلی همچنان به‌صورت Lazy Load باقی می‌ماند.
-                $('#jstree').html(createTree(data.newOperation, 0, false, true));
+                $('#jstree').data('tree-search-mode', true)
+                    .html(createTree(data.newOperation, 0, false, true));
                 InitializeTreeLinks($('#jstree'));
                 BindTreeEvents();
 
@@ -449,7 +453,8 @@
 
                 NewOperation = data.newOperation;
                 BaravordType = data.baravordType;
-                $('#jstree').html(createTree(NewOperation, 0, true));
+                $('#jstree').data('tree-search-mode', false)
+                    .html(createTree(NewOperation, 0, true));
                 InitializeTreeLinks($('#jstree'));
 
                 BindTreeEvents();
@@ -620,7 +625,7 @@
            autocomplete="off" style="max-width:450px;text-align:right;" />
     <button type="button" id="btnClearTreeSearch" class="btn btn-outline-secondary"
             title="پاک کردن جستجو">×</button>
-    <small class="text-muted">حداقل ۲ حرف یا رقم وارد کنید</small>
+    <small class="text-muted">حداقل ۴ حرف یا رقم وارد کنید</small>
 </div>
 <div id="jstree" style="margin:20px;margin-top:10px;">
 </div>
