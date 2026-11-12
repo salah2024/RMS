@@ -309,7 +309,7 @@
             },
             error: function (response) {
                 $target.html('<li class="tree-load-error" style="padding:5px;color:#b00;">خطا در دریافت اطلاعات؛ برای تلاش مجدد دوباره روی شاخه کلیک کنید.</li>');
-                console.error('GetTree child loading failed:', response);
+                //console.error('GetTree child loading failed:', response);
             },
             complete: function () {
                 $target.removeData('tree-loading');
@@ -390,7 +390,7 @@
             },
             error: function (response) {
                 toastr('danger', 'خطا', 'مشکلی بوجود آمده، مجددا بعدا امتحان نمایید');
-                console.error('GetTree root loading failed:', response);
+                //console.error('GetTree root loading failed:', response);
             }
         });
     }
