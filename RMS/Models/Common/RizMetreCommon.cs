@@ -1964,7 +1964,10 @@ public class RizMetreCommon
                     userBarAvordOutPutFiltered = userBarAvordOutPutFiltered
                         .Concat(barAvordOnlyInFbItems)
                         .OrderBy(x => x.ItemFbShomareh)
+                        .DistinctBy(x=>x.FBId)
                         .ToList();
+                    
+
 
                     List<string> lstItemFbShomarehs = userBarAvordOutPutFiltered.Select(x => x.ItemFbShomareh).Distinct().ToList();
 
