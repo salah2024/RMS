@@ -1,5 +1,5 @@
 ﻿var gParents = [];
-function createTree(data, parentId) {
+function createTree(data, parentId, lazyMode) {
 
     var html = "";
     var children = data.filter(function (item) {
@@ -48,10 +48,14 @@ function createTree(data, parentId) {
                             ${operationName}
                         <span id="span${id}"></span>
                         </a>
-                        <span id="spanOpShomareh${id}"></span>
-                        <ul style="margin-top:5px" id="ula${id}">`;
-                        html += createTree(data, id);
-                        html += `</ul></li>`;
+                        <span id="spanOpShomareh${id}"></span>`;
+                        if (lazyMode) {
+                            html += `<ul style="margin-top:5px" id="ula${id}" data-tree-lazy="${item.hasChildren ? 'true' : 'false'}" data-tree-loaded="false"></ul></li>`;
+                        } else {
+                            html += `<ul style="margin-top:5px" id="ula${id}">`;
+                            html += createTree(data, id, false);
+                            html += `</ul></li>`;
+                        }
                     }
                     else {
                         html += `
@@ -61,8 +65,7 @@ function createTree(data, parentId) {
                         <span id="span${id}"></span>
                         </a>
                         <span id="spanOpShomareh${id}"></span>
-                        <ul style="margin-top:5px" id="ula${id}">`;
-                        html += `</ul></li>`;
+                        <ul style="margin-top:5px" id="ula${id}" data-tree-dynamic="true"></ul></li>`;
                     }
                 }
                 else {
@@ -111,11 +114,14 @@ function createTree(data, parentId) {
                            <div style="display: flex; align-items: center; gap: 5px;">
                            <a id="a${id}">${operationName}
                            <span id="span${id}"></span></a>
-
-                                    </div>
-                      <ul id="ula${id}">`;
-                        html += createTree(data, id); // Recursive call
-                        html += `</ul></li>`;
+                           </div>`;
+                        if (lazyMode) {
+                            html += `<ul id="ula${id}" data-tree-lazy="${item.hasChildren ? 'true' : 'false'}" data-tree-loaded="false"></ul></li>`;
+                        } else {
+                            html += `<ul id="ula${id}">`;
+                            html += createTree(data, id, false);
+                            html += `</ul></li>`;
+                        }
 
 
 
