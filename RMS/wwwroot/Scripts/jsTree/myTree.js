@@ -65,7 +65,11 @@ function createTree(data, parentId, lazyMode, searchMode) {
                         <span id="span${id}"></span>
                         </a>
                         <span id="spanOpShomareh${id}"></span>
-                        <ul style="margin-top:5px" id="ula${id}" data-tree-dynamic="true">`;\n                        if (searchMode) {\n                            html += createTree(data, id, false, true);\n                        }\n                        html += `</ul></li>`;
+                        <ul style="margin-top:5px" id="ula${id}" data-tree-dynamic="true">`;
+                        if (searchMode) {
+                            html += createTree(data, id, false, true);
+                        }
+                        html += `</ul></li>`;
                     }
                 }
                 else {
