@@ -264,88 +264,137 @@
         ShowTree();
     }
     //////////////
-    function ShowTree() {
-    plugin = ['wholerow'];
-    var vardata = new Object();
-    Year = $('#HDFYear').val();
-    //NoeFBId = $('#HDFNoeFB').val();
-    BarAvordUserId = $('#HDFBarAvordUserID').val();
-
-    vardata.Year =parseInt(Year);
-    //vardata.NoeFBId = parseInt(NoeFBId);
-    vardata.BarAvordUserId = BarAvordUserId;
-    vardata.OpName = '';
-    $.ajax({
-    type: "POST",
-        url: "@Url.Action("GetTree")",
-        data: JSON.stringify(vardata),
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: function (data) {
-
-        NewOperation=data.newOperation;
-        BaravordType=data.baravordType;
-
-    var html= createTree(NewOperation,0);
-
-    console.log(html);
-
-    $('#jstree').html(html);
-
-
-    $('#jstree li a').each(function () {
-
-        var $a = $(this);
-
-        $a.addClass('OpMenuStyle');
-
-        $a.off('click.MenuAccordion').on('click.MenuAccordion', function (e) {
-
-        e.preventDefault(); // جلوگیری از رفتار پیش‌فرض
-
-        var $this = $(this);
-        var currentId = $this.attr('id');
-        var $target = $('#ul' + currentId);
-
-    // 🔹 اجرای تابع onclick قبل از بازکردن نود
-        var inlineClick = $this.attr("onclick");
-        if (inlineClick) {
-        try {
-            eval(inlineClick);   // اجرای کد موجود در onclick
-        }
-        catch (ex) {
-            console.error("Error in onclick:", ex);
-        }
-     }
-
-    if (!$target.length) return;
-
-    var $allNodes = $('#jstree [id^="ula"]');
-    var $ancestors = $this.parents('[id^="ula"]');
-
-    if ($target.is(':visible')) {
-        $target.find('[id^="ula"]').addBack().slideUp(500);
-    }
-    else {
-        var $keepOpen = $ancestors.add($target);
-            $allNodes.not($keepOpen).slideUp(500);
-             $keepOpen.slideDown(500);
-         }
+    function InitializeTreeLinks($container) {
+        $container.find('a[id^="a"]').addBack('a[id^="a"]').each(function () {
+            var $a = $(this);
+            $a.addClass('OpMenuStyle');
+            var inlineClick = $a.attr('onclick');
+            if (inlineClick) {
+                $a.data('tree-inline-click', inlineClick);
+                $a.removeAttr('onclick');
+            }
         });
-
-    });
-
-    $('#jstree li ul').each(function () {
-    $(this).hide();
-    });
-    },
-    error: function (response) {
-    toastr('danger', 'خطا', 'مشکلی بوجود آمده، مجددا بعدا امتحان نمایید')
-    }
-    });
     }
 
-    //////////////
+    function LoadTreeChildren(parentId, $target) {
+        if ($target.data('tree-loading') || $target.data('tree-loaded') === true) return;
+
+        $target.data('tree-loading', true);
+        $target.html('<li class="tree-loading" style="padding:5px;color:#777;">در حال بارگذاری...</li>');
+
+        var vardata = {
+            Year: parseInt($('#HDFYear').val()),
+            BarAvordUserId: $('#HDFBarAvordUserID').val(),
+            OpName: '',
+            ParentId: parentId
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("GetTree")",
+            data: JSON.stringify(vardata),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (!data || !data.newOperation) {
+                    $target.empty().data('tree-loaded', true);
+                    return;
+                }
+
+                var html = createTree(data.newOperation, parentId, true);
+                $target.html(html);
+                InitializeTreeLinks($target);
+                $target.children('li').children('ul[id^="ula"]').hide();
+                $target.data('tree-loaded', true);
+            },
+            error: function (response) {
+                $target.html('<li class="tree-load-error" style="padding:5px;color:#b00;">خطا در دریافت اطلاعات؛ برای تلاش مجدد دوباره روی شاخه کلیک کنید.</li>');
+                console.error('GetTree child loading failed:', response);
+            },
+            complete: function () {
+                $target.removeData('tree-loading');
+            }
+        });
+    }
+
+    function ShowTree() {
+        var vardata = {
+            Year: parseInt($('#HDFYear').val()),
+            BarAvordUserId: $('#HDFBarAvordUserID').val(),
+            OpName: '',
+            ParentId: 0
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("GetTree")",
+            data: JSON.stringify(vardata),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                if (!data || !data.newOperation) {
+                    $('#jstree').empty();
+                    return;
+                }
+
+                NewOperation = data.newOperation;
+                BaravordType = data.baravordType;
+                $('#jstree').html(createTree(NewOperation, 0, true));
+                InitializeTreeLinks($('#jstree'));
+
+                $('#jstree')
+                    .off('click.MenuAccordion', 'a[id^="a"]')
+                    .on('click.MenuAccordion', 'a[id^="a"]', function (e) {
+                        e.preventDefault();
+
+                        var $this = $(this);
+                        var currentId = $this.attr('id').substring(1);
+                        var inlineClick = $this.data('tree-inline-click');
+
+                        if (inlineClick) {
+                            try {
+                                new Function('e', 'event', inlineClick).call(this, e, e);
+                            } catch (ex) {
+                                console.error('Error in tree node action:', ex);
+                            }
+                        }
+
+                        var $target = $('#ula' + currentId);
+                        if (!$target.length) return;
+
+                        if ($target.is('ul')) {
+                            var $branches = $('#jstree ul[id^="ula"]');
+                            var $ancestors = $this.parents('ul[id^="ula"]');
+
+                            if ($target.is(':visible')) {
+                                $target.find('ul[id^="ula"]').addBack().slideUp(250);
+                                return;
+                            }
+
+                            $branches.not($ancestors).not($target).slideUp(250);
+
+                            if ($target.attr('data-tree-lazy') === 'true' &&
+                                $target.data('tree-loaded') !== true) {
+                                LoadTreeChildren(currentId, $target);
+                            }
+
+                            $target.slideDown(250);
+                        } else if ($target.is('div')) {
+                            var panelWasVisible = $target.is(':visible');
+                            $('#jstree div[id^="ula"]').not($target).slideUp(250);
+                            $target.toggle(!panelWasVisible);
+                        }
+                    });
+
+                $('#jstree ul[id^="ula"]').hide();
+            },
+            error: function (response) {
+                toastr('danger', 'خطا', 'مشکلی بوجود آمده، مجددا بعدا امتحان نمایید');
+                console.error('GetTree root loading failed:', response);
+            }
+        });
+    }
+
     function GetTreeForOneOperation() {
     debugger;
     plugin = ['wholerow'];
