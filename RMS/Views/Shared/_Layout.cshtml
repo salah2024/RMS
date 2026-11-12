@@ -51,14 +51,29 @@
         }
 
 
-        .navbar {
-            background-color:#fff;
+        /* فقط نوار اصلی بالای صفحه ثابت باشد؛ قانون عمومی .navbar
+           باعث می‌شد نوار دوم هم fixed و هم‌پوشان با منوی پروفایل شود. */
+        #navbar-main {
+            background-color: #fff;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            z-index: 999;
-            height: 50px; /* یا مقدار واقعی */
+            z-index: 1200;
+            min-height: 50px;
+            height: 50px;
+            overflow: visible !important;
+        }
+
+        /* نوار دوم در جریان عادی صفحه باقی بماند و زیر منوی پروفایل باشد. */
+        .modern-ribbon {
+            position: relative !important;
+            z-index: 100 !important;
+        }
+
+        /* منوهای بازشونده نوار اصلی بالاتر از سایر اجزای صفحه باشند. */
+        #navbar-main .dropdown-menu {
+            z-index: 1300 !important;
         }
 
         html, body {
