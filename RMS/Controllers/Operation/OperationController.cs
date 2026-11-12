@@ -71,7 +71,9 @@ public class OperationController(ApplicationDbContext context) : Controller
 
         var operationDetails = _context.OperationDetails
             .Where(x => operationIds.Contains(x.OperationId))
-            .ToDictionary(x => x.OperationId);
+            .ToList()
+            .GroupBy(x => x.OperationId)
+            .ToDictionary(x => x.Key, x => x.First());
 
         var visibleHamlItems = _context.RizMetreUserses
             .Include(x => x.FB)
@@ -159,7 +161,7 @@ public class OperationController(ApplicationDbContext context) : Controller
 
             AddAncestorChain(op.ParentId);
             string uniqueKey = op.Id + "|" + item.ItemsFBShomareh + "|" + (int)item.NoeFB;
-            if (!includedItemKeys.Add(uniqueKey)) continue;
+            if (!includedItemKeys.Add(uniqueKey) || !includedIds.Add(op.Id)) continue;
 
             result.Add(new AllOperationDto
             {
