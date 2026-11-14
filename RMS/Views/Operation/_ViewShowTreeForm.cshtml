@@ -384,9 +384,17 @@
 
                             $target.slideDown(250);
                         } else if ($target.is('div')) {
-                            var panelWasVisible = $target.is(':visible');
+                            // OperationClick controls this panel's visibility itself:
+                            // it loads the table only while the panel is hidden.
+                            // Toggling it here before the lazy-loaded function runs
+                            // makes the first click expose an empty panel and causes
+                            // OperationClick to skip its AJAX request.
                             $('#jstree div[id^="ula"]').not($target).slideUp(250);
-                            $target.toggle(!panelWasVisible);
+
+                            if (!inlineClick) {
+                                var panelWasVisible = $target.is(':visible');
+                                $target.toggle(!panelWasVisible);
+                            }
                         }
                     });
 
