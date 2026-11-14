@@ -4,9 +4,16 @@
     "use strict";
 
     var loaderScript = document.currentScript;
-    var scriptBaseUrl = loaderScript && loaderScript.src
-        ? loaderScript.src.substring(0, loaderScript.src.lastIndexOf("/") + 1)
-        : "";
+    var configuredBaseUrl = loaderScript && loaderScript.getAttribute("data-base-url");
+    var scriptBaseUrl = configuredBaseUrl
+        ? configuredBaseUrl
+        : (loaderScript && loaderScript.src
+            ? loaderScript.src.substring(0, loaderScript.src.lastIndexOf("/") + 1)
+            : "");
+
+    if (scriptBaseUrl && scriptBaseUrl.charAt(scriptBaseUrl.length - 1) !== "/") {
+        scriptBaseUrl += "/";
+    }
 
     var loadedScripts = Object.create(null);
 
@@ -92,7 +99,7 @@
             };
             script.onerror = function () {
                 delete loadedScripts[fileName];
-                reject(new Error("Unable to load " + fileName));
+                reject(new Error("Unable to load script: " + script.src));
             };
             (document.head || document.getElementsByTagName("head")[0]).appendChild(script);
         });
