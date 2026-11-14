@@ -3,7 +3,19 @@
 (function (window, document) {
     "use strict";
 
+    // document.currentScript may be null when this view is injected as a partial
+    // or its scripts are evaluated by a library such as jQuery.
     var loaderScript = document.currentScript;
+    if (!loaderScript || !loaderScript.getAttribute("data-base-url")) {
+        var loaderScripts = document.getElementsByTagName("script");
+        for (var i = loaderScripts.length - 1; i >= 0; i--) {
+            if (loaderScripts[i].getAttribute("data-base-url")) {
+                loaderScript = loaderScripts[i];
+                break;
+            }
+        }
+    }
+
     var configuredBaseUrl = loaderScript && loaderScript.getAttribute("data-base-url");
     var scriptBaseUrl = configuredBaseUrl
         ? configuredBaseUrl
@@ -13,6 +25,10 @@
 
     if (scriptBaseUrl && scriptBaseUrl.charAt(scriptBaseUrl.length - 1) !== "/") {
         scriptBaseUrl += "/";
+    }
+
+    if (!scriptBaseUrl) {
+        console.error("OperationScriptLoader: base URL could not be resolved. Check the data-base-url attribute on OperationScriptLoader.js.");
     }
 
     var loadedScripts = Object.create(null);
