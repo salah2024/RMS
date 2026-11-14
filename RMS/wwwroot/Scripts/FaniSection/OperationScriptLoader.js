@@ -108,7 +108,7 @@
     }
 
     function getFunctionName(inlineCall) {
-        var match = /^s*([A-Za-z_$][\w$]*)\s*\(/.exec(inlineCall || "");
+        var match = /^\\s*([A-Za-z_$][\w$]*)\s*\(/.exec(inlineCall || "");
         return match ? match[1] : "";
     }
 
