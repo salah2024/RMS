@@ -252,7 +252,7 @@ public class OperationController(ApplicationDbContext context) : Controller
 
                     item.ItemsFBShomareh = fullShomareh == "" ? "" : shomareh6;
                 }
-                else
+                else if (!item.CheckData.HasValue)
                 {
                     NewOperation.Add(item);
                 }
