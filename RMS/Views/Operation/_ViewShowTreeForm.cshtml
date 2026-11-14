@@ -325,6 +325,7 @@
             ParentId: 0
         };
 
+        var __treeAjaxStart = performance.now();
         $.ajax({
             type: "POST",
             url: "@Url.Action("GetTree")",
@@ -332,15 +333,28 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (data) {
+                var __treeAjaxEnd = performance.now();
                 if (!data || !data.newOperation) {
                     $('#jstree').empty();
+                    console.info("[TreePerf] ShowTree: empty response", {
+                        ajaxToSuccessMs: Math.round((__treeAjaxEnd - __treeAjaxStart) * 100) / 100
+                    });
                     return;
                 }
 
+                var __treeStageStart = performance.now();
                 NewOperation = data.newOperation;
                 BaravordType = data.baravordType;
-                $('#jstree').html(createTree(NewOperation, 0, true));
+                var __treeDataReady = performance.now();
+
+                var __treeHtml = createTree(NewOperation, 0, true);
+                var __treeBuildEnd = performance.now();
+
+                $('#jstree').html(__treeHtml);
+                var __treeDomEnd = performance.now();
+
                 InitializeTreeLinks($('#jstree'));
+                var __treeLinksEnd = performance.now();
 
                 $('#jstree')
                     .off('click.MenuAccordion', 'a[id^="a"]')
@@ -387,6 +401,20 @@
                     });
 
                 $('#jstree ul[id^="ula"]').hide();
+                var __treeDone = performance.now();
+                console.group("[TreePerf] Initial tree rendering");
+                console.table({
+                    ajaxToSuccessMs: Math.round((__treeAjaxEnd - __treeAjaxStart) * 100) / 100,
+                    dataReadyMs: Math.round((__treeDataReady - __treeStageStart) * 100) / 100,
+                    createTreeMs: Math.round((__treeBuildEnd - __treeDataReady) * 100) / 100,
+                    insertHtmlMs: Math.round((__treeDomEnd - __treeBuildEnd) * 100) / 100,
+                    initializeLinksMs: Math.round((__treeLinksEnd - __treeDomEnd) * 100) / 100,
+                    bindAndHideMs: Math.round((__treeDone - __treeLinksEnd) * 100) / 100,
+                    totalAfterAjaxSuccessMs: Math.round((__treeDone - __treeAjaxEnd) * 100) / 100,
+                    rootItems: NewOperation.length,
+                    generatedHtmlLength: __treeHtml.length
+                });
+                console.groupEnd();
             },
             error: function (response) {
                 toastr('danger', 'خطا', 'مشکلی بوجود آمده، مجددا بعدا امتحان نمایید');
