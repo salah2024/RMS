@@ -123,29 +123,7 @@
 
 <script src="~/Scripts/jsTree/jstree.min.js"></script>
 <script src="~/Scripts/jsTree/myTree.js"></script>
-<script src="~/Scripts/FaniSection/DrawingPol.js"></script>
-<script src="~/Scripts/FaniSection/DrawingPlan2.js"></script>
-<script src="~/Scripts/FaniSection/AbnieFani.js"></script>
-<script src="~/Scripts/FaniSection/AbnieFaniShowRizMetre.js"></script>
-<script src="~/Scripts/FaniSection/AssisAbnieFani.js"></script>
-<script src="~/Scripts/FaniSection/AmalyateKhaki.js"></script>
-<script src="~/Scripts/FaniSection/AmalyateKhaki2.js"></script>
-<script src="~/Scripts/FaniSection/AmalyateKhakiSumMaghadir.js"></script>
-<script src="~/Scripts/FaniSection/AmalyateKhakiEzafeBaha.js"></script>
-<script src="~/Scripts/FaniSection/AmalyateKhakiGharzeh.js"></script>
-<script src="~/Scripts/FaniSection/AssisScript.js"></script>
-<script src="~/Scripts/FaniSection/AssisScript2.js"></script>
-<script src="~/Scripts/FaniSection/KhakRizi.js"></script>
-<script src="~/Scripts/FaniSection/KhakRiziEdit.js"></script>
-<script src="~/Scripts/FaniSection/PayKaniNew.js"></script>
-<script src="~/Scripts/FaniSection/PayKaniEzafeBahaNew.js"></script>
-<script src="~/Scripts/FaniSection/ChanelKaniNew.js"></script>
-<script src="~/Scripts/FaniSection/ChanelKaniEzafeBahaNew.js"></script>
-<script src="~/Scripts/FaniSection/Board.js"></script>
-<script src="~/Scripts/FaniSection/BoardStand.js"></script>
-<script src="~/Scripts/FaniSection/ZaribBalaSari.js"></script>
-<script src="~/Scripts/FaniSection/ZaribManteghe.js"></script>
-<script src="~/Scripts/FaniSection/CheckConditionContextRelated.js"></script>
+<script src="~/Scripts/FaniSection/OperationScriptLoader.js"></script>
 
 <script>
 
@@ -366,11 +344,17 @@
                         var inlineClick = $this.data('tree-inline-click');
 
                         if (inlineClick) {
-                            try {
-                                new Function('e', 'event', inlineClick).call(this, e, e);
-                            } catch (ex) {
-                                console.error('Error in tree node action:', ex);
-                            }
+                            OperationScriptLoader.ensureForCall(inlineClick).then(function () {
+                                try {
+                                    new Function('e', 'event', inlineClick).call($this[0], e, e);
+                                } catch (ex) {
+                                    console.error('Error in tree node action:', ex);
+                                    if (window.toastr) toastr.error('اجرای عملیات با خطا مواجه شد', 'خطا');
+                                }
+                            }).catch(function (ex) {
+                                console.error('Error loading operation scripts:', ex);
+                                if (window.toastr) toastr.error('بارگذاری فایل‌های عملیات ناموفق بود. لطفاً دوباره تلاش کنید.', 'خطا');
+                            });
                         }
 
                         var $target = $('#ula' + currentId);
