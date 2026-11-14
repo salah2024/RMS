@@ -149,83 +149,113 @@ public class OperationController(ApplicationDbContext context) : Controller
 
             List<AllOperationDto> NewOperation = new List<AllOperationDto>();
 
-
-            List<string> lstShomareh = operation1.Where(x => x.CheckData == true).Select(x => x.ItemsFBShomarehMain).ToList();
-
-            List<string> lstShomareh1 = new List<string>();
-            foreach (var item in lstShomareh)
-            {
-                if (item.Trim() != "")
+            // کلیدهای موردنیاز را یک‌بار از ردیف‌های همین سطح استخراج می‌کنیم.
+            var checkedItems = operation1
+                .Where(x => x.CheckData == true && x.NoeFB.HasValue && !string.IsNullOrWhiteSpace(x.ItemsFBShomareh))
+                .Select(x => new
                 {
-                    lstShomareh1.Add(item.Trim().Substring(0, 6));
-                }
-            }
-            List<clsItemsFields> lstItemsFields = _context.ItemsFieldses.Where(x => lstShomareh1.Contains(x.ItemShomareh)).ToList();
+                    NoeFB = x.NoeFB.Value,
+                    Shomareh = x.ItemsFBShomareh.Trim(),
+                    Shomareh6 = x.ItemsFBShomareh.Trim().Length >= 6
+                        ? x.ItemsFBShomareh.Trim().Substring(0, 6)
+                        : x.ItemsFBShomareh.Trim()
+                })
+                .Distinct()
+                .ToList();
+
+            var noeFBIds = checkedItems.Select(x => x.NoeFB).Distinct().ToList();
+            var hamlNumbers = checkedItems.Select(x => x.Shomareh).Distinct().ToList();
+            var fieldNumbers = checkedItems.Select(x => x.Shomareh6).Distinct().ToList();
+
+            // به‌جای اجرای یک کوئری برای هر ردیف، اطلاعات حمل را گروهی می‌خوانیم.
+            var hamlLookup = _context.BarAvordHamls
+                .AsNoTracking()
+                .Where(x => x.BarAvordId == request.BarAvordUserId
+                    && noeFBIds.Contains(x.NoeFBId)
+                    && hamlNumbers.Contains(x.FBShomarehHaml))
+                .ToList()
+                .GroupBy(x => (x.NoeFBId, Shomareh: x.FBShomarehHaml))
+                .ToDictionary(g => g.Key, g => g.First());
+
+            // ریزمتره‌های تمام آیتم‌های این سطح در یک درخواست دریافت می‌شوند.
+            var rizMetreLookup = _context.RizMetreUserses
+                .AsNoTracking()
+                .Include(x => x.FB)
+                .Where(x => x.FB.BarAvordId == request.BarAvordUserId
+                    && noeFBIds.Contains(x.FB.NoeFBId)
+                    && hamlNumbers.Contains(x.FB.Shomareh))
+                .ToList()
+                .GroupBy(x => (x.FB.NoeFBId, Shomareh: x.FB.Shomareh))
+                .ToDictionary(g => g.Key, g =>
+                {
+                    decimal? sum = 0;
+                    long count = 0;
+                    foreach (var rm in g)
+                    {
+                        sum += (rm.Tool ?? 1) * (rm.Arz ?? 1) * (rm.Ertefa ?? 1) * (rm.Vazn ?? 1);
+                        count++;
+                    }
+                    return (Count: count, Sum: sum);
+                });
+
+            // محدودیت حمل نیز به‌صورت گروهی خوانده می‌شود.
+            var necessaryLimitNoeFBs = _context.BarAvordHamlNecessaryLimits
+                .AsNoTracking()
+                .Where(x => x.BarAvordId == request.BarAvordUserId && noeFBIds.Contains(x.NoeFBId))
+                .Select(x => x.NoeFBId)
+                .Distinct()
+                .ToHashSet();
+
+            // فیلدهای وزن به دیکشنری تبدیل می‌شوند تا جستجوی تکراری در حلقه حذف شود.
+            var itemsFieldsLookup = _context.ItemsFieldses
+                .AsNoTracking()
+                .Where(x => fieldNumbers.Contains(x.ItemShomareh))
+                .ToList()
+                .GroupBy(x => (x.ItemShomareh, x.NoeFB, x.FieldType))
+                .ToDictionary(g => g.Key, g => g.First());
 
             foreach (var item in operation1)
             {
-                if (item.LatinName != null)
+                if (item.LatinName != null && item.LatinName.Trim().ToLower() == "sharh")
                 {
-                    if (item.LatinName.Trim().ToLower() == "sharh")
-                    {
-                        clsBarAvordHamlNecessaryLimit? barAvordHamlNecessaryLimit = _context.BarAvordHamlNecessaryLimits.FirstOrDefault(x => x.BarAvordId == request.BarAvordUserId && x.NoeFBId == item.NoeFB);
-                        if (barAvordHamlNecessaryLimit != null)
-                        {
-                            item.CheckNecessary = true;
-                        }
-                        else
-                            item.CheckNecessary = false;
-                    }
+                    item.CheckNecessary = item.NoeFB.HasValue
+                        && necessaryLimitNoeFBs.Contains(item.NoeFB.Value);
                 }
-                if (item.CheckData != null)
+
+                if (item.CheckData == true)
                 {
-                    if (item.CheckData.Value)
+                    string fullShomareh = (item.ItemsFBShomareh ?? "").Trim();
+                    string shomareh6 = fullShomareh.Length >= 6
+                        ? fullShomareh.Substring(0, 6)
+                        : fullShomareh;
+
+                    if (item.NoeFB.HasValue
+                        && hamlLookup.TryGetValue((item.NoeFB.Value, fullShomareh), out var barAvordHaml))
                     {
-                        clsBarAvordHaml? barAvordHaml = _context.BarAvordHamls.FirstOrDefault(x => x.BarAvordId == request.BarAvordUserId && x.NoeFBId == item.NoeFB && x.FBShomarehHaml == item.ItemsFBShomareh.Trim());
-
-                        if (barAvordHaml != null)
-                        {
-                            item.OperationDefaultValue = barAvordHaml?.ValueBase == null ? 0 : barAvordHaml.ValueBase;
-                            item.Value = barAvordHaml?.Value == null ? 0 : barAvordHaml.Value;
-                        }
-
-                        List<clsRizMetreUsers> lstRizMetreUsers =
-                            _context.RizMetreUserses.Include(x => x.FB).Where(x => x.FB.BarAvordId == request.BarAvordUserId && x.FB.Shomareh == item.ItemsFBShomareh && x.FB.NoeFBId == item.NoeFB).ToList();
-
-
-                        string strItemFBShomareh = "";
-                        if (item.ItemsFBShomareh != "")
-                        {
-                            strItemFBShomareh = item.ItemsFBShomareh.Substring(0, 6);
-                        }
-
-                        clsItemsFields? currentItemsField = lstItemsFields.FirstOrDefault(x => x.ItemShomareh == strItemFBShomareh && x.NoeFB == item.NoeFB && x.FieldType == ItemFieldType.Vazn);
-
-                        if (currentItemsField != null)
-                        {
-                            item.Vahed = currentItemsField.Vahed;
-                        }
-
-                        decimal? dSumVazn = 0;
-
-                        foreach (var RM in lstRizMetreUsers)
-                        {
-                            dSumVazn += (RM.Tool != null ? RM.Tool : 1) * (RM.Arz != null ? RM.Arz : 1) * (RM.Ertefa != null ? RM.Ertefa : 1) * (RM.Vazn != null ? RM.Vazn : 1);
-                        }
-
-
-                        long RMCount = lstRizMetreUsers.Count();
-                        if (RMCount != 0)
-                        {
-                            item.SumVazn = dSumVazn;
-                            NewOperation.Add(item);
-                        }
-
-                        item.ItemsFBShomareh = item.ItemsFBShomareh.Trim() == "" ? "" : item.ItemsFBShomareh.Substring(0, 6);
+                        item.OperationDefaultValue = barAvordHaml.ValueBase ?? 0;
+                        item.Value = barAvordHaml.Value ?? 0;
                     }
+
+                    if (item.NoeFB.HasValue
+                        && itemsFieldsLookup.TryGetValue((shomareh6, item.NoeFB.Value, ItemFieldType.Vazn), out var currentItemsField))
+                    {
+                        item.Vahed = currentItemsField.Vahed;
+                    }
+
+                    if (item.NoeFB.HasValue
+                        && rizMetreLookup.TryGetValue((item.NoeFB.Value, fullShomareh), out var rizMetreInfo)
+                        && rizMetreInfo.Count != 0)
+                    {
+                        item.SumVazn = rizMetreInfo.Sum;
+                        NewOperation.Add(item);
+                    }
+
+                    item.ItemsFBShomareh = fullShomareh == "" ? "" : shomareh6;
                 }
                 else
+                {
                     NewOperation.Add(item);
+                }
             }
 
             var currentNodeIds = NewOperation
@@ -235,14 +265,15 @@ public class OperationController(ApplicationDbContext context) : Controller
                 .ToList();
 
             var parentIdsWithChildren = currentNodeIds.Count == 0
-                ? new List<long>()
+                ? new HashSet<long>()
                 : _context.Operations
+                    .AsNoTracking()
                     .Where(x => x.Year == request.Year
                         && x.ParentId.HasValue
                         && currentNodeIds.Contains(x.ParentId.Value))
                     .Select(x => x.ParentId.Value)
                     .Distinct()
-                    .ToList();
+                    .ToHashSet();
 
             foreach (var node in NewOperation)
                 node.HasChildren = parentIdsWithChildren.Contains(node.ID);
