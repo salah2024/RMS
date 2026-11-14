@@ -348,6 +348,16 @@
                         var $this = $(this);
                         var currentId = $this.attr('id').substring(1);
                         var inlineClick = $this.data('tree-inline-click');
+                        var $target = $('#ula' + currentId);
+
+                        // For operation panels, the first click loads and opens the panel.
+                        // If it is already open, close it and do not call OperationClick again,
+                        // because OperationClick intentionally skips loading when the panel is visible.
+                        if (inlineClick && $target.is('div') && $target.is(':visible')) {
+                            $('#jstree div[id^="ula"]').not($target).stop(true, true).slideUp(250);
+                            $target.stop(true, true).slideUp(250);
+                            return;
+                        }
 
                         if (inlineClick) {
                             OperationScriptLoader.ensureForCall(inlineClick).then(function () {
@@ -363,7 +373,6 @@
                             });
                         }
 
-                        var $target = $('#ula' + currentId);
                         if (!$target.length) return;
 
                         if ($target.is('ul')) {
