@@ -115,16 +115,7 @@ public class OperationController(ApplicationDbContext context) : Controller
                     select new { op, od }
                 ).ToList();
 
-                // فقط آیتم‌های مربوط به عملیات همین سطح دریافت شوند؛
-                // در غیر این صورت تمام آیتم‌های تمام سطوح برای هر بار لود درخت خوانده می‌شوند.
-                var baseOperationIds = baseRows
-                    .Select(x => x.op.Id)
-                    .Distinct()
-                    .ToList();
-
-                var siLookup = ShomarehItems
-                    .Where(s => baseOperationIds.Contains(s.OperationId))
-                    .ToLookup(s => s.OperationId);
+                var siLookup = ShomarehItems.ToLookup(s => s.OperationId);
 
                 List<AllOperationDto> operation = baseRows
                     .SelectMany(x => siLookup[x.op.Id].DefaultIfEmpty(),
