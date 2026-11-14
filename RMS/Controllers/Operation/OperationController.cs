@@ -122,11 +122,9 @@ public class OperationController(ApplicationDbContext context) : Controller
                     .Distinct()
                     .ToList();
 
-                var siLookup = baseOperationIds.Count == 0
-                    ? Enumerable.Empty<dynamic>().ToLookup(x => (long)x.OperationId)
-                    : ShomarehItems
-                        .Where(s => baseOperationIds.Contains(s.OperationId))
-                        .ToLookup(s => s.OperationId);
+                var siLookup = ShomarehItems
+                    .Where(s => baseOperationIds.Contains(s.OperationId))
+                    .ToLookup(s => s.OperationId);
 
                 List<AllOperationDto> operation = baseRows
                     .SelectMany(x => siLookup[x.op.Id].DefaultIfEmpty(),
