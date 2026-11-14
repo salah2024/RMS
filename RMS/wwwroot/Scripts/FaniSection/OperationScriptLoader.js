@@ -3,25 +3,26 @@
 (function (window, document) {
     "use strict";
 
-    // document.currentScript may be null when this view is injected as a partial
-    // or its scripts are evaluated by a library such as jQuery.
+    // Prefer the URL explicitly supplied by the Razor view. This also works
+    // when the partial is injected and document.currentScript is unavailable.
+    var scriptBaseUrl = window.OperationScriptsBaseUrl || "";
     var loaderScript = document.currentScript;
-    if (!loaderScript || !loaderScript.getAttribute("data-base-url")) {
+
+    // Fallback: locate the loader tag by its own URL, not by a custom attribute.
+    if (!scriptBaseUrl) {
         var loaderScripts = document.getElementsByTagName("script");
         for (var i = loaderScripts.length - 1; i >= 0; i--) {
-            if (loaderScripts[i].getAttribute("data-base-url")) {
+            var source = loaderScripts[i].src || "";
+            if (source.indexOf("OperationScriptLoader.js") >= 0) {
                 loaderScript = loaderScripts[i];
                 break;
             }
         }
-    }
 
-    var configuredBaseUrl = loaderScript && loaderScript.getAttribute("data-base-url");
-    var scriptBaseUrl = configuredBaseUrl
-        ? configuredBaseUrl
-        : (loaderScript && loaderScript.src
-            ? loaderScript.src.substring(0, loaderScript.src.lastIndexOf("/") + 1)
-            : "");
+        if (loaderScript && loaderScript.src) {
+            scriptBaseUrl = loaderScript.src.substring(0, loaderScript.src.lastIndexOf("/") + 1);
+        }
+    }
 
     if (scriptBaseUrl && scriptBaseUrl.charAt(scriptBaseUrl.length - 1) !== "/") {
         scriptBaseUrl += "/";
