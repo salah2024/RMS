@@ -1,5 +1,7 @@
 ﻿var gParents = [];
 function createTree(data, parentId, lazyMode) {
+    var __treeBuildStart = performance.now();
+    var __treeInputCount = data ? data.length : 0;
 
     var html = "";
     var children = data.filter(function (item) {
@@ -219,6 +221,16 @@ function createTree(data, parentId, lazyMode) {
                         </div>`;
                 }
             }
+        });
+    }
+    var __treeBuildMs = performance.now() - __treeBuildStart;
+    if (window.console && console.info) {
+        console.info("[TreePerf] createTree", {
+            parentId: parentId,
+            lazyMode: !!lazyMode,
+            inputItems: __treeInputCount,
+            htmlLength: html.length,
+            durationMs: Math.round(__treeBuildMs * 100) / 100
         });
     }
     return html;
