@@ -1594,7 +1594,38 @@ function ShowSelctionPol(IsNew, PolExistingId, PolNum, GetTedadDahaneh, GetDahan
             }
             else {
                 $('#PolShow-' + PolExistingId).addClass('displayShow');
-                $('#PolShow-' + PolExistingId).slideDown(500);
+                $('#PolShow-' + PolExistingId).stop(true, true).slideDown(500, function () {
+                    var panel = this;
+
+                    requestAnimationFrame(function () {
+                        var rect = panel.getBoundingClientRect();
+                        var scrollParent = $(panel).parents().filter(function () {
+                            var overflowY = window.getComputedStyle(this).overflowY;
+                            return (overflowY === 'auto' || overflowY === 'scroll') &&
+                                this.scrollHeight > this.clientHeight;
+                        }).first()[0];
+
+                        if (scrollParent) {
+                            var parentRect = scrollParent.getBoundingClientRect();
+                            var overflow = rect.bottom - parentRect.bottom;
+                            if (overflow > 0) {
+                                $(scrollParent).stop(true).animate({
+                                    scrollTop: scrollParent.scrollTop + overflow + 24
+                                }, 300);
+                            }
+                            return;
+                        }
+
+                        var viewportBottom = window.innerHeight || document.documentElement.clientHeight;
+                        var overflow = rect.bottom - viewportBottom;
+                        if (overflow > 0) {
+                            window.scrollTo({
+                                top: window.pageYOffset + overflow + 24,
+                                behavior: 'smooth'
+                            });
+                        }
+                    });
+                });
             }
 
             if (IsNew == 0) {
