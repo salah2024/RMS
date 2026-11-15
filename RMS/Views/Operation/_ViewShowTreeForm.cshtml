@@ -260,6 +260,66 @@
         });
     }
 
+    // Scroll only when newly expanded tree content extends below the visible area.
+    function ScrollTreeContentIntoView(target) {
+        var element = target && target.jquery ? target[0] : target;
+        if (!element) return;
+
+        requestAnimationFrame(function () {
+            var rect = element.getBoundingClientRect();
+            var scrollParent = $(element).parents().filter(function () {
+                var overflowY = window.getComputedStyle(this).overflowY;
+                return (overflowY === 'auto' || overflowY === 'scroll') &&
+                    this.scrollHeight > this.clientHeight;
+            }).first()[0];
+
+            if (scrollParent) {
+                var parentRect = scrollParent.getBoundingClientRect();
+                var overflow = rect.bottom - parentRect.bottom;
+                if (overflow > 0) {
+                    $(scrollParent).stop(true).animate({
+                        scrollTop: scrollParent.scrollTop + overflow + 24
+                    }, 300);
+                }
+                return;
+            }
+
+            var viewportBottom = window.innerHeight || document.documentElement.clientHeight;
+            var overflow = rect.bottom - viewportBottom;
+            if (overflow > 0) {
+                window.scrollTo({
+                    top: window.pageYOffset + overflow + 24,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    }
+
+    // OperationClick fills and displays its panel asynchronously; observe that moment
+    // so the page can scroll after the actual content has been rendered.
+    function WatchOperationPanelForAutoScroll($target) {
+        if (!$target || !$target.length || !window.MutationObserver) return;
+
+        var panel = $target[0];
+        var observer = new MutationObserver(function () {
+            if ($target.is(':visible') && panel.children.length > 0) {
+                observer.disconnect();
+                setTimeout(function () {
+                    ScrollTreeContentIntoView(panel);
+                }, 120);
+            }
+        });
+
+        observer.observe(panel, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['style']
+        });
+
+        setTimeout(function () { observer.disconnect(); }, 30000);
+    }
+
     function LoadTreeChildren(parentId, $target) {
         if ($target.data('tree-loading') || $target.data('tree-loaded') === true) return;
 
@@ -290,6 +350,7 @@
                 InitializeTreeLinks($target);
                 $target.children('li').children('ul[id^="ula"]').hide();
                 $target.data('tree-loaded', true);
+                ScrollTreeContentIntoView($target);
             },
             error: function (response) {
                 $target.html('<li class="tree-load-error" style="padding:5px;color:#b00;">خطا در دریافت اطلاعات؛ برای تلاش مجدد دوباره روی شاخه کلیک کنید.</li>');
@@ -360,6 +421,10 @@
                         }
 
                         if (inlineClick) {
+                            if ($target.is('div') && !$target.is(':visible')) {
+                                WatchOperationPanelForAutoScroll($target);
+                            }
+
                             OperationScriptLoader.ensureForCall(inlineClick).then(function () {
                                 try {
                                     new Function('e', 'event', inlineClick).call($this[0], e, e);
@@ -391,7 +456,9 @@
                                 LoadTreeChildren(currentId, $target);
                             }
 
-                            $target.slideDown(250);
+                            $target.stop(true, true).slideDown(250, function () {
+                                ScrollTreeContentIntoView($target);
+                            });
                         } else if ($target.is('div')) {
                             // OperationClick controls this panel's visibility itself:
                             // it loads the table only while the panel is hidden.
