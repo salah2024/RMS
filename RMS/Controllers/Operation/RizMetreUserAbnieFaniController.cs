@@ -82,13 +82,7 @@ public class RizMetreUserAbnieFaniController(ApplicationDbContext context) : Con
 
         int Year = request.Year;
 
-        //try
-        //{
         string strPolNum = PolNum.ToString("D3");
-        //List<string> lstStr = new List<string>();
-        //lstStr.Add("3"); lstStr.Add("5");
-        //var RizMetreUsers1 = context.RizMetreUserses.Where(x => x.FB.BarAvordId == BarAvordId && lstStr.Contains(x.Type.Trim().Substring(1, 1))
-        //                     && x.Type.Trim().Substring(4, 3) == strPolNum).ToList();
 
 
         List<clsPolVaAbroBarAvordRizMetre> lstPolRMU = _context.PolVaAbroBarAvordRizMetres.Include(x => x.RizMetreUsers).Where(x => x.PolVaAbroBarAvordId == PolVaAbroId).ToList();
@@ -104,7 +98,7 @@ public class RizMetreUserAbnieFaniController(ApplicationDbContext context) : Con
                 context.SaveChanges();
             }
         }
-        //clsRizMetreUserss.Delete("BarAvordId=" + BarAvordID + " and (SUBSTRING(ltrim(rtrim(Type)),1,1) in('3','5')) and SUBSTRING(ltrim(rtrim(Type)),4,3)='" + PolNum.ToString("D3") + "'");
+
         AbnieFaniCommonGhalebBandi AbnieFaniGhalebBandi = new AbnieFaniCommonGhalebBandi(_context);
         AbnieFaniCommonGhalebBandiChenaj AbnieFaniGhalebBandiChenaj = new AbnieFaniCommonGhalebBandiChenaj(_context);
         AbnieFaniCommonGhalebBandiDalDarja AbnieFaniGhalebBandiDalDarja = new AbnieFaniCommonGhalebBandiDalDarja(_context);
@@ -133,6 +127,8 @@ public class RizMetreUserAbnieFaniController(ApplicationDbContext context) : Con
         string strt = Math.Round(decimal.Parse(t), 3).ToString();
         string strb1 = Math.Round(decimal.Parse(b1), 3).ToString();
         string strb2 = Math.Round(decimal.Parse(b2), 3).ToString();
+        decimal db1 = decimal.Parse(strb1);
+        decimal db2 = decimal.Parse(strb2);
         string strc1 = Math.Round(decimal.Parse(c1), 3).ToString();
         string strc2 = Math.Round(decimal.Parse(c2), 3).ToString();
         string strp1 = Math.Round(decimal.Parse(p1), 3).ToString();
@@ -141,19 +137,15 @@ public class RizMetreUserAbnieFaniController(ApplicationDbContext context) : Con
         string strLW1j = Math.Round(decimal.Parse(LW1j), 3).ToString();
         string strLW1p = Math.Round(decimal.Parse(LW1p), 3).ToString();
         string strLB1W1 = Math.Round(((decimal.Parse(hMinw1) / 3) + AbadDivarBaliForhMinw1.x + decimal.Parse("0.35") + AbadDivarBaliForhMinw1.b), 3).ToString(); //Math.Round(decimal.Parse(LB1W1), 2).ToString();
-        //string strLB2W1 = Math.Round(decimal.Parse(LB2W1), 2).ToString();
         string strLW2j = Math.Round(decimal.Parse(LW2j), 3).ToString();
         string strLW2p = Math.Round(decimal.Parse(LW2p), 3).ToString();
         string strLB1W2 = Math.Round(((decimal.Parse(hMinw2) / 3) + AbadDivarBaliForhMinw2.x + decimal.Parse("0.35") + AbadDivarBaliForhMinw2.b), 3).ToString(); //Math.Round(decimal.Parse(LB1W2), 2).ToString();
-        //string strLB2W2 = Math.Round(decimal.Parse(LB2W2), 2).ToString();
         string strLW3j = Math.Round(decimal.Parse(LW3j), 3).ToString();
         string strLW3p = Math.Round(decimal.Parse(LW3p), 3).ToString();
         string strLB1W3 = Math.Round(((decimal.Parse(hMinw3) / 3) + AbadDivarBaliForhMinw3.x + decimal.Parse("0.35") + AbadDivarBaliForhMinw3.b), 3).ToString(); //Math.Round(decimal.Parse(LB1W3), 2).ToString();
-        //string strLB2W3 = Math.Round(decimal.Parse(LB2W3), 2).ToString();
         string strLW4j = Math.Round(decimal.Parse(LW4j), 3).ToString();
         string strLW4p = Math.Round(decimal.Parse(LW4p), 3).ToString();
         string strLB1W4 = Math.Round(((decimal.Parse(hMinw4) / 3) + AbadDivarBaliForhMinw4.x + decimal.Parse("0.35") + AbadDivarBaliForhMinw4.b), 3).ToString(); //Math.Round(decimal.Parse(LB1W4), 2).ToString();
-        //string strLB2W4 = Math.Round(decimal.Parse(LB2W4), 2).ToString();
         string strhMinw1 = Math.Round(decimal.Parse(hMinw1), 3).ToString();
         string strhMinw2 = Math.Round(decimal.Parse(hMinw2), 3).ToString();
         string strhMinw3 = Math.Round(decimal.Parse(hMinw3), 3).ToString();
@@ -161,45 +153,35 @@ public class RizMetreUserAbnieFaniController(ApplicationDbContext context) : Con
         string strHs = Math.Round(decimal.Parse(Hs), 3).ToString();
 
         int intNoeBanaii = int.Parse(NoeBanaii.Trim());
-        //if (NoeBanaii.Trim() == "1")
-        //{
+
         AbnieFaniGhalebBandi
             .GhalebBandi(BarAvordId, NoeFBId, PolVaAbroId, PolNum, strLAbro, strw1, strw2, strw3, strw4, strf, strm,
                          strn, strk, strh, strD, TedadDahaneh, strLPayeMoarab, strLKooleMoarab, b1, b2, p1, p2, intNoeBanaii,Year);
-        //_context.SaveChanges();
 
         AbnieFaniGhalebBandiChenaj.GhalebBandiChenaj(BarAvordId, NoeFBId, PolVaAbroId, PolNum, strLAbro, strw1, strw2, strw3, strw4, strf, strm, strn, strk, strh, strt, strb2, strc2, strp2, D, TedadDahaneh);
-        //_context.SaveChanges();
 
         if (NahveEjraDal.Trim() == "1")
             AbnieFaniGhalebBandiDalDarja.GhalebBandiDalDarja(BarAvordId, NoeFBId, PolVaAbroId, PolNum, strLAbro, strw1, strw2, strw3, strw4, strt, strj, strc1, strD, TedadDahaneh);
         else if (NahveEjraDal.Trim() == "2")
             AbnieFaniGhalebBandiDalPishSakhteh.GhalebBandiDalPishSakhteh(BarAvordId, PolVaAbroId, NoeFBId, PolNum, strLAbro, strw1, strw2, strw3, strw4, strt, strj, strc1, strD, TedadDahaneh);
-        //_context.SaveChanges();
 
        await AbnieFaniBoton.Boton(PolVaAbroId, PolNum, BarAvordId, NoeFBId, strLAbro, strw1, strw2, strw3, strw4, strf, strm, strn, strk, strh, strt, strb1, strb2,
                         strj, strc1, strc2, strp1, strp2, strD, TedadDahaneh, NahveEjraDal, strhMinw1, strhMinw2, strhMinw3, strhMinw4, intNoeBanaii,Year);
-        //_context.SaveChanges();
 
         AbnieFaniGhalebBandiFendasionDastak.GhalebBandiFendasionDastak(PolVaAbroId, NoeFBId, PolNum, strD, TedadDahaneh, BarAvordId,
             strLW1j, strLW1p, strLB1W1, strLW2j, strLW2p, strLB1W2, strLW3j, strLW3p, strLB1W3, strLW4j, strLW4p, strLB1W4, strh);
-        //_context.SaveChanges();
 
         if (intNoeBanaii == 1)
         {
             AbnieFaniGhalebBandiDivarVaSotoonDastak.GhalebBandiDivarVaSotoonDastak(PolVaAbroId, NoeFBId, PolNum, D, TedadDahaneh, BarAvordId, strh, strt, strhMinw1,
-                strhMinw2, strhMinw3, strhMinw4, strw1, strw2, strw3, strw4);
-            //_context.SaveChanges();
+                strhMinw2, strhMinw3, strhMinw4,db1,db2, strw1, strw2, strw3, strw4);
 
             AbnieFaniGhalebBandiSarKalaDastak.GhalebBandiSarKalaDastak(PolVaAbroId, NoeFBId, PolNum, D, TedadDahaneh, BarAvordId, strt, strhMinw1, strhMinw2, strhMinw3, strhMinw4, strw1, strw2, strw3, strw4);
-            //_context.SaveChanges();
         }
 
        await AbnieFaniBotonFendasionDastak.BotonFendasionDastak(PolVaAbroId, NoeFBId, PolNum, strD, TedadDahaneh, BarAvordId, strh, strt, strhMinw1, strhMinw2, strhMinw3, strhMinw4, strw1, strw2, strw3, strw4, intNoeBanaii,Year);
-        //_context.SaveChanges();
 
        await AbnieFaniArmator.Armator(PolVaAbroId, PolNum, strD, TedadDahaneh, BarAvordId, NoeFBId, strLAbro, strHs,Year);
-       // _context.SaveChanges();
 
         if (intNoeBanaii == 2)
         {
@@ -211,23 +193,8 @@ public class RizMetreUserAbnieFaniController(ApplicationDbContext context) : Con
                                                     AbadDivarBaliForhMinw1, AbadDivarBaliForhMinw2, AbadDivarBaliForhMinw3, AbadDivarBaliForhMinw4,Year);
         }
 
-
-
-
         context.SaveChanges();
-
-        //}
-        //else if (NoeBanaii.Trim() == "2")
-        //{
-
-        //}
         return new JsonResult("OK");
-        //return "OK";
-        //}
-        //catch (Exception)
-        //{
-        //    return "NOK";
-        //}
     }
 
     public JsonResult SaveEzafeBahaForAbnieFaniPol([FromBody] SaveEzafeBahaForAbnieFaniPolInputDto request)
@@ -245,20 +212,6 @@ public class RizMetreUserAbnieFaniController(ApplicationDbContext context) : Con
 
         string[] strShomareh = { "120701", "120702" };
 
-        //bool blnCheck = false;
-        //clsAbnieFaniQueries AbnieFaniQueries = new clsAbnieFaniQueries();
-        //DataTable DtQuesForAbnieFaniValues = clsAbnieFaniQueries.ListWithParameterQuesForAbnieFaniValues("PolVaAbroId=" + PolVaAbroId + " and QuestionForAbnieFaniId=" + QuestionForAbnieFaniId);
-        //if (DtQuesForAbnieFaniValues.Rows.Count == 0)
-        //{
-        //    if (AbnieFaniQueries.Save(QuestionForAbnieFaniId, 1, 0, PolVaAbroId))
-        //        blnCheck = true;
-        //}
-        //else
-        //    blnCheck = true;
-
-        //if (blnCheck)
-        //{
-
         string strOtherShomareh = "";
         for (int i = 0; i < strShomareh.Length; i++)
         {
@@ -271,18 +224,6 @@ public class RizMetreUserAbnieFaniController(ApplicationDbContext context) : Con
         var varFBUserOtherShomareh = context.FBs.Where(x => x.BarAvordId == BarAvordId && x.Shomareh == strOtherShomareh).ToList();
         DataTable DtFBUserOtherShomareh = clsConvert.ToDataTable(varFBUserOtherShomareh);
 
-        //DataTable DtFBUser = clsOperationItemsFB.FBListWithParameter("BarAvordId=" + BarAvordID + " and Shomareh='" + ItemFBForAdd.Trim() + "'");
-        //DataTable DtFBUserOtherShomareh = clsOperationItemsFB.FBListWithParameter("BarAvordId=" + BarAvordID + " and Shomareh='" + strOtherShomareh + "'");
-        //clsOperationItemsFB OperationItemsFB = new clsOperationItemsFB();
-        //int FBId = 0;
-        //if (DtFBUser.Rows.Count == 0)
-        //{
-
-        //    FBId = OperationItemsFB.SaveFB(BarAvordID, ItemFBForAdd.Trim(), 0);
-        //}
-        //else
-        //    FBId = int.Parse(DtFBUser.Rows[0]["Id"].ToString());
-
         ItemFBForAdd = ItemFBForAdd.Trim();
         Guid FBId = new Guid();
         if (DtFBUser.Rows.Count == 0)
@@ -290,7 +231,6 @@ public class RizMetreUserAbnieFaniController(ApplicationDbContext context) : Con
             clsFB FBSave = new clsFB();
             FBSave.BarAvordId = BarAvordId;
             FBSave.Shomareh = ItemFBForAdd;
-            //FBSave.BahayeVahedZarib = 0;
             FBSave.NoeFBId = NoeFBId;
             context.FBs.Add(FBSave);
             context.SaveChanges();
@@ -303,8 +243,6 @@ public class RizMetreUserAbnieFaniController(ApplicationDbContext context) : Con
         bool blnCheckIsOtherShomarehRizMetreDelete = true;
         if (DtFBUserOtherShomareh.Rows.Count != 0)
         {
-            //DataTable DtQuesForAbnieFani = clsQuesForAbnieFani.ListWithParameterQuesForAbnieFaniValues("isezafebaha=1 and ID<>" + QuestionForAbnieFaniId);
-
             string strParam = "isezafebaha=1 and Id<>" + QuestionForAbnieFaniId;
             var QuesForAbnieFaniParam = new SqlParameter("@Parameter", strParam);
 
@@ -314,7 +252,7 @@ public class RizMetreUserAbnieFaniController(ApplicationDbContext context) : Con
 
             DataTable DtQuesForAbnieFani = clsConvert.ToDataTable(QuesForAbnieFani);
 
-            //DataTable DtQuesForAbnieFani = clsAbnieFaniQueries.ListWithParameterQuesForAbnieFani("isezafebaha=1 and id<>" + QuestionForAbnieFaniId);
+
             Guid FBIdOtherShomareh = Guid.Parse(DtFBUserOtherShomareh.Rows[0]["Id"].ToString());
             long lngQuesForAbnieFaniId = long.Parse(DtQuesForAbnieFani.Rows[0]["Id"].ToString());
             var varAbnieFaniQueries = context.QuesForAbnieFaniValuess.Where(x => x.PolVaAbroId == PolVaAbroId && x.QuestionForAbnieFaniId == lngQuesForAbnieFaniId).ToList();
@@ -323,7 +261,7 @@ public class RizMetreUserAbnieFaniController(ApplicationDbContext context) : Con
                 context.QuesForAbnieFaniValuess.RemoveRange(varAbnieFaniQueries);
                 context.SaveChanges();
             }
-            //clsAbnieFaniQueries.DeleteQuesForAbnieFaniValuesWithParameter("PolVaAbroId=" + PolVaAbroId + " and QuestionForAbnieFaniId=" + DtQuesForAbnieFani.Rows[0]["Id"].ToString());
+
 
             var varRizMetreUsers = (from RizMetreUsers in context.RizMetreUserses
                                     join FB in context.FBs on RizMetreUsers.FBId equals FB.ID

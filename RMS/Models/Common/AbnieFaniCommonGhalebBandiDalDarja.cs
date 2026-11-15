@@ -22,28 +22,21 @@ public class AbnieFaniCommonGhalebBandiDalDarja(ApplicationDbContext context)
 
             DataTable DtFBUser = null;
 
-            // clsOperationItemsFB OperationItemsFB = new clsOperationItemsFB();
             Guid guFBId = new Guid();
             DataTable DtLastRizMetreUsersesShomareh = null;
             long Shomareh = 0;
-            //clsRizMetreUsersses RizMetre = new clsRizMetreUsersses();
             decimal dMeghdarJoz = 0;
             if (int.Parse(D.Trim()) <= 5)
             {
                 clsFB? varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "080301" && x.NoeFBId == NoeFBId);
-                //DtFBUser = clsConvert.ToDataTable(varFBUser);
-
                 guFBId = new Guid();
-                //if (DtFBUser.Rows.Count == 0)
                 if (varFBUser == null)
                 {
                     clsFB FBSave = new clsFB();
                     FBSave.BarAvordId = BarAvordId;
                     FBSave.Shomareh = "080301";
-                    //FBSave.BahayeVahedZarib = 0;
                     FBSave.NoeFBId = NoeFBId;
                     _context.FBs.Add(FBSave);
-                    //_context.SaveChanges();
                     guFBId = FBSave.ID;
                 }
                 else
@@ -57,8 +50,6 @@ public class AbnieFaniCommonGhalebBandiDalDarja(ApplicationDbContext context)
 
 
                 ////////////////قالب زیر دال
-                //DtLastRizMetreUsersesShomareh = clsRizMetreUsersses.GetLastRizMetreUsersesShomareh("FBId=" + FBId);
-                //Shomareh = int.Parse(DtLastRizMetreUsersesShomareh.Rows[0]["lastShomareh"].ToString().Trim());
                 clsRizMetreUsers RizMetre = new clsRizMetreUsers();
                 RizMetre.Shomareh = Shomareh;
                 RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
@@ -93,8 +84,6 @@ public class AbnieFaniCommonGhalebBandiDalDarja(ApplicationDbContext context)
                     PolDetailType = PolDetailTypeEnum.قالب_زیر_دال
                 };
                 _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre2);
-                //_context.SaveChanges();
-                //RizMetre.Save();
                 /////////////قالب نمای دال
                 int tedad = int.Parse(TedadDahaneh) * (2 - (countWIsZero / 2));
                 if (tedad != 0)
@@ -133,8 +122,6 @@ public class AbnieFaniCommonGhalebBandiDalDarja(ApplicationDbContext context)
                         PolDetailType = PolDetailTypeEnum.قالب_نمای_دال
                     };
                     _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre2);
-                    //_context.SaveChanges();
-                    //RizMetre.Save();
                 }
 
                 /////////////
@@ -214,10 +201,8 @@ public class AbnieFaniCommonGhalebBandiDalDarja(ApplicationDbContext context)
             {
 
                 clsFB? varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "080302" && x.NoeFBId == NoeFBId);
-                //DtFBUser = clsConvert.ToDataTable(varFBUser);
 
                 guFBId = new Guid();
-                //if (DtFBUser.Rows.Count == 0)
                 if (varFBUser == null)
                 {
                     clsFB FBSave = new clsFB();
@@ -276,8 +261,7 @@ public class AbnieFaniCommonGhalebBandiDalDarja(ApplicationDbContext context)
                     PolDetailType = PolDetailTypeEnum.قالب_زیر_دال
                 };
                 _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre1);
-                //_context.SaveChanges();
-                //RizMetre.Save();
+
                 /////////////قالب نمای دال
                 int tedad = int.Parse(TedadDahaneh) * (2 - (countWIsZero / 2));
                 if (tedad != 0)
@@ -316,9 +300,6 @@ public class AbnieFaniCommonGhalebBandiDalDarja(ApplicationDbContext context)
                         PolDetailType = PolDetailTypeEnum.قالب_نمای_دال
                     };
                     _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre1);
-
-                    //_context.SaveChanges();
-                    //RizMetre.Save();
                 }
 
                 /////////////
@@ -397,19 +378,15 @@ public class AbnieFaniCommonGhalebBandiDalDarja(ApplicationDbContext context)
 
 
             clsFB? varFBUser1 = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "080501" && x.NoeFBId == NoeFBId);
-            //DtFBUser = clsConvert.ToDataTable(varFBUser1);
 
             guFBId = new Guid();
-            //if (DtFBUser.Rows.Count == 0)
             if (varFBUser1 == null)
             {
                 clsFB FBSave = new clsFB();
                 FBSave.BarAvordId = BarAvordId;
                 FBSave.Shomareh = "080501";
-                //FBSave.BahayeVahedZarib = 0;
                 FBSave.NoeFBId = NoeFBId;
                 _context.FBs.Add(FBSave);
-                //_context.SaveChanges();
                 guFBId = FBSave.ID;
             }
             else
@@ -459,8 +436,6 @@ public class AbnieFaniCommonGhalebBandiDalDarja(ApplicationDbContext context)
                 PolDetailType = PolDetailTypeEnum.قالب_درز_انبساط
             };
             _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-            //_context.SaveChanges();
-            //RizMetre.Save();
 
             return true;
         }

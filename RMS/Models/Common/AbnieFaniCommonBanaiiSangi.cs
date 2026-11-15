@@ -754,7 +754,6 @@ public class AbnieFaniCommonBanaiiSangi(ApplicationDbContext context)
                 clsFB FBSave = new clsFB();
                 FBSave.BarAvordId = BarAvordId;
                 FBSave.Shomareh = "060301";
-                //FBSave.BahayeVahedZarib = 0;
                 FBSave.NoeFBId = NoeFBId;
                 _context.FBs.Add(FBSave);
 
@@ -862,7 +861,6 @@ public class AbnieFaniCommonBanaiiSangi(ApplicationDbContext context)
                 clsFB FBSave = new clsFB();
                 FBSave.BarAvordId = BarAvordId;
                 FBSave.Shomareh = "060402";
-                //FBSave.BahayeVahedZarib = 0;
                 FBSave.NoeFBId = NoeFBId;
                 _context.FBs.Add(FBSave);
 

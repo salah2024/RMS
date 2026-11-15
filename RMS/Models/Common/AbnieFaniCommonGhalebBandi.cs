@@ -17,27 +17,14 @@ public class AbnieFaniCommonGhalebBandi(ApplicationDbContext context)
                             string b2, string p1, string p2, int intNoeBanaii, int Year)
     {
         clsFB? varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "080101" && x.NoeFBId == NoeFBId);
-        //DataTable DtFBUser = clsConvert.ToDataTable(varFBUser);
-
-        //DataTable DtFBUser = clsOperationItemsFB.FBListWithParameter("BarAvordId=" + BarAvordID + " and Shomareh='080101'");
-        //clsOperationItemsFB OperationItemsFB = new clsOperationItemsFB();
-        //int FBId = 0;
-        //if (DtFBUser.Rows.Count == 0)
-        //    FBId = OperationItemsFB.SaveFB(BarAvordID, "080101", 0);
-        //else
-        //    FBId = int.Parse(DtFBUser.Rows[0]["Id"].ToString());
-
         Guid guFBId = new Guid();
-        //if (DtFBUser.Rows.Count == 0)
         if (varFBUser == null)
         {
             clsFB FBSave = new clsFB();
             FBSave.BarAvordId = BarAvordId;
             FBSave.Shomareh = "080101";
-            //FBSave.BahayeVahedZarib = 0;
             FBSave.NoeFBId = NoeFBId;
             _context.FBs.Add(FBSave);
-            //_context.SaveChanges();
             guFBId = FBSave.ID;
         }
         else
@@ -50,8 +37,6 @@ public class AbnieFaniCommonGhalebBandi(ApplicationDbContext context)
         else
             Shomareh = 1;
 
-        //DataTable DtLastRizMetreUsersesShomareh = clsRizMetreUsersses.GetLastRizMetreUsersesShomareh("FBId=" + FBId);
-        //int Shomareh = int.Parse(DtLastRizMetreUsersesShomareh.Rows[0]["lastShomareh"].ToString().Trim());
         clsRizMetreUsers RizMetre = new clsRizMetreUsers();
         RizMetre.Shomareh = Shomareh;
         RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
@@ -212,7 +197,7 @@ public class AbnieFaniCommonGhalebBandi(ApplicationDbContext context)
             RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 2);
 
             _context.RizMetreUserses.Add(RizMetre);
-            //RizMetre.Save();
+
         }
         ////////////////
         ///
@@ -226,23 +211,16 @@ public class AbnieFaniCommonGhalebBandi(ApplicationDbContext context)
             {
                 string strCurrentShomareh = arrItemsForInsert[1, count];
                 clsFB? varFBUser1 = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == strCurrentShomareh && x.NoeFBId == NoeFBId);
-                //DtFBUser = clsConvert.ToDataTable(varFBUser1);
-
-                //DtFBUser = clsOperationItemsFB.FBListWithParameter("BarAvordId=" + BarAvordID + " and Shomareh='" + arrItemsForInsert[1, count] + "'");
                 guFBId = new Guid();
-                //if (DtFBUser.Rows.Count == 0)
                 if (varFBUser1 == null)
                 {
                     clsFB FBSave = new clsFB();
                     FBSave.BarAvordId = BarAvordId;
                     FBSave.Shomareh = strCurrentShomareh;
-                    //FBSave.BahayeVahedZarib = 0;
                     FBSave.NoeFBId = NoeFBId;
                     _context.FBs.Add(FBSave);
-                    //_context.SaveChanges();
                     guFBId = FBSave.ID;
                 }
-                //FBId = OperationItemsFB.SaveFB(BarAvordID, arrItemsForInsert[1, count], 0);
                 else
                     guFBId = varFBUser1.ID; //Guid.Parse(DtFBUser.Rows[0]["ID"].ToString());
 
@@ -270,7 +248,6 @@ public class AbnieFaniCommonGhalebBandi(ApplicationDbContext context)
                 else
                     Shomareh = 1;
 
-                //DtLastRizMetreUsersesShomareh = clsRizMetreUsersses.GetLastRizMetreUsersesShomareh("FBId=" + FBId);
                 RizMetre = new clsRizMetreUsers();
                 RizMetre.Shomareh = Shomareh;//int.Parse(DtLastRizMetreUsersesShomareh.Rows[0]["lastShomareh"].ToString().Trim());
                 RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
@@ -307,8 +284,6 @@ public class AbnieFaniCommonGhalebBandi(ApplicationDbContext context)
                     PolDetailType = PolDetailTypeEnum.قالب_بندی_طولی_دیوار_کوله_طرف_داخل
                 };
                 _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                //_context.SaveChanges();
-                //RizMetre.Save();
                 count++;
             } while (a >= 0);
             count = 0;
@@ -316,22 +291,16 @@ public class AbnieFaniCommonGhalebBandi(ApplicationDbContext context)
             {
                 string strCurrentShomareh = arrItemsForInsert[1, count];
                 clsFB? varFBUser1 = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == strCurrentShomareh && x.NoeFBId == NoeFBId);
-                //DtFBUser = clsConvert.ToDataTable(varFBUser1);
-
-                //DtFBUser = clsOperationItemsFB.FBListWithParameter("BarAvordId=" + BarAvordID + " and Shomareh='" + arrItemsForInsert[1, count] + "'");
                 guFBId = new Guid();
                 if (varFBUser1 == null)
                 {
                     clsFB FBSave = new clsFB();
                     FBSave.BarAvordId = BarAvordId;
                     FBSave.Shomareh = strCurrentShomareh;
-                    //FBSave.BahayeVahedZarib = 0;
                     FBSave.NoeFBId = NoeFBId;
                     _context.FBs.Add(FBSave);
-                    //_context.SaveChanges();
                     guFBId = FBSave.ID;
 
-                    //FBId = OperationItemsFB.SaveFB(BarAvordID, arrItemsForInsert[1, count], 0);
                 }
                 else
                     guFBId = varFBUser1.ID; //Guid.Parse(DtFBUser.Rows[0]["ID"].ToString());
@@ -361,7 +330,6 @@ public class AbnieFaniCommonGhalebBandi(ApplicationDbContext context)
                 else
                     lastShomareh = 1;
 
-                //DtLastRizMetreUsersesShomareh = clsRizMetreUsersses.GetLastRizMetreUsersesShomareh("FBId=" + FBId);
                 RizMetre = new clsRizMetreUsers();
                 RizMetre.Shomareh = lastShomareh;// int.Parse(DtLastRizMetreUsersesShomareh.Rows[0]["lastShomareh"].ToString().Trim());
                 RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
@@ -398,8 +366,6 @@ public class AbnieFaniCommonGhalebBandi(ApplicationDbContext context)
                     PolDetailType = PolDetailTypeEnum.قالب_طولی_دیوار_کوله_طرف_خارج
                 };
                 _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                //_context.SaveChanges();
-                //RizMetre.Save();
                 count++;
             } while (a >= 0);
             ////////////////
@@ -408,9 +374,6 @@ public class AbnieFaniCommonGhalebBandi(ApplicationDbContext context)
             {
                 string strCurrentShomareh = arrItemsForInsert[1, count];
                 clsFB? varFBUser1 = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == strCurrentShomareh && x.NoeFBId == NoeFBId);
-                //DtFBUser = clsConvert.ToDataTable(varFBUser1);
-
-                //DtFBUser = clsOperationItemsFB.FBListWithParameter("BarAvordId=" + BarAvordID + " and Shomareh='" + arrItemsForInsert[1, count] + "'");
                 guFBId = new Guid();
                 if (varFBUser1 == null)
                 {
@@ -423,7 +386,6 @@ public class AbnieFaniCommonGhalebBandi(ApplicationDbContext context)
                     //_context.SaveChanges();
                     guFBId = FBSave.ID;
 
-                    //FBId = OperationItemsFB.SaveFB(BarAvordID, arrItemsForInsert[1, count], 0);
                 }
                 else
                     guFBId = varFBUser1.ID; //Guid.Parse(DtFBUser.Rows[0]["ID"].ToString());
@@ -524,24 +486,6 @@ public class AbnieFaniCommonGhalebBandi(ApplicationDbContext context)
                 {
 
                     decimal hArzKoole = Math.Round(((db1 + db2) / 2), 2);
-                    //tedad = 2 * (int.Parse(TedadDahaneh) - 1);
-                    //if (tedad != 0)
-                    //{
-                    //a = decimal.Parse(LKooleMoarab.Trim()) / 100 - int.Parse(arrItemsForInsert[0, count].ToString());
-                    //if (a >= 0)
-                    //{
-                    //    if (count == 0)
-                    //        hKoolePrimForInsert = int.Parse(arrItemsForInsert[0, count]);
-                    //    else
-                    //        hKoolePrimForInsert = int.Parse(arrItemsForInsert[0, count]) - int.Parse(arrItemsForInsert[0, count - 1]);
-                    //}
-                    //else
-                    //{
-                    //    if (count == 0)
-                    //        hKoolePrimForInsert = decimal.Parse(LKooleMoarab) / 100;
-                    //    else
-                    //        hKoolePrimForInsert = decimal.Parse(LKooleMoarab) / 100 - int.Parse(arrItemsForInsert[0, count - 1]);
-                    //}
 
                     RizMetre = new clsRizMetreUsers();
                     RizMetre.Shomareh = ++Shomareh;

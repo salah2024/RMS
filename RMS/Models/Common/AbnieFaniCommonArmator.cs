@@ -36,26 +36,21 @@ public class AbnieFaniCommonArmator(ApplicationDbContext context)
                                       tblAbadeKoole.Hs,
                                       AbadeKooleID = tblAbadeKoole.Id
                                   }).Where(x => x.AbadeKooleID == lngHs).ToList();
-        //DataTable DtAbroDaliDetails = clsConvert.ToDataTable(varAbroDaliDetails);
 
         string[,] GhotrVazn ={{"8","10","12","14","16","18","20","22","25","28","32"},
                               {"0.345","0.617","0.888","1.21","1.58","2","2.47","2.98"
                                   ,"3.85","4.83","6.31"}};
 
         clsFB? varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "090204" && x.NoeFBId == NoeFBId);
-        //DataTable DtFBUser = clsConvert.ToDataTable(varFBUser);
 
         Guid guFBId090204 = new Guid();
         if (varFBUser == null)
-        //if (DtFBUser.Rows.Count == 0)
         {
             clsFB FBSave = new clsFB();
             FBSave.BarAvordId = BarAvordId;
             FBSave.Shomareh = "090204";
-            //FBSave.BahayeVahedZarib = 0;
             FBSave.NoeFBId = NoeFBId;
             _context.FBs.Add(FBSave);
-            //_context.SaveChanges();
             guFBId090204 = FBSave.ID;
         }
         else
@@ -70,19 +65,15 @@ public class AbnieFaniCommonArmator(ApplicationDbContext context)
             Shomareh090204 = 1;
 
         varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "090205" && x.NoeFBId == NoeFBId);
-        //DtFBUser = clsConvert.ToDataTable(varFBUser);
 
         Guid guFBId090205 = new Guid();
-        //if (DtFBUser.Rows.Count == 0)
         if (varFBUser == null)
         {
             clsFB FBSave = new clsFB();
             FBSave.BarAvordId = BarAvordId;
             FBSave.Shomareh = "090205";
-            //FBSave.BahayeVahedZarib = 0;
             FBSave.NoeFBId = NoeFBId;
             _context.FBs.Add(FBSave);
-            //_context.SaveChanges();
             guFBId090205 = FBSave.ID;
         }
         else
@@ -98,19 +89,15 @@ public class AbnieFaniCommonArmator(ApplicationDbContext context)
 
         ///////////////
         varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "090206" && x.NoeFBId == NoeFBId);
-        //DtFBUser = clsConvert.ToDataTable(varFBUser);
 
         Guid guFBId090206 = new Guid();
-        //if (DtFBUser.Rows.Count == 0)
         if (varFBUser == null)
         {
             clsFB FBSave = new clsFB();
             FBSave.BarAvordId = BarAvordId;
             FBSave.Shomareh = "090206";
-            //FBSave.BahayeVahedZarib = 0;
             FBSave.NoeFBId = NoeFBId;
             _context.FBs.Add(FBSave);
-            //_context.SaveChanges();
             guFBId090206 = FBSave.ID;
         }
         else
@@ -125,7 +112,6 @@ public class AbnieFaniCommonArmator(ApplicationDbContext context)
             Shomareh090206 = 1;
 
 
-        //for (int i = 0; i < DtAbroDaliDetails.Rows.Count; i++)
         foreach (var AbroDaliDetails in varAbroDaliDetails)
         {
             int intGhotr = AbroDaliDetails.Ghotr;// int.Parse(DtAbroDaliDetails.Rows[i]["Ghotr"].ToString().Trim());

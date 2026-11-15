@@ -27,19 +27,13 @@ public class AbnieFaniCommonGhalebBandiDalPishSakhteh(ApplicationDbContext conte
                 clsFB FBSave = new clsFB();
                 FBSave.BarAvordId = BarAvordId;
                 FBSave.Shomareh = "080701";
-                //FBSave.BahayeVahedZarib = 0;
                 FBSave.NoeFBId = NoeFBId;
                 _context.FBs.Add(FBSave);
-                //_context.SaveChanges();
                 guFBId = FBSave.ID;
             }
             else
                 guFBId = varFBUser.ID; //Guid.Parse(DtFBUser.Rows[0]["ID"].ToString());
             ////////////////
-            //var varDtLastRizMetreUsersesShomareh = _context.RizMetreUserses.Where(x => x.FBId == guFBId).ToList();
-            //DataTable DtLastRizMetreUsersesShomareh = clsConvert.ToDataTable(varDtLastRizMetreUsersesShomareh);
-            //int Shomareh = int.Parse(DtLastRizMetreUsersesShomareh.Rows[0]["lastShomareh"].ToString().Trim());
-
             var RizMetreUserLastShomareh = _context.RizMetreUserses.Where(x => x.FBId == guFBId).OrderByDescending(x => x.Shomareh).FirstOrDefault();
             long Shomareh = 0;
             if (RizMetreUserLastShomareh != null)
@@ -49,8 +43,6 @@ public class AbnieFaniCommonGhalebBandiDalPishSakhteh(ApplicationDbContext conte
 
 
             ////////////////قالب زیر دال پیش ساخته
-            //DataTable DtLastRizMetreUsersesShomareh = clsRizMetreUsersses.GetLastRizMetreUsersesShomareh("FBId=" + FBId);
-            //int Shomareh = int.Parse(DtLastRizMetreUsersesShomareh.Rows[0]["lastShomareh"].ToString().Trim());
             clsRizMetreUsers RizMetre = new clsRizMetreUsers();
             RizMetre.Shomareh = Shomareh;
             RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
@@ -85,8 +77,6 @@ public class AbnieFaniCommonGhalebBandiDalPishSakhteh(ApplicationDbContext conte
                 PolDetailType = PolDetailTypeEnum.قالب_زیر_دال_پیش_ساخته
             };
             _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-            //_context.SaveChanges();
-            //RizMetre.Save();
             ///////
             RizMetre = new clsRizMetreUsers();
             RizMetre.Shomareh = ++Shomareh;
@@ -121,8 +111,6 @@ public class AbnieFaniCommonGhalebBandiDalPishSakhteh(ApplicationDbContext conte
                 PolDetailType = PolDetailTypeEnum.قالب_بغل_دال_پیش_ساخته_در_جهت_طولی
             };
             _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-            //_context.SaveChanges();
-            //RizMetre.Save();
             /////////////
             RizMetre = new clsRizMetreUsers();
             RizMetre.Shomareh = ++Shomareh;
@@ -232,34 +220,23 @@ public class AbnieFaniCommonGhalebBandiDalPishSakhteh(ApplicationDbContext conte
                 PolDetailType = PolDetailTypeEnum.قالب_عرضی_جانپناه
             };
             _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-            //_context.SaveChanges();
-
-            //RizMetre.Save();
             //////////
 
             varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "080702" && x.NoeFBId == NoeFBId);
-            //DtFBUser = clsConvert.ToDataTable(varFBUser);
 
             guFBId = new Guid();
-            //if (DtFBUser.Rows.Count == 0)
             if (varFBUser == null)
             {
                 clsFB FBSave = new clsFB();
                 FBSave.BarAvordId = BarAvordId;
                 FBSave.Shomareh = "080702";
-                //FBSave.BahayeVahedZarib = 0;
                 FBSave.NoeFBId = NoeFBId;
                 _context.FBs.Add(FBSave);
-                //_context.SaveChanges();
                 guFBId = FBSave.ID;
             }
             else
                 guFBId = varFBUser.ID; //Guid.Parse(DtFBUser.Rows[0]["ID"].ToString());
             ////////////////
-            //varDtLastRizMetreUsersesShomareh = _context.RizMetreUserses.Where(x => x.FBId == guFBId).ToList();
-            //DtLastRizMetreUsersesShomareh = clsConvert.ToDataTable(varDtLastRizMetreUsersesShomareh);
-            //Shomareh = int.Parse(DtLastRizMetreUsersesShomareh.Rows[0]["lastShomareh"].ToString().Trim());
-
             RizMetreUserLastShomareh = _context.RizMetreUserses.Where(x => x.FBId == guFBId).OrderByDescending(x => x.Shomareh).FirstOrDefault();
             Shomareh = 0;
             if (RizMetreUserLastShomareh != null)
@@ -268,11 +245,6 @@ public class AbnieFaniCommonGhalebBandiDalPishSakhteh(ApplicationDbContext conte
                 Shomareh = 1;
 
             ////////////////قالب دال پیش ساخته
-            //DtLastRizMetreUsersesShomareh = clsRizMetreUsersses.GetLastRizMetreUsersesShomareh("FBId=" + FBId);
-            //Shomareh = int.Parse(DtLastRizMetreUsersesShomareh.Rows[0]["lastShomareh"].ToString().Trim());
-
-            //DataTable DtSumOfToolPolVaAbro = tblPolVaAbroBarAvord.SumOfToolPolVaAbroBarAvordListWithParameter("BarAvordId='" + BarAvordId + "'");
-
             string strParam = "BarAvordId='" + BarAvordId + "'";
             var PolVaAbroParam = new SqlParameter("@Parameter", strParam);
 
@@ -332,9 +304,6 @@ public class AbnieFaniCommonGhalebBandiDalPishSakhteh(ApplicationDbContext conte
                     PolDetailType = PolDetailTypeEnum.قالب_دال_پیش_ساخته
                 };
                 _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-
-                //_context.SaveChanges();
-                //RizMetre.Save();
                 ///////
                 RizMetre = new clsRizMetreUsers();
                 RizMetre.Shomareh = ++Shomareh;
@@ -370,9 +339,6 @@ public class AbnieFaniCommonGhalebBandiDalPishSakhteh(ApplicationDbContext conte
                     PolDetailType = PolDetailTypeEnum.قالب_دال_پیش_ساخته
                 };
                 _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-
-                //_context.SaveChanges();
-                //RizMetre.Save();
                 /////////////
                 RizMetre = new clsRizMetreUsers();
                 RizMetre.Shomareh = ++Shomareh;
@@ -408,9 +374,6 @@ public class AbnieFaniCommonGhalebBandiDalPishSakhteh(ApplicationDbContext conte
                     PolDetailType = PolDetailTypeEnum.قالب_دال_پیش_ساخته
                 };
                 _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-
-                //_context.SaveChanges();
-                //RizMetre.Save();
             }
 
             return true;

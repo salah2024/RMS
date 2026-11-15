@@ -10,7 +10,7 @@ public class AbnieFaniCommonGhalebBandiDivarVaSotoonDastak(ApplicationDbContext 
     private readonly ApplicationDbContext _context = context;
 
     public bool GhalebBandiDivarVaSotoonDastak(Guid PolVaAbroId, NoeFehrestBaha NoeFBId, int PolNum, string D, string TedadDahaneh, Guid BarAvordId,
-        string h, string t, string hMinw1, string hMinw2, string hMinw3, string hMinw4,
+        string h, string t, string hMinw1, string hMinw2, string hMinw3, string hMinw4,decimal b1,decimal b2,
         string w1, string w2, string w3, string w4)
     {
         decimal dh = decimal.Parse(h);
@@ -184,2972 +184,3211 @@ public class AbnieFaniCommonGhalebBandiDivarVaSotoonDastak(ApplicationDbContext 
 
             if (hMinw > 0 && LW > 0)
             {
+
+                    decimal x = dh - 0.3m;
+                    decimal y = b1 - b2;
+
+                    decimal res = (decimal)Math.Sqrt((double)(x * x + y * y));
+
+                if (dht > 0 && dht <= 2)
+                {
+                    //decimal res = Math.Round(((dht + hMinw) / 2), 3);
+
+
+                    clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                    RizMetre.Shomareh = Shomareh080201++;
+                    RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                    RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
+                    RizMetre.Tedad = 2;
+                    RizMetre.Tool = LW;
+                    RizMetre.Arz = null;
+                    RizMetre.Ertefa = res;
+                    RizMetre.Vazn = null;
+                    RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                    RizMetre.FBId = guFBId080201;
+                    RizMetre.OperationsOfHamlId = 1;
+                    RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
+                    RizMetre.ForItem = "";
+                    RizMetre.UseItem = "";
+
+                    decimal dMeghdarJoz = 0;
+                    if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                        dMeghdarJoz = 0;
+                    else
+                        dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                        (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                    RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                    _context.RizMetreUserses.Add(RizMetre);
+
+                    clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                    {
+                        PolVaAbroBarAvordId = PolVaAbroId,
+                        RizMetreId = RizMetre.ID,
+                        PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
+                    };
+                    _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                    //_context.SaveChanges();
+                    //RizMetre.Save();
+                }
+
+                else if (dht > 2 && dht <= 3)
+                {
+                    //decimal res1 = Math.Round(((dht - 2) / 2), 3);
+                    //decimal res2 = Math.Round((((dht + hMinw) / 2) - res1), 3);
+
+                    clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+
+                    decimal dMeghdarJoz = 0;
+
+                    RizMetre = new clsRizMetreUsers();
+                    RizMetre.Shomareh = Shomareh080202++;
+                    RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                    RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
+                    RizMetre.Tedad = 2;
+                    RizMetre.Tool = LW;
+                    RizMetre.Arz = null;
+                    RizMetre.Ertefa = res;
+                    RizMetre.Vazn = null;
+                    RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                    RizMetre.FBId = guFBId080202;
+                    RizMetre.OperationsOfHamlId = 1;
+                    RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
+                    RizMetre.ForItem = "";
+                    RizMetre.UseItem = "";
+
+                    dMeghdarJoz = 0;
+                    if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                        dMeghdarJoz = 0;
+                    else
+                        dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                        (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                    RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                    _context.RizMetreUserses.Add(RizMetre);
+
+                    clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                    {
+                        PolVaAbroBarAvordId = PolVaAbroId,
+                        RizMetreId = RizMetre.ID,
+                        PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
+                    };
+                    _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+
+                }
+
+                else if (dht > 3 && dht <= 5)
+                {
+                    //decimal res1 = Math.Round(((dht - 3) / 2), 3);
+                    //decimal res2 = Math.Round((((dht - 2) / 2) - res1), 3);
+                    //decimal res3 = Math.Round((((dht + hMinw) / 2) - res2), 3);
+
+                    clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                   
+
+                    decimal dMeghdarJoz = 0;
+                    
+                    RizMetre = new clsRizMetreUsers();
+                    RizMetre.Shomareh = Shomareh080203++;
+                    RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                    RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی " + i;
+                    RizMetre.Tedad = 2;
+                    RizMetre.Tool = LW;
+                    RizMetre.Arz = null;
+                    RizMetre.Ertefa = res;
+                    RizMetre.Vazn = null;
+                    RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                    RizMetre.FBId = guFBId080203;
+                    RizMetre.OperationsOfHamlId = 1;
+                    RizMetre.Type = "500" + PolNum.ToString("D3") + "12";///قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی
+                    RizMetre.ForItem = "";
+                    RizMetre.UseItem = "";
+
+                    dMeghdarJoz = 0;
+                    if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                        dMeghdarJoz = 0;
+                    else
+                        dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                        (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                    RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                    _context.RizMetreUserses.Add(RizMetre);
+
+                    clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                    {
+                        PolVaAbroBarAvordId = PolVaAbroId,
+                        RizMetreId = RizMetre.ID,
+                        PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_3_تا_5_متر_دیوار_بالی
+                    };
+                    _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                }
+
+                else if (dht > 5 && dht <= 7)
+                {
+                    //decimal res1 = Math.Round(((dht - 5) / 2), 3);
+                    //decimal res2 = Math.Round((((dht - 3) / 2) - res1), 3);
+                    //decimal res3 = Math.Round((((dht - 2) / 2) - res2), 3);
+                    //decimal res4 = Math.Round((((dht + hMinw) / 2) - res3), 3);
+
+                    clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+
+                    RizMetre = new clsRizMetreUsers();
+                    RizMetre.Shomareh = Shomareh080204++;
+                    RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                    RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی " + i;
+                    RizMetre.Tedad = 2;
+                    RizMetre.Tool = LW;
+                    RizMetre.Arz = null;
+                    RizMetre.Ertefa = res;
+                    RizMetre.Vazn = null;
+                    RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                    RizMetre.FBId = guFBId080204;
+                    RizMetre.OperationsOfHamlId = 1;
+                    RizMetre.Type = "500" + PolNum.ToString("D3") + "13";///قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی
+                    RizMetre.ForItem = "";
+                    RizMetre.UseItem = "";
+
+                   decimal dMeghdarJoz = 0;
+                    if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                        dMeghdarJoz = 0;
+                    else
+                        dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                        (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                    RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                    _context.RizMetreUserses.Add(RizMetre);
+
+                    clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                    {
+                        PolVaAbroBarAvordId = PolVaAbroId,
+                        RizMetreId = RizMetre.ID,
+                        PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_5_تا_7_متر_دیوار_بالی
+                    };
+                    _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                    //_context.SaveChanges();
+
+                    //RizMetre.Save();
+                }
+
+                else if (dht > 7 && dht <= 10)
+                {
+                    //decimal res1 = Math.Round(((dht - 7) / 2), 3);
+                    //decimal res2 = Math.Round((((dht - 5) / 2) - res1), 3);
+                    //decimal res3 = Math.Round((((dht - 3) / 2) - res2), 3);
+                    //decimal res4 = Math.Round((((dht - 2) / 2) - res3), 3);
+                    //decimal res5 = Math.Round((((dht + hMinw) / 2) - res4), 3);
+
+                    clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                   
+
+                    RizMetre = new clsRizMetreUsers();
+                    RizMetre.Shomareh = Shomareh080205++;
+                    RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                    RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 7 تا 10 متر دیوار بالی " + i;
+                    RizMetre.Tedad = 2;
+                    RizMetre.Tool = LW;
+                    RizMetre.Arz = null;
+                    RizMetre.Ertefa = res;
+                    RizMetre.Vazn = null;
+                    RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                    RizMetre.FBId = guFBId080205;
+                    RizMetre.OperationsOfHamlId = 1;
+                    RizMetre.Type = "500" + PolNum.ToString("D3") + "14";///قالب دیوارها و ستون های بتنی بین 7 تا 10 متر دیوار بالی
+                    RizMetre.ForItem = "";
+                    RizMetre.UseItem = "";
+
+                   decimal dMeghdarJoz = 0;
+                    if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                        dMeghdarJoz = 0;
+                    else
+                        dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                        (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                    RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                    _context.RizMetreUserses.Add(RizMetre);
+
+                    clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                    {
+                        PolVaAbroBarAvordId = PolVaAbroId,
+                        RizMetreId = RizMetre.ID,
+                        PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_7_تا_10_متر_دیوار_بالی
+                    };
+                    _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                }
+
+
+
                 ////////////////
                 //////////////
                 /////////////
                 ////////////////
-                if (hMinw > 0 && hMinw <= 2)
-                {
-                    if (dht > 0 && dht <= 2)
-                    {
-                        decimal res = Math.Round(((dht + hMinw) / 2), 3);
-
-                        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080201++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080201;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        decimal dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-                    }
-
-                    else if (dht > 2 && dht <= 3)
-                    {
-                        decimal res1 = Math.Round(((dht - 2) / 2), 3);
-                        decimal res2 = Math.Round((((dht + hMinw) / 2) - res1), 3);
-
-                        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080201++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res2;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080201;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        decimal dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080202++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res1;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080202;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-                    }
-
-                    else if (dht > 3 && dht <= 5)
-                    {
-                        decimal res1 = Math.Round(((dht - 3) / 2), 3);
-                        decimal res2 = Math.Round((((dht - 2) / 2) - res1), 3);
-                        decimal res3 = Math.Round((((dht + hMinw) / 2) - res2), 3);
-
-                        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080201++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res3;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080201;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        decimal dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080202++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res2;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080202;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080203++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res1;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080203;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "12";///قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_3_تا_5_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-                    }
-
-                    else if (dht > 5 && dht <= 7)
-                    {
-                        decimal res1 = Math.Round(((dht - 5) / 2), 3);
-                        decimal res2 = Math.Round((((dht - 3) / 2) - res1), 3);
-                        decimal res3 = Math.Round((((dht - 2) / 2) - res2), 3);
-                        decimal res4 = Math.Round((((dht + hMinw) / 2) - res3), 3);
-
-                        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080201++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res4;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080201;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        decimal dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-
-                        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080202++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res3;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080202;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080203++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res2;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080203;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "12";///قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_3_تا_5_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-
-                        //RizMetre.Save();
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080204++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res1;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080204;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "13";///قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_5_تا_7_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-
-                        //RizMetre.Save();
-                    }
-
-                    else if (dht > 7 && dht <= 10)
-                    {
-                        decimal res1 = Math.Round(((dht - 7) / 2), 3);
-                        decimal res2 = Math.Round((((dht - 5) / 2) - res1), 3);
-                        decimal res3 = Math.Round((((dht - 3) / 2) - res2), 3);
-                        decimal res4 = Math.Round((((dht - 2) / 2) - res3), 3);
-                        decimal res5 = Math.Round((((dht + hMinw) / 2) - res4), 3);
-
-                        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080201++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res5;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080201;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        decimal dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080202++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res4;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080202;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080203++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res3;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080203;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "12";///قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_3_تا_5_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080204++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res2;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080204;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "13";///قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_5_تا_7_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080205++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 7 تا 10 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res1;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080205;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "14";///قالب دیوارها و ستون های بتنی بین 7 تا 10 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_7_تا_10_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-                    }
-                }
-
-                else if (hMinw > 2 && hMinw <= 3)
-                {
-                    if (dht > 0 && dht <= 2)
-                    {
-                        decimal res = 2;
-
-                        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080201++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080201;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        decimal dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-                    }
-
-                    else if (dht > 2 && dht <= 3)
-                    {
-                        decimal res1 = Math.Round((((dht + hMinw) / 2) - 2), 3);
-                        decimal res2 = 2;
-
-                        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080201++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res2;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080201;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        decimal dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080202++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res1;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080202;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-                    }
-
-                    else if (dht > 3 && dht <= 5)
-                    {
-                        decimal res1 = Math.Round(((dht - 3) / 2), 3);
-                        decimal res2 = Math.Round((((dht + hMinw) / 2) - res1 - 2), 3);
-                        decimal res3 = 2;
-
-                        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080201++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res3;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080201;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        decimal dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080202++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res2;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080202;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080203++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res1;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080203;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "12";///قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_3_تا_5_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-                    }
-
-                    else if (dht > 5 && dht <= 7)
-                    {
-                        decimal res1 = (dht - 5) / 2;
-                        decimal res2 = ((dht - 3) / 2) - res1;
-                        decimal res3 = ((dht + hMinw) / 2) - res2 - 2;
-                        decimal res4 = 2;
-
-                        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080201++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res4;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080201;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        decimal dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080202++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res3;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080202;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080203++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res2;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080203;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "12";///قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_3_تا_5_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080204++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res1;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080204;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "13";///قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_5_تا_7_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //RizMetre.Save();
-                    }
-
-                    else if (dht > 7 && dht <= 10)
-                    {
-                        decimal res1 = (dht - 7) / 2;
-                        decimal res2 = ((dht - 5) / 2) - res1;
-                        decimal res3 = ((dht - 3) / 2) - res2;
-                        decimal res4 = ((dht + hMinw) / 2) - res3 - 2;
-                        decimal res5 = 2;
-
-                        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080201++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res5;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080201;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        decimal dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080202++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res4;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080202;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080203++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res3;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080203;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "12";///قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_3_تا_5_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080204++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res2;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080204;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "13";///قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_5_تا_7_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080205++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 7 تا 10 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res1;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080205;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "14";///قالب دیوارها و ستون های بتنی بین 7 تا 10 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_7_تا_10_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //RizMetre.Save();
-                    }
-                }
-                else if (hMinw > 3 && hMinw <= 5)
-                {
-                    if (dht > 0 && dht <= 2)
-                    {
-                        decimal res = 2;
-
-                        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080201++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080201;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        decimal dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-                    }
-
-                    else if (dht > 2 && dht <= 3)
-                    {
-                        decimal res1 = 1;
-                        decimal res2 = 2;
-
-                        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080201++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res2;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080201;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-                        decimal dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080202++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = 0;
-                        RizMetre.Ertefa = res1;
-                        RizMetre.Vazn = 0;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080202;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-                    }
-
-                    else if (dht > 3 && dht <= 5)
-                    {
-                        decimal res1 = ((dht + hMinw) / 2) - 3;
-                        decimal res2 = 1;
-                        decimal res3 = 2;
-
-                        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080201++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res3;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080201;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        decimal dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080202++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res2;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080202;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080203++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res1;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080203;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "12";///قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_3_تا_5_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-                    }
-
-                    else if (dht > 5 && dht <= 7)
-                    {
-                        decimal res1 = (dht - 5) / 2;
-                        decimal res2 = ((dht + hMinw) / 2) - res1 - 3;
-                        decimal res3 = 1;
-                        decimal res4 = 2;
-
-                        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080201++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res4;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080201;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        decimal dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080202++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res3;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080202;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080203++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res2;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080203;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "12";///قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_3_تا_5_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080204++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res1;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080204;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "13";///قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_5_تا_7_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-                    }
-
-                    else if (dht > 7 && dht <= 10)
-                    {
-                        decimal res1 = (dht - 7) / 2;
-                        decimal res2 = ((dht - 5) / 2) - res1;
-                        decimal res3 = ((dht + hMinw) / 2) - res2 - 3;
-                        decimal res4 = 1;
-                        decimal res5 = 2;
-
-                        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080201++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res5;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080201;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        decimal dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080202++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res4;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080202;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080203++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res3;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080203;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "12";///قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_3_تا_5_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080204++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res2;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080204;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "13";///قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_5_تا_7_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080205++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 7 تا 10 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res1;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080205;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "14";///قالب دیوارها و ستون های بتنی بین 7 تا 10 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_7_تا_10_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-                    }
-                }
-
-                else if (hMinw > 5 && hMinw <= 7)
-                {
-                    if (dht > 0 && dht <= 2)
-                    {
-                        decimal res = 2;
-
-                        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080201++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080201;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        decimal dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-                    }
-
-                    else if (dht > 2 && dht <= 3)
-                    {
-                        decimal res1 = 1;
-                        decimal res2 = 2;
-
-                        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080201++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res2;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080201;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        decimal dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080202++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res1;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080202;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-                    }
-
-                    else if (dht > 3 && dht <= 5)
-                    {
-                        decimal res1 = 2;
-                        decimal res2 = 1;
-                        decimal res3 = 2;
-
-                        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080201++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res3;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080201;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        decimal dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080202++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res2;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080202;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080203++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res1;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080203;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "12";///قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_3_تا_5_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-                    }
-
-                    else if (dht > 5 && dht <= 7)
-                    {
-                        decimal res1 = ((dht + hMinw) / 2) - 5;
-                        decimal res2 = 2;
-                        decimal res3 = 1;
-                        decimal res4 = 2;
-
-                        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080201++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res4;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080201;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        decimal dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080202++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res3;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080202;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080203++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res2;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080203;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "12";///قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_3_تا_5_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080204++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res1;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080204;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "13";///قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_5_تا_7_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-                    }
-
-                    else if (dht > 7 && dht <= 10)
-                    {
-                        decimal res1 = (dht - 7) / 2;
-                        decimal res2 = ((dht + hMinw) / 2) - 5 - res1;
-                        decimal res3 = 2;
-                        decimal res4 = 1;
-                        decimal res5 = 2;
-
-                        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080201++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res5;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080201;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        decimal dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080202++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res4;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080202;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080203++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res3;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080203;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "12";///قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        //RizMetre.Save();
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_3_تا_5_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080204++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res2;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080204;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "13";///قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_5_تا_7_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080205++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 7 تا 10 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res1;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080205;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "14";///قالب دیوارها و ستون های بتنی بین 7 تا 10 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_7_تا_10_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        ///_context.SaveChanges();
-                        //RizMetre.Save();
-                    }
-                }
-
-                else if (hMinw > 7 && hMinw <= 10)
-                {
-                    if (dht > 0 && dht <= 2)
-                    {
-                        decimal res = 2;
-
-                        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080201++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080201;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        decimal dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-                    }
-
-                    else if (dht > 2 && dht <= 3)
-                    {
-                        decimal res1 = 1;
-                        decimal res2 = 2;
-
-                        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080201++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res2;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080201;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        decimal dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-
-
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080202++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res1;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080202;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-                    }
-
-                    else if (dht > 3 && dht <= 5)
-                    {
-                        decimal res1 = 2;
-                        decimal res2 = 1;
-                        decimal res3 = 2;
-
-                        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080201++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res3;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080201;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        decimal dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080202++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res2;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080202;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080203++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res1;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080203;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "12";///قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_3_تا_5_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-                    }
-
-                    else if (dht > 5 && dht <= 7)
-                    {
-                        decimal res1 = 2;
-                        decimal res2 = 2;
-                        decimal res3 = 1;
-                        decimal res4 = 2;
-
-                        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080201++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res4;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080201;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        decimal dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080202++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res3;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080202;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080203++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res2;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080203;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "12";///قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_3_تا_5_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080204++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res1;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080204;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "13";///قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_5_تا_7_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-                    }
-
-                    else if (dht > 7 && dht <= 10)
-                    {
-                        decimal res1 = ((dht + hMinw) / 2) - 7;
-                        decimal res2 = 2;
-                        decimal res3 = 2;
-                        decimal res4 = 1;
-                        decimal res5 = 2;
-
-                        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080201++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res5;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080201;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        decimal dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080202++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res4;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080202;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080203++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res3;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080203;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "12";///قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_3_تا_5_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080204++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res2;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080204;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "13";///قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_5_تا_7_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-
-                        RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh080205++;
-                        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-                        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 7 تا 10 متر دیوار بالی " + i;
-                        RizMetre.Tedad = 2;
-                        RizMetre.Tool = LW;
-                        RizMetre.Arz = null;
-                        RizMetre.Ertefa = res1;
-                        RizMetre.Vazn = null;
-                        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-                        RizMetre.FBId = guFBId080205;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "500" + PolNum.ToString("D3") + "14";///قالب دیوارها و ستون های بتنی بین 7 تا 10 متر دیوار بالی
-                        RizMetre.ForItem = "";
-                        RizMetre.UseItem = "";
-
-                        dMeghdarJoz = 0;
-                        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-                            dMeghdarJoz = 0;
-                        else
-                            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-                            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-                        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-                        {
-                            PolVaAbroBarAvordId = PolVaAbroId,
-                            RizMetreId = RizMetre.ID,
-                            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_7_تا_10_متر_دیوار_بالی
-                        };
-                        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                        //_context.SaveChanges();
-                        //RizMetre.Save();
-                    }
-                }
+                //if (hMinw > 0 && hMinw <= 2)
+                //{
+                //    if (dht > 0 && dht <= 2)
+                //    {
+                //        decimal res = Math.Round(((dht + hMinw) / 2), 3);
+
+                //        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080201++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080201;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        decimal dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+                //    }
+
+                //    else if (dht > 2 && dht <= 3)
+                //    {
+                //        decimal res1 = Math.Round(((dht - 2) / 2), 3);
+                //        decimal res2 = Math.Round((((dht + hMinw) / 2) - res1), 3);
+
+                //        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080201++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res2;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080201;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        decimal dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080202++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res1;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080202;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+                //    }
+
+                //    else if (dht > 3 && dht <= 5)
+                //    {
+                //        decimal res1 = Math.Round(((dht - 3) / 2), 3);
+                //        decimal res2 = Math.Round((((dht - 2) / 2) - res1), 3);
+                //        decimal res3 = Math.Round((((dht + hMinw) / 2) - res2), 3);
+
+                //        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080201++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res3;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080201;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        decimal dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080202++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res2;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080202;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080203++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res1;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080203;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "12";///قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_3_تا_5_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+                //    }
+
+                //    else if (dht > 5 && dht <= 7)
+                //    {
+                //        decimal res1 = Math.Round(((dht - 5) / 2), 3);
+                //        decimal res2 = Math.Round((((dht - 3) / 2) - res1), 3);
+                //        decimal res3 = Math.Round((((dht - 2) / 2) - res2), 3);
+                //        decimal res4 = Math.Round((((dht + hMinw) / 2) - res3), 3);
+
+                //        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080201++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res4;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080201;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        decimal dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+
+                //        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080202++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res3;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080202;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080203++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res2;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080203;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "12";///قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_3_تا_5_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+
+                //        //RizMetre.Save();
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080204++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res1;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080204;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "13";///قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_5_تا_7_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+
+                //        //RizMetre.Save();
+                //    }
+
+                //    else if (dht > 7 && dht <= 10)
+                //    {
+                //        decimal res1 = Math.Round(((dht - 7) / 2), 3);
+                //        decimal res2 = Math.Round((((dht - 5) / 2) - res1), 3);
+                //        decimal res3 = Math.Round((((dht - 3) / 2) - res2), 3);
+                //        decimal res4 = Math.Round((((dht - 2) / 2) - res3), 3);
+                //        decimal res5 = Math.Round((((dht + hMinw) / 2) - res4), 3);
+
+                //        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080201++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res5;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080201;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        decimal dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080202++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res4;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080202;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080203++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res3;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080203;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "12";///قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_3_تا_5_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080204++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res2;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080204;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "13";///قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_5_تا_7_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080205++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 7 تا 10 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res1;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080205;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "14";///قالب دیوارها و ستون های بتنی بین 7 تا 10 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_7_تا_10_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+                //    }
+                //}
+
+                //else if (hMinw > 2 && hMinw <= 3)
+                //{
+                //    if (dht > 0 && dht <= 2)
+                //    {
+                //        decimal res = 2;
+
+                //        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080201++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080201;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        decimal dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+                //    }
+
+                //    else if (dht > 2 && dht <= 3)
+                //    {
+                //        decimal res1 = Math.Round((((dht + hMinw) / 2) - 2), 3);
+                //        decimal res2 = 2;
+
+                //        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080201++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res2;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080201;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        decimal dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080202++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res1;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080202;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+                //    }
+
+                //    else if (dht > 3 && dht <= 5)
+                //    {
+                //        decimal res1 = Math.Round(((dht - 3) / 2), 3);
+                //        decimal res2 = Math.Round((((dht + hMinw) / 2) - res1 - 2), 3);
+                //        decimal res3 = 2;
+
+                //        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080201++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res3;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080201;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        decimal dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080202++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res2;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080202;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080203++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res1;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080203;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "12";///قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_3_تا_5_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+                //    }
+
+                //    else if (dht > 5 && dht <= 7)
+                //    {
+                //        decimal res1 = (dht - 5) / 2;
+                //        decimal res2 = ((dht - 3) / 2) - res1;
+                //        decimal res3 = ((dht + hMinw) / 2) - res2 - 2;
+                //        decimal res4 = 2;
+
+                //        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080201++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res4;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080201;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        decimal dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080202++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res3;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080202;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080203++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res2;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080203;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "12";///قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_3_تا_5_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080204++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res1;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080204;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "13";///قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_5_تا_7_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //RizMetre.Save();
+                //    }
+
+                //    else if (dht > 7 && dht <= 10)
+                //    {
+                //        decimal res1 = (dht - 7) / 2;
+                //        decimal res2 = ((dht - 5) / 2) - res1;
+                //        decimal res3 = ((dht - 3) / 2) - res2;
+                //        decimal res4 = ((dht + hMinw) / 2) - res3 - 2;
+                //        decimal res5 = 2;
+
+                //        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080201++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res5;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080201;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        decimal dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080202++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res4;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080202;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080203++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res3;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080203;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "12";///قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_3_تا_5_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080204++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res2;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080204;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "13";///قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_5_تا_7_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080205++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 7 تا 10 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res1;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080205;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "14";///قالب دیوارها و ستون های بتنی بین 7 تا 10 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_7_تا_10_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //RizMetre.Save();
+                //    }
+                //}
+                //else if (hMinw > 3 && hMinw <= 5)
+                //{
+                //    if (dht > 0 && dht <= 2)
+                //    {
+                //        decimal res = 2;
+
+                //        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080201++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080201;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        decimal dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+                //    }
+
+                //    else if (dht > 2 && dht <= 3)
+                //    {
+                //        decimal res1 = 1;
+                //        decimal res2 = 2;
+
+                //        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080201++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res2;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080201;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+                //        decimal dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080202++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = 0;
+                //        RizMetre.Ertefa = res1;
+                //        RizMetre.Vazn = 0;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080202;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+                //    }
+
+                //    else if (dht > 3 && dht <= 5)
+                //    {
+                //        decimal res1 = ((dht + hMinw) / 2) - 3;
+                //        decimal res2 = 1;
+                //        decimal res3 = 2;
+
+                //        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080201++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res3;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080201;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        decimal dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080202++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res2;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080202;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080203++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res1;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080203;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "12";///قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_3_تا_5_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+                //    }
+
+                //    else if (dht > 5 && dht <= 7)
+                //    {
+                //        decimal res1 = (dht - 5) / 2;
+                //        decimal res2 = ((dht + hMinw) / 2) - res1 - 3;
+                //        decimal res3 = 1;
+                //        decimal res4 = 2;
+
+                //        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080201++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res4;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080201;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        decimal dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080202++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res3;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080202;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080203++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res2;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080203;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "12";///قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_3_تا_5_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080204++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res1;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080204;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "13";///قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_5_تا_7_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+                //    }
+
+                //    else if (dht > 7 && dht <= 10)
+                //    {
+                //        decimal res1 = (dht - 7) / 2;
+                //        decimal res2 = ((dht - 5) / 2) - res1;
+                //        decimal res3 = ((dht + hMinw) / 2) - res2 - 3;
+                //        decimal res4 = 1;
+                //        decimal res5 = 2;
+
+                //        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080201++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res5;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080201;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        decimal dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080202++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res4;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080202;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080203++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res3;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080203;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "12";///قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_3_تا_5_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080204++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res2;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080204;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "13";///قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_5_تا_7_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080205++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 7 تا 10 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res1;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080205;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "14";///قالب دیوارها و ستون های بتنی بین 7 تا 10 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_7_تا_10_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+                //    }
+                //}
+
+                //else if (hMinw > 5 && hMinw <= 7)
+                //{
+                //    if (dht > 0 && dht <= 2)
+                //    {
+                //        decimal res = 2;
+
+                //        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080201++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080201;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        decimal dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+                //    }
+
+                //    else if (dht > 2 && dht <= 3)
+                //    {
+                //        decimal res1 = 1;
+                //        decimal res2 = 2;
+
+                //        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080201++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res2;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080201;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        decimal dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080202++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res1;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080202;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+                //    }
+
+                //    else if (dht > 3 && dht <= 5)
+                //    {
+                //        decimal res1 = 2;
+                //        decimal res2 = 1;
+                //        decimal res3 = 2;
+
+                //        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080201++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res3;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080201;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        decimal dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080202++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res2;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080202;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080203++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res1;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080203;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "12";///قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_3_تا_5_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+                //    }
+
+                //    else if (dht > 5 && dht <= 7)
+                //    {
+                //        decimal res1 = ((dht + hMinw) / 2) - 5;
+                //        decimal res2 = 2;
+                //        decimal res3 = 1;
+                //        decimal res4 = 2;
+
+                //        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080201++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res4;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080201;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        decimal dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080202++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res3;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080202;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080203++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res2;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080203;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "12";///قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_3_تا_5_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080204++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res1;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080204;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "13";///قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_5_تا_7_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+                //    }
+
+                //    else if (dht > 7 && dht <= 10)
+                //    {
+                //        decimal res1 = (dht - 7) / 2;
+                //        decimal res2 = ((dht + hMinw) / 2) - 5 - res1;
+                //        decimal res3 = 2;
+                //        decimal res4 = 1;
+                //        decimal res5 = 2;
+
+                //        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080201++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res5;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080201;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        decimal dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080202++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res4;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080202;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080203++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res3;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080203;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "12";///قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        //RizMetre.Save();
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_3_تا_5_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080204++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res2;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080204;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "13";///قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_5_تا_7_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080205++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 7 تا 10 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res1;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080205;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "14";///قالب دیوارها و ستون های بتنی بین 7 تا 10 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_7_تا_10_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        ///_context.SaveChanges();
+                //        //RizMetre.Save();
+                //    }
+                //}
+
+                //else if (hMinw > 7 && hMinw <= 10)
+                //{
+                //    if (dht > 0 && dht <= 2)
+                //    {
+                //        decimal res = 2;
+
+                //        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080201++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080201;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        decimal dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+                //    }
+
+                //    else if (dht > 2 && dht <= 3)
+                //    {
+                //        decimal res1 = 1;
+                //        decimal res2 = 2;
+
+                //        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080201++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res2;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080201;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        decimal dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+
+
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080202++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res1;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080202;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+                //    }
+
+                //    else if (dht > 3 && dht <= 5)
+                //    {
+                //        decimal res1 = 2;
+                //        decimal res2 = 1;
+                //        decimal res3 = 2;
+
+                //        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080201++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res3;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080201;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        decimal dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080202++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res2;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080202;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080203++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res1;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080203;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "12";///قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_3_تا_5_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+                //    }
+
+                //    else if (dht > 5 && dht <= 7)
+                //    {
+                //        decimal res1 = 2;
+                //        decimal res2 = 2;
+                //        decimal res3 = 1;
+                //        decimal res4 = 2;
+
+                //        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080201++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res4;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080201;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        decimal dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080202++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res3;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080202;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080203++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res2;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080203;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "12";///قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_3_تا_5_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080204++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res1;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080204;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "13";///قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_5_تا_7_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+                //    }
+
+                //    else if (dht > 7 && dht <= 10)
+                //    {
+                //        decimal res1 = ((dht + hMinw) / 2) - 7;
+                //        decimal res2 = 2;
+                //        decimal res3 = 2;
+                //        decimal res4 = 1;
+                //        decimal res5 = 2;
+
+                //        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080201++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res5;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080201;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "10";///قالب دیوارها و ستون های بتنی حداکثر 2 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        decimal dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_حداکثر_2_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080202++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res4;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080202;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "11";///قالب دیوارها و ستون های بتنی بین 2 تا 3 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_2_تا_3_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080203++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res3;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080203;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "12";///قالب دیوارها و ستون های بتنی بین 3 تا 5 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_3_تا_5_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080204++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res2;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080204;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "13";///قالب دیوارها و ستون های بتنی بین 5 تا 7 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_5_تا_7_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+
+                //        RizMetre = new clsRizMetreUsers();
+                //        RizMetre.Shomareh = Shomareh080205++;
+                //        RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
+                //        RizMetre.Sharh = " قالب دیوارها و ستون های بتنی بین 7 تا 10 متر دیوار بالی " + i;
+                //        RizMetre.Tedad = 2;
+                //        RizMetre.Tool = LW;
+                //        RizMetre.Arz = null;
+                //        RizMetre.Ertefa = res1;
+                //        RizMetre.Vazn = null;
+                //        RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
+                //        RizMetre.FBId = guFBId080205;
+                //        RizMetre.OperationsOfHamlId = 1;
+                //        RizMetre.Type = "500" + PolNum.ToString("D3") + "14";///قالب دیوارها و ستون های بتنی بین 7 تا 10 متر دیوار بالی
+                //        RizMetre.ForItem = "";
+                //        RizMetre.UseItem = "";
+
+                //        dMeghdarJoz = 0;
+                //        if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
+                //            dMeghdarJoz = 0;
+                //        else
+                //            dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
+                //            (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
+
+                //        RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz, 3);
+
+                //        _context.RizMetreUserses.Add(RizMetre);
+
+                //        polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
+                //        {
+                //            PolVaAbroBarAvordId = PolVaAbroId,
+                //            RizMetreId = RizMetre.ID,
+                //            PolDetailType = PolDetailTypeEnum.قالب_دیوارها_ستون_های_بتنی_بین_7_تا_10_متر_دیوار_بالی
+                //        };
+                //        _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
+                //        //_context.SaveChanges();
+                //        //RizMetre.Save();
+                //    }
+                //}
             }
         }
         return true;

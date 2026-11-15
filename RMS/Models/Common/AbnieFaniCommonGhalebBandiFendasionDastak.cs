@@ -13,23 +13,17 @@ public class AbnieFaniCommonGhalebBandiFendasionDastak(ApplicationDbContext cont
     string LW1j, string LW1p, string LB1W1, string LW2j, string LW2p, string LB1W2,
     string LW3j, string LW3p, string LB1W3, string LW4j, string LW4p, string LB1W4, string h)
     {
-        //clsOperationItemsFB OperationItemsFB = new clsOperationItemsFB();
-        //clsRizMetreUsersses RizMetre = new clsRizMetreUsersses();
         ///////////////
         clsFB? varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "080101" && x.NoeFBId == NoeFBId);
-        //DataTable DtFBUser = clsConvert.ToDataTable(varFBUser);
 
         Guid guFBId = new Guid();
-        //if (DtFBUser.Rows.Count == 0)
         if (varFBUser == null)
         {
             clsFB FBSave = new clsFB();
             FBSave.BarAvordId = BarAvordId;
             FBSave.Shomareh = "080101";
-            //FBSave.BahayeVahedZarib = 0;
             FBSave.NoeFBId = NoeFBId;
             _context.FBs.Add(FBSave);
-            //_context.SaveChanges();
             guFBId = FBSave.ID;
         }
         else
@@ -48,12 +42,9 @@ public class AbnieFaniCommonGhalebBandiFendasionDastak(ApplicationDbContext cont
         decimal rndh = Math.Round(dh);
 
         clsAbadDivarBali? varAbadDivarBali = _context.AbadDivarBalis.FirstOrDefault(x => x.h == rndh);
-        //DataTable DtAbadDivarBali = clsConvert.ToDataTable(varAbadDivarBali);
-        //DataTable DtAbadDivarBali = clsAbadeKoole.AbadDivarBaliListWithParametr("h=" + rndh.ToString());
 
         decimal m = 0;
         if (varAbadDivarBali!=null)
-        //if (DtAbadDivarBali.Rows.Count != 0)
         {
             m = varAbadDivarBali.m; //decimal.Parse(DtAbadDivarBali.Rows[0]["m"].ToString());
         }
@@ -137,8 +128,6 @@ public class AbnieFaniCommonGhalebBandiFendasionDastak(ApplicationDbContext cont
                     PolDetailType = PolDetailTypeEnum.قالب_بندی_طولی_پی_دیوار_بالی_جلو
                 };
                 _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                //_context.SaveChanges();
-                //RizMetre.Save();
             }
             if (dLWp != 0)
             {
@@ -176,8 +165,6 @@ public class AbnieFaniCommonGhalebBandiFendasionDastak(ApplicationDbContext cont
                     PolDetailType = PolDetailTypeEnum.قالب_بندی_طولی_پی_دیوار_بالی_پشت
                 };
                 _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                //_context.SaveChanges();
-                //RizMetre.Save();
             }
             if (dLB1W != 0)
             {
@@ -215,48 +202,8 @@ public class AbnieFaniCommonGhalebBandiFendasionDastak(ApplicationDbContext cont
                     PolDetailType = PolDetailTypeEnum.قالب_بندی_عرضی_پی_دیوار_بالی_طرف_1
                 };
                 _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-                //_context.SaveChanges();
-                //RizMetre.Save();
             }
-            //if (dLB2W != 0)
-            //{
-            //    clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-            //    RizMetre.Shomareh = Shomareh++;
-            //    RizMetre.ShomarehNew = RizMetre.Shomareh.ToString();
-            //    RizMetre.Sharh = " قالب عرضی پی دیوار بالی (سرکله) " + i + "(طرف دو)";
-            //    RizMetre.Tedad = 1;
-            //    RizMetre.Tool = null;
-            //    RizMetre.Arz = dLB2W;
-            //    RizMetre.Ertefa = m;
-            //    RizMetre.Vazn = null;
-            //    RizMetre.Des = "پل شماره " + PolNum + " ، " + TedadDahaneh + " دهانه " + D + " متری ";
-            //    RizMetre.FBId = guFBId;
-            //    RizMetre.OperationsOfHamlId = 1;
-            //    RizMetre.Type = "500" + PolNum.ToString("D3") + "03";///قالب بندی عرضی پی دیوار بالی طرف 2
-            //    RizMetre.ForItem = "";
-            //    RizMetre.UseItem = "";
-
-            //    decimal dMeghdarJoz = 0;
-            //    if (RizMetre.Tedad == null && RizMetre.Tool == null && RizMetre.Arz == null && RizMetre.Ertefa == null && RizMetre.Vazn == null)
-            //        dMeghdarJoz = 0;
-            //    else
-            //        dMeghdarJoz += (RizMetre.Tedad == null ? 1 : RizMetre.Tedad.Value) * (RizMetre.Tool == null ? 1 : RizMetre.Tool.Value) *
-            //        (RizMetre.Arz == null ? 1 : RizMetre.Arz.Value) * (RizMetre.Ertefa == null ? 1 : RizMetre.Ertefa.Value) * (RizMetre.Vazn == null ? 1 : RizMetre.Vazn.Value);
-
-            //    RizMetre.MeghdarJoz = RizMetre.MeghdarJoz = Math.Round(dMeghdarJoz,3);
-
-            //    _context.RizMetreUserses.Add(RizMetre);
-
-            //    clsPolVaAbroBarAvordRizMetre polVaAbroBarAvordRizMetre = new clsPolVaAbroBarAvordRizMetre
-            //    {
-            //        PolVaAbroBarAvordId = PolVaAbroId,
-            //        RizMetreId = RizMetre.ID,
-            //        PolDetailType = PolDetailTypeEnum.قالب_بندی_عرضی_پی_دیوار بالی_طرف_2
-            //    };
-            //    _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
-            //    //_context.SaveChanges();
-            //    //RizMetre.Save();
-            //}
+            
         }
         return true;
     }
