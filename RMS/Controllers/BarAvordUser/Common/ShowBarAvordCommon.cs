@@ -330,6 +330,49 @@ public class ShowBarAvordCommon
 
         List<clsFehrestBahaItemsReplace> lstFehrestBahaItemsReplaces = await _context.FehrestBahaItemsReplaces.Where(x => x.NoeFB == NoeFBId && x.Year == Year).ToListAsync();
         List<clsZarayebFosoul> lstZarayebFosouls = await _context.ZarayebFosouls.ToListAsync();
+
+        // ریزمتره‌های عادی را یک‌بار بر اساس شناسه آیتم گروه‌بندی می‌کنیم.
+        var rizMetreByFbId = RizMetre
+            .GroupBy(x => x.FBId)
+            .ToDictionary(
+                g => g.Key,
+                g => new
+                {
+                    Items = g.ToList(),
+                    Sum = g.Sum(x => x.MeghdarJoz ?? 0)
+                });
+
+        // ردیف‌های ستاره‌دار و ریزمتره‌های آن‌ها را یک‌بار دریافت می‌کنیم
+        // تا برای هر فصل و هر ردیف، درخواست جداگانه به دیتابیس ارسال نشود.
+        List<clsItemFBStar> allItemFBStars = await _context.ItemFBStars
+            .Where(x => x.BaravordId == BarAvordUserId && x.NoeFBId == NoeFBId)
+            .ToListAsync();
+
+        var itemFBStarsByFasl = allItemFBStars
+            .GroupBy(x => x.Shomareh.Substring(0, 2))
+            .ToDictionary(g => g.Key, g => g.ToList());
+
+        var itemFBStarNumbers = allItemFBStars
+            .Select(x => x.Shomareh)
+            .Distinct()
+            .ToList();
+
+        var rizMetreStarsByNumber = await _context.RizMetreStars
+            .Include(x => x.ItemFBStar)
+            .Where(x => x.ItemFBStar.BaravordId == BarAvordUserId &&
+                        x.ItemFBStar.NoeFBId == NoeFBId &&
+                        itemFBStarNumbers.Contains(x.Shomareh.Trim()))
+            .Select(x => new
+            {
+                Shomareh = x.Shomareh.Trim(),
+                x.MeghdarJoz
+            })
+            .ToListAsync();
+
+        var rizMetreStarSums = rizMetreStarsByNumber
+            .GroupBy(x => x.Shomareh)
+            .ToDictionary(g => g.Key, g => g.Sum(x => x.MeghdarJoz ?? 0));
+
         foreach (var fasl in Fosoul)
         {
             // اول FBs رو فیلتر و گروه‌بندی کن (در حافظه)
@@ -358,7 +401,8 @@ public class ShowBarAvordCommon
             //ضرایب مربوط به فصول را در سایر ضرایب ضرب میکنیم
             decimal? ZaribFasl = null;
             if (NoeBAType != NoeBarAvord.BarAvord)
-                ZaribFasl = lstZaribPishnahadiPaymanKarFosoul.FirstOrDefault(x => x.Code.Trim() == fasl.Code.Trim())?.ZaribJoz;
+                ZaribFasl = lstZaribPishnahadiPaymanKarFosoul
+                    .FirstOrDefault(x => x.Code.Trim() == fasl.Code.Trim())?.ZaribJoz;
 
             decimal dCurrentZarib = AllZarib * (ZaribFasl == null ? 1 : ZaribFasl.Value);
 
@@ -369,11 +413,17 @@ public class ShowBarAvordCommon
 
             bool blnFaslAsli = fasl.FaslAsli == null ? true : fasl.FaslAsli.Value;
 
-            List<clsFehrestBahaItemsReplace> lstExceptionItems = new List<clsFehrestBahaItemsReplace>();
+            // تعداد استثناهای هر شماره را نگه می‌داریم تا حتی در صورت وجود
+            // رکورد تکراری، رفتار جمع فعلی بدون تغییر باقی بماند.
+            Dictionary<string, int> exceptionItemCounts = new Dictionary<string, int>();
             clsZarayebFosoul ZarayebFasl = new clsZarayebFosoul();
             if (!blnFaslAsli)
             {
-                lstExceptionItems = lstFehrestBahaItemsReplaces.Where(x => x.FaslId == fasl.Id).ToList();
+                exceptionItemCounts = lstFehrestBahaItemsReplaces
+                    .Where(x => x.FaslId == fasl.Id)
+                    .GroupBy(x => x.FBShomarehMain)
+                    .ToDictionary(g => g.Key, g => g.Count());
+
                 ZarayebFasl = lstZarayebFosouls.First(x => x.FaslId == fasl.Id);
             }
 
@@ -386,7 +436,9 @@ public class ShowBarAvordCommon
             List<ViewUserBarAvordOutPutDto> userBarAvordOutPutFiltered = userBarAvordOutPut.Where(x => x.FBId != null).ToList();
 
 
-            var fehrestShomarehs = userBarAvordOutPutFiltered.Select(x => x.ItemFbShomareh).ToList();
+            var fehrestShomarehs = userBarAvordOutPutFiltered
+                .Select(x => x.ItemFbShomareh)
+                .ToHashSet();
 
             var barAvordOnlyInFbItems = fbItems
                 .Where(fb => fb.Shomareh.StartsWith(fasl.Code) && !fehrestShomarehs.Contains(fb.Shomareh))
@@ -413,6 +465,13 @@ public class ShowBarAvordCommon
 
             List<clsBahayeVahedItemsRelated> lstBVItemRelated = _context.BahayeVahedItemsRelateds.Where(x => lstItemFbShomarehs.Contains(x.ItemShomarehRelated.ToLower().Trim()) && x.NoeFB == NoeFBId && x.Year == Year).ToList();
 
+            var bvItemRelatedByNumber = lstBVItemRelated
+                .GroupBy(x => x.ItemShomarehRelated.Trim().ToLowerInvariant())
+                .ToDictionary(g => g.Key, g => g.First());
+
+            var barAvordItemByNumber = userBarAvordOutPutFiltered
+                .GroupBy(x => x.ItemFbShomareh.Trim())
+                .ToDictionary(g => g.Key, g => g.First());
 
             foreach (var item in userBarAvordOutPutFiltered)
             {
@@ -432,13 +491,11 @@ public class ShowBarAvordCommon
                 //}
 
 
-                var rizMetres = RizMetre
-                    .Where(x => x.FBId == item.FBId)
-                    .ToList();
-
-                item.RizMetre.AddRange(rizMetres);
-
-                Meghdar += rizMetres.Sum(x => x.MeghdarJoz ?? 0);
+                if (rizMetreByFbId.TryGetValue(item.FBId, out var rizMetreGroup))
+                {
+                    item.RizMetre.AddRange(rizMetreGroup.Items);
+                    Meghdar = rizMetreGroup.Sum;
+                }
 
                 
 
@@ -449,10 +506,10 @@ public class ShowBarAvordCommon
                     decimal dBahayeKol = 0;
 
 
-                    clsBahayeVahedItemsRelated? BVItemsRelated = lstBVItemRelated.FirstOrDefault(x => x.ItemShomarehRelated.Trim().ToLower() == item.ItemFbShomareh.Trim().ToLower());
+                    bvItemRelatedByNumber.TryGetValue(item.ItemFbShomareh.Trim().ToLowerInvariant(), out var BVItemsRelated);
                     if (BVItemsRelated != null)
                     {
-                        var barAvordInFehrest1 = userBarAvordOutPutFiltered.FirstOrDefault(x => x.ItemFbShomareh.Trim() == BVItemsRelated.ItemShomareh.Trim());
+                        barAvordItemByNumber.TryGetValue(BVItemsRelated.ItemShomareh.Trim(), out var barAvordInFehrest1);
                         if (barAvordInFehrest1 != null)
                         {
                             long BahayeVahed1 = barAvordInFehrest1.BahayeVahedNew != 0 ? barAvordInFehrest1.BahayeVahedNew : (barAvordInFehrest1.BahayeVahed == null || barAvordInFehrest1.BahayeVahed == "") ? 0 : long.Parse(barAvordInFehrest1.BahayeVahed);
@@ -474,15 +531,12 @@ public class ShowBarAvordCommon
 
                         if (fasl.Code != "99")
                         {
-                            if (lstExceptionItems.Count != 0)
+                            if (exceptionItemCounts.Count != 0)
                             {
-                                foreach (var ExceptionItem in lstExceptionItems)
+                                if (exceptionItemCounts.TryGetValue(item.ItemFbShomarehMain, out int exceptionCount))
                                 {
-                                    if (item.ItemFbShomarehMain == ExceptionItem.FBShomarehMain)
-                                    {
-                                        currentJameFaslInZarib = dBahayeKol * (ZarayebFasl.ZaribBalaSari != null ? ZarayebFasl.ZaribBalaSari.Value : 1) * (ZarayebFasl.ZaribManteghe != null ? ZarayebFasl.ZaribManteghe.Value : 1);
-                                        AllJameFaslWithoutBahaVahedWithZarib += currentJameFaslInZarib;
-                                    }
+                                    currentJameFaslInZarib = dBahayeKol * (ZarayebFasl.ZaribBalaSari != null ? ZarayebFasl.ZaribBalaSari.Value : 1) * (ZarayebFasl.ZaribManteghe != null ? ZarayebFasl.ZaribManteghe.Value : 1);
+                                    AllJameFaslWithoutBahaVahedWithZarib += currentJameFaslInZarib * exceptionCount;
                                 }
                             }
                             else
@@ -521,15 +575,12 @@ public class ShowBarAvordCommon
 
                             if (fasl.Code != "99")
                             {
-                                if (lstExceptionItems.Count != 0)
+                                if (exceptionItemCounts.Count != 0)
                                 {
-                                    foreach (var ExceptionItem in lstExceptionItems)
+                                    if (exceptionItemCounts.TryGetValue(item.ItemFbShomarehMain, out int exceptionCount))
                                     {
-                                        if (item.ItemFbShomarehMain == ExceptionItem.FBShomarehMain)
-                                        {
-                                            currentJameFaslInZarib = dBahayeKol * (ZarayebFasl.ZaribBalaSari != null ? ZarayebFasl.ZaribBalaSari.Value : 1) * (ZarayebFasl.ZaribManteghe != null ? ZarayebFasl.ZaribManteghe.Value : 1);
-                                            dJameFaslWithZarib += currentJameFaslInZarib;
-                                        }
+                                        currentJameFaslInZarib = dBahayeKol * (ZarayebFasl.ZaribBalaSari != null ? ZarayebFasl.ZaribBalaSari.Value : 1) * (ZarayebFasl.ZaribManteghe != null ? ZarayebFasl.ZaribManteghe.Value : 1);
+                                        dJameFaslWithZarib += currentJameFaslInZarib * exceptionCount;
                                     }
                                 }
                                 else
@@ -557,7 +608,10 @@ public class ShowBarAvordCommon
             decimal AllJameFaslStarWithZarib = 0;
 
 
-            List<clsItemFBStar> lstItemFBStars = await _context.ItemFBStars.Where(x => x.BaravordId == BarAvordUserId && x.NoeFBId == NoeFBId && x.Shomareh.Substring(0, 2) == fasl.Code).ToListAsync();
+            List<clsItemFBStar> lstItemFBStars = itemFBStarsByFasl.TryGetValue(fasl.Code, out var starsForFasl)
+                ? starsForFasl
+                : new List<clsItemFBStar>();
+
             foreach (var itemFBStarCurrent in lstItemFBStars)
             {
                 decimal ItemZaribStar = itemFBStarCurrent.ItemZaribStar == null ? 1 : itemFBStarCurrent.ItemZaribStar.Value;
@@ -570,9 +624,7 @@ public class ShowBarAvordCommon
                 //{
                 decimal BahayeVahedStar = itemFBStarCurrent.BahayeVahed * ItemZaribStar;
                 //}
-                JameItemFBStar = _context.RizMetreStars.Include(x => x.ItemFBStar)
-                     .Where(x => x.ItemFBStar.BaravordId == BarAvordUserId && x.ItemFBStar.NoeFBId == NoeFBId && x.ItemFBStar.Shomareh.Trim() == itemFBStarCurrent.Shomareh)
-                     .Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
+                rizMetreStarSums.TryGetValue(itemFBStarCurrent.Shomareh, out JameItemFBStar);
 
                 AllJameFaslStar += JameItemFBStar * BahayeVahedStar;
                 bool blnKharidTajhizat = itemFBStarCurrent.blnKharidTajhizat == null ? false : itemFBStarCurrent.blnKharidTajhizat.Value;
