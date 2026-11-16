@@ -1726,6 +1726,10 @@ public class RizMetreCommon
                                  ZarayebFosoul.ZaribManteghe
                              }).ToList();
 
+            var faslZaribByItemNumber = FaslZarib
+                .GroupBy(x => x.FBShomareh)
+                .ToDictionary(g => g.Key, g => g.First());
+
             foreach (var noeFB in NoeFB)
             {
                 if (noeFB != "")
@@ -1752,6 +1756,10 @@ public class RizMetreCommon
                                  FBId = riz.FBId,
                                  MeghdarJoz = riz.MeghdarJoz
                              }).OrderBy(x => x.Shomareh).ToList();
+
+                    var rizMetreByFbId = RizMetreAll
+                        .GroupBy(x => x.FBId)
+                        .ToDictionary(g => g.Key, g => g.ToList());
 
 
                     // اول FBs رو فیلتر و گروه‌بندی کن (در حافظه)
@@ -1949,7 +1957,9 @@ public class RizMetreCommon
                     decimal JameFaslWithoutBahaVahedWithZarib = 0;//جمع آیتم های بدون بهای واحد در ضریب
 
 
-                    var fehrestShomarehs = userBarAvordOutPutFiltered.Select(x => x.ItemFbShomareh).ToList();
+                    var fehrestShomarehs = userBarAvordOutPutFiltered
+                        .Select(x => x.ItemFbShomareh)
+                        .ToHashSet();
 
                     var barAvordOnlyInFbItems = fbItems
                         .Where(fb => !fehrestShomarehs.Contains(fb.Shomareh))
@@ -1978,34 +1988,25 @@ public class RizMetreCommon
 
                     List<clsBahayeVahedItemsRelated> lstBVItemRelated = _context.BahayeVahedItemsRelateds.Where(x => lstItemFbShomarehs.Contains(x.ItemShomarehRelated.ToLower().Trim()) && x.NoeFB == NoeFBId && x.Year == Year).ToList();
 
+                    var bvItemRelatedByNumber = lstBVItemRelated
+                        .GroupBy(x => x.ItemShomarehRelated.Trim())
+                        .ToDictionary(g => g.Key, g => g.First());
+
+                    var barAvordItemByNumber = userBarAvordOutPut
+                        .GroupBy(x => x.ItemFbShomareh.Trim())
+                        .ToDictionary(g => g.Key, g => g.First());
+
                     foreach (var item in userBarAvordOutPutFiltered)
                     {
                         decimal ItemZarib = (item.ItemZarib == null || item.ItemZarib == 0) ? 1 : item.ItemZarib.Value;
                         decimal Meghdar = 0;
 
-                        List<ViewUserBarAvordOutPutRizMetreDto> lstCurrentRM = RizMetreAll.Where(x => x.FBId == item.FBId).ToList();
-
-                        foreach (var RM in lstCurrentRM)
+                        if ((!blnCheckUsePercent || item.ItemFbShomareh.Substring(0, 2) != "99") &&
+                            item.FBId.HasValue &&
+                            rizMetreByFbId.TryGetValue(item.FBId.Value, out var currentRizMetres))
                         {
-                            if (blnCheckUsePercent)
-                            {
-                                if (item.ItemFbShomareh.Substring(0, 2) != "99")
-                                {
-                                    if (item.FBId == RM.FBId)
-                                    {
-                                        item.RizMetre.Add(RM);
-                                        Meghdar += RM.MeghdarJoz != null ? RM.MeghdarJoz.Value : 0;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                if (item.FBId == RM.FBId)
-                                {
-                                    item.RizMetre.Add(RM);
-                                    Meghdar += RM.MeghdarJoz != null ? RM.MeghdarJoz.Value : 0;
-                                }
-                            }
+                            item.RizMetre.AddRange(currentRizMetres);
+                            Meghdar = currentRizMetres.Sum(x => x.MeghdarJoz ?? 0);
                         }
 
                         if (Meghdar != 0)
@@ -2014,10 +2015,10 @@ public class RizMetreCommon
                             decimal dBahayeKol = 0;
 
 
-                            clsBahayeVahedItemsRelated? BVItemsRelated = lstBVItemRelated.FirstOrDefault(x => x.ItemShomarehRelated.Trim() == item.ItemFbShomareh.Trim());
+                            bvItemRelatedByNumber.TryGetValue(item.ItemFbShomareh.Trim(), out var BVItemsRelated);
                             if (BVItemsRelated != null)
                             {
-                                var barAvordInFehrest1 = userBarAvordOutPut.FirstOrDefault(x => x.ItemFbShomareh.Trim() == BVItemsRelated.ItemShomareh.Trim());
+                                barAvordItemByNumber.TryGetValue(BVItemsRelated.ItemShomareh.Trim(), out var barAvordInFehrest1);
                                 if (barAvordInFehrest1 != null)
                                 {
                                     long BahayeVahed1 = barAvordInFehrest1.BahayeVahedNew != 0 ? barAvordInFehrest1.BahayeVahedNew :
@@ -2039,9 +2040,8 @@ public class RizMetreCommon
                                 }
                                 else
                                 {
-                                    if (FaslZarib.Select(x => x.FBShomareh).Contains(item.ItemFbShomareh))
-                                    {
-                                        var currentFaslZarib = FaslZarib.Where(x => x.FBShomareh == item.ItemFbShomareh).First();
+                                    if (faslZaribByItemNumber.TryGetValue(item.ItemFbShomareh, out var currentFaslZarib))
+                                        {
 
                                         decimal newZaribBalaSari = currentFaslZarib.ZaribBalaSari == null ? zaribBalaSari : currentFaslZarib.ZaribBalaSari.Value;
                                         decimal newZaribManteghe = currentFaslZarib.ZaribManteghe == null ? zaribManteghe : currentFaslZarib.ZaribManteghe.Value;
@@ -2087,9 +2087,8 @@ public class RizMetreCommon
                                     }
                                     else
                                     {
-                                        if (FaslZarib.Select(x => x.FBShomareh).Contains(item.ItemFbShomareh))
+                                        if (faslZaribByItemNumber.TryGetValue(item.ItemFbShomareh, out var currentFaslZarib))
                                         {
-                                            var currentFaslZarib = FaslZarib.Where(x => x.FBShomareh == item.ItemFbShomareh).First();
 
                                             decimal newZaribBalaSari = currentFaslZarib.ZaribBalaSari == null ? zaribBalaSari : currentFaslZarib.ZaribBalaSari.Value;
                                             decimal newZaribManteghe = currentFaslZarib.ZaribManteghe == null ? zaribManteghe : currentFaslZarib.ZaribManteghe.Value;
@@ -2129,6 +2128,15 @@ public class RizMetreCommon
                     decimal JameFaslStar = 0;
                     decimal JameFaslStarWithZarib = 0;
 
+                    var rizMetreStarRows = _context.RizMetreStars
+                        .Where(x => x.ItemFBStar.BaravordId == BarAvordId && x.ItemFBStar.NoeFBId == NoeFBId)
+                        .Select(x => new { x.ItemFBStarId, x.MeghdarJoz })
+                        .ToList();
+
+                    var rizMetreStarSums = rizMetreStarRows
+                        .GroupBy(x => x.ItemFBStarId)
+                        .ToDictionary(g => g.Key, g => g.Sum(x => x.MeghdarJoz ?? 0));
+
                     foreach (var itemFBStarCurrent in lstItemFBStars)
                     {
                         decimal ItemZaribStar = (itemFBStarCurrent.ItemZaribStar == null || itemFBStarCurrent.ItemZaribStar == 0) ? 1 : itemFBStarCurrent.ItemZaribStar.Value;
@@ -2140,9 +2148,7 @@ public class RizMetreCommon
                         //{
                         decimal BahayeVahedStar = itemFBStarCurrent.BahayeVahed * ItemZaribStar;
                         //}
-                        decimal JameItemFBStar = _context.RizMetreStars
-                              .Where(x => x.ItemFBStarId == itemFBStarCurrent.ID)
-                              .Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
+                        rizMetreStarSums.TryGetValue(itemFBStarCurrent.ID, out decimal JameItemFBStar);
 
                         JameFaslStar += JameItemFBStar * BahayeVahedStar;
                         bool blnKharidTajhizat = itemFBStarCurrent.blnKharidTajhizat == null ? false : itemFBStarCurrent.blnKharidTajhizat.Value;
