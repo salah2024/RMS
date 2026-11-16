@@ -1138,7 +1138,7 @@ public class RizMetreCommon
         void LogPerf(string stage, int? rowCount = null)
         {
             long nowMs = perfWatch.ElapsedMilliseconds;
-            Console.WriteLine($"[PERF][CALC][{BarAvordId}] {stage}: +{nowMs - perfLastMs} ms | total={nowMs} ms" +
+            System.Diagnostics.Debug.WriteLine($"[PERF][CALC][{BarAvordId}] {stage}: +{nowMs - perfLastMs} ms | total={nowMs} ms" +
                 (rowCount.HasValue ? $" | rows={rowCount.Value}" : string.Empty));
             perfLastMs = nowMs;
         }
@@ -1688,7 +1688,7 @@ public class RizMetreCommon
         void LogPerf(string stage, int? rowCount = null)
         {
             long nowMs = perfWatch.ElapsedMilliseconds;
-            Console.WriteLine($"[PERF][CALC][{BarAvordId}] {stage}: +{nowMs - perfLastMs} ms | total={nowMs} ms" +
+            System.Diagnostics.Debug.WriteLine($"[PERF][CALC][{BarAvordId}] {stage}: +{nowMs - perfLastMs} ms | total={nowMs} ms" +
                 (rowCount.HasValue ? $" | rows={rowCount.Value}" : string.Empty));
             perfLastMs = nowMs;
         }
