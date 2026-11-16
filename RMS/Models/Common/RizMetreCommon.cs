@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 using RMS.Controllers.AbnieFani.Dto;
 using RMS.Controllers.BarAvordUser.Dto;
 using RMS.Controllers.Operation.Dto;
@@ -1132,6 +1133,16 @@ public class RizMetreCommon
         Guid BarAvordId = request.BarAvordId;
         NoeFehrestBaha NoeFBId = request.NoeFBId;
         int Year = request.Year;
+        var perfWatch = Stopwatch.StartNew();
+        long perfLastMs = 0;
+        void LogPerf(string stage, int? rowCount = null)
+        {
+            long nowMs = perfWatch.ElapsedMilliseconds;
+            Console.WriteLine($"[PERF][CALC][{BarAvordId}] {stage}: +{nowMs - perfLastMs} ms | total={nowMs} ms" +
+                (rowCount.HasValue ? $" | rows={rowCount.Value}" : string.Empty));
+            perfLastMs = nowMs;
+        }
+
 
         clsBaravordUser? baravordUser = _context.BaravordUsers.FirstOrDefault(x => x.ID == BarAvordId);
         if (baravordUser != null)
@@ -1152,6 +1163,7 @@ public class RizMetreCommon
                         FBId = riz.FBId,
                         MeghdarJoz = riz.MeghdarJoz
                     }).OrderBy(x => x.Shomareh).ToList();
+            LogPerf("ریزمتره‌های عادی برای محاسبه فصول", RizMetreAll.Count);
 
             var rizMetreByFbId = RizMetreAll
                 .GroupBy(x => x.FBId)
@@ -1649,6 +1661,7 @@ public class RizMetreCommon
                 Check = checkLimitItemStar
             };
 
+            LogPerf("اتمام محاسبه فصول");
             return result;
         }
         else
@@ -1670,6 +1683,16 @@ public class RizMetreCommon
     {
         Guid BarAvordId = request.BarAvordId;
         int Year = request.Year;
+        var perfWatch = Stopwatch.StartNew();
+        long perfLastMs = 0;
+        void LogPerf(string stage, int? rowCount = null)
+        {
+            long nowMs = perfWatch.ElapsedMilliseconds;
+            Console.WriteLine($"[PERF][CALC][{BarAvordId}] {stage}: +{nowMs - perfLastMs} ms | total={nowMs} ms" +
+                (rowCount.HasValue ? $" | rows={rowCount.Value}" : string.Empty));
+            perfLastMs = nowMs;
+        }
+
 
         clsBaravordUser? baravordUser = _context.BaravordUsers.FirstOrDefault(x => x.ID == BarAvordId);
 
@@ -2182,6 +2205,7 @@ public class RizMetreCommon
                 }
             }
 
+            LogPerf("اتمام محاسبه جمع کل");
             ResultCalculateBarAvordDto result = new ResultCalculateBarAvordDto
             {
                 JameFasl = JameFaslAll,
