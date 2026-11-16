@@ -196,9 +196,15 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
 
 
 
+        var fehrestByMainNumber = lstFehrestBahas
+            .GroupBy(x => x.ShomarehMain.Trim())
+            .ToDictionary(g => g.Key, g => g.First());
+
         foreach (var fb in fbItems)
         {
-            fb.BahayeVahedSharh = fb.BahayeVahedSharh.Trim() == "" ? lstFehrestBahas.Where(x => x.ShomarehMain.Trim() == fb.Shomareh.Substring(0, 6)).First().Sharh : fb.BahayeVahedSharh.Trim();
+            fb.BahayeVahedSharh = fb.BahayeVahedSharh.Trim() == ""
+                ? fehrestByMainNumber[fb.Shomareh.Substring(0, 6)].Sharh
+                : fb.BahayeVahedSharh.Trim();
         }
 
         //foreach (var item in fbItems)
@@ -259,7 +265,9 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
         }).ToList();
 
 
-        var fehrestShomarehs = barAvordInFehrest.Select(x => x.ItemFbShomareh).ToList();
+        var fehrestShomarehs = barAvordInFehrest
+            .Select(x => x.ItemFbShomareh)
+            .ToHashSet();
 
         var barAvordOnlyInFbItems = fbItems
             .Where(fb => fb.Shomareh.StartsWith(request.ShomarehFasl) && !fehrestShomarehs.Contains(fb.Shomareh))
@@ -291,14 +299,27 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
         List<clsBahayeVahedItemsRelated> lstBVItemRelated = _context.BahayeVahedItemsRelateds.Where(x => lstItemFbShomarehs.Contains(x.ItemShomarehRelated.ToLower().Trim()) && x.NoeFB == NoeFBId && x.Year == Year).ToList();
 
         var rizMetreByFbId = RizMetre
-            .GroupBy(x => x.FBId)
+            .Where(x => x.FBId.HasValue)
+            .GroupBy(x => x.FBId.Value)
             .ToDictionary(g => g.Key, g => g.ToList());
+
+        var itemsFieldsByNumber = itemsFields
+            .GroupBy(x => x.ItemShomareh.Trim())
+            .ToDictionary(g => g.Key, g => g.ToList());
+
+        var bvItemRelatedByNumber = lstBVItemRelated
+            .GroupBy(x => x.ItemShomarehRelated.Trim().ToLower())
+            .ToDictionary(g => g.Key, g => g.First());
+
+        var barAvordItemByNumber = userBarAvordOutPut
+            .GroupBy(x => x.ItemFbShomareh.Trim())
+            .ToDictionary(g => g.Key, g => g.First());
 
         foreach (var item in userBarAvordOutPut)
         {
             decimal Meghdar = 0;
-            if (item.FBId is Guid fbId &&
-                rizMetreByFbId.TryGetValue(fbId, out var rms))
+            if (item.FBId.HasValue &&
+                rizMetreByFbId.TryGetValue(item.FBId.Value, out var rms))
             {
                 item.RizMetre.AddRange(rms);
 
@@ -307,10 +328,10 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
 
             if (Meghdar != 0)
             {
-                clsBahayeVahedItemsRelated? BVItemsRelated = lstBVItemRelated.FirstOrDefault(x => x.ItemShomarehRelated.Trim() == item.ItemFbShomareh.Trim());
+                bvItemRelatedByNumber.TryGetValue(item.ItemFbShomareh.Trim().ToLower(), out var BVItemsRelated);
                 if (BVItemsRelated != null)
                 {
-                    var barAvordInFehrest1 = userBarAvordOutPut.FirstOrDefault(x => x.ItemFbShomareh.Trim() == BVItemsRelated.ItemShomareh.Trim());
+                    barAvordItemByNumber.TryGetValue(BVItemsRelated.ItemShomareh.Trim(), out var barAvordInFehrest1);
                     if (barAvordInFehrest1 != null)
                     {
                         long BahayeVahed1 = barAvordInFehrest1.BahayeVahedNew != 0 ? barAvordInFehrest1.BahayeVahedNew : (barAvordInFehrest1.BahayeVahed == null || barAvordInFehrest1.BahayeVahed == "") ? 0 : long.Parse(barAvordInFehrest1.BahayeVahed);
@@ -319,17 +340,18 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
                 }
             }
 
-            List<ItemsFieldForUserBarAvordOutPutDto> currentItemsFields = itemsFields
-                    .Where(x => x.ItemShomareh.Trim() == item.ItemFbShomarehMain)
-                        .Select(x => new ItemsFieldForUserBarAvordOutPutDto
-                        {
-                            Id = x.Id,
-                            ItemShomareh = x.ItemShomareh.Trim(),
-                            FieldType = x.FieldType,
-                            Vahed = x.Vahed,
-                            IsEnteringValue = x.IsEnteringValue,
-                            EssentialValue = x.EssentialValue
-                        }).ToList();
+            List<ItemsFieldForUserBarAvordOutPutDto> currentItemsFields =
+                itemsFieldsByNumber.TryGetValue(item.ItemFbShomarehMain, out var currentFieldRows)
+                    ? currentFieldRows.Select(x => new ItemsFieldForUserBarAvordOutPutDto
+                    {
+                        Id = x.Id,
+                        ItemShomareh = x.ItemShomareh.Trim(),
+                        FieldType = x.FieldType,
+                        Vahed = x.Vahed,
+                        IsEnteringValue = x.IsEnteringValue,
+                        EssentialValue = x.EssentialValue
+                    }).ToList()
+                    : new List<ItemsFieldForUserBarAvordOutPutDto>();
 
             item.ItemsFields.AddRange(currentItemsFields);
 
@@ -392,22 +414,20 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
         }).OrderBy(x => x.Shomareh).ToList();
 
 
+        var rizMetreStarByItemId = RizMetreStar
+            .GroupBy(x => x.ItemFBStarId)
+            .ToDictionary(g => g.Key, g => g.ToList());
+
         foreach (var item in lstItemFBStars)
         {
-
             decimal ItemZaribStar = (item.ItemZaribStar == null || item.ItemZaribStar == 0) ? 1 : item.ItemZaribStar.Value;
             decimal Meghdar = 0;
-            foreach (var RM in RizMetreStar)
+
+            if (rizMetreStarByItemId.TryGetValue(item.Id, out var starRizMetres))
             {
-                if (item.Id == RM.ItemFBStarId)
-                {
-                    item.RizMetre.Add(RM);
-                    Meghdar += RM.MeghdarJoz != null ? RM.MeghdarJoz.Value : 0;
-                }
+                item.RizMetre.AddRange(starRizMetres);
+                Meghdar = starRizMetres.Sum(x => x.MeghdarJoz ?? 0);
             }
-
-
-
 
             item.Meghdar = Meghdar;
             decimal dBahayeKol = Meghdar * item.BahayeVahed * ItemZaribStar;
