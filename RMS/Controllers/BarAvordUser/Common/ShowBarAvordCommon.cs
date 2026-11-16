@@ -333,7 +333,8 @@ public class ShowBarAvordCommon
 
         // ریزمتره‌های عادی را یک‌بار بر اساس شناسه آیتم گروه‌بندی می‌کنیم.
         var rizMetreByFbId = RizMetre
-            .GroupBy(x => x.FBId)
+            .Where(x => x.FBId.HasValue)
+            .GroupBy(x => x.FBId.Value)
             .ToDictionary(
                 g => g.Key,
                 g => new
@@ -361,10 +362,10 @@ public class ShowBarAvordCommon
             .Include(x => x.ItemFBStar)
             .Where(x => x.ItemFBStar.BaravordId == BarAvordUserId &&
                         x.ItemFBStar.NoeFBId == NoeFBId &&
-                        itemFBStarNumbers.Contains(x.Shomareh.Trim()))
+                        itemFBStarNumbers.Contains(x.ItemFBStar.Shomareh.Trim()))
             .Select(x => new
             {
-                Shomareh = x.Shomareh.Trim(),
+                Shomareh = x.ItemFBStar.Shomareh.Trim(),
                 x.MeghdarJoz
             })
             .ToListAsync();
@@ -466,7 +467,7 @@ public class ShowBarAvordCommon
             List<clsBahayeVahedItemsRelated> lstBVItemRelated = _context.BahayeVahedItemsRelateds.Where(x => lstItemFbShomarehs.Contains(x.ItemShomarehRelated.ToLower().Trim()) && x.NoeFB == NoeFBId && x.Year == Year).ToList();
 
             var bvItemRelatedByNumber = lstBVItemRelated
-                .GroupBy(x => x.ItemShomarehRelated.Trim().ToLowerInvariant())
+                .GroupBy(x => x.ItemShomarehRelated.Trim().ToLower())
                 .ToDictionary(g => g.Key, g => g.First());
 
             var barAvordItemByNumber = userBarAvordOutPutFiltered
@@ -491,7 +492,7 @@ public class ShowBarAvordCommon
                 //}
 
 
-                if (rizMetreByFbId.TryGetValue(item.FBId, out var rizMetreGroup))
+                if (item.FBId.HasValue && rizMetreByFbId.TryGetValue(item.FBId.Value, out var rizMetreGroup))
                 {
                     item.RizMetre.AddRange(rizMetreGroup.Items);
                     Meghdar = rizMetreGroup.Sum;
@@ -506,7 +507,7 @@ public class ShowBarAvordCommon
                     decimal dBahayeKol = 0;
 
 
-                    bvItemRelatedByNumber.TryGetValue(item.ItemFbShomareh.Trim().ToLowerInvariant(), out var BVItemsRelated);
+                    bvItemRelatedByNumber.TryGetValue(item.ItemFbShomareh.Trim().ToLower(), out var BVItemsRelated);
                     if (BVItemsRelated != null)
                     {
                         barAvordItemByNumber.TryGetValue(BVItemsRelated.ItemShomareh.Trim(), out var barAvordInFehrest1);
