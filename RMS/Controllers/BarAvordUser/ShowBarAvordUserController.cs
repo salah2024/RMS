@@ -299,8 +299,7 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
         List<clsBahayeVahedItemsRelated> lstBVItemRelated = _context.BahayeVahedItemsRelateds.Where(x => lstItemFbShomarehs.Contains(x.ItemShomarehRelated.ToLower().Trim()) && x.NoeFB == NoeFBId && x.Year == Year).ToList();
 
         var rizMetreByFbId = RizMetre
-            .Where(x => x.FBId.HasValue)
-            .GroupBy(x => x.FBId.Value)
+            .GroupBy(x => x.FBId)
             .ToDictionary(g => g.Key, g => g.ToList());
 
         var itemsFieldsByNumber = itemsFields
