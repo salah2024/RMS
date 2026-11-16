@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 using RMS.Controllers.BarAvordUser.Dto;
 using RMS.Controllers.BaseInfo.Dto;
 using RMS.Models.Common;
@@ -141,6 +142,17 @@ public class ShowBarAvordCommon
         Guid BarAvordUserId = request.BarAvordUserId;
         NoeFehrestBaha NoeFBId = request.NoeFBId;
         int Year = request.Year;
+        
+        var perfWatch = Stopwatch.StartNew();
+        long perfLastMs = 0;
+        void LogPerf(string stage, int? rowCount = null)
+        {
+            long nowMs = perfWatch.ElapsedMilliseconds;
+            Console.WriteLine($"[PERF][ShowBarAvord][{BarAvordUserId}][{NoeFBId}] {stage}: +{nowMs - perfLastMs} ms | total={nowMs} ms" +
+                (rowCount.HasValue ? $" | rows={rowCount.Value}" : string.Empty));
+            perfLastMs = nowMs;
+        }
+
 
         ////////////////////////////////
         //در صورتی که صورت وضعیت باشد، بایستی ضریب پیشنهادی پیمانکار را نیز در ضرایب منطقه و بالاسری برای هر فصل پیدا کرده و ضرب کنیم
@@ -179,6 +191,7 @@ public class ShowBarAvordCommon
                 Order = x.order,
                 FaslAsli = x.FaslAsli == null ? true : x.FaslAsli
             }).ToListAsync();
+        LogPerf("فهرست فصول", Fosoul.Count);
 
 
         var RizMetre = await _context.RizMetreUserses.Include(x => x.FB).Where(x => x.FB.BarAvordId == BarAvordUserId && x.FB.NoeFBId == NoeFBId)
@@ -196,6 +209,7 @@ public class ShowBarAvordCommon
                 FBId = riz.FBId,
                 MeghdarJoz = riz.MeghdarJoz
             }).OrderBy(x => x.Shomareh).ToListAsync();
+        LogPerf("ریزمتره‌های عادی", RizMetre.Count);
 
 
 
@@ -212,6 +226,7 @@ public class ShowBarAvordCommon
             Year = Year
         };
         ResultGetZarayebDto result1 = RizMetreCommon.GetZarayeb(requestGetZarayeb, _context);
+        LogPerf("ضرایب");
 
 
         List<clsFehrestBahaItemsReplace> lstFBItemReplaces = await _context.FehrestBahaItemsReplaces.Where(x => x.Year == Year && x.NoeFB == NoeFBId).ToListAsync();
@@ -272,6 +287,8 @@ public class ShowBarAvordCommon
 .ToListAsync();
 
 
+        LogPerf("آیتم‌های برآورد", fbItems.Count);
+
         var replaceDictionary = lstFBItemReplaces
             .GroupBy(x => x.FBShomarehMain)
             .ToDictionary(
@@ -328,6 +345,8 @@ public class ShowBarAvordCommon
                 NoeFB = fb.NoeFB
             }).ToListAsync();
 
+        LogPerf("فهرست‌بها", lstFehrestBahas.Count);
+
         List<clsFehrestBahaItemsReplace> lstFehrestBahaItemsReplaces = await _context.FehrestBahaItemsReplaces.Where(x => x.NoeFB == NoeFBId && x.Year == Year).ToListAsync();
         List<clsZarayebFosoul> lstZarayebFosouls = await _context.ZarayebFosouls.ToListAsync();
 
@@ -347,6 +366,8 @@ public class ShowBarAvordCommon
         List<clsItemFBStar> allItemFBStars = await _context.ItemFBStars
             .Where(x => x.BaravordId == BarAvordUserId && x.NoeFBId == NoeFBId)
             .ToListAsync();
+
+        LogPerf("ریزمتره‌های ستاره‌دار", rizMetreStarsByNumber.Count);
 
         var itemFBStarsByFasl = allItemFBStars
             .GroupBy(x => x.Shomareh.Substring(0, 2))
@@ -644,6 +665,7 @@ public class ShowBarAvordCommon
             fasl.JameFaslAll = AllJameFaslStar + JameFasl + AllJameFaslWithoutBahaVahed;
             fasl.JameFaslWithZaribAll = AllJameFaslStarWithZarib + dJameFaslWithZarib + AllJameFaslWithoutBahaVahedWithZarib;
         }
+        LogPerf("پایان محاسبه فصول", Fosoul.Count);
         return Fosoul;
     }
 
