@@ -1736,6 +1736,7 @@ public class RizMetreCommon
             //decimal JameTajhizInZaribAll = 0;
 
             List<clsFehrestBahaItemsReplace> lstFehrestBahaItemsReplace = _context.FehrestBahaItemsReplaces.Where(x => x.Year == Year).ToList();
+                        LogPerf("جایگزینی‌های فهرست‌بها", lstFehrestBahaItemsReplace.Count);
             //List<clsZarayebFosoul> lstZarayebFosoul = _context.ZarayebFosouls.ToList();
 
             var FaslZarib = (from FehrestBahaItemsReplace in _context.FehrestBahaItemsReplaces
@@ -1749,6 +1750,8 @@ public class RizMetreCommon
                                  ZarayebFosoul.ZaribBalaSari,
                                  ZarayebFosoul.ZaribManteghe
                              }).ToList();
+
+                        LogPerf("ضرایب فصل‌ها", FaslZarib.Count);
 
             var faslZaribByItemNumber = FaslZarib
                 .Where(x => x.FBShomareh != null)
@@ -1781,6 +1784,8 @@ public class RizMetreCommon
                                  FBId = riz.FBId,
                                  MeghdarJoz = riz.MeghdarJoz
                              }).OrderBy(x => x.Shomareh).ToList();
+
+                                        LogPerf($"ریزمتره‌های عادی ({NoeFBId})", RizMetreAll.Count);
 
                     var rizMetreByFbId = RizMetreAll
                         .GroupBy(x => x.FBId)
@@ -1865,6 +1870,8 @@ public class RizMetreCommon
                     .Select(g => g.First())
                     .ToListAsync();
 
+                                        LogPerf($"آیتم‌های برآورد ({NoeFBId})", fbItems.Count);
+
                     //foreach (var item in fbItems)
                     //{
                     //    foreach (var fbItemsReplace in lstFehrestBahaItemsReplaceFilter)
@@ -1916,7 +1923,9 @@ public class RizMetreCommon
                  NoeFB = fb.NoeFB
              }).ToListAsync();
 
-                    List<ViewUserBarAvordOutPutDto> userBarAvordOutPut = lstFehrestBahas //_context.FehrestBahas
+                                         LogPerf($"فهرست‌بها ({NoeFBId})", lstFehrestBahas.Count);
+
+                     List<ViewUserBarAvordOutPutDto> userBarAvordOutPut = lstFehrestBahas //_context.FehrestBahas
                     .Where(fehrest => fehrest.Sal == Year && fehrest.NoeFB == NoeFBId)
                     .ToList() // انتقال به حافظه
                     .GroupJoin(fbItems,
@@ -2012,6 +2021,8 @@ public class RizMetreCommon
                     List<string> lstItemFbShomarehs = userBarAvordOutPutFiltered.Select(x => x.ItemFbShomareh).Distinct().ToList();
 
                     List<clsBahayeVahedItemsRelated> lstBVItemRelated = _context.BahayeVahedItemsRelateds.Where(x => lstItemFbShomarehs.Contains(x.ItemShomarehRelated.ToLower().Trim()) && x.NoeFB == NoeFBId && x.Year == Year).ToList();
+
+                                        LogPerf($"آیتم‌های مرتبط ({NoeFBId})", lstBVItemRelated.Count);
 
                     var bvItemRelatedByNumber = lstBVItemRelated
                         .GroupBy(x => x.ItemShomarehRelated.Trim())
@@ -2157,6 +2168,8 @@ public class RizMetreCommon
                         .Where(x => x.ItemFBStar.BaravordId == BarAvordId && x.ItemFBStar.NoeFBId == NoeFBId)
                         .Select(x => new { x.ItemFBStarId, x.MeghdarJoz })
                         .ToList();
+
+                                        LogPerf($"ریزمتره‌های ستاره‌دار ({NoeFBId})", rizMetreStarRows.Count);
 
                     var rizMetreStarSums = rizMetreStarRows
                         .GroupBy(x => x.ItemFBStarId)
