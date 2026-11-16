@@ -106,6 +106,7 @@ function TabClick(currentTab) {
                 hMax = h + t;
                 hMin = hMax - ((2 - (alfaw1 / 90)) * (hMax - 1));
 
+                debugger;
                 $('#hMinw1-' + PolExistingId).val(hMin.toFixed(2));
             }
 
@@ -875,7 +876,6 @@ function fillHadeAksarErtefa(GetHadAksarErtefaKoole, GetErtefaKhakriz) {
     MaxHadAksarErtefaKoole = 0;
 
     $.each(HadAksarErtefaKoole, function () {
-        debugger;
 
         blnCheck = false;
         HadeAksarErtefaListSplit = HadeAksarErtefaList.split(',');
@@ -1645,6 +1645,7 @@ function ShowSelctionPol(IsNew, PolExistingId, PolNum, GetTedadDahaneh, GetDahan
                 $('#drdNoeBanaii-' + PolExistingId).val(NoeBanaii);
                 $('#drdNahveEjraDal-' + PolExistingId).val(NahveEjraDal);
                 $.each(DastakPolInfo, function () {
+                    debugger;
                     PolVaAbroId = $(this).find("PolVaAbroId").text();
                     if (PolVaAbroId == PolExistingId) {
                         Shomareh = $(this).find("Shomareh").text();
@@ -1844,7 +1845,7 @@ function drawingPlan() {
     alfaw3 = $('#alfaw3-' + PolExistingId).val();
     alfaw4 = $('#alfaw4-' + PolExistingId).val();
 
-
+    debugger;
     $('#hMinw1-' + PolExistingId).val(Check_hminw($('#hMinw1-' + PolExistingId).val()));
     $('#hMinw2-' + PolExistingId).val(Check_hminw($('#hMinw2-' + PolExistingId).val()));
     $('#hMinw3-' + PolExistingId).val(Check_hminw($('#hMinw3-' + PolExistingId).val()));
