@@ -1,4 +1,5 @@
-﻿var timerAddPol;
+﻿
+var timerAddPol;
 function TabClick(currentTab) {
     PolExistingId = $('#HDFPolIdForEdit').val();
     if (currentTab == 'Plan-' + PolExistingId) {
@@ -105,6 +106,16 @@ function TabClick(currentTab) {
 
                 hMax = h + t;
                 hMin = hMax - ((2 - (alfaw1 / 90)) * (hMax - 1));
+
+                console.log({
+                    ObjectId: ObjectId,
+                    alfaw1: alfaw1,
+                    h: h,
+                    t: t,
+                    hMax: hMax,
+                    calculatedHMin: hMin
+                });
+
 
                 debugger;
                 $('#hMinw1-' + PolExistingId).val(hMin.toFixed(2));
@@ -784,10 +795,10 @@ function fillTedadDahaneh(GetTedadDahaneh, GetDahaneAbro, GetHadAksarErtefaKoole
             };
         });
     });
-    fillDahaneAbro(GetDahaneAbro, GetHadAksarErtefaKoole, GetErtefaKhakriz, NoeBanaii, NahveEjraDal);
+    fillDahaneAbro(GetDahaneAbro, GetHadAksarErtefaKoole, GetErtefaKhakriz, NoeBanaii, NahveEjraDal, IsNew);
 }
 
-function fillDahaneAbro(GetDahaneAbro, GetHadAksarErtefaKoole, GetErtefaKhakriz, NoeBanaii, NahveEjraDal) {
+function fillDahaneAbro(GetDahaneAbro, GetHadAksarErtefaKoole, GetErtefaKhakriz, NoeBanaii, NahveEjraDal,IsNew) {
     PolExistingId = $('#HDFPolIdForEdit').val();
     count = 0;
     DahaneAbroList = '';
@@ -863,10 +874,10 @@ function fillDahaneAbro(GetDahaneAbro, GetHadAksarErtefaKoole, GetErtefaKhakriz,
     //}
     //$('#drdNahveEjraDal-' + PolExistingId).html(strNahveEjraDal);
 
-    fillHadeAksarErtefa(GetHadAksarErtefaKoole, GetErtefaKhakriz)
+    fillHadeAksarErtefa(GetHadAksarErtefaKoole, GetErtefaKhakriz, IsNew)
 }
 
-function fillHadeAksarErtefa(GetHadAksarErtefaKoole, GetErtefaKhakriz) {
+function fillHadeAksarErtefa(GetHadAksarErtefaKoole, GetErtefaKhakriz, IsNew) {
 
     debugger;
     PolExistingId = $('#HDFPolIdForEdit').val();
@@ -900,7 +911,7 @@ function fillHadeAksarErtefa(GetHadAksarErtefaKoole, GetErtefaKhakriz) {
     $('#drdHadeAksarErtefa-' + PolExistingId).html(str);
 
 
-    fnGetErtefaKhakriz(GetErtefaKhakriz);
+    fnGetErtefaKhakriz(GetErtefaKhakriz, IsNew,false);
     //$('#drdHadeAksarErtefa-' + PolExistingId).each(function () {
     //    $('option', this).each(function () {
     //        if ($(this).text() == GetHadAksarErtefaKoole) {
@@ -909,7 +920,7 @@ function fillHadeAksarErtefa(GetHadAksarErtefaKoole, GetErtefaKhakriz) {
     //    });
     //});
 }
-function fnGetErtefaKhakriz(GetErtefaKhakriz) {
+function fnGetErtefaKhakriz(GetErtefaKhakriz, IsNew, UpdateHMin = false) {
     
     PolExistingId = $('#HDFPolIdForEdit').val();
     TedadDahanehCurrent = $('#drdTedadDahaneh-' + PolExistingId).val();
@@ -1093,10 +1104,23 @@ function fnGetErtefaKhakriz(GetErtefaKhakriz) {
                         , parseInt(e * 100), parseInt(n * 100), parseInt(k * 100), parseInt(t * 100), parseInt(j * 100), StartPointX, StartPointY, scale, Meyar, NoeBanaii);
                 }
 
+                // for (var i = 1; i < 5; i++) {
+                //     hMinwCurrent = $(`#hMinw${i}-` + PolExistingId);
+
+                //     hMinwCurrent.val($('#drdHadeAksarErtefa-' + PolExistingId).val());
+
+                //     checkErtefaKhakRiz(hMinwCurrent);
+                // }
+
+
                 for (var i = 1; i < 5; i++) {
                     hMinwCurrent = $(`#hMinw${i}-` + PolExistingId);
 
-                    hMinwCurrent.val($('#drdHadeAksarErtefa-' + PolExistingId).val());
+                    if (IsNew == 1 || UpdateHMin) {
+                        hMinwCurrent.val(
+                            $('#drdHadeAksarErtefa-' + PolExistingId).val()
+                        );
+                    }
 
                     checkErtefaKhakRiz(hMinwCurrent);
                 }
@@ -1503,7 +1527,7 @@ function ShowSelctionPol(IsNew, PolExistingId, PolNum, GetTedadDahaneh, GetDahan
                 }
                 $('#drdNahveEjraDal-' + PolExistingId).html(strNahveEjraDal);
                 //////////
-                fnGetErtefaKhakriz();
+                fnGetErtefaKhakriz(undefined, 0, true);
             });
 
             $('input[name="drdNoeBanaii-' + PolExistingId + '"]').change(function () {
@@ -1515,7 +1539,7 @@ function ShowSelctionPol(IsNew, PolExistingId, PolNum, GetTedadDahaneh, GetDahan
                //clearTimeout(timerAddPol);
                 //ChangeSaveButtonColor();
                 debugger;
-               fnGetErtefaKhakriz();
+                fnGetErtefaKhakriz(undefined, 0, true);
             });
 
             // $('#txtHadeAksarErtefa-' + PolExistingId).change(function () {
@@ -1656,6 +1680,14 @@ function ShowSelctionPol(IsNew, PolExistingId, PolNum, GetTedadDahaneh, GetDahan
                             $('#w1-' + PolExistingId).val(ToolW);
                             $('#alfaw1-' + PolExistingId).val(Zavie);
                             $('#hMinw1-' + PolExistingId).val(hMin);
+
+                            const inputId = '#hMinw1-' + PolExistingId;
+
+                            console.log('بعد از تنظیم دیتابیس:', $(inputId).val());
+
+                            setTimeout(function () {
+                                console.log('بعد از 100 میلی‌ثانیه:', $(inputId).val());
+                            }, 100);
                         }
                         else if (Shomareh == 2) {
                             $('#w2-' + PolExistingId).val(ToolW);
