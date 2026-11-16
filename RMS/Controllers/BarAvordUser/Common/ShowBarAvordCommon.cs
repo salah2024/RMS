@@ -148,7 +148,7 @@ public class ShowBarAvordCommon
         void LogPerf(string stage, int? rowCount = null)
         {
             long nowMs = perfWatch.ElapsedMilliseconds;
-            Console.WriteLine($"[PERF][ShowBarAvord][{BarAvordUserId}][{NoeFBId}] {stage}: +{nowMs - perfLastMs} ms | total={nowMs} ms" +
+            System.Diagnostics.Debug.WriteLine($"[PERF][ShowBarAvord][{BarAvordUserId}][{NoeFBId}] {stage}: +{nowMs - perfLastMs} ms | total={nowMs} ms" +
                 (rowCount.HasValue ? $" | rows={rowCount.Value}" : string.Empty));
             perfLastMs = nowMs;
         }
