@@ -307,7 +307,7 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
             .ToDictionary(g => g.Key, g => g.ToList());
 
         var bvItemRelatedByNumber = lstBVItemRelated
-            .GroupBy(x => x.ItemShomarehRelated.Trim().ToLower())
+            .GroupBy(x => x.ItemShomarehRelated.Trim())
             .ToDictionary(g => g.Key, g => g.First());
 
         var barAvordItemByNumber = userBarAvordOutPut
@@ -327,7 +327,7 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
 
             if (Meghdar != 0)
             {
-                bvItemRelatedByNumber.TryGetValue(item.ItemFbShomareh.Trim().ToLower(), out var BVItemsRelated);
+                bvItemRelatedByNumber.TryGetValue(item.ItemFbShomareh.Trim(), out var BVItemsRelated);
                 if (BVItemsRelated != null)
                 {
                     barAvordItemByNumber.TryGetValue(BVItemsRelated.ItemShomareh.Trim(), out var barAvordInFehrest1);
