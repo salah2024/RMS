@@ -333,8 +333,7 @@ public class ShowBarAvordCommon
 
         // ریزمتره‌های عادی را یک‌بار بر اساس شناسه آیتم گروه‌بندی می‌کنیم.
         var rizMetreByFbId = RizMetre
-            .Where(x => x.FBId.HasValue)
-            .GroupBy(x => x.FBId.Value)
+            .GroupBy(x => x.FBId)
             .ToDictionary(
                 g => g.Key,
                 g => new
