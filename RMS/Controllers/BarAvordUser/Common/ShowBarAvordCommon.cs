@@ -352,16 +352,10 @@ public class ShowBarAvordCommon
             .GroupBy(x => x.Shomareh.Substring(0, 2))
             .ToDictionary(g => g.Key, g => g.ToList());
 
-        var itemFBStarNumbers = allItemFBStars
-            .Select(x => x.Shomareh)
-            .Distinct()
-            .ToList();
-
         var rizMetreStarsByNumber = await _context.RizMetreStars
             .Include(x => x.ItemFBStar)
             .Where(x => x.ItemFBStar.BaravordId == BarAvordUserId &&
-                        x.ItemFBStar.NoeFBId == NoeFBId &&
-                        itemFBStarNumbers.Contains(x.ItemFBStar.Shomareh.Trim()))
+                        x.ItemFBStar.NoeFBId == NoeFBId)
             .Select(x => new
             {
                 Shomareh = x.ItemFBStar.Shomareh.Trim(),
