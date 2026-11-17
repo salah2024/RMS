@@ -23,7 +23,8 @@ public class AbnieFaniCommonBotonFendasionDastak(ApplicationDbContext context)
 
 
         ///////////////
-        clsFB? varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "120104" && x.NoeFBId == NoeFBId);
+        clsFB? varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "120104" && x.NoeFBId == NoeFBId)
+            ?? _context.FBs.Local.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "120104" && x.NoeFBId == NoeFBId);
         //DataTable DtFBUser = clsConvert.ToDataTable(varFBUser);
 
         Guid guFBId120104 = new Guid();
