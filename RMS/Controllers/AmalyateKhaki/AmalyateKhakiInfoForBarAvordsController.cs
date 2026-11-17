@@ -274,14 +274,6 @@ public class AmalyateKhakiInfoForBarAvordsController(ApplicationDbContext contex
                             /////////////////////////////////////
                             //////دریافت جمع ریزمتره های جاری///
                             /////////////////////////////////////
-                            decimal? dSumRizMetreCurrentFB = RizMetreCommon.SumRizMetreCurrentFB(gFBId, _context);
-
-                            decimal? dSumRizMetreCurrentFBAll = dSumRizMetreCurrentFB.HasValue
-                                   ? (dSumRizMetreCurrentFB ?? 0) + Hajm
-                                   : null;
-
-                            FB.SumRizMetre = dSumRizMetreCurrentFBAll;
-
                             clsAmalyateKhakiInfoForBarAvordDetailsRizMetre AmalyateKhakiInfoForBarAvordDetailsRizMetre
                                 = new clsAmalyateKhakiInfoForBarAvordDetailsRizMetre
                                 {
