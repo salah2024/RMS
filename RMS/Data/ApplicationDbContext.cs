@@ -155,6 +155,99 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<clsItemHasConditionBaseItemRemoved> ItemHasConditionBaseItemRemoveds { get; set; }
     public DbSet<clsBarAvordProjectionWorkFlow> BarAvordProjectionWorkFlows { get; set; }
 
+    // همگام‌سازی مرکزی جمع ریزمتره هر FB پس از هر درج، ویرایش یا حذف
+    public override int SaveChanges(bool acceptAllChangesOnSuccess)
+    {
+        var affectedFBIds = GetChangedRizMetreFBIds();
+
+        int result = base.SaveChanges(acceptAllChangesOnSuccess);
+
+        RefreshSumRizMetre(affectedFBIds);
+
+        return result;
+    }
+
+    public override async Task<int> SaveChangesAsync(
+        bool acceptAllChangesOnSuccess,
+        CancellationToken cancellationToken = default)
+    {
+        var affectedFBIds = GetChangedRizMetreFBIds();
+
+        int result = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+
+        await RefreshSumRizMetreAsync(affectedFBIds, cancellationToken);
+
+        return result;
+    }
+
+    private HashSet<Guid> GetChangedRizMetreFBIds()
+    {
+        var result = new HashSet<Guid>();
+
+        foreach (var entry in ChangeTracker.Entries<clsRizMetreUsers>())
+        {
+            if (entry.State == EntityState.Added || entry.State == EntityState.Modified)
+                result.Add(entry.Entity.FBId);
+
+            if (entry.State == EntityState.Modified || entry.State == EntityState.Deleted)
+            {
+                var oldFBId = entry.OriginalValues.GetValue<Guid>(nameof(clsRizMetreUsers.FBId));
+                result.Add(oldFBId);
+            }
+        }
+
+        result.Remove(Guid.Empty);
+        return result;
+    }
+
+    private void RefreshSumRizMetre(HashSet<Guid> fbIds)
+    {
+        foreach (var fbId in fbIds)
+        {
+            decimal? sum = RizMetreUserses
+                .Where(x => x.FBId == fbId)
+                .Sum(x => (decimal?)x.MeghdarJoz);
+
+            FBs.Where(x => x.ID == fbId)
+                .ExecuteUpdate(setters => setters.SetProperty(x => x.SumRizMetre, sum));
+
+            var trackedFB = ChangeTracker.Entries<clsFB>()
+                .FirstOrDefault(x => x.Entity.ID == fbId);
+
+            if (trackedFB != null)
+            {
+                trackedFB.Property(x => x.SumRizMetre).CurrentValue = sum;
+                trackedFB.Property(x => x.SumRizMetre).IsModified = false;
+            }
+        }
+    }
+
+    private async Task RefreshSumRizMetreAsync(
+        HashSet<Guid> fbIds,
+        CancellationToken cancellationToken)
+    {
+        foreach (var fbId in fbIds)
+        {
+            decimal? sum = await RizMetreUserses
+                .Where(x => x.FBId == fbId)
+                .SumAsync(x => (decimal?)x.MeghdarJoz, cancellationToken);
+
+            await FBs.Where(x => x.ID == fbId)
+                .ExecuteUpdateAsync(
+                    setters => setters.SetProperty(x => x.SumRizMetre, sum),
+                    cancellationToken);
+
+            var trackedFB = ChangeTracker.Entries<clsFB>()
+                .FirstOrDefault(x => x.Entity.ID == fbId);
+
+            if (trackedFB != null)
+            {
+                trackedFB.Property(x => x.SumRizMetre).CurrentValue = sum;
+                trackedFB.Property(x => x.SumRizMetre).IsModified = false;
+            }
+        }
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
