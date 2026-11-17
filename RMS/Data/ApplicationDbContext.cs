@@ -208,8 +208,14 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
                 .Where(x => x.FBId == fbId && x.IsDeleted != true)
                 .Sum(x => (decimal?)x.MeghdarJoz);
 
-            FBs.Where(x => x.ID == fbId)
+            Console.WriteLine(
+                $"[SUM-RIZMETRE][SYNC][CALCULATED] FBId={fbId} | Sum={sum}");
+
+            int updatedRows = FBs.Where(x => x.ID == fbId)
                 .ExecuteUpdate(setters => setters.SetProperty(x => x.SumRizMetre, sum));
+
+            Console.WriteLine(
+                $"[SUM-RIZMETRE][SYNC][UPDATED] FBId={fbId} | Sum={sum} | UpdatedRows={updatedRows}");
 
             var trackedFB = ChangeTracker.Entries<clsFB>()
                 .FirstOrDefault(x => x.Entity.ID == fbId);
@@ -232,10 +238,16 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
                 .Where(x => x.FBId == fbId && x.IsDeleted != true)
                 .SumAsync(x => (decimal?)x.MeghdarJoz, cancellationToken);
 
-            await FBs.Where(x => x.ID == fbId)
+            Console.WriteLine(
+                $"[SUM-RIZMETRE][ASYNC][CALCULATED] FBId={fbId} | Sum={sum}");
+
+            int updatedRows = await FBs.Where(x => x.ID == fbId)
                 .ExecuteUpdateAsync(
                     setters => setters.SetProperty(x => x.SumRizMetre, sum),
                     cancellationToken);
+
+            Console.WriteLine(
+                $"[SUM-RIZMETRE][ASYNC][UPDATED] FBId={fbId} | Sum={sum} | UpdatedRows={updatedRows}");
 
             var trackedFB = ChangeTracker.Entries<clsFB>()
                 .FirstOrDefault(x => x.Entity.ID == fbId);
