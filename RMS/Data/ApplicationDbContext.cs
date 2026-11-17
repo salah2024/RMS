@@ -249,6 +249,16 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             Console.WriteLine(
                 $"[SUM-RIZMETRE][ASYNC][UPDATED] FBId={fbId} | Sum={sum} | UpdatedRows={updatedRows}");
 
+            decimal? persistedSum = await FBs
+                .AsNoTracking()
+                .Where(x => x.ID == fbId)
+                .Select(x => x.SumRizMetre)
+                .SingleOrDefaultAsync(cancellationToken);
+
+            System.Diagnostics.Debug.WriteLine(
+                $"[SUM-RIZMETRE][ASYNC][READBACK] FBId={fbId} | " +
+                $"Calculated={sum} | Persisted={persistedSum} | UpdatedRows={updatedRows}");
+
             var trackedFB = ChangeTracker.Entries<clsFB>()
                 .FirstOrDefault(x => x.Entity.ID == fbId);
 
