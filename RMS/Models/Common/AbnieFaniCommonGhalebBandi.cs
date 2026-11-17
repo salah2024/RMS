@@ -25,7 +25,8 @@ public class AbnieFaniCommonGhalebBandi(ApplicationDbContext context)
         decimal dp1 = decimal.Parse(p1);
         decimal dp2 = decimal.Parse(p2);
 
-        clsFB? varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "080101" && x.NoeFBId == NoeFBId);
+        clsFB? varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "080101" && x.NoeFBId == NoeFBId)
+            ?? _context.FBs.Local.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "080101" && x.NoeFBId == NoeFBId);
         Guid guFBId = new Guid();
         if (varFBUser == null)
         {
