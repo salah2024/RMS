@@ -43,7 +43,8 @@ public class AbnieFaniCommonGhalebBandiChenaj(ApplicationDbContext context)
             if (blnFirstCon)
             {
                 string strCurrentShomareh = arrItemsForInsert[1, count];
-                clsFB? varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == strCurrentShomareh && x.NoeFBId == NoeFBId);
+                clsFB? varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == strCurrentShomareh && x.NoeFBId == NoeFBId)
+                    ?? _context.FBs.Local.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == strCurrentShomareh && x.NoeFBId == NoeFBId);
 
                 Guid guFBId = new Guid();
                 //if (DtFBUser.Rows.Count == 0)
@@ -277,7 +278,8 @@ public class AbnieFaniCommonGhalebBandiChenaj(ApplicationDbContext context)
             else if (blnSecondCon)
             {
                 string strCurrentShomareh = arrItemsForInsert[1, count];
-                clsFB? varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == strCurrentShomareh && x.NoeFBId == NoeFBId);
+                clsFB? varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == strCurrentShomareh && x.NoeFBId == NoeFBId)
+                    ?? _context.FBs.Local.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == strCurrentShomareh && x.NoeFBId == NoeFBId);
 
                 Guid guFBId = new Guid();
                 //if (DtFBUser.Rows.Count == 0)
