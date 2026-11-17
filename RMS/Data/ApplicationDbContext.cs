@@ -160,10 +160,13 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         LogTrackedFBUpdates("SYNC");
 
+        LogSumRizMetreTransactionState("SYNC-BEFORE-BASE-SAVE");
+
         var affectedFBIds = GetChangedRizMetreFBIds();
 
         int result = base.SaveChanges(acceptAllChangesOnSuccess);
 
+        LogSumRizMetreTransactionState("SYNC-AFTER-BASE-SAVE");
         RefreshSumRizMetre(affectedFBIds);
 
         return result;
@@ -175,13 +178,32 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         LogTrackedFBUpdates("ASYNC");
 
+        LogSumRizMetreTransactionState("ASYNC-BEFORE-BASE-SAVE");
+
         var affectedFBIds = GetChangedRizMetreFBIds();
 
         int result = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
 
+        LogSumRizMetreTransactionState("ASYNC-AFTER-BASE-SAVE");
         await RefreshSumRizMetreAsync(affectedFBIds, cancellationToken);
 
+
+
         return result;
+    }
+
+    private void LogSumRizMetreTransactionState(string stage)
+    {
+        var connection = Database.GetDbConnection();
+        var ambientTransaction = System.Transactions.Transaction.Current;
+        var efTransaction = Database.CurrentTransaction;
+
+        System.Diagnostics.Debug.WriteLine(
+            $"[SUM-RIZMETRE][TX][{stage}] " +
+            $"Server={connection.DataSource} | Database={connection.Database} | " +
+            $"EFTransactionId={efTransaction?.TransactionId.ToString() ?? "null"} | " +
+            $"AmbientTransactionId={ambientTransaction?.TransactionInformation.LocalIdentifier ?? "null"} | " +
+            $"AmbientStatus={ambientTransaction?.TransactionInformation.Status.ToString() ?? "null"}");
     }
 
     private void LogTrackedFBUpdates(string saveChangesType)
@@ -261,6 +283,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         foreach (var fbId in fbIds)
         {
+            LogSumRizMetreTransactionState($"ASYNC-BEFORE-REFRESH-{fbId}");
+
             decimal? sum = await RizMetreUserses
                 .Where(x => x.FBId == fbId && x.IsDeleted != true)
                 .SumAsync(x => (decimal?)x.MeghdarJoz, cancellationToken);
@@ -285,6 +309,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             System.Diagnostics.Debug.WriteLine(
                 $"[SUM-RIZMETRE][ASYNC][READBACK] FBId={fbId} | " +
                 $"Calculated={sum} | Persisted={persistedSum} | UpdatedRows={updatedRows}");
+
+            LogSumRizMetreTransactionState($"ASYNC-AFTER-READBACK-{fbId}");
 
             var trackedFB = ChangeTracker.Entries<clsFB>()
                 .FirstOrDefault(x => x.Entity.ID == fbId);
