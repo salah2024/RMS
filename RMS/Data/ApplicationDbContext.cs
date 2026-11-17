@@ -171,6 +171,12 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         {
             entry.Entity.InsertDateTime ??= now;
         }
+
+        foreach (var entry in ChangeTracker.Entries<clsFB>()
+                     .Where(x => x.State == EntityState.Added))
+        {
+            entry.Entity.InsertDateTime ??= now;
+        }
     }
 
     // همگام‌سازی مرکزی جمع ریزمتره هر FB پس از هر درج، ویرایش یا حذف
