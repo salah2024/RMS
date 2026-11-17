@@ -275,17 +275,6 @@ public class PayKaniInfoForBarAvordsController(ApplicationDbContext context) : C
                             _context.RizMetreUserses.Add(RizMetre);
 
 
-                            /////////////////////////////////////
-                            //////دریافت جمع ریزمتره های جاری///
-                            /////////////////////////////////////
-                            decimal? dSumRizMetreCurrentFB = RizMetreCommon.SumRizMetreCurrentFB(gFBId, _context);
-
-                            decimal? dSumRizMetreCurrentFBAll = dSumRizMetreCurrentFB.HasValue
-                                   ? (dSumRizMetreCurrentFB ?? 0) + Hajm
-                                   : null;
-
-                            FB.SumRizMetre = dSumRizMetreCurrentFBAll;
-
                             clsPayKaniInfoForBarAvordDetailsRizMetre PayKaniInfoForBarAvordDetailsRizMetre
                                 = new clsPayKaniInfoForBarAvordDetailsRizMetre
                                 {
