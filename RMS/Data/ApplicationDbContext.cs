@@ -155,9 +155,28 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<clsItemHasConditionBaseItemRemoved> ItemHasConditionBaseItemRemoveds { get; set; }
     public DbSet<clsBarAvordProjectionWorkFlow> BarAvordProjectionWorkFlows { get; set; }
 
+    // ثبت خودکار زمان ایجاد برای تمام ریزمتره‌ها، مستقل از مسیر درج
+    private void SetRizMetreInsertDateTime()
+    {
+        var now = DateTime.Now;
+
+        foreach (var entry in ChangeTracker.Entries<clsRizMetreUsers>()
+                     .Where(x => x.State == EntityState.Added))
+        {
+            entry.Entity.InsertDateTime ??= now;
+        }
+
+        foreach (var entry in ChangeTracker.Entries<clsRizMetreUsersHistory>()
+                     .Where(x => x.State == EntityState.Added))
+        {
+            entry.Entity.InsertDateTime ??= now;
+        }
+    }
+
     // همگام‌سازی مرکزی جمع ریزمتره هر FB پس از هر درج، ویرایش یا حذف
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {
+        SetRizMetreInsertDateTime();
         LogTrackedFBUpdates("SYNC");
 
         LogSumRizMetreTransactionState("SYNC-BEFORE-BASE-SAVE");
@@ -176,6 +195,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         bool acceptAllChangesOnSuccess,
         CancellationToken cancellationToken = default)
     {
+        SetRizMetreInsertDateTime();
         LogTrackedFBUpdates("ASYNC");
 
         LogSumRizMetreTransactionState("ASYNC-BEFORE-BASE-SAVE");
