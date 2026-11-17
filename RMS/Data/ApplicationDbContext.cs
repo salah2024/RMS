@@ -245,6 +245,17 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             }
         }
 
+        // اگر مسیر دیگری SumRizMetre را مستقیماً روی FB تغییر دهد،
+        // همان FB نیز باید پس از SaveChanges از روی ریزمتره‌ها محاسبه شود.
+        foreach (var entry in ChangeTracker.Entries<clsFB>())
+        {
+            if (entry.State == EntityState.Modified &&
+                entry.Property(x => x.SumRizMetre).IsModified)
+            {
+                result.Add(entry.Entity.ID);
+            }
+        }
+
         result.Remove(Guid.Empty);
         return result;
     }
