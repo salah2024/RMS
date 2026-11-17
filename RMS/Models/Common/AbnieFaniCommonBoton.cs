@@ -633,7 +633,8 @@ public class AbnieFaniCommonBoton(ApplicationDbContext context)
         /////////////////
         ///120104
         //////////////
-        varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "120104" && x.NoeFBId == NoeFBId);
+        varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "120104" && x.NoeFBId == NoeFBId)
+            ?? _context.FBs.Local.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "120104" && x.NoeFBId == NoeFBId);
         //DtFBUser = clsConvert.ToDataTable(varFBUser);
 
         guFBId = new Guid();
