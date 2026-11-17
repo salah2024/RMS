@@ -89,7 +89,6 @@ public class AmalyateKhakiCommon
             FB = newFB;
         }
 
-        decimal dSumAllRizMetre = 0;
 
         List<clsItemsRelatedToItemHaml> lstRelatedToItemHaml = await _context.ItemsRelatedToItemHamls.Where(x => x.NoeFB == NoeFBId && x.Year == Year).ToListAsync();
 
@@ -123,7 +122,6 @@ public class AmalyateKhakiCommon
                             RizMetre.MeghdarJoz = MeghdarJoz;
                             _context.RizMetreUserses.Add(RizMetre);
 
-                            dSumAllRizMetre += MeghdarJoz ?? 0;
 
                             clsAmalyateKhakiInfoForBarAvordEzafeBahaRizMetre AmalyateKhakiInfoForBarAvordEzafeBahaRizMetre
                                 = new clsAmalyateKhakiInfoForBarAvordEzafeBahaRizMetre
@@ -228,7 +226,6 @@ public class AmalyateKhakiCommon
                             RizMetre.MeghdarJoz = MeghdarJoz;
                             _context.RizMetreUserses.Add(RizMetre);
 
-                            dSumAllRizMetre += MeghdarJoz ?? 0;
 
                             clsAmalyateKhakiInfoForBarAvordEzafeBahaRizMetre AmalyateKhakiInfoForBarAvordEzafeBahaRizMetre
                                 = new clsAmalyateKhakiInfoForBarAvordEzafeBahaRizMetre
@@ -418,13 +415,6 @@ public class AmalyateKhakiCommon
         /////////////////////////////////////
         //////دریافت جمع ریزمتره های جاری///
         /////////////////////////////////////
-        decimal? dSumRizMetreCurrentFB = RizMetreCommon.SumRizMetreCurrentFB(gFBId, _context);
-
-        decimal? dSumRizMetreCurrentFBAll = dSumRizMetreCurrentFB.HasValue
-               ? (dSumRizMetreCurrentFB ?? 0) + dSumAllRizMetre
-               : null;
-
-        FB.SumRizMetre = dSumRizMetreCurrentFBAll;
 
         return true;
     }
