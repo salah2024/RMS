@@ -18,7 +18,8 @@ public class AbnieFaniCommonGhalebBandiSarKalaDastak(ApplicationDbContext contex
     {
         ///////////////
 
-        clsFB? varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "080201" && x.NoeFBId == NoeFBId);
+        clsFB? varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "080201" && x.NoeFBId == NoeFBId)
+            ?? _context.FBs.Local.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "080201" && x.NoeFBId == NoeFBId);
 
         Guid guFBId080201 = new Guid();
         if (varFBUser == null)
@@ -41,7 +42,8 @@ public class AbnieFaniCommonGhalebBandiSarKalaDastak(ApplicationDbContext contex
         else
             Shomareh080201 = 1;
 
-        varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "080202" && x.NoeFBId == NoeFBId);
+        varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "080202" && x.NoeFBId == NoeFBId)
+            ?? _context.FBs.Local.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "080202" && x.NoeFBId == NoeFBId);
 
         Guid guFBId080202 = new Guid();
         if (varFBUser == null)
@@ -64,7 +66,8 @@ public class AbnieFaniCommonGhalebBandiSarKalaDastak(ApplicationDbContext contex
             Shomareh080202 = 1;
 
         ///////////////
-        varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "080203" && x.NoeFBId == NoeFBId);
+        varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "080203" && x.NoeFBId == NoeFBId)
+            ?? _context.FBs.Local.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "080203" && x.NoeFBId == NoeFBId);
 
         Guid guFBId080203 = new Guid();
         if (varFBUser == null)
@@ -88,7 +91,8 @@ public class AbnieFaniCommonGhalebBandiSarKalaDastak(ApplicationDbContext contex
             Shomareh080203 = 1;
 
         ///////////////
-        varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "080204" && x.NoeFBId == NoeFBId);
+        varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "080204" && x.NoeFBId == NoeFBId)
+            ?? _context.FBs.Local.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "080204" && x.NoeFBId == NoeFBId);
 
 
         Guid guFBId080204 = new Guid();
