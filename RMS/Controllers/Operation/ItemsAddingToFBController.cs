@@ -2011,7 +2011,6 @@ namespace RMS.Controllers.Operation
                                     ///در این حالت بایستی آیتم اصلی برگشت شده و ضریب ارسالی در بهای واحد ضرب شود
                                     ///و عدد بدست آمده در ضریب بهای واحد قرار گیرد
                                     ///
-                                    decimal dSumAllRizMetre = 0;
                                     //string FieldsAdding = ItemsAdding.FieldsAdding.ToString();
                                     // string? ConditionContextRel = ItemsAdding.ConditionContextRel.ToString().Trim() == "" ? null : ItemsAdding.ConditionContextRel.ToString().Trim();
                                     // long? ConditionContextId = long.Parse(ItemsAdding.ConditionContextId.ToString().Trim() == "" ? null : ItemsAdding.ConditionContextId.ToString().Trim());
@@ -2248,7 +2247,6 @@ namespace RMS.Controllers.Operation
 
                                                 _context.RizMetreUserses.Add(RizMetreUserses);
 
-                                                dSumAllRizMetre += dMeghdarJoz ?? 0;
 
 
                                                 //Start///////////////////////
@@ -2274,13 +2272,6 @@ namespace RMS.Controllers.Operation
                                         /////////////////////////////////////
                                         //////دریافت جمع ریزمتره های جاری///
                                         /////////////////////////////////////
-                                        decimal? dSumRizMetreCurrentFB = RizMetreCommon.SumRizMetreCurrentFB(FBId, _context);
-
-                                        decimal? dSumRizMetreCurrentFBAll = dSumRizMetreCurrentFB.HasValue
-                                               ? (dSumRizMetreCurrentFB ?? 0) + dSumAllRizMetre
-                                               : null;
-
-                                        varFBUser.SumRizMetre = dSumRizMetreCurrentFBAll;
 
                                         await _context.SaveChangesAsync();
                                     }
@@ -2288,7 +2279,6 @@ namespace RMS.Controllers.Operation
                                 }
                             case "4":
                                 {
-                                    decimal dSumAllRizMetre = 0;
                                     //string FieldsAdding = ItemsAdding.FieldsAdding.ToString();
                                     //string? ConditionContextRel = ItemsAdding.ConditionContextRel.ToString().Trim() == "" ? null : ItemsAdding.ConditionContextRel.ToString().Trim();
                                     //long? ConditionContextId = long.Parse(ItemsAdding.ConditionContextId.ToString().Trim() == "" ? null : ItemsAdding.ConditionContextId.ToString().Trim());
@@ -2582,7 +2572,6 @@ namespace RMS.Controllers.Operation
 
                                                     _context.RizMetreUserses.Add(RizMetreUserses);
 
-                                                    dSumAllRizMetre += dMeghdarJoz ?? 0;
 
                                                     //Start///////////////////////
                                                     ////////////حمل///////////////
@@ -2610,13 +2599,6 @@ namespace RMS.Controllers.Operation
                                             /////////////////////////////////////
                                             //////دریافت جمع ریزمتره های جاری///
                                             /////////////////////////////////////
-                                            decimal? dSumRizMetreCurrentFB = RizMetreCommon.SumRizMetreCurrentFB(FBId, _context);
-
-                                            decimal? dSumRizMetreCurrentFBAll = dSumRizMetreCurrentFB.HasValue
-                                                   ? (dSumRizMetreCurrentFB ?? 0) + dSumAllRizMetre
-                                                   : null;
-
-                                            varFBUser.SumRizMetre = dSumRizMetreCurrentFBAll;
 
                                             await _context.SaveChangesAsync();
                                         }
@@ -2634,7 +2616,6 @@ namespace RMS.Controllers.Operation
                                 }
                             case "5":
                                 {
-                                    decimal dSumAllRizMetre = 0;
                                     //string FieldsAdding = ItemsAdding.FieldsAdding.ToString().Trim() == "" ? null : ItemsAdding.FieldsAdding.ToString().Trim();
                                     //string? ConditionContextRel = ItemsAdding.ConditionContextRel.ToString().Trim() == "" ? null : ItemsAdding.ConditionContextRel.ToString().Trim();
                                     //long? ConditionContextId = long.Parse(ItemsAdding.ConditionContextId.ToString().Trim() == "" ? null : ItemsAdding.ConditionContextId.ToString().Trim());
@@ -2881,7 +2862,6 @@ namespace RMS.Controllers.Operation
                                                             BaseRizMetreId = DtRizMetreUserses11.Id
                                                         });
 
-                                                    dSumAllRizMetre += dMeghdarJoz ?? 0;
 
                                                     //Start///////////////////////
                                                     ////////////حمل///////////////
@@ -2909,13 +2889,6 @@ namespace RMS.Controllers.Operation
                                             /////////////////////////////////////
                                             //////دریافت جمع ریزمتره های جاری///
                                             /////////////////////////////////////
-                                            decimal? dSumRizMetreCurrentFB = RizMetreCommon.SumRizMetreCurrentFB(FBId, _context);
-
-                                            decimal? dSumRizMetreCurrentFBAll = dSumRizMetreCurrentFB.HasValue
-                                                   ? (dSumRizMetreCurrentFB ?? 0) + dSumAllRizMetre
-                                                   : null;
-
-                                            varFBUser.SumRizMetre = dSumRizMetreCurrentFBAll;
 
                                             await _context.SaveChangesAsync();
                                         }
@@ -2940,7 +2913,6 @@ namespace RMS.Controllers.Operation
                                 }
                             case "2":
                                 {
-                                    decimal dSumAllRizMetre = 0;
                                     //StringToFormula StringToFormula = new StringToFormula();
                                     blnCheckIsExistErrors = "false";
 
@@ -2985,7 +2957,6 @@ namespace RMS.Controllers.Operation
                                 }
                             case "7":
                                 {
-                                    decimal dSumAllRizMetre = 0;
                                     //string FieldsAdding = ItemsAdding.FieldsAdding.ToString().Trim() == "" ? null : ItemsAdding.FieldsAdding.ToString().Trim();
                                     //string? ConditionContextRel = ItemsAdding.ConditionContextRel.ToString().Trim() == "" ? null : ItemsAdding.ConditionContextRel.ToString().Trim();
                                     //long? ConditionContextId = long.Parse(ItemsAdding.ConditionContextId.ToString().Trim() == "" ? null : ItemsAdding.ConditionContextId.ToString().Trim());
@@ -3224,7 +3195,6 @@ namespace RMS.Controllers.Operation
                                                             BaseRizMetreId = DtRizMetreUserses11.Id
                                                         });
 
-                                                        dSumAllRizMetre += dMeghdarJoz ?? 0;
 
                                                         //Start///////////////////////
                                                         ////////////حمل///////////////
@@ -3253,20 +3223,12 @@ namespace RMS.Controllers.Operation
                                         /////////////////////////////////////
                                         //////دریافت جمع ریزمتره های جاری///
                                         /////////////////////////////////////
-                                        decimal? dSumRizMetreCurrentFB = RizMetreCommon.SumRizMetreCurrentFB(FBId, _context);
-
-                                        decimal? dSumRizMetreCurrentFBAll = dSumRizMetreCurrentFB.HasValue
-                                               ? (dSumRizMetreCurrentFB ?? 0) + dSumAllRizMetre
-                                               : null;
-
-                                        varFBUser.SumRizMetre = dSumRizMetreCurrentFBAll;
                                         await _context.SaveChangesAsync();
                                     }
                                     break;
                                 }
                             case "8":
                                 {
-                                    decimal dSumAllRizMetre = 0;
                                     blnCheckIsExistErrors = "false";
                                     bool blnCheckSave = false;
 
@@ -3508,7 +3470,6 @@ namespace RMS.Controllers.Operation
                                                         BaseRizMetreId = DtRizMetreUserses11.Id
                                                     });
 
-                                                dSumAllRizMetre += dMeghdarJoz ?? 0;
 
                                                 //Start///////////////////////
                                                 ////////////حمل///////////////
@@ -3533,13 +3494,6 @@ namespace RMS.Controllers.Operation
                                                 /////////////////////////////////////
                                                 //////دریافت جمع ریزمتره های جاری///
                                                 /////////////////////////////////////
-                                                decimal? dSumRizMetreCurrentFB = RizMetreCommon.SumRizMetreCurrentFB(FBId, _context);
-
-                                                decimal? dSumRizMetreCurrentFBAll = dSumRizMetreCurrentFB.HasValue
-                                                       ? (dSumRizMetreCurrentFB ?? 0) + dSumAllRizMetre
-                                                       : null;
-
-                                                varFBUser.SumRizMetre = dSumRizMetreCurrentFBAll;
                                                 await _context.SaveChangesAsync();
                                             }
                                         }
@@ -3597,7 +3551,6 @@ namespace RMS.Controllers.Operation
                                             else
                                             {
 
-                                                decimal dSumAllRizMetre = 0;
                                                 blnCheckIsExistErrors = "false";
 
                                                 //long lngItemsHasCondition_ConditionContextId = long.Parse(ItemsAdding.ItemsHasCondition_ConditionContextId.ToString());
@@ -3834,7 +3787,6 @@ namespace RMS.Controllers.Operation
                                                                     RizMetreId = RizMetreUserses.ID,
                                                                     BaseRizMetreId = DtRizMetreUserses11.Id
                                                                 });
-                                                            dSumAllRizMetre += dMeghdarJoz ?? 0;
 
                                                             //Start///////////////////////
                                                             ////////////حمل///////////////
@@ -3861,13 +3813,6 @@ namespace RMS.Controllers.Operation
                                                     /////////////////////////////////////
                                                     //////دریافت جمع ریزمتره های جاری///
                                                     /////////////////////////////////////
-                                                    decimal? dSumRizMetreCurrentFB = RizMetreCommon.SumRizMetreCurrentFB(FBId, _context);
-
-                                                    decimal? dSumRizMetreCurrentFBAll = dSumRizMetreCurrentFB.HasValue
-                                                           ? (dSumRizMetreCurrentFB ?? 0) + dSumAllRizMetre
-                                                           : null;
-
-                                                    varFBUser.SumRizMetre = dSumRizMetreCurrentFBAll;
                                                     await _context.SaveChangesAsync();
                                                 }
                                             }
@@ -3954,7 +3899,6 @@ namespace RMS.Controllers.Operation
 
                                     if (blnCheckSave)
                                     {
-                                        decimal dSumAllRizMetre = 0;
 
                                         clsBaravordUser? BA = _context.BaravordUsers.Where(x => x.ID == BarAvordId).FirstOrDefault();
                                         if (BA != null)
@@ -4139,7 +4083,6 @@ namespace RMS.Controllers.Operation
                                                             RizMetreId = RizMetreUserses.ID,
                                                             BaseRizMetreId = RM.Id
                                                         });
-                                                        dSumAllRizMetre += dMeghdarJoz ?? 0;
 
 
                                                         //Start///////////////////////
@@ -4168,13 +4111,6 @@ namespace RMS.Controllers.Operation
                                             /////////////////////////////////////
                                             //////دریافت جمع ریزمتره های جاری///
                                             /////////////////////////////////////
-                                            decimal? dSumRizMetreCurrentFB = RizMetreCommon.SumRizMetreCurrentFB(FBId, _context);
-
-                                            decimal? dSumRizMetreCurrentFBAll = dSumRizMetreCurrentFB.HasValue
-                                                   ? (dSumRizMetreCurrentFB ?? 0) + dSumAllRizMetre
-                                                   : null;
-
-                                            varFBUser.SumRizMetre = dSumRizMetreCurrentFBAll;
                                             await _context.SaveChangesAsync();
                                             //}
                                         }
@@ -4183,7 +4119,6 @@ namespace RMS.Controllers.Operation
                                 }
                             case "12":
                                 {
-                                    decimal dSumAllRizMetre = 0;
                                     //string FieldsAdding = ItemsAdding.FieldsAdding.ToString();
                                     //string? ConditionContextRel = ItemsAdding.ConditionContextRel.ToString().Trim() == "" ? null : ItemsAdding.ConditionContextRel.ToString().Trim();
                                     //long? ConditionContextId = long.Parse(ItemsAdding.ConditionContextId.ToString().Trim() == "" ? null : ItemsAdding.ConditionContextId.ToString().Trim());
@@ -4411,7 +4346,6 @@ namespace RMS.Controllers.Operation
                                                             BaseRizMetreId = RM.Id
                                                         });
 
-                                                        dSumAllRizMetre += dMeghdarJoz ?? 0;
 
                                                         //Start///////////////////////
                                                         ////////////حمل///////////////
@@ -4438,13 +4372,6 @@ namespace RMS.Controllers.Operation
                                             /////////////////////////////////////
                                             //////دریافت جمع ریزمتره های جاری///
                                             /////////////////////////////////////
-                                            decimal? dSumRizMetreCurrentFB = RizMetreCommon.SumRizMetreCurrentFB(FBId, _context);
-
-                                            decimal? dSumRizMetreCurrentFBAll = dSumRizMetreCurrentFB.HasValue
-                                                   ? (dSumRizMetreCurrentFB ?? 0) + dSumAllRizMetre
-                                                   : null;
-
-                                            varFBUser.SumRizMetre = dSumRizMetreCurrentFBAll;
 
                                             await _context.SaveChangesAsync();
                                         }
@@ -4454,7 +4381,6 @@ namespace RMS.Controllers.Operation
                                 }
                             case "13":
                                 {
-                                    decimal dSumAllRizMetre = 0;
                                     //string FieldsAdding = ItemsAdding.FieldsAdding.ToString();
                                     //string? ConditionContextRel = ItemsAdding.ConditionContextRel.ToString().Trim() == "" ? null : ItemsAdding.ConditionContextRel.ToString().Trim();
                                     //long? ConditionContextId = long.Parse(ItemsAdding.ConditionContextId.ToString().Trim() == "" ? null : ItemsAdding.ConditionContextId.ToString().Trim());
@@ -4707,7 +4633,6 @@ namespace RMS.Controllers.Operation
                                                             BaseRizMetreId = DtRizMetreUserses11.Id
                                                         });
 
-                                                        dSumAllRizMetre += dMeghdarJoz ?? 0;
 
 
                                                         //Start///////////////////////
@@ -4736,13 +4661,6 @@ namespace RMS.Controllers.Operation
                                                 /////////////////////////////////////
                                                 //////دریافت جمع ریزمتره های جاری///
                                                 /////////////////////////////////////
-                                                decimal? dSumRizMetreCurrentFB = RizMetreCommon.SumRizMetreCurrentFB(FBId, _context);
-
-                                                decimal? dSumRizMetreCurrentFBAll = dSumRizMetreCurrentFB.HasValue
-                                                       ? (dSumRizMetreCurrentFB ?? 0) + dSumAllRizMetre
-                                                       : null;
-
-                                                varFBUser.SumRizMetre = dSumRizMetreCurrentFBAll;
                                                 await _context.SaveChangesAsync();
                                             }
                                         }
@@ -4759,7 +4677,6 @@ namespace RMS.Controllers.Operation
                                 }
                             case "14":
                                 {
-                                    decimal dSumRizMetreAll = 0;
 
                                     //string FieldsAdding = ItemsAdding.FieldsAdding.ToString().Trim() == "" ? null : ItemsAdding.FieldsAdding.ToString().Trim();
                                     //string? ConditionContextRel = ItemsAdding.ConditionContextRel.ToString().Trim() == "" ? null : ItemsAdding.ConditionContextRel.ToString().Trim();
@@ -5013,8 +4930,6 @@ namespace RMS.Controllers.Operation
                                                         (dArz == null ? 1 : dArz.Value) * (dErtefa == null ? 1 : dErtefa.Value) * (Vazn == null ? 1 : Vazn.Value);
                                                     RizMetreUserses.MeghdarJoz = dMeghdarJoz;
 
-                                                    dSumRizMetreAll += dMeghdarJoz.HasValue
-                                                           ? (dMeghdarJoz ?? 0) : 0;
 
                                                     RizMetreUserses.ConditionContextRel = ConditionContextRel;
                                                     RizMetreUserses.ConditionContextId = ConditionContextId;
@@ -5056,13 +4971,6 @@ namespace RMS.Controllers.Operation
                                             /////////////////////////////////////
                                             //////دریافت جمع ریزمتره های جاری///
                                             /////////////////////////////////////
-                                            decimal? dSumRizMetreCurrentFB = RizMetreCommon.SumRizMetreCurrentFB(FBId, _context);
-
-                                            decimal? dSumRizMetreCurrentFBAll = dSumRizMetreCurrentFB.HasValue
-                                                   ? (dSumRizMetreCurrentFB ?? 0) + dSumRizMetreAll
-                                                   : null;
-
-                                            varFBUser.SumRizMetre = dSumRizMetreCurrentFBAll;
 
                                             await _context.SaveChangesAsync();
                                         }
@@ -5131,7 +5039,6 @@ namespace RMS.Controllers.Operation
                                     RizMetreCommon rizMetreCommon = new RizMetreCommon();
                                     long[] lngConditionGroupId = { 12 };
 
-                                    decimal dSumAllRizMetre = 0;
                                     GetAndShowAddItemsInputForSoubatDto request2 = new GetAndShowAddItemsInputForSoubatDto()
                                     {
                                         ShomarehFB = strItemsFBShomareh,//strFBShomareh,
@@ -5362,7 +5269,6 @@ namespace RMS.Controllers.Operation
                                                                 BaseRizMetreId = itemRM.Id
                                                             });
 
-                                                        dSumAllRizMetre += dMeghdarJoz ?? 0;
 
                                                         //Start///////////////////////
                                                         ////////////حمل///////////////
@@ -5391,13 +5297,6 @@ namespace RMS.Controllers.Operation
                                             /////////////////////////////////////
                                             //////دریافت جمع ریزمتره های جاری///
                                             /////////////////////////////////////
-                                            decimal? dSumRizMetreCurrentFB = RizMetreCommon.SumRizMetreCurrentFB(FBId, _context);
-
-                                            decimal? dSumRizMetreCurrentFBAll = dSumRizMetreCurrentFB.HasValue
-                                                   ? (dSumRizMetreCurrentFB ?? 0) + dSumAllRizMetre
-                                                   : null;
-
-                                            varFBUser.SumRizMetre = dSumRizMetreCurrentFBAll;
 
                                             await _context.SaveChangesAsync();
                                         }
@@ -5447,7 +5346,6 @@ namespace RMS.Controllers.Operation
                                 }
                             case "18":
                                 {
-                                    decimal dSumAllRizMetre = 0;
                                     //string FieldsAdding = ItemsAdding.FieldsAdding.ToString();
                                     //string? ConditionContextRel = ItemsAdding.ConditionContextRel.ToString().Trim() == "" ? null : ItemsAdding.ConditionContextRel.ToString().Trim();
                                     //long? ConditionContextId = long.Parse(ItemsAdding.ConditionContextId.ToString().Trim() == "" ? null : ItemsAdding.ConditionContextId.ToString().Trim());
@@ -5647,7 +5545,6 @@ namespace RMS.Controllers.Operation
 
                                                         _context.RizMetreUserses.Add(RizMetreUserses1);
 
-                                                        dSumAllRizMetre += dMeghdarJoz1 ?? 0;
                                                     }
 
 
@@ -5704,7 +5601,6 @@ namespace RMS.Controllers.Operation
                                                         BaseRizMetreId = RM.Id
                                                     });
 
-                                                    dSumAllRizMetre += dMeghdarJoz ?? 0;
 
                                                     //Start///////////////////////
                                                     ////////////حمل///////////////
@@ -5729,13 +5625,6 @@ namespace RMS.Controllers.Operation
                                                 /////////////////////////////////////
                                                 //////دریافت جمع ریزمتره های جاری///
                                                 /////////////////////////////////////
-                                                decimal? dSumRizMetreCurrentFB = RizMetreCommon.SumRizMetreCurrentFB(FBId, _context);
-
-                                                decimal? dSumRizMetreCurrentFBAll = dSumRizMetreCurrentFB.HasValue
-                                                       ? (dSumRizMetreCurrentFB ?? 0) + dSumAllRizMetre
-                                                       : null;
-
-                                                varFBUser.SumRizMetre = dSumRizMetreCurrentFBAll;
 
                                                 await _context.SaveChangesAsync();
                                             }
@@ -5753,7 +5642,6 @@ namespace RMS.Controllers.Operation
                                 }
                             case "19":
                                 {
-                                    decimal dSumAllRizMetre = 0;
                                     //string FieldsAdding = ItemsAdding.FieldsAdding.ToString();
                                     //string? ConditionContextRel = ItemsAdding.ConditionContextRel.ToString().Trim() == "" ? null : ItemsAdding.ConditionContextRel.ToString().Trim();
                                     //long? ConditionContextId = long.Parse(ItemsAdding.ConditionContextId.ToString().Trim() == "" ? null : ItemsAdding.ConditionContextId.ToString().Trim());
@@ -5970,7 +5858,6 @@ namespace RMS.Controllers.Operation
                                                             BaseRizMetreId = RM.Id
                                                         });
 
-                                                    dSumAllRizMetre += dMeghdarJoz1 ?? 0;
 
                                                     //Start///////////////////////
                                                     ////////////حمل///////////////
@@ -5998,13 +5885,6 @@ namespace RMS.Controllers.Operation
                                         /////////////////////////////////////
                                         //////دریافت جمع ریزمتره های جاری///
                                         /////////////////////////////////////
-                                        decimal? dSumRizMetreCurrentFB = RizMetreCommon.SumRizMetreCurrentFB(FBId, _context);
-
-                                        decimal? dSumRizMetreCurrentFBAll = dSumRizMetreCurrentFB.HasValue
-                                               ? (dSumRizMetreCurrentFB ?? 0) + dSumAllRizMetre
-                                               : null;
-
-                                        varFBUser.SumRizMetre = dSumRizMetreCurrentFBAll;
 
                                         await _context.SaveChangesAsync();
                                     }
