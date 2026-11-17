@@ -158,6 +158,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     // همگام‌سازی مرکزی جمع ریزمتره هر FB پس از هر درج، ویرایش یا حذف
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {
+        LogTrackedFBUpdates("SYNC");
+
         var affectedFBIds = GetChangedRizMetreFBIds();
 
         int result = base.SaveChanges(acceptAllChangesOnSuccess);
@@ -171,6 +173,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         bool acceptAllChangesOnSuccess,
         CancellationToken cancellationToken = default)
     {
+        LogTrackedFBUpdates("ASYNC");
+
         var affectedFBIds = GetChangedRizMetreFBIds();
 
         int result = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
@@ -178,6 +182,29 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         await RefreshSumRizMetreAsync(affectedFBIds, cancellationToken);
 
         return result;
+    }
+
+    private void LogTrackedFBUpdates(string saveChangesType)
+    {
+        var changedFBs = ChangeTracker
+            .Entries<clsFB>()
+            .Where(e => e.State == EntityState.Modified)
+            .Select(e => new
+            {
+                e.Entity.ID,
+                OriginalSum = e.Property(x => x.SumRizMetre).OriginalValue,
+                CurrentSum = e.Property(x => x.SumRizMetre).CurrentValue,
+                IsModified = e.Property(x => x.SumRizMetre).IsModified
+            })
+            .ToList();
+
+        foreach (var fb in changedFBs)
+        {
+            System.Diagnostics.Debug.WriteLine(
+                $"[FB-TRACKED-UPDATE][{saveChangesType}] ID={fb.ID} | " +
+                $"Original={fb.OriginalSum} | Current={fb.CurrentSum} | " +
+                $"IsModified={fb.IsModified}");
+        }
     }
 
     private HashSet<Guid> GetChangedRizMetreFBIds()
