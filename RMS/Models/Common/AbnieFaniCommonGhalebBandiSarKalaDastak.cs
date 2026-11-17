@@ -115,7 +115,8 @@ public class AbnieFaniCommonGhalebBandiSarKalaDastak(ApplicationDbContext contex
         else
             Shomareh080204 = 1;
 
-        varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "080205" && x.NoeFBId == NoeFBId);
+        varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "080205" && x.NoeFBId == NoeFBId)
+            ?? _context.FBs.Local.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "080205" && x.NoeFBId == NoeFBId);
 
 
         Guid guFBId080205 = new Guid();
