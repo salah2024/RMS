@@ -1015,8 +1015,9 @@ namespace RMS.Models.Common
                                         clsFB? Fb = _context.FBs.Where(x => x.ID == guFBUsersAddedId).FirstOrDefault();
                                         if (Fb != null)
                                         {
-                                            _context.RizMetreUserses.Where(x => x.FBId == Fb.ID).ExecuteDelete();
-
+                                            var deletedRizMetresForSum1 = _context.RizMetreUserses.Where(x => x.FBId == Fb.ID).ToList();
+                                            _context.RizMetreUserses.RemoveRange(deletedRizMetresForSum1);
+                                            _context.SaveChanges();
                                             _context.FBs.Remove(Fb);
                                             _context.SaveChanges();
                                         }
