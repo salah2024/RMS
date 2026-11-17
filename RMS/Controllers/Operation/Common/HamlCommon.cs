@@ -218,14 +218,7 @@ public static class HamlCommon
                         /////////////////////////////////////
                         //////دریافت جمع ریزمتره های جاری///
                         /////////////////////////////////////
-                        decimal? dSumRizMetreCurrentFB = RizMetreCommon.SumRizMetreCurrentFB(gFBIdHaml, _context);
-
-                        decimal? dSumRizMetreCurrentFBAll = dSumRizMetreCurrentFB.HasValue || RizMetre.MeghdarJoz.HasValue
-                               ? (dSumRizMetreCurrentFB ?? 0) + (RizMetre.MeghdarJoz ?? 0)
-                               : null;
-
-                        FBHaml.SumRizMetre = dSumRizMetreCurrentFBAll;
-
+                        
 
                         clsBarAvordHamlRizMetre BarAvordHamlRizMetre
                             = new clsBarAvordHamlRizMetre
