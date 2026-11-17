@@ -200,7 +200,8 @@ public class AbnieFaniCommonGhalebBandiDalDarja(ApplicationDbContext context)
             else if (int.Parse(D.Trim()) > 5 && int.Parse(D.Trim()) <= 10)
             {
 
-                clsFB? varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "080302" && x.NoeFBId == NoeFBId);
+                clsFB? varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "080302" && x.NoeFBId == NoeFBId)
+                    ?? _context.FBs.Local.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "080302" && x.NoeFBId == NoeFBId);
 
                 guFBId = new Guid();
                 if (varFBUser == null)
