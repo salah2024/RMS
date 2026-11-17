@@ -14,7 +14,8 @@ public class AbnieFaniCommonGhalebBandiFendasionDastak(ApplicationDbContext cont
     string LW3j, string LW3p, string LB1W3, string LW4j, string LW4p, string LB1W4, string h)
     {
         ///////////////
-        clsFB? varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "080101" && x.NoeFBId == NoeFBId);
+        clsFB? varFBUser = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "080101" && x.NoeFBId == NoeFBId)
+            ?? _context.FBs.Local.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == "080101" && x.NoeFBId == NoeFBId);
 
         Guid guFBId = new Guid();
         if (varFBUser == null)
