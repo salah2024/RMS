@@ -451,7 +451,9 @@ namespace RMS.Controllers.Operation
                                                     /////////////
                                                     //////////////
                                                     ///
-                                                    _context.RizMetreUserses.Where(x => x.FBId == Fb.ID && x.ForItem == strFBShomareh.Trim()).ExecuteDelete();
+                                                    var deletedRizMetresForSum1 = _context.RizMetreUserses.Where(x => x.FBId == Fb.ID && x.ForItem == strFBShomareh.Trim()).ToList();
+                                                    _context.RizMetreUserses.RemoveRange(deletedRizMetresForSum1);
+                                                    _context.SaveChanges();
                                                     _context.SaveChanges();
                                                 }
                                             }
@@ -493,7 +495,11 @@ namespace RMS.Controllers.Operation
                                                     //////////////
                                                     //////////////
 
-                                                    _context.RizMetreUserses.Where(x => x.FBId == Fb.ID && x.ForItem == strFBShomareh.Trim() && x.Type == "2" && x.LevelNumber == LevelNumber).ExecuteDelete();
+                                                    var deletedRizMetresForSum2 = _context.RizMetreUserses.Where(x => x.FBId == Fb.ID && x.ForItem == strFBShomareh.Trim() && x.Type == "2" && x.LevelNumber == LevelNumber).ToList();
+
+                                                    _context.RizMetreUserses.RemoveRange(deletedRizMetresForSum2);
+
+                                                    _context.SaveChanges();
                                                     //_context.RizMetreUserses.Where(x => x.FBId == Fb.ID && x.ForItem == strFBShomareh.Trim() && x.Type == "3").ExecuteDelete();
 
 
@@ -653,7 +659,11 @@ namespace RMS.Controllers.Operation
                                                     /////////////
                                                     //////////////
 
-                                                    _context.RizMetreUserses.Where(x => x.FBId == Fb.ID && x.ForItem == strFBShomareh.Trim()).ExecuteDelete();
+                                                    var deletedRizMetresForSum3 = _context.RizMetreUserses.Where(x => x.FBId == Fb.ID && x.ForItem == strFBShomareh.Trim()).ToList();
+
+                                                    _context.RizMetreUserses.RemoveRange(deletedRizMetresForSum3);
+
+                                                    _context.SaveChanges();
                                                     _context.SaveChanges();
                                                 }
                                             }
@@ -692,7 +702,9 @@ namespace RMS.Controllers.Operation
                                                     }
                                                     /////////////
                                                     //////////////
-                                                    _context.RizMetreUserses.Where(x => x.FBId == Fb.ID && x.ForItem == strFBShomareh.Trim()).ExecuteDelete();
+                                                    var deletedRizMetresForSum4 = _context.RizMetreUserses.Where(x => x.FBId == Fb.ID && x.ForItem == strFBShomareh.Trim()).ToList();
+                                                    _context.RizMetreUserses.RemoveRange(deletedRizMetresForSum4);
+                                                    _context.SaveChanges();
                                                     _context.SaveChanges();
                                                 }
                                             }
@@ -734,8 +746,9 @@ namespace RMS.Controllers.Operation
                                                     /////////////
                                                     //////////////
                                                     ///                  
-                                                    _context.RizMetreUserses.Where(x => x.FBId == Fb.ID && x.ForItem == strFBShomareh.Trim()).ExecuteDelete();
-
+                                                    var deletedRizMetresForSum5 = _context.RizMetreUserses.Where(x => x.FBId == Fb.ID && x.ForItem == strFBShomareh.Trim()).ToList();
+                                                    _context.RizMetreUserses.RemoveRange(deletedRizMetresForSum5);
+                                                    _context.SaveChanges();
                                                     _context.SaveChanges();
                                                 }
                                             }
@@ -778,7 +791,9 @@ namespace RMS.Controllers.Operation
                                                     /////////////
                                                     //////////////
                                                     ///
-                                                    _context.RizMetreUserses.Where(x => x.FBId == Fb.ID && x.ForItem == strFBShomareh.Trim()).ExecuteDelete();
+                                                    var deletedRizMetresForSum6 = _context.RizMetreUserses.Where(x => x.FBId == Fb.ID && x.ForItem == strFBShomareh.Trim()).ToList();
+                                                    _context.RizMetreUserses.RemoveRange(deletedRizMetresForSum6);
+                                                    _context.SaveChanges();
                                                     await _context.SaveChangesAsync();
                                                 }
                                             }
