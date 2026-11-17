@@ -205,7 +205,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         foreach (var fbId in fbIds)
         {
             decimal? sum = RizMetreUserses
-                .Where(x => x.FBId == fbId)
+                .Where(x => x.FBId == fbId && x.IsDeleted != true)
                 .Sum(x => (decimal?)x.MeghdarJoz);
 
             FBs.Where(x => x.ID == fbId)
@@ -229,7 +229,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         foreach (var fbId in fbIds)
         {
             decimal? sum = await RizMetreUserses
-                .Where(x => x.FBId == fbId)
+                .Where(x => x.FBId == fbId && x.IsDeleted != true)
                 .SumAsync(x => (decimal?)x.MeghdarJoz, cancellationToken);
 
             await FBs.Where(x => x.ID == fbId)
