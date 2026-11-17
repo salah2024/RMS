@@ -343,7 +343,8 @@ public class AbnieFaniCommonGhalebBandiChenaj(ApplicationDbContext context)
                 _context.PolVaAbroBarAvordRizMetres.Add(polVaAbroBarAvordRizMetre);
 
                 string strCurrentShomareh1 = arrItemsForInsert[1, count + 1];
-                clsFB? varFBUser1 = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == strCurrentShomareh1 && x.NoeFBId == NoeFBId);
+                clsFB? varFBUser1 = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == strCurrentShomareh1 && x.NoeFBId == NoeFBId)
+                    ?? _context.FBs.Local.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == strCurrentShomareh1 && x.NoeFBId == NoeFBId);
                 //DtFBUser = clsConvert.ToDataTable(varFBUser1);
                 guFBId = new Guid();
                 //if (DtFBUser.Rows.Count == 0)
