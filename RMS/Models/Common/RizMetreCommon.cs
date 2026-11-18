@@ -899,30 +899,15 @@ public class RizMetreCommon
         int Year = request.Year;
         string Code = request.Code;
 
-        decimal SumMeghdarJoz = _context.RizMetreUserses.Where(x => x.FBId == FBId).Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
+        decimal SumMeghdarJoz = await _context.FBs.AsNoTracking()
+            .Where(x => x.ID == FBId)
+            .Select(x => x.SumRizMetre ?? 0m)
+            .FirstOrDefaultAsync();
         /////
         //////
         //////محاسبه کل فصل
         ///
         //decimal SumMeghdarFasl = 0;
-        var RizMetreAll = _context.RizMetreUserses.Include(x => x.FB).Where(x => x.FB.BarAvordId == BarAvordId && x.FB.NoeFBId == NoeFBId)
-                .Select(riz => new ViewUserBarAvordOutPutRizMetreDto
-                {
-                    Id = riz.ID,
-                    Sharh = riz.Sharh,
-                    Shomareh = riz.Shomareh,
-                    Arz = riz.Arz,
-                    Des = riz.Des,
-                    Ertefa = riz.Ertefa,
-                    Tedad = riz.Tedad,
-                    Tool = riz.Tool,
-                    Vazn = riz.Vazn,
-                    FBId = riz.FBId,
-                    MeghdarJoz = riz.MeghdarJoz
-                }).OrderBy(x => x.Shomareh).ToList();
-
-
-
         List<clsFehrestBahaItemsReplace> lstFBItemReplaces = _context.FehrestBahaItemsReplaces.Where(x => x.Year == Year && x.NoeFB == NoeFBId).ToList();
 
         var lstFehrestBahas = (from FehrestBaha in _context.FehrestBahas
@@ -964,7 +949,8 @@ public class RizMetreCommon
                                  Vahed = fehrestbaha.Vahed,
                                  //BahayeVahedZarib = fb.BahayeVahedZarib,
                                  BahayeVahedNew = fb.BahayeVahedNew,
-                                 ItemZarib = fb.ItemZarib
+                                 ItemZarib = fb.ItemZarib,
+                                 SumRizMetre = fb.SumRizMetre
                              })
         .GroupBy(f => f.Shomareh)
         .Select(g => g.FirstOrDefault())
@@ -1015,6 +1001,7 @@ public class RizMetreCommon
                 Vahed = x.fehrest.Vahed,
                 FBId = x.fbItem != null ? x.fbItem.ID : null,
                 ItemZarib = x.fbItem != null ? x.fbItem.ItemZarib : 1,
+                Meghdar = x.fbItem?.SumRizMetre ?? 0m,
                 RizMetre = new List<ViewUserBarAvordOutPutRizMetreDto>()
             }).ToList();
 
@@ -1053,15 +1040,7 @@ public class RizMetreCommon
 
         foreach (var item in userBarAvordOutPutFilter)
         {
-            decimal Meghdar = 0;
-            foreach (var RM in RizMetreAll)
-            {
-                if (item.FBId == RM.FBId)
-                {
-                    item.RizMetre.Add(RM);
-                    Meghdar += RM.MeghdarJoz != null ? RM.MeghdarJoz.Value : 0;
-                }
-            }
+            decimal Meghdar = item.Meghdar;
 
             decimal ItemZarib = (item.ItemZarib == null || item.ItemZarib == 0) ? 1 : item.ItemZarib.Value;
 
@@ -1137,23 +1116,6 @@ public class RizMetreCommon
         if (baravordUser != null)
         {
 
-            var RizMetreAll = _context.RizMetreUserses.Include(x => x.FB).Where(x => x.FB.BarAvordId == BarAvordId && x.FB.NoeFBId == NoeFBId)
-                    .Select(riz => new ViewUserBarAvordOutPutRizMetreDto
-                    {
-                        Id = riz.ID,
-                        Sharh = riz.Sharh,
-                        Shomareh = riz.Shomareh,
-                        Arz = riz.Arz,
-                        Des = riz.Des,
-                        Ertefa = riz.Ertefa,
-                        Tedad = riz.Tedad,
-                        Tool = riz.Tool,
-                        Vazn = riz.Vazn,
-                        FBId = riz.FBId,
-                        MeghdarJoz = riz.MeghdarJoz
-                    }).OrderBy(x => x.Shomareh).ToList();
-
-
             List<clsFehrestBahaItemsReplace> lstFBItemReplaces = _context.FehrestBahaItemsReplaces.Where(x => x.Year == Year && x.NoeFB == NoeFBId).ToList();
 
 
@@ -1228,7 +1190,8 @@ public class RizMetreCommon
 
        BahayeVahedNew = fb.BahayeVahedNew,
 
-       ItemZarib = fb.ItemZarib
+       ItemZarib = fb.ItemZarib,
+       SumRizMetre = fb.SumRizMetre
    }
 )
 .GroupBy(x => x.Shomareh)
@@ -1301,6 +1264,7 @@ public class RizMetreCommon
                 FBId = x.fbItem != null ? x.fbItem.ID : null,
                 BahayeVahedNew = x.fbItem != null ? x.fbItem.BahayeVahedNew : 0,
                 ItemZarib = x.fbItem != null ? x.fbItem.ItemZarib : 1,
+                Meghdar = x.fbItem?.SumRizMetre ?? 0m,
                 RizMetre = new List<ViewUserBarAvordOutPutRizMetreDto>()
             }).ToList();
 
@@ -1320,6 +1284,7 @@ public class RizMetreCommon
                 Vahed = fb.Vahed,
                 FBId = fb.ID,
                 ItemZarib = fb.ItemZarib,
+                Meghdar = fb.SumRizMetre ?? 0m,
                 RizMetre = new List<ViewUserBarAvordOutPutRizMetreDto>(),
                 ItemsFields = new List<ItemsFieldForUserBarAvordOutPutDto>()
             }).ToList();
@@ -1390,30 +1355,9 @@ public class RizMetreCommon
 
             foreach (var item in lstuserBarAvordOutPut)
             {
-                decimal Meghdar = 0;
-                foreach (var RM in RizMetreAll)
-                {
-                    if (blnCheckUsePercent)
-                    {
-                        if (item.ItemFbShomareh.Substring(0, 2) != "99")
-                        {
-                            if (item.FBId == RM.FBId)
-                            {
-                                item.RizMetre.Add(RM);
-                                Meghdar += RM.MeghdarJoz != null ? RM.MeghdarJoz.Value : 0;
-                            }
-                        }
-                    }
-                    else
-                    {
-
-                        if (item.FBId == RM.FBId)
-                        {
-                            item.RizMetre.Add(RM);
-                            Meghdar += RM.MeghdarJoz != null ? RM.MeghdarJoz.Value : 0;
-                        }
-                    }
-                }
+                decimal Meghdar = blnCheckUsePercent && item.ItemFbShomareh.Substring(0, 2) == "99"
+                    ? 0m
+                    : item.Meghdar;
                 if (Meghdar != 0)
                 {
                     clsBahayeVahedItemsRelated? BVItemsRelated = lstBVItemRelated.FirstOrDefault(x => x.ItemShomarehRelated.Trim() == item.ItemFbShomareh.Trim());
@@ -1732,23 +1676,6 @@ public class RizMetreCommon
 
                     var FaslZaribFilter = FaslZarib.Where(x => x.NoeFB == NoeFBId).ToList();
 
-                    List<ViewUserBarAvordOutPutRizMetreDto> RizMetreAll = _context.RizMetreUserses.Include(x => x.FB).Where(x => x.FB.BarAvordId == BarAvordId && x.FB.NoeFBId == NoeFBId)
-                             .Select(riz => new ViewUserBarAvordOutPutRizMetreDto
-                             {
-                                 Id = riz.ID,
-                                 Sharh = riz.Sharh,
-                                 Shomareh = riz.Shomareh,
-                                 Arz = riz.Arz,
-                                 Des = riz.Des,
-                                 Ertefa = riz.Ertefa,
-                                 Tedad = riz.Tedad,
-                                 Tool = riz.Tool,
-                                 Vazn = riz.Vazn,
-                                 FBId = riz.FBId,
-                                 MeghdarJoz = riz.MeghdarJoz
-                             }).OrderBy(x => x.Shomareh).ToList();
-
-
                     // اول FBs رو فیلتر و گروه‌بندی کن (در حافظه)
                     //var fbItems = _context.FBs
                     //    .Where(f => f.BarAvordId == BarAvordId && f.NoeFBId == NoeFBId)
@@ -1820,7 +1747,8 @@ public class RizMetreCommon
 
                         BahayeVahedNew = fb.BahayeVahedNew,
 
-                        ItemZarib = fb.ItemZarib
+                        ItemZarib = fb.ItemZarib,
+                        SumRizMetre = fb.SumRizMetre
                     }
                     )
                     .GroupBy(x => x.Shomareh)
@@ -1895,6 +1823,7 @@ public class RizMetreCommon
                         FBId = x.fbItem != null ? x.fbItem.ID : null,
                         BahayeVahedNew = x.fbItem != null ? x.fbItem.BahayeVahedNew : 0,
                         ItemZarib = x.fbItem != null ? x.fbItem.ItemZarib : 1,
+                        Meghdar = x.fbItem?.SumRizMetre ?? 0m,
                         RizMetre = new List<ViewUserBarAvordOutPutRizMetreDto>()
                     }).ToList();
 
@@ -1957,6 +1886,7 @@ public class RizMetreCommon
                             Vahed = fb.Vahed,
                             FBId = fb.ID,
                             ItemZarib = fb.ItemZarib,
+                            Meghdar = fb.SumRizMetre ?? 0m,
                             RizMetre = new List<ViewUserBarAvordOutPutRizMetreDto>(),
                             ItemsFields = new List<ItemsFieldForUserBarAvordOutPutDto>()
                         }).ToList();
@@ -1976,32 +1906,9 @@ public class RizMetreCommon
                     foreach (var item in userBarAvordOutPutFiltered)
                     {
                         decimal ItemZarib = (item.ItemZarib == null || item.ItemZarib == 0) ? 1 : item.ItemZarib.Value;
-                        decimal Meghdar = 0;
-
-                        List<ViewUserBarAvordOutPutRizMetreDto> lstCurrentRM = RizMetreAll.Where(x => x.FBId == item.FBId).ToList();
-
-                        foreach (var RM in lstCurrentRM)
-                        {
-                            if (blnCheckUsePercent)
-                            {
-                                if (item.ItemFbShomareh.Substring(0, 2) != "99")
-                                {
-                                    if (item.FBId == RM.FBId)
-                                    {
-                                        item.RizMetre.Add(RM);
-                                        Meghdar += RM.MeghdarJoz != null ? RM.MeghdarJoz.Value : 0;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                if (item.FBId == RM.FBId)
-                                {
-                                    item.RizMetre.Add(RM);
-                                    Meghdar += RM.MeghdarJoz != null ? RM.MeghdarJoz.Value : 0;
-                                }
-                            }
-                        }
+                        decimal Meghdar = blnCheckUsePercent && item.ItemFbShomareh.Substring(0, 2) == "99"
+                            ? 0m
+                            : item.Meghdar;
 
                         if (Meghdar != 0)
                         {
@@ -2269,7 +2176,10 @@ public class RizMetreCommon
 
     public static decimal? SumRizMetreCurrentFB(Guid FBId, ApplicationDbContext context)
     {
-        decimal? SumRizMetreCurrentFB = context.RizMetreUserses.Where(x => x.FBId == FBId).Sum(x => x.MeghdarJoz);
+        decimal? SumRizMetreCurrentFB = context.FBs.AsNoTracking()
+            .Where(x => x.ID == FBId)
+            .Select(x => x.SumRizMetre)
+            .FirstOrDefault();
         return SumRizMetreCurrentFB;
     }
 }
