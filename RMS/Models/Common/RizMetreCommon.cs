@@ -433,19 +433,6 @@ public class RizMetreCommon
                 .OrderBy(x => x.Shomareh)
                 .ToList();
 
-        var fieldsByItemNumber = _context.ItemsFieldses.AsNoTracking()
-            .Where(x => x.NoeFB == NoeFB)
-            .Select(x => new ItemFBShomarehForGetAndShowAddItemsFieldsDto
-            {
-                Shomareh = x.ItemShomareh,
-                FieldType = x.FieldType,
-                Vahed = x.Vahed,
-                IsEnteringValue = x.IsEnteringValue
-            })
-            .ToList()
-            .GroupBy(x => (x.Shomareh ?? string.Empty).Trim())
-            .ToDictionary(g => g.Key, g => g.ToList());
-
         var additionsByContext = additions
             .GroupBy(x => x.ItemsHasCondition_ConditionContextId)
             .ToDictionary(g => g.Key, g => g.ToList());
@@ -491,8 +478,8 @@ public class RizMetreCommon
                 if (!additionsByContext.TryGetValue(conditionRow.ItemsHasCondition_ConditionContextId, out var contextAdditions))
                     continue;
 
-                bool canEdit = conditionRow.EnableEditing;
-                bool canDelete = conditionRow.EnableDeleting;
+                bool canEdit = conditionRow.EnableEditing == true;
+                bool canDelete = conditionRow.EnableDeleting == true;
                 decimal amount = conditionRow.Meghdar;
 
                 foreach (var adding in contextAdditions)
