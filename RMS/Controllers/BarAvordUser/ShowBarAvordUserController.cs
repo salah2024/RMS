@@ -51,7 +51,7 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
 
         // فقط جزئیات ریزمتره‌های فصل جاری دریافت می‌شود؛
         // جمع مقدار هر FB از SumRizMetre خوانده می‌شود و نیازی به تجمیع این جزئیات نیست.
-        var RizMetre = _context.RizMetreUserses
+        var RizMetre = await _context.RizMetreUserses
     .AsNoTracking()
     .Where(x =>
         x.FB.BarAvordId == request.BarAvordUserId &&
@@ -74,10 +74,12 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
         FBId = riz.FBId,
         MeghdarJoz = riz.MeghdarJoz
     })
-    .AsNoTracking()
-    .ToList();
+    .ToListAsync();
 
-        List<clsFehrestBahaItemsReplace> lstFBItemReplaces = _context.FehrestBahaItemsReplaces.Where(x => x.Year == Year && x.NoeFB == NoeFBId).ToList();
+        List<clsFehrestBahaItemsReplace> lstFBItemReplaces = await _context.FehrestBahaItemsReplaces
+            .AsNoTracking()
+            .Where(x => x.Year == Year && x.NoeFB == NoeFBId)
+            .ToListAsync();
 
         var lstFehrestBahas = await (
             from fb in _context.FehrestBahas.AsNoTracking()
@@ -201,9 +203,22 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
 
 
 
+        var fehrestSharhByMain = lstFehrestBahas
+            .GroupBy(x => x.ShomarehMain.Trim())
+            .ToDictionary(g => g.Key, g => g.First().Sharh);
+
         foreach (var fb in fbItems)
         {
-            fb.BahayeVahedSharh = fb.BahayeVahedSharh.Trim() == "" ? lstFehrestBahas.Where(x => x.ShomarehMain.Trim() == fb.Shomareh.Substring(0, 6)).First().Sharh : fb.BahayeVahedSharh.Trim();
+            var currentSharh = fb.BahayeVahedSharh?.Trim();
+            if (string.IsNullOrEmpty(currentSharh) &&
+                fehrestSharhByMain.TryGetValue(fb.Shomareh[..6], out var fehrestSharh))
+            {
+                fb.BahayeVahedSharh = fehrestSharh;
+            }
+            else
+            {
+                fb.BahayeVahedSharh = currentSharh ?? string.Empty;
+            }
         }
 
         //foreach (var item in fbItems)
@@ -265,7 +280,9 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
         }).ToList();
 
 
-        var fehrestShomarehs = barAvordInFehrest.Select(x => x.ItemFbShomareh).ToList();
+        var fehrestShomarehs = barAvordInFehrest
+            .Select(x => x.ItemFbShomareh)
+            .ToHashSet();
 
         var barAvordOnlyInFbItems = fbItems
             .Where(fb => fb.Shomareh.StartsWith(request.ShomarehFasl) && !fehrestShomarehs.Contains(fb.Shomareh))
@@ -293,9 +310,28 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
 
         List<string> lstItemFbShomarehs = userBarAvordOutPut.Select(x => x.ItemFbShomareh).Distinct().ToList();
 
-        List<clsItemsFields> itemsFields = _context.ItemsFieldses.Where(x => x.NoeFB == NoeFBId && lstItemFbShomarehs.Contains(x.ItemShomareh)).OrderBy(x => x.FieldType).ToList();
+        List<clsItemsFields> itemsFields = await _context.ItemsFieldses
+            .AsNoTracking()
+            .Where(x => x.NoeFB == NoeFBId && lstItemFbShomarehs.Contains(x.ItemShomareh))
+            .OrderBy(x => x.FieldType)
+            .ToListAsync();
 
-        List<clsBahayeVahedItemsRelated> lstBVItemRelated = _context.BahayeVahedItemsRelateds.Where(x => lstItemFbShomarehs.Contains(x.ItemShomarehRelated.ToLower().Trim()) && x.NoeFB == NoeFBId && x.Year == Year).ToList();
+        List<clsBahayeVahedItemsRelated> lstBVItemRelated = await _context.BahayeVahedItemsRelateds
+            .AsNoTracking()
+            .Where(x => lstItemFbShomarehs.Contains(x.ItemShomarehRelated.ToLower().Trim()) && x.NoeFB == NoeFBId && x.Year == Year)
+            .ToListAsync();
+
+        var relatedByItem = lstBVItemRelated
+            .GroupBy(x => x.ItemShomarehRelated.Trim(), StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
+
+        var outputByItemNumber = userBarAvordOutPut
+            .GroupBy(x => x.ItemFbShomareh.Trim(), StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
+
+        var fieldsByMainNumber = itemsFields
+            .GroupBy(x => x.ItemShomareh.Trim())
+            .ToDictionary(g => g.Key, g => g.OrderBy(x => x.FieldType).ToList());
 
         var rizMetreByFbId = RizMetre
             .GroupBy(x => x.FBId)
@@ -313,10 +349,9 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
 
             if (Meghdar != 0)
             {
-                clsBahayeVahedItemsRelated? BVItemsRelated = lstBVItemRelated.FirstOrDefault(x => x.ItemShomarehRelated.Trim() == item.ItemFbShomareh.Trim());
-                if (BVItemsRelated != null)
+                if (relatedByItem.TryGetValue(item.ItemFbShomareh.Trim(), out var BVItemsRelated))
                 {
-                    var barAvordInFehrest1 = userBarAvordOutPut.FirstOrDefault(x => x.ItemFbShomareh.Trim() == BVItemsRelated.ItemShomareh.Trim());
+                    outputByItemNumber.TryGetValue(BVItemsRelated.ItemShomareh.Trim(), out var barAvordInFehrest1);
                     if (barAvordInFehrest1 != null)
                     {
                         long BahayeVahed1 = barAvordInFehrest1.BahayeVahedNew != 0 ? barAvordInFehrest1.BahayeVahedNew : (barAvordInFehrest1.BahayeVahed == null || barAvordInFehrest1.BahayeVahed == "") ? 0 : long.Parse(barAvordInFehrest1.BahayeVahed);
@@ -325,9 +360,9 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
                 }
             }
 
-            List<ItemsFieldForUserBarAvordOutPutDto> currentItemsFields = itemsFields
-                    .Where(x => x.ItemShomareh.Trim() == item.ItemFbShomarehMain)
-                        .Select(x => new ItemsFieldForUserBarAvordOutPutDto
+            List<ItemsFieldForUserBarAvordOutPutDto> currentItemsFields =
+                fieldsByMainNumber.TryGetValue(item.ItemFbShomarehMain, out var matchingFields)
+                    ? matchingFields.Select(x => new ItemsFieldForUserBarAvordOutPutDto
                         {
                             Id = x.Id,
                             ItemShomareh = x.ItemShomareh.Trim(),
@@ -335,7 +370,8 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
                             Vahed = x.Vahed,
                             IsEnteringValue = x.IsEnteringValue,
                             EssentialValue = x.EssentialValue
-                        }).ToList();
+                        }).ToList()
+                    : new List<ItemsFieldForUserBarAvordOutPutDto>();
 
             item.ItemsFields.AddRange(currentItemsFields);
 
@@ -379,7 +415,7 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
 
         List<Guid> lstItemFBStarIds = lstItemFBStars.Select(x => x.Id).ToList();
 
-        var RizMetreStar = _context.RizMetreStars.Where(x => lstItemFBStarIds.Contains(x.ItemFBStarId))
+        var RizMetreStar = await _context.RizMetreStars.AsNoTracking().Where(x => lstItemFBStarIds.Contains(x.ItemFBStarId))
         .Select(riz => new ViewBarAvordItemStarOutPutRizMetreDto
         {
             Id = riz.ID,
@@ -395,21 +431,22 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
             Vazn = riz.Vazn,
             MeghdarJoz = riz.MeghdarJoz,
             ItemFBStarId = riz.ItemFBStarId
-        }).OrderBy(x => x.Shomareh).ToList();
+        }).OrderBy(x => x.Shomareh).ToListAsync();
 
+
+        var rizMetreStarByItemId = RizMetreStar
+            .GroupBy(x => x.ItemFBStarId)
+            .ToDictionary(g => g.Key, g => g.ToList());
 
         foreach (var item in lstItemFBStars)
         {
 
             decimal ItemZaribStar = (item.ItemZaribStar == null || item.ItemZaribStar == 0) ? 1 : item.ItemZaribStar.Value;
             decimal Meghdar = 0;
-            foreach (var RM in RizMetreStar)
+            if (rizMetreStarByItemId.TryGetValue(item.Id, out var starRizMetres))
             {
-                if (item.Id == RM.ItemFBStarId)
-                {
-                    item.RizMetre.Add(RM);
-                    Meghdar += RM.MeghdarJoz != null ? RM.MeghdarJoz.Value : 0;
-                }
+                item.RizMetre.AddRange(starRizMetres);
+                Meghdar = starRizMetres.Sum(rm => rm.MeghdarJoz ?? 0m);
             }
 
 
