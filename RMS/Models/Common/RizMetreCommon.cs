@@ -1344,10 +1344,10 @@ public class RizMetreCommon
                                  FBShomareh = FehrestBahaItemsReplace.FBShomarehNew,
                                  ZarayebFosoul.ZaribBalaSari,
                                  ZarayebFosoul.ZaribManteghe
-                             }).ToList()
+                             }).ToList();
             var faslZaribByItemNumber = FaslZarib
                 .GroupBy(x => x.FBShomareh)
-                .ToDictionary(g => g.Key, g => g.First());;
+                .ToDictionary(g => g.Key, g => g.First());
 
 
             bool blnCheckUsePercent = false;
