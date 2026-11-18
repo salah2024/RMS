@@ -34,7 +34,7 @@
     var index = 0;
     data.forEach((item) => {
 
-        debugger;
+
         var Field0 = item.itemsFields[0] == undefined ? "" : item.itemsFields[0].vahed;
         var Field1 = item.itemsFields[1] == undefined ? "" : item.itemsFields[1].vahed;
         var Field2 = item.itemsFields[2] == undefined ? "" : item.itemsFields[2].vahed;
@@ -132,8 +132,6 @@
 		</tr>
 		`).join('');
         }
-
-        debugger;
 
 
         field = item.itemsFields;
@@ -307,7 +305,6 @@
 
 
     Stars.forEach((item) => {
-        debugger;
 
         currentId = item.id;
 
@@ -474,7 +471,7 @@
 
     var RowNew = '';
 
-    debugger;
+
     if (faslAsli) {
 
         RowNew = $(`
@@ -874,7 +871,7 @@ const getDisabledAttr = (f) => f.isEnteringValue ? '' : 'disabled';
 
 function EditRizMetreRow(rowEl, rizMetreId, Shomareh, rizId, FBId, Code) {
 
-    debugger;
+
     const itemsFieldsStr = rowEl.getAttribute('data-itemsFields');
     const itemsFields = JSON.parse(itemsFieldsStr);
 
@@ -896,7 +893,6 @@ function EditRizMetreRow(rowEl, rizMetreId, Shomareh, rizId, FBId, Code) {
     $row.addClass('editing');
 
     $row.find('td').each(function (index) {
-        debugger;
 
         const $td = $(this);
         const text = $td.find('span').html();
@@ -962,7 +958,7 @@ function cancelEditRow(row, rizMetreId, Shomareh, rizId1, FBId) {
     //row.removeClass('editing');
     row.find('td').each(function (index) {
 
-        debugger;
+
         if (index === 0 || index === row.children('td').length - 1) {
             return;
         }
@@ -1034,7 +1030,7 @@ function UpdateRizMetreFromRow(el, rizMetreId, Shomareh, rizId1, FBId, Code) {
         BarAvordUserId = $('#HDFBarAvordUserID').val();
         NoeFBId = parseInt($('#HDFNoeFB').val());
         Year = parseInt($('#HDFYear').val());
-        debugger;
+
         var vardata = new Object();
         vardata.Id = rizId;
         vardata.TajmieItem = values[0] != "" ? values[0] : null;
@@ -1063,7 +1059,7 @@ function UpdateRizMetreFromRow(el, rizMetreId, Shomareh, rizId1, FBId, Code) {
                     let num = parseFloat(info[1]);
                     //let bahayeVahedFasl1 = parseFloat(convertPersianToEnglish(bahayeVahedFasl.text()));
 
-                    debugger;
+
                     el.parent().parent().find('#spanMeghdarJoz').html(formatNumber(parseFloat(num).toFixed(2)));
 
                     var meghdarFasl = $('#meghdarFasl_' + Shomareh);
@@ -1190,7 +1186,7 @@ function SaveNewRMUClick($btn) {
     NoeFBId = parseInt($('#HDFNoeFB').val());
     Year = parseInt($('#HDFYear').val());
 
-    debugger;
+
     ItemZaribStar = $itemZaribStar == undefined ? null : $itemZaribStar.val().trim() == "" ? null : $itemZaribStar.val();
 
     var vardata = new Object();
@@ -1244,7 +1240,6 @@ function SaveRMUClick(object, Shomareh, rizId, Code) {
     findFirstObj = false;
     object.parent().parent().find('input[type=text]').each(function () {
 
-        debugger;
 
         if ($(this).attr('id') == 'txtSharh')
             Sharh = $(this).val();
@@ -1375,7 +1370,6 @@ function SaveRMUClick(object, Shomareh, rizId, Code) {
             Des = $(this).val();
     });
 
-    debugger;
 
     if (Check) {
         BarAvordUserId = $('#HDFBarAvordUserID').val();
@@ -1409,7 +1403,7 @@ function SaveRMUClick(object, Shomareh, rizId, Code) {
                     ///////////////
                     ///////////////
 
-                    debugger;
+
                     //dMeghdarJoz = data.dMeghdarJoz;
                     //SumMeghdarJoz = data.sumMeghdarJoz;
                     //JameFasl = data.jameFasl;
@@ -1444,7 +1438,6 @@ function SaveRMUClick(object, Shomareh, rizId, Code) {
                     //} else {
                     //    inputBahayeVahed.removeClass('blinking'); // اگر نمی‌خواهید در غیر صفر بودن کلاس باقی بماند
                     //}
-                    debugger;
 
                 }
                 else if (info[0] == "NOK") {
@@ -1501,7 +1494,6 @@ function refreshBaseItem(object, Shomareh, Code) {
             contentType: "application/json; charset=utf-8",
             success: function (data) {
 
-                debugger;
 
                 ///////////////
                 ///////////////
@@ -1577,7 +1569,6 @@ function refreshBaseItem(object, Shomareh, Code) {
             contentType: "application/json; charset=utf-8",
             success: function (data) {
 
-                debugger;
 
                 ///////////////
                 ///////////////
@@ -1840,7 +1831,6 @@ function GetCurrentRizMetreUsers(Shomareh, rizId, FBId, Code) {
 
 function TajmieItemChange(Obj) {
 
-    debugger;
 
     TajmieItemVal = $(Obj).val();
     NoeFBId = parseInt($('#HDFNoeFB').val());
@@ -1858,8 +1848,7 @@ function TajmieItemChange(Obj) {
         },
 
         success: function (data) {
-            debugger;
-           
+
         },
          error: function (xhr) {
 
