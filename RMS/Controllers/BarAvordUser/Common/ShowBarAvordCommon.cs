@@ -353,6 +353,7 @@ public class ShowBarAvordCommon
                     FBId = x.fbItem != null ? x.fbItem.ID : null,
                     BahayeVahedNew = x.fbItem != null ? x.fbItem.BahayeVahedNew : 0,
                     ItemZarib = x.fbItem != null ? x.fbItem.ItemZarib : null,
+                    Meghdar = x.fbItem?.SumRizMetre ?? 0m,
                     RizMetre = new List<ViewUserBarAvordOutPutRizMetreDto>()
                 }).ToList();
 
