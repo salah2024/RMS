@@ -10,5 +10,6 @@
         //public decimal BahayeVahedZarib { get; set; }
         public long BahayeVahedNew { get; set; }
         public decimal? ItemZarib { get; set; }
+        public decimal? SumRizMetre { get; set; }
     }
 }
