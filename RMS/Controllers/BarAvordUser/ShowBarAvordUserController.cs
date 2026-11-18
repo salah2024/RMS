@@ -397,8 +397,9 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
         //    userBarAvordOutPut.Remove(item);
         //}
 
-        List<ItemFBStarForShowBaravordDto> lstItemFBStars =
-            _context.ItemFBStars.Include(x => x.Vahed).Where(x => x.BaravordId == request.BarAvordUserId && x.NoeFBId == NoeFBId && x.Shomareh.Substring(0, 2) == request.ShomarehFasl.Trim())
+        List<ItemFBStarForShowBaravordDto> lstItemFBStars = await
+            _context.ItemFBStars.AsNoTracking()
+            .Where(x => x.BaravordId == request.BarAvordUserId && x.NoeFBId == NoeFBId && x.Shomareh.Substring(0, 2) == request.ShomarehFasl.Trim())
             .Select(x => new ItemFBStarForShowBaravordDto
             {
                 Id = x.ID,
@@ -411,7 +412,7 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
                 blnKharidTajhizat = x.blnKharidTajhizat,
                 ItemZaribStar = x.ItemZaribStar,
                 RizMetre = new List<ViewBarAvordItemStarOutPutRizMetreDto>()
-            }).ToList();
+            }).ToListAsync();
 
         List<Guid> lstItemFBStarIds = lstItemFBStars.Select(x => x.Id).ToList();
 
