@@ -161,7 +161,10 @@ public class ShowBarAvordCommon
                 {
                     //یافتن ضرایب پیشنهادی پیمانکار برای هر فصل
                     lstZaribPishnahadiPaymanKarFosoul =
-                          _context.ZaribPishnahadiPaymanKarFosouls.Include(x => x.ZaribPishnahadiPaymanKar).Where(x => x.ZaribPishnahadiPaymanKar.BarAvordUserId == baravordUserMain.ID).ToList();
+                          await _context.ZaribPishnahadiPaymanKarFosouls
+                            .AsNoTracking()
+                            .Where(x => x.ZaribPishnahadiPaymanKar.BarAvordUserId == baravordUserMain.ID)
+                            .ToListAsync();
                 }
             }
         }
@@ -225,7 +228,10 @@ public class ShowBarAvordCommon
         ResultGetZarayebDto result1 = RizMetreCommon.GetZarayeb(requestGetZarayeb, _context);
 
 
-        List<clsFehrestBahaItemsReplace> lstFBItemReplaces = await _context.FehrestBahaItemsReplaces.Where(x => x.Year == Year && x.NoeFB == NoeFBId).ToListAsync();
+        List<clsFehrestBahaItemsReplace> lstFBItemReplaces = await _context.FehrestBahaItemsReplaces
+            .AsNoTracking()
+            .Where(x => x.Year == Year && x.NoeFB == NoeFBId)
+            .ToListAsync();
 
         //var fbItems = await _context.FBs
         //    .Where(f => f.BarAvordId == BarAvordUserId && f.NoeFBId == NoeFBId)
@@ -340,8 +346,43 @@ public class ShowBarAvordCommon
                 NoeFB = fb.NoeFB
             }).ToListAsync();
 
-        List<clsFehrestBahaItemsReplace> lstFehrestBahaItemsReplaces = await _context.FehrestBahaItemsReplaces.Where(x => x.NoeFB == NoeFBId && x.Year == Year).ToListAsync();
-        List<clsZarayebFosoul> lstZarayebFosouls = await _context.ZarayebFosouls.ToListAsync();
+        // همان داده جایگزینی که بالاتر دریافت شده، دوباره از دیتابیس خوانده نمی‌شود.
+        List<clsFehrestBahaItemsReplace> lstFehrestBahaItemsReplaces = lstFBItemReplaces;
+        List<clsZarayebFosoul> lstZarayebFosouls = await _context.ZarayebFosouls
+            .AsNoTracking()
+            .ToListAsync();
+
+        // اطلاعات آیتم‌های مرتبط برای همه فصل‌ها یک‌بار دریافت می‌شود؛ نه یک Query در هر فصل.
+        var allRelatedItemNumbers = lstFehrestBahas
+            .Select(x => x.Shomareh)
+            .Concat(fbItems.Select(x => x.Shomareh))
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Select(x => x.Trim().ToLower())
+            .Distinct()
+            .ToList();
+
+        var allRelatedItems = await _context.BahayeVahedItemsRelateds
+            .AsNoTracking()
+            .Where(x => x.NoeFB == NoeFBId && x.Year == Year &&
+                        allRelatedItemNumbers.Contains(x.ItemShomarehRelated.ToLower().Trim()))
+            .ToListAsync();
+
+        var relatedByItemNumberGlobal = allRelatedItems
+            .GroupBy(x => x.ItemShomarehRelated.Trim(), StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
+
+        var zaribPishnahadiByFasl = lstZaribPishnahadiPaymanKarFosoul
+            .GroupBy(x => x.Code.Trim(), StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(g => g.Key, g => g.First().ZaribJoz, StringComparer.OrdinalIgnoreCase);
+
+        var exceptionItemsByFaslId = lstFehrestBahaItemsReplaces
+            .Where(x => x.FaslId != null)
+            .GroupBy(x => x.FaslId)
+            .ToDictionary(g => g.Key, g => g.ToList());
+
+        var zarayebByFaslId = lstZarayebFosouls
+            .GroupBy(x => x.FaslId)
+            .ToDictionary(g => g.Key, g => g.First());
         // ستاره‌ها و جمع ریزمتره‌های آن‌ها یک‌بار برای کل برآورد دریافت می‌شوند.
         var allItemFBStars = await _context.ItemFBStars
             .AsNoTracking()
@@ -388,8 +429,9 @@ public class ShowBarAvordCommon
 
             //ضرایب مربوط به فصول را در سایر ضرایب ضرب میکنیم
             decimal? ZaribFasl = null;
-            if (NoeBAType != NoeBarAvord.BarAvord)
-                ZaribFasl = lstZaribPishnahadiPaymanKarFosoul.FirstOrDefault(x => x.Code.Trim() == fasl.Code.Trim())?.ZaribJoz;
+            if (NoeBAType != NoeBarAvord.BarAvord &&
+                zaribPishnahadiByFasl.TryGetValue(fasl.Code.Trim(), out var zaribFaslValue))
+                ZaribFasl = zaribFaslValue;
 
             decimal dCurrentZarib = AllZarib * (ZaribFasl == null ? 1 : ZaribFasl.Value);
 
@@ -404,8 +446,10 @@ public class ShowBarAvordCommon
             clsZarayebFosoul ZarayebFasl = new clsZarayebFosoul();
             if (!blnFaslAsli)
             {
-                lstExceptionItems = lstFehrestBahaItemsReplaces.Where(x => x.FaslId == fasl.Id).ToList();
-                ZarayebFasl = lstZarayebFosouls.First(x => x.FaslId == fasl.Id);
+                if (exceptionItemsByFaslId.TryGetValue(fasl.Id, out var exceptionItems))
+                    lstExceptionItems = exceptionItems;
+                if (zarayebByFaslId.TryGetValue(fasl.Id, out var zarayebFasl))
+                    ZarayebFasl = zarayebFasl;
             }
 
             decimal JameFasl = 0;
@@ -417,10 +461,13 @@ public class ShowBarAvordCommon
             List<ViewUserBarAvordOutPutDto> userBarAvordOutPutFiltered = userBarAvordOutPut.Where(x => x.FBId != null).ToList();
 
 
-            var fehrestShomarehs = userBarAvordOutPutFiltered.Select(x => x.ItemFbShomareh).ToList();
+            var fehrestShomarehs = userBarAvordOutPutFiltered
+                .Select(x => x.ItemFbShomareh)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
             var barAvordOnlyInFbItems = fbItems
-                .Where(fb => fb.Shomareh.StartsWith(fasl.Code) && !fehrestShomarehs.Contains(fb.Shomareh))
+                .Where(fb => fb.Shomareh.StartsWith(fasl.Code, StringComparison.Ordinal) &&
+                             !fehrestShomarehs.Contains(fb.Shomareh))
                 .Select(fb => new ViewUserBarAvordOutPutDto
                 {
                     ItemFbShomareh = fb.Shomareh,
@@ -440,14 +487,8 @@ public class ShowBarAvordCommon
             .OrderBy(x => x.ItemFbShomareh)
             .ToList();
 
-            List<string> lstItemFbShomarehs = userBarAvordOutPutFiltered.Select(x => x.ItemFbShomareh).Distinct().ToList();
-
-
-            List<clsBahayeVahedItemsRelated> lstBVItemRelated = _context.BahayeVahedItemsRelateds.Where(x => lstItemFbShomarehs.Contains(x.ItemShomarehRelated.ToLower().Trim()) && x.NoeFB == NoeFBId && x.Year == Year).ToList();
-
-            var relatedByItemNumber = lstBVItemRelated
-                .GroupBy(x => x.ItemShomarehRelated.Trim(), StringComparer.OrdinalIgnoreCase)
-                .ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
+            // دیکشنری سراسری از قبل ساخته شده و برای تمام فصل‌ها استفاده می‌شود.
+            var relatedByItemNumber = relatedByItemNumberGlobal;
 
             var outputByItemNumber = userBarAvordOutPutFiltered
                 .GroupBy(x => x.ItemFbShomareh.Trim(), StringComparer.OrdinalIgnoreCase)
