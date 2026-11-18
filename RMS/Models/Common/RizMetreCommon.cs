@@ -1346,6 +1346,7 @@ public class RizMetreCommon
                                  ZarayebFosoul.ZaribManteghe
                              }).ToList();
             var faslZaribByItemNumber = FaslZarib
+                .Where(x => x.FBShomareh != null)
                 .GroupBy(x => x.FBShomareh)
                 .ToDictionary(g => g.Key, g => g.First());
 
@@ -1721,6 +1722,7 @@ public class RizMetreCommon
 
                     var FaslZaribFilter = FaslZarib.Where(x => x.NoeFB == NoeFBId).ToList();
                     var faslZaribByItemNumber = FaslZaribFilter
+                        .Where(x => x.FBShomareh != null)
                         .GroupBy(x => x.FBShomareh)
                         .ToDictionary(g => g.Key, g => g.First());
 
