@@ -352,19 +352,11 @@ public class ShowBarAvordCommon
             .AsNoTracking()
             .ToListAsync();
 
-        // اطلاعات آیتم‌های مرتبط برای همه فصل‌ها یک‌بار دریافت می‌شود؛ نه یک Query در هر فصل.
-        var allRelatedItemNumbers = lstFehrestBahas
-            .Select(x => x.Shomareh)
-            .Concat(fbItems.Select(x => x.Shomareh))
-            .Where(x => !string.IsNullOrWhiteSpace(x))
-            .Select(x => x.Trim().ToLower())
-            .Distinct()
-            .ToList();
-
+        // جدول آیتم‌های مرتبط در محدوده سال و نوع فهرست بها فقط یک‌بار خوانده می‌شود.
+        // این روش از Query تکراری هر فصل و نیز ساخت IN بزرگ با احتمال عبور از محدودیت پارامترهای SQL Server جلوگیری می‌کند.
         var allRelatedItems = await _context.BahayeVahedItemsRelateds
             .AsNoTracking()
-            .Where(x => x.NoeFB == NoeFBId && x.Year == Year &&
-                        allRelatedItemNumbers.Contains(x.ItemShomarehRelated.ToLower().Trim()))
+            .Where(x => x.NoeFB == NoeFBId && x.Year == Year)
             .ToListAsync();
 
         var relatedByItemNumberGlobal = allRelatedItems
@@ -448,8 +440,7 @@ public class ShowBarAvordCommon
             {
                 if (exceptionItemsByFaslId.TryGetValue(fasl.Id, out var exceptionItems))
                     lstExceptionItems = exceptionItems;
-                if (zarayebByFaslId.TryGetValue(fasl.Id, out var zarayebFasl))
-                    ZarayebFasl = zarayebFasl;
+                ZarayebFasl = zarayebByFaslId[fasl.Id];
             }
 
             decimal JameFasl = 0;
