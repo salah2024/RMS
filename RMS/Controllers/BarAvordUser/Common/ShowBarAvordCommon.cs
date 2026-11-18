@@ -342,6 +342,24 @@ public class ShowBarAvordCommon
 
         List<clsFehrestBahaItemsReplace> lstFehrestBahaItemsReplaces = await _context.FehrestBahaItemsReplaces.Where(x => x.NoeFB == NoeFBId && x.Year == Year).ToListAsync();
         List<clsZarayebFosoul> lstZarayebFosouls = await _context.ZarayebFosouls.ToListAsync();
+        // ستاره‌ها و جمع ریزمتره‌های آن‌ها یک‌بار برای کل برآورد دریافت می‌شوند.
+        var allItemFBStars = await _context.ItemFBStars
+            .AsNoTracking()
+            .Where(x => x.BaravordId == BarAvordUserId && x.NoeFBId == NoeFBId)
+            .ToListAsync();
+
+        var rizMetreStarSums = await _context.RizMetreStars
+            .AsNoTracking()
+            .Where(x => x.ItemFBStar.BaravordId == BarAvordUserId &&
+                        x.ItemFBStar.NoeFBId == NoeFBId)
+            .GroupBy(x => x.ItemFBStar.Shomareh.Trim())
+            .Select(g => new
+            {
+                Shomareh = g.Key,
+                SumMeghdar = g.Sum(x => x.MeghdarJoz ?? 0m)
+            })
+            .ToDictionaryAsync(x => x.Shomareh, x => x.SumMeghdar);
+
         foreach (var fasl in Fosoul)
         {
             // اول FBs رو فیلتر و گروه‌بندی کن (در حافظه)
@@ -572,22 +590,17 @@ public class ShowBarAvordCommon
             decimal AllJameFaslStarWithZarib = 0;
 
 
-            List<clsItemFBStar> lstItemFBStars = await _context.ItemFBStars.Where(x => x.BaravordId == BarAvordUserId && x.NoeFBId == NoeFBId && x.Shomareh.Substring(0, 2) == fasl.Code).ToListAsync();
+            List<clsItemFBStar> lstItemFBStars = allItemFBStars
+                .Where(x => x.Shomareh.Substring(0, 2) == fasl.Code)
+                .ToList();
             foreach (var itemFBStarCurrent in lstItemFBStars)
             {
                 decimal ItemZaribStar = itemFBStarCurrent.ItemZaribStar == null ? 1 : itemFBStarCurrent.ItemZaribStar.Value;
 
-                decimal JameItemFBStar = 0;
-                //clsItemFBStar? itemFBStar = _context.ItemFBStars.FirstOrDefault(x => x.BaravordId == BarAvordUserId && x.NoeFBId == NoeFBId && x.Shomareh.Trim() == itemFBStarCurrent.Shomareh);
-
-                //BahayeVahedStar = 0;
-                //if (itemFBStar != null)
-                //{
                 decimal BahayeVahedStar = itemFBStarCurrent.BahayeVahed * ItemZaribStar;
-                //}
-                JameItemFBStar = _context.RizMetreStars.Include(x => x.ItemFBStar)
-                     .Where(x => x.ItemFBStar.BaravordId == BarAvordUserId && x.ItemFBStar.NoeFBId == NoeFBId && x.ItemFBStar.Shomareh.Trim() == itemFBStarCurrent.Shomareh)
-                     .Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
+                decimal JameItemFBStar = rizMetreStarSums.TryGetValue(itemFBStarCurrent.Shomareh.Trim(), out var starSum)
+                    ? starSum
+                    : 0m;
 
                 AllJameFaslStar += JameItemFBStar * BahayeVahedStar;
                 bool blnKharidTajhizat = itemFBStarCurrent.blnKharidTajhizat == null ? false : itemFBStarCurrent.blnKharidTajhizat.Value;
