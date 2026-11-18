@@ -238,7 +238,7 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
         //                         BahayeVahedZarib = fb.BahayeVahedZarib,
         //                         BahayeVahedNew = fb.BahayeVahedNew,
         //                         ItemZarib = fb.ItemZarib,
-        SumRizMetre = fb.SumRizMetre
+        //SumRizMetre = fb.SumRizMetre
         //                     })
         //        .GroupBy(f => f.Shomareh)
         //        .Select(g => g.FirstOrDefault())
