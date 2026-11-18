@@ -1036,7 +1036,18 @@ public class RizMetreCommon
 
         List<string> lstItemFbShomarehs = userBarAvordOutPutFilter.Select(x => x.ItemFbShomareh).Distinct().ToList();
 
-        List<clsBahayeVahedItemsRelated> lstBVItemRelated = _context.BahayeVahedItemsRelateds.Where(x => lstItemFbShomarehs.Contains(x.ItemShomarehRelated.ToLower().Trim()) && x.NoeFB == NoeFBId && x.Year == Year).ToList();
+        List<clsBahayeVahedItemsRelated> lstBVItemRelated = _context.BahayeVahedItemsRelateds
+            .AsNoTracking()
+            .Where(x => lstItemFbShomarehs.Contains(x.ItemShomarehRelated.ToLower().Trim()) && x.NoeFB == NoeFBId && x.Year == Year)
+            .ToList();
+
+        var relatedItemsByNumber = lstBVItemRelated
+            .GroupBy(x => x.ItemShomarehRelated.Trim())
+            .ToDictionary(g => g.Key, g => g.First());
+
+        var outputItemsByNumber = userBarAvordOutPut
+            .GroupBy(x => x.ItemFbShomareh.Trim())
+            .ToDictionary(g => g.Key, g => g.First());
 
         foreach (var item in userBarAvordOutPutFilter)
         {
@@ -1049,10 +1060,10 @@ public class RizMetreCommon
                 decimal dBVahed = 0;// item.BahayeVahedNew != 0 ? item.BahayeVahedNew : item.BahayeVahed == null || item.BahayeVahed == "" ? 0 : decimal.Parse(item.BahayeVahed);
                 decimal dBahayeKol = 0;
 
-                clsBahayeVahedItemsRelated? BVItemsRelated = lstBVItemRelated.FirstOrDefault(x => x.ItemShomarehRelated.Trim() == item.ItemFbShomareh.Trim());
+                relatedItemsByNumber.TryGetValue(item.ItemFbShomareh.Trim(), out var BVItemsRelated);
                 if (BVItemsRelated != null)
                 {
-                    var barAvordInFehrest1 = userBarAvordOutPut.FirstOrDefault(x => x.ItemFbShomareh.Trim() == BVItemsRelated.ItemShomareh.Trim());
+                    outputItemsByNumber.TryGetValue(BVItemsRelated.ItemShomareh.Trim(), out var barAvordInFehrest1);
                     if (barAvordInFehrest1 != null)
                     {
                         long BahayeVahed1 = barAvordInFehrest1.BahayeVahedNew != 0 ? barAvordInFehrest1.BahayeVahedNew : barAvordInFehrest1.BahayeVahed == null ? 0 : long.Parse(barAvordInFehrest1.BahayeVahed);
@@ -1350,7 +1361,18 @@ public class RizMetreCommon
 
             List<string> lstItemFbShomarehs = lstuserBarAvordOutPut.Select(x => x.ItemFbShomareh).Distinct().ToList();
 
-            List<clsBahayeVahedItemsRelated> lstBVItemRelated = _context.BahayeVahedItemsRelateds.Where(x => lstItemFbShomarehs.Contains(x.ItemShomarehRelated.ToLower().Trim()) && x.NoeFB == NoeFBId && x.Year == Year).ToList();
+            List<clsBahayeVahedItemsRelated> lstBVItemRelated = _context.BahayeVahedItemsRelateds
+            .AsNoTracking()
+            .Where(x => lstItemFbShomarehs.Contains(x.ItemShomarehRelated.ToLower().Trim()) && x.NoeFB == NoeFBId && x.Year == Year)
+            .ToList();
+
+        var relatedItemsByNumber = lstBVItemRelated
+            .GroupBy(x => x.ItemShomarehRelated.Trim())
+            .ToDictionary(g => g.Key, g => g.First());
+
+        var outputItemsByNumber = userBarAvordOutPut
+            .GroupBy(x => x.ItemFbShomareh.Trim())
+            .ToDictionary(g => g.Key, g => g.First());
 
 
             foreach (var item in lstuserBarAvordOutPut)
@@ -1360,10 +1382,10 @@ public class RizMetreCommon
                     : item.Meghdar;
                 if (Meghdar != 0)
                 {
-                    clsBahayeVahedItemsRelated? BVItemsRelated = lstBVItemRelated.FirstOrDefault(x => x.ItemShomarehRelated.Trim() == item.ItemFbShomareh.Trim());
+                    relatedItemsByNumber.TryGetValue(item.ItemFbShomareh.Trim(), out var BVItemsRelated);
                     if (BVItemsRelated != null)
                     {
-                        var barAvordInFehrest1 = userBarAvordOutPut.FirstOrDefault(x => x.ItemFbShomareh.Trim() == BVItemsRelated.ItemShomareh.Trim());
+                        outputItemsByNumber.TryGetValue(BVItemsRelated.ItemShomareh.Trim(), out var barAvordInFehrest1);
                         if (barAvordInFehrest1 != null)
                         {
                             long BahayeVahed1 = barAvordInFehrest1.BahayeVahedNew != 0 ? barAvordInFehrest1.BahayeVahedNew : (barAvordInFehrest1.BahayeVahed == null || barAvordInFehrest1.BahayeVahed == "") ? 0 : long.Parse(barAvordInFehrest1.BahayeVahed);
@@ -1913,7 +1935,18 @@ public class RizMetreCommon
 
                     List<string> lstItemFbShomarehs = userBarAvordOutPutFiltered.Select(x => x.ItemFbShomareh).Distinct().ToList();
 
-                    List<clsBahayeVahedItemsRelated> lstBVItemRelated = _context.BahayeVahedItemsRelateds.Where(x => lstItemFbShomarehs.Contains(x.ItemShomarehRelated.ToLower().Trim()) && x.NoeFB == NoeFBId && x.Year == Year).ToList();
+                    List<clsBahayeVahedItemsRelated> lstBVItemRelated = _context.BahayeVahedItemsRelateds
+            .AsNoTracking()
+            .Where(x => lstItemFbShomarehs.Contains(x.ItemShomarehRelated.ToLower().Trim()) && x.NoeFB == NoeFBId && x.Year == Year)
+            .ToList();
+
+        var relatedItemsByNumber = lstBVItemRelated
+            .GroupBy(x => x.ItemShomarehRelated.Trim())
+            .ToDictionary(g => g.Key, g => g.First());
+
+        var outputItemsByNumber = userBarAvordOutPut
+            .GroupBy(x => x.ItemFbShomareh.Trim())
+            .ToDictionary(g => g.Key, g => g.First());
 
                     foreach (var item in userBarAvordOutPutFiltered)
                     {
@@ -1928,10 +1961,10 @@ public class RizMetreCommon
                             decimal dBahayeKol = 0;
 
 
-                            clsBahayeVahedItemsRelated? BVItemsRelated = lstBVItemRelated.FirstOrDefault(x => x.ItemShomarehRelated.Trim() == item.ItemFbShomareh.Trim());
+                            relatedItemsByNumber.TryGetValue(item.ItemFbShomareh.Trim(), out var BVItemsRelated);
                             if (BVItemsRelated != null)
                             {
-                                var barAvordInFehrest1 = userBarAvordOutPut.FirstOrDefault(x => x.ItemFbShomareh.Trim() == BVItemsRelated.ItemShomareh.Trim());
+                                outputItemsByNumber.TryGetValue(BVItemsRelated.ItemShomareh.Trim(), out var barAvordInFehrest1);
                                 if (barAvordInFehrest1 != null)
                                 {
                                     long BahayeVahed1 = barAvordInFehrest1.BahayeVahedNew != 0 ? barAvordInFehrest1.BahayeVahedNew :
