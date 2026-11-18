@@ -1336,7 +1336,10 @@ public class RizMetreCommon
                                  FBShomareh = FehrestBahaItemsReplace.FBShomarehNew,
                                  ZarayebFosoul.ZaribBalaSari,
                                  ZarayebFosoul.ZaribManteghe
-                             }).ToList();
+                             }).ToList()
+            var faslZaribByItemNumber = FaslZarib
+                .GroupBy(x => x.FBShomareh)
+                .ToDictionary(g => g.Key, g => g.First());;
 
 
             bool blnCheckUsePercent = false;
@@ -1408,9 +1411,9 @@ public class RizMetreCommon
                         JameFaslWithoutBahaVahed += dBahayeKol;
                     }
 
-                    if (FaslZarib.Select(x => x.FBShomareh).Contains(item.ItemFbShomareh))
+                    if (faslZaribByItemNumber.TryGetValue(item.ItemFbShomareh, out var currentFaslZarib))
                     {
-                        var currentFaslZarib = FaslZarib.Where(x => x.FBShomareh == item.ItemFbShomareh).First();
+                        
 
                         decimal newZaribBalaSari = currentFaslZarib.ZaribBalaSari == null ? zaribBalaSari : currentFaslZarib.ZaribBalaSari.Value;
                         decimal newZaribManteghe = currentFaslZarib.ZaribManteghe == null ? zaribManteghe : currentFaslZarib.ZaribManteghe.Value;
@@ -1460,9 +1463,9 @@ public class RizMetreCommon
 
                         JameFasl += dBahayeKol;
 
-                        if (FaslZarib.Select(x => x.FBShomareh).Contains(item.ItemFbShomareh))
+                        if (faslZaribByItemNumber.TryGetValue(item.ItemFbShomareh, out var currentFaslZarib))
                         {
-                            var currentFaslZarib = FaslZarib.Where(x => x.FBShomareh == item.ItemFbShomareh).First();
+                            
 
                             decimal newZaribBalaSari = currentFaslZarib.ZaribBalaSari == null ? zaribBalaSari : currentFaslZarib.ZaribBalaSari.Value;
                             decimal newZaribManteghe = currentFaslZarib.ZaribManteghe == null ? zaribManteghe : currentFaslZarib.ZaribManteghe.Value;
@@ -1709,6 +1712,9 @@ public class RizMetreCommon
                     List<clsFehrestBahaItemsReplace> lstFehrestBahaItemsReplaceFilter = lstFehrestBahaItemsReplace.Where(x => x.NoeFB == NoeFBId).ToList();
 
                     var FaslZaribFilter = FaslZarib.Where(x => x.NoeFB == NoeFBId).ToList();
+                    var faslZaribByItemNumber = FaslZaribFilter
+                        .GroupBy(x => x.FBShomareh)
+                        .ToDictionary(g => g.Key, g => g.First());
 
                     // اول FBs رو فیلتر و گروه‌بندی کن (در حافظه)
                     //var fbItems = _context.FBs
@@ -1986,9 +1992,9 @@ public class RizMetreCommon
                                 }
                                 else
                                 {
-                                    if (FaslZarib.Select(x => x.FBShomareh).Contains(item.ItemFbShomareh))
+                                    if (faslZaribByItemNumber.TryGetValue(item.ItemFbShomareh, out var currentFaslZarib))
                                     {
-                                        var currentFaslZarib = FaslZarib.Where(x => x.FBShomareh == item.ItemFbShomareh).First();
+                                        
 
                                         decimal newZaribBalaSari = currentFaslZarib.ZaribBalaSari == null ? zaribBalaSari : currentFaslZarib.ZaribBalaSari.Value;
                                         decimal newZaribManteghe = currentFaslZarib.ZaribManteghe == null ? zaribManteghe : currentFaslZarib.ZaribManteghe.Value;
@@ -2034,9 +2040,9 @@ public class RizMetreCommon
                                     }
                                     else
                                     {
-                                        if (FaslZarib.Select(x => x.FBShomareh).Contains(item.ItemFbShomareh))
+                                        if (faslZaribByItemNumber.TryGetValue(item.ItemFbShomareh, out var currentFaslZarib))
                                         {
-                                            var currentFaslZarib = FaslZarib.Where(x => x.FBShomareh == item.ItemFbShomareh).First();
+                                            
 
                                             decimal newZaribBalaSari = currentFaslZarib.ZaribBalaSari == null ? zaribBalaSari : currentFaslZarib.ZaribBalaSari.Value;
                                             decimal newZaribManteghe = currentFaslZarib.ZaribManteghe == null ? zaribManteghe : currentFaslZarib.ZaribManteghe.Value;
