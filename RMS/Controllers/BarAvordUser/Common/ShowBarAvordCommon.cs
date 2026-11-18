@@ -21,7 +21,7 @@ public class ShowBarAvordCommon
         int Year = request.Year;
 
 
-        clsBaravordUser? BaravordUser = await _context.BaravordUsers.FirstOrDefaultAsync(x => x.ID == BarAvordUserId);
+        clsBaravordUser? BaravordUser = await _context.BaravordUsers.AsNoTracking().FirstOrDefaultAsync(x => x.ID == BarAvordUserId);
         if (BaravordUser == null)
         {
             return new ResultGetFosoulForBarAvordDto();
@@ -30,7 +30,7 @@ public class ShowBarAvordCommon
         {
             List<GetFosoulOutputDto> Fosoul = await AllFosoulBarAvord(request, BaravordUser, _context);
 
-            List<clsVahed> lstVaheds = await _context.Vaheds.ToListAsync();
+            List<clsVahed> lstVaheds = await _context.Vaheds.AsNoTracking().ToListAsync();
 
             var result = new ResultGetFosoulForBarAvordDto
             {
@@ -64,7 +64,7 @@ public class ShowBarAvordCommon
 
         bool blnCheckUsePercent = false;
         //در صورتی که تجهیزکارگاه بصورت درصدی حساب شود
-        clsTajhizKargahDarsad? TajhizKargahDarsad = _context.TajhizKargahDarsads.FirstOrDefault(x => x.BarAvordUserId == BarAvordUserId && x.NoeFB == request.NoeFBId);
+        clsTajhizKargahDarsad? TajhizKargahDarsad = await _context.TajhizKargahDarsads.AsNoTracking().FirstOrDefaultAsync(x => x.BarAvordUserId == BarAvordUserId && x.NoeFB == request.NoeFBId);
         if (TajhizKargahDarsad != null)
         {
             blnCheckUsePercent = true;
@@ -122,7 +122,7 @@ public class ShowBarAvordCommon
             //dJameTajhiz= JameTajhiz
         };
 
-        List<clsVahed> lstVaheds = await _context.Vaheds.ToListAsync();
+        List<clsVahed> lstVaheds = await _context.Vaheds.AsNoTracking().ToListAsync();
 
         var result = new ResultGetFosoulForSooratVaziatDto
         {
@@ -156,7 +156,7 @@ public class ShowBarAvordCommon
 
             if (NoeBAType != NoeBarAvord.BarAvord)
             {
-                clsBaravordUser? baravordUserMain = await _context.BaravordUsers.FirstOrDefaultAsync(x => x.ID == BaravordUser.ParentId);
+                clsBaravordUser? baravordUserMain = await _context.BaravordUsers.AsNoTracking().FirstOrDefaultAsync(x => x.ID == BaravordUser.ParentId);
                 if (baravordUserMain != null)
                 {
                     //یافتن ضرایب پیشنهادی پیمانکار برای هر فصل
@@ -172,7 +172,7 @@ public class ShowBarAvordCommon
         ////////////////////////
         ////////////////////////
 
-        List<GetFosoulOutputDto> Fosoul = await _context.Fosouls.Where(x => x.NoeFB == NoeFBId)
+        List<GetFosoulOutputDto> Fosoul = await _context.Fosouls.AsNoTracking().Where(x => x.NoeFB == NoeFBId)
             .OrderBy(x => x.order)
             .Select(x => new GetFosoulOutputDto
             {
@@ -242,7 +242,7 @@ public class ShowBarAvordCommon
 
 
         var fbItems = await (
-    from fb in _context.FBs
+    from fb in _context.FBs.AsNoTracking()
 
     join fehrestbaha in _context.FehrestBahas
         on fb.Shomareh.Substring(0, 6)
