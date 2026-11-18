@@ -1406,15 +1406,13 @@ public class RizMetreCommon
                 .Where(x => x.BaravordId == BarAvordId && noeFBIds.Contains(x.NoeFBId))
                 .ToListAsync();
 
-            var itemFBStarIds = allItemFBStars.Select(x => x.ID).ToList();
-            var rizMetreStarSums = itemFBStarIds.Count == 0
-                ? new Dictionary<Guid, decimal>()
-                : await _context.RizMetreStars
-                    .AsNoTracking()
-                    .Where(x => itemFBStarIds.Contains(x.ItemFBStarId))
-                    .GroupBy(x => x.ItemFBStarId)
-                    .Select(g => new { ItemFBStarId = g.Key, SumMeghdar = g.Sum(x => x.MeghdarJoz ?? 0m) })
-                    .ToDictionaryAsync(x => x.ItemFBStarId, x => x.SumMeghdar);
+            var rizMetreStarSums = await _context.RizMetreStars
+                .AsNoTracking()
+                .Where(x => x.ItemFBStar.BaravordId == BarAvordId &&
+                            noeFBIds.Contains(x.ItemFBStar.NoeFBId))
+                .GroupBy(x => x.ItemFBStarId)
+                .Select(g => new { ItemFBStarId = g.Key, SumMeghdar = g.Sum(x => x.MeghdarJoz ?? 0m) })
+                .ToDictionaryAsync(x => x.ItemFBStarId, x => x.SumMeghdar);
 
             var itemFBStarsByNoeFB = allItemFBStars
                 .GroupBy(x => x.NoeFBId)
