@@ -181,7 +181,11 @@ public class ShowBarAvordCommon
             }).ToListAsync();
 
 
-        var RizMetre = await _context.RizMetreUserses.Include(x => x.FB).Where(x => x.FB.BarAvordId == BarAvordUserId && x.FB.NoeFBId == NoeFBId)
+        // این متد همه فصل‌ها را محاسبه می‌کند؛ جزئیات ریزمتره فقط برای نمایش لازم‌اند.
+        // جمع هر FB در تمام محاسبات از FB.SumRizMetre استفاده می‌شود.
+        var RizMetre = await _context.RizMetreUserses
+            .AsNoTracking()
+            .Where(x => x.FB.BarAvordId == BarAvordUserId && x.FB.NoeFBId == NoeFBId)
             .Select(riz => new ViewUserBarAvordOutPutRizMetreDto
             {
                 Id = riz.ID,
@@ -195,7 +199,14 @@ public class ShowBarAvordCommon
                 Vazn = riz.Vazn,
                 FBId = riz.FBId,
                 MeghdarJoz = riz.MeghdarJoz
-            }).OrderBy(x => x.Shomareh).ToListAsync();
+            })
+            .OrderBy(x => x.Shomareh)
+            .ToListAsync();
+
+        // دسترسی به جزئیات هر FB به‌صورت O(1)، به‌جای فیلترکردن کل لیست برای هر آیتم.
+        var rizMetreByFbId = RizMetre
+            .GroupBy(x => x.FBId)
+            .ToDictionary(g => g.Key, g => g.ToList());
 
 
 
@@ -435,12 +446,13 @@ public class ShowBarAvordCommon
                 //}
 
 
-                var rizMetres = RizMetre
-                    .Where(x => x.FBId == item.FBId)
-                    .ToList();
+                if (item.FBId is Guid fbId &&
+                    rizMetreByFbId.TryGetValue(fbId, out var rizMetres))
+                {
+                    // جزئیات برای نمایش از ریزمتره‌ها خوانده می‌شود؛ جمع از فیلد تجمیعی FB است.
+                    item.RizMetre.AddRange(rizMetres);
+                }
 
-                // جزئیات برای نمایش از ریزمتره‌ها خوانده می‌شود؛ جمع از فیلد تجمیعی FB است.
-                item.RizMetre.AddRange(rizMetres);
                 Meghdar = item.Meghdar;
 
                 
