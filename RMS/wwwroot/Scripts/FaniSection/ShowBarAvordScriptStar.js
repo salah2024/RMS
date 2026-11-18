@@ -1,6 +1,5 @@
 ﻿function EditRizMetreRowStar(rowEl, rizMetreId, Shomareh, rizId, Code) {
 
-    debugger;
 
     const $row = $(rowEl);
     if ($row.hasClass('editing')) {
@@ -125,7 +124,7 @@ function UpdateRizMetreFromRowStar(el, rizMetreId, Shomareh, rizId1, Code) {
                 if (info[0] == "OK") {
                     row.removeClass('editing');
 
-                  debugger;
+
                   //var bahayeVahedFasl = $('#bahayeVahedFaslStar_' + Shomareh);
 
                     let num = parseFloat(info[1]);
@@ -211,7 +210,7 @@ function SaveRMUStarClick(object, Shomareh, rizId, Code) {
     var bahayeKolFasl = $('#bahayeKolFaslStar_' + Shomareh);
     var bahayeVahedFasl = $('#bahayeVahedFaslStar_' + Shomareh);
 
-    debugger;
+
     var Sharh, Tedad, Tool, Arz, Ertefa, Vazn, Des, Check = true;
     firstObj = null;
     findFirstObj = false;
@@ -303,7 +302,6 @@ function SaveRMUStarClick(object, Shomareh, rizId, Code) {
         Year = parseInt($('#HDFYear').val());
         NoeFBId = parseInt($('#HDFNoeFB').val());
 
-        debugger;
 
         var vardata = new Object();
         vardata.Sharh = Sharh;
@@ -328,7 +326,7 @@ function SaveRMUStarClick(object, Shomareh, rizId, Code) {
                 var info = data.split('_');
                 if (info[0] == "OK") {
 
-                    debugger;
+
                     let num = parseFloat(info[1]);
                     //let bahayeVahedFasl1 = parseFloat(convertPersianToEnglish(bahayeVahedFasl.text() == "" ? "0" : bahayeVahedFasl.text()));
 
@@ -389,7 +387,7 @@ function SaveRMUStarClick(object, Shomareh, rizId, Code) {
 
 //ریزه متره های ستاره دار
 function GetCurrentRizMetreItemFBStar(Shomareh, rizId, Code) {
-    debugger;
+
     BarAvordUserId = $('#HDFBarAvordUserID').val();
     NoeFBId = parseInt($('#HDFNoeFB').val());
     var vardata = new Object();
@@ -405,7 +403,7 @@ function GetCurrentRizMetreItemFBStar(Shomareh, rizId, Code) {
         success: function (response) {
 
             rizMetreUsers = response;
-            debugger;
+
             const rizRow = $(`#${rizId}`);
             const tbody = rizRow.find('tbody');
             tbody.empty(); // پاک‌کردن محتوای قدیمی
@@ -492,7 +490,7 @@ function GetCurrentRizMetreItemFBStar(Shomareh, rizId, Code) {
 
 
 function cancelEditRowStar(row, rizMetreId, Shomareh, rizId1) {
-    debugger;
+
     //row.removeClass('editing');
     row.find('td').each(function (index) {
         if (index === 0 || index === row.children('td').length - 1) {
@@ -530,7 +528,7 @@ function cancelEditRowStar(row, rizMetreId, Shomareh, rizId1) {
 
 
 function DeleteRizMetreStar(object, RizMetreId, Shomareh, rizId, Code) {
-    debugger;
+
     BarAvordUserId = $('#HDFBarAvordUserID').val();
     NoeFBId = parseInt($('#HDFNoeFB').val());
     Year = parseInt($('#HDFYear').val());
@@ -548,7 +546,7 @@ function DeleteRizMetreStar(object, RizMetreId, Shomareh, rizId, Code) {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (response) {
-            debugger;
+
             info = response.split('_');
             if (info[0] == "OK") {
 
