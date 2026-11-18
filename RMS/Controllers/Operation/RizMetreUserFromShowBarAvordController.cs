@@ -287,7 +287,8 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
 
        BahayeVahedNew = fb.BahayeVahedNew,
 
-       ItemZarib = fb.ItemZarib
+       ItemZarib = fb.ItemZarib,
+       SumRizMetre = fb.SumRizMetre
    }
 )
 .GroupBy(x => x.Shomareh)
