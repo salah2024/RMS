@@ -812,21 +812,14 @@ public class BaravordUserController(ApplicationDbContext context, UserManager<Ap
                     Vahed = x.fehrest.Vahed,
                     FBId = x.fbItem != null ? x.fbItem.ID : null,
                     BahayeVahedNew = x.fbItem != null ? x.fbItem.BahayeVahedNew : 0,
+                    Meghdar = x.fbItem?.SumRizMetre ?? 0m,
                     RizMetre = new List<ViewUserBarAvordOutPutRizMetreDto>()
                 }).ToList();
 
             decimal JameFasl = 0;
             foreach (var item in userBarAvordOutPut)
             {
-                decimal Meghdar = 0;
-                foreach (var RM in RizMetreAll)
-                {
-                    if (item.FBId == RM.FBId)
-                    {
-                        item.RizMetre.Add(RM);
-                        Meghdar += RM.MeghdarJoz != null ? RM.MeghdarJoz.Value : 0;
-                    }
-                }
+                decimal Meghdar = item.Meghdar;
                 decimal dBVahed = item.BahayeVahedNew != 0 ? item.BahayeVahedNew : item.BahayeVahed == null || item.BahayeVahed == "" ? 0 : decimal.Parse(item.BahayeVahed);
                 item.Meghdar = Meghdar;
                 decimal dBahayeKol = Meghdar * dBVahed * ItemZarib;
