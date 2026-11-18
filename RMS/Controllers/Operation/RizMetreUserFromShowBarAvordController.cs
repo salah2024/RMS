@@ -180,7 +180,10 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
 
             await context.SaveChangesAsync();
 
-            decimal? dSumMeghdarJoz = await _context.RizMetreUserses.Include(x => x.FB).Where(x => x.FBId == FBId).SumAsync(x => x.MeghdarJoz);
+            decimal dSumMeghdarJoz = await _context.FBs.AsNoTracking()
+                .Where(x => x.ID == FBId)
+                .Select(x => x.SumRizMetre ?? 0m)
+                .FirstOrDefaultAsync();
             decimal? dBahayeItem = dSumMeghdarJoz * dBahayeVahed * ItemZarib;
 
             return new JsonResult("OK_" + dMeghdarJoz + "_" + dSumMeghdarJoz + "_" + dBahayeItem + "_" + FBId);
@@ -212,22 +215,6 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
 
         List<clsFehrestBahaItemsReplace> lstfehrestBahaItemsReplace = await _context.FehrestBahaItemsReplaces.Where(x => x.FBShomarehNew.Substring(0, 2) == FBShomareh.Substring(0, 2) && x.NoeFB == NoeFBId && x.Year == Year).ToListAsync();
 
-        var RizMetreAll = _context.RizMetreUserses.Include(x => x.FB).Where(x => x.FB.BarAvordId == BarAvordId && x.FB.NoeFBId == NoeFBId)
-                .Select(riz => new ViewUserBarAvordOutPutRizMetreDto
-                {
-                    Id = riz.ID,
-                    Sharh = riz.Sharh,
-                    Shomareh = riz.Shomareh,
-                    Arz = riz.Arz,
-                    Des = riz.Des,
-                    Ertefa = riz.Ertefa,
-                    Tedad = riz.Tedad,
-                    Tool = riz.Tool,
-                    Vazn = riz.Vazn,
-                    FBId = riz.FBId,
-                    MeghdarJoz = riz.MeghdarJoz
-                }).OrderBy(x => x.Shomareh).ToList();
-
 
         // اول FBs رو فیلتر و گروه‌بندی کن (در حافظه)
         //var fbItems = _context.FBs
@@ -250,7 +237,8 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
         //                         Vahed = fehrestbaha.Vahed,
         //                         BahayeVahedZarib = fb.BahayeVahedZarib,
         //                         BahayeVahedNew = fb.BahayeVahedNew,
-        //                         ItemZarib = fb.ItemZarib
+        //                         ItemZarib = fb.ItemZarib,
+        SumRizMetre = fb.SumRizMetre
         //                     })
         //        .GroupBy(f => f.Shomareh)
         //        .Select(g => g.FirstOrDefault())
@@ -388,6 +376,7 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
                 FBId = x.fbItem != null ? x.fbItem.ID : null,
                 BahayeVahedNew = x.fbItem != null ? x.fbItem.BahayeVahedNew : 0,
                 ItemZarib = x.fbItem != null ? x.fbItem.ItemZarib : 0,
+                Meghdar = x.fbItem?.SumRizMetre ?? 0m,
                 RizMetre = new List<ViewUserBarAvordOutPutRizMetreDto>()
             }).ToList();
 
@@ -408,6 +397,7 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
                 Vahed = fb.Vahed,
                 FBId = fb.ID,
                 ItemZarib = fb.ItemZarib,
+                Meghdar = fb.SumRizMetre ?? 0m,
                 RizMetre = new List<ViewUserBarAvordOutPutRizMetreDto>(),
                 ItemsFields = new List<ItemsFieldForUserBarAvordOutPutDto>()
             }).ToList();
@@ -467,18 +457,7 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
         decimal AllJameFaslStarWithZarib = 0;
         foreach (var item in userBarAvordOutPutFiltered)
         {
-            decimal Meghdar = 0;
-
-            List<ViewUserBarAvordOutPutRizMetreDto> lstCurrentRM = RizMetreAll.Where(x => x.FBId == item.FBId).ToList();
-
-            foreach (var RM in lstCurrentRM)
-            {
-                if (item.FBId == RM.FBId)
-                {
-                    item.RizMetre.Add(RM);
-                    Meghdar += RM.MeghdarJoz != null ? RM.MeghdarJoz.Value : 0;
-                }
-            }
+            decimal Meghdar = item.Meghdar;
 
 
             if (Meghdar != 0)
@@ -922,7 +901,10 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
         //};
         //ResultCalculateFaslDto result = RizMetreCommon.fnCalculateFasl(CalculateFasl, _context);
 
-        decimal dSumMeghdarJoz = await context.RizMetreUserses.Where(x => x.FBId == entity.FBId).SumAsync(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
+        decimal dSumMeghdarJoz = await context.FBs.AsNoTracking()
+            .Where(x => x.ID == entity.FBId)
+            .Select(x => x.SumRizMetre ?? 0m)
+            .FirstOrDefaultAsync();
         decimal? dBahayeItem = dSumMeghdarJoz * dBahayeVahed;
 
 
@@ -976,23 +958,10 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
 
                     await context.SaveChangesAsync();
 
-                    var RizMetreAll = _context.RizMetreUserses.Include(x => x.FB).Where(x => x.FB.BarAvordId == BarAvordUserId)
-                    .Select(riz => new ViewUserBarAvordOutPutRizMetreDto
-                    {
-                        Id = riz.ID,
-                        Sharh = riz.Sharh,
-                        Shomareh = riz.Shomareh,
-                        Arz = riz.Arz,
-                        Des = riz.Des,
-                        Ertefa = riz.Ertefa,
-                        Tedad = riz.Tedad,
-                        Tool = riz.Tool,
-                        Vazn = riz.Vazn,
-                        FBId = riz.FBId,
-                        MeghdarJoz = riz.MeghdarJoz
-                    }).OrderBy(x => x.Shomareh).ToList();
-
-                    decimal SumMeghdarJoz = context.RizMetreUserses.Where(x => x.FBId == entity.FBId).Sum(x => x.MeghdarJoz != null ? x.MeghdarJoz.Value : 0);
+                    decimal SumMeghdarJoz = await context.FBs.AsNoTracking()
+                        .Where(x => x.ID == entity.FBId)
+                        .Select(x => x.SumRizMetre ?? 0m)
+                        .FirstOrDefaultAsync();
 
                     string Code = FB.Shomareh.Substring(0, 2);
 
@@ -1021,7 +990,7 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
                     decimal JameFaslInZarib = 0;
 
                     // اول FBs رو فیلتر و گروه‌بندی کن (در حافظه)
-                    var fbItems = _context.FBs
+                    var fbItems = _context.FBs.AsNoTracking()
                         .Where(f => f.BarAvordId == BarAvordUserId)
                         .GroupBy(f => f.Shomareh)
                         .Select(g => g.FirstOrDefault())
@@ -1044,6 +1013,7 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
                             BahayeVahedNew = x.fbItem != null ? x.fbItem.BahayeVahedNew : 0,
                             Vahed = x.fehrest.Vahed,
                             FBId = x.fbItem != null ? x.fbItem.ID : null,
+                            Meghdar = x.fbItem?.SumRizMetre ?? 0m,
                             RizMetre = new List<ViewUserBarAvordOutPutRizMetreDto>()
                         }).ToList();
 
@@ -1052,15 +1022,7 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
                     decimal JameFasl = 0;
                     foreach (var item in userBarAvordOutPutFiltered)
                     {
-                        decimal Meghdar = 0;
-                        foreach (var RM in RizMetreAll)
-                        {
-                            if (item.FBId == RM.FBId)
-                            {
-                                item.RizMetre.Add(RM);
-                                Meghdar += RM.MeghdarJoz != null ? RM.MeghdarJoz.Value : 0;
-                            }
-                        }
+                        decimal Meghdar = item.Meghdar;
                         decimal dBVahed = item.BahayeVahedNew != 0 ? item.BahayeVahedNew : item.BahayeVahed == null || item.BahayeVahed == "" ? 0 : decimal.Parse(item.BahayeVahed);
                         item.Meghdar = Meghdar;
                         decimal dBahayeKol = Meghdar * dBVahed;
