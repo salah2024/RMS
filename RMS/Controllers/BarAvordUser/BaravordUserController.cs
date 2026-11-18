@@ -85,40 +85,12 @@ public class BaravordUserController(ApplicationDbContext context, UserManager<Ap
                                             ? "رد شده"
                                         : w.Status == WorkflowInstanceStatus.Cancelled
                                             ? "لغو شده"
-                                        : w.CurrentStep.Title).FirstOrDefault(),
+                                        : w.CurrentStep.Title).FirstOrDefault() ?? "",
 
                                   }).OrderByDescending(x => x.BUNum).OrderByDescending(x => x.BUInsertDate).ToListAsync();
 
             foreach (var item in barAvord)
             {
-                var workflow = await _context.WorkflowInstances
-                    .Include(x => x.CurrentStep)
-                    .Where(x => x.EntityId == item.BUId)
-                    .OrderByDescending(x => x.InsertDateTime)
-                    .FirstOrDefaultAsync();
-
-                if (workflow == null)
-                {
-                    item.WorkflowStatusTitle = "";
-                }
-                else if (workflow.Status == WorkflowInstanceStatus.Completed)
-                {
-                    item.WorkflowStatusTitle = "تایید نهایی شده";
-                }
-                else if (workflow.Status == WorkflowInstanceStatus.Rejected)
-                {
-                    item.WorkflowStatusTitle = "رد شده";
-                }
-                else if (workflow.Status == WorkflowInstanceStatus.Cancelled)
-                {
-                    item.WorkflowStatusTitle = "لغو شده";
-                }
-                else
-                {
-                    item.WorkflowStatusTitle = $"{workflow.CurrentStep.Title}";
-                }
-
-
                 string[] NoeFBs = item.BUNoeFBs.Split(",");
 
                 string strNoeFB = "";
