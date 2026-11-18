@@ -45,7 +45,7 @@ function ensureShowBarAvordAsset(assetName) {
 }
 
 function GetFosoul() {
-    debugger;
+
     BarAvordUserId = $('#HDFBarAvordUserID').val();
     NoeFBId = parseInt($('#HDFNoeFB').val());
     Year = parseInt($('#HDFYear').val());
@@ -71,7 +71,7 @@ function GetFosoul() {
             lstVaheds = response.lstVaheds;
             renderTableFosoul(response);
 
-            debugger;
+
             if (BAType != 'BarAvord') {
             }
             else {
@@ -87,7 +87,7 @@ function GetFosoul() {
 
 
 function GetSumAllFBForSooratVaziat() {
-    debugger;
+
     BarAvordUserId = $('#HDFBarAvordUserID').val();
     NoeFBId = parseInt($('#HDFNoeFB').val());
     Year = parseInt($('#HDFYear').val());
@@ -114,7 +114,7 @@ function GetSumAllFBForSooratVaziat() {
 }
 
 function GetSumAllFosoulForSooratVaziat() {
-    debugger;
+
     BarAvordUserId = $('#HDFBarAvordUserID').val();
     NoeFBId = parseInt($('#HDFNoeFB').val());
     Year = parseInt($('#HDFYear').val());
@@ -141,7 +141,7 @@ function GetSumAllFosoulForSooratVaziat() {
 }
 
 function GetJamBarAvordAll() {
-    debugger;
+
     BarAvordId = $('#HDFBarAvordUserID').val();
     Year = parseInt($('#HDFYear').val());
 
@@ -156,7 +156,6 @@ function GetJamBarAvordAll() {
         dataType: "json",
         success: function (response) {
 
-            debugger;
 
             jameFasl = response.jameFasl;
             jameFaslStar = response.jameFaslStar;
@@ -193,7 +192,7 @@ function GetJamFosoulAll() {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (response) {
-            debugger;
+
             jameFasl = response.jameFasl;
             jameFaslWithOutTajhiz = response.jameFaslWithOutTajhiz;
             jameFaslStar = response.jameFaslStar;
@@ -275,7 +274,7 @@ function LoadDarsadTajhizKargah() {
     BarAvordId = $('#HDFBarAvordUserID').val();
     NoeFBId = parseInt($('#HDFNoeFB').val());
     Year = parseInt($('#HDFYear').val());
-    debugger;
+
     var vardata = new Object();
     vardata.NoeFB = NoeFBId;
     vardata.BarAvordUserId = BarAvordId;
@@ -432,7 +431,7 @@ function renderTableFosoul(data) {
                 // باز کردن ردیف انتخاب‌شده
                 detailRow.show();
 
-                debugger;
+
                 GetBarAvord(item.id, item.code, item.faslName, faslAsli);
             }
         });
@@ -440,12 +439,11 @@ function renderTableFosoul(data) {
         $('#chkNonZeroMeghdarFasl').off('change').on('change', function () {
 
             isOneRowFilled = false;
-            debugger;
+
             const showOnlyNonZero = $(this).is(':checked');
             // همه‌ی ردیف‌های اصلی (نه ردیف دوم مربوط به barAvordContainer)
             $('#fosoulTable tbody tr').each(function () {
 
-                debugger;
 
                 const $row = $(this);
 
@@ -478,7 +476,6 @@ function renderTableFosoul(data) {
             if (!isOneRowFilled) {
                 $('#fosoulTable tbody tr').each(function () {
 
-                    debugger;
 
                     const $row = $(this);
 
@@ -504,7 +501,6 @@ function renderTableFosoul(data) {
     });
 
     BAType = $('#HDFBAType').val();
-    debugger;
 
     if (BAType != 'BarAvord') {
         SumFosoulForSooratVaziat = data.sumFosoulForSooratVaziat;
@@ -545,7 +541,7 @@ function renderTableFosoul(data) {
 function txtChangeTajhiz() {
 
     Obj = $('#txtDarsadTajhiz-99')[0];
-    debugger;
+
     IdSplit = Obj.id.split('-');
     Id = IdSplit[1];
 
@@ -575,7 +571,7 @@ function SaveTajhizKargahDarsad(Obj, Darsad, MeghdarPercent) {
     //curentMeghdar = $(Obj).parent().parent().find('[id^="tdjameFasl-"]')
     //curentMeghdar.html(dMeghdarPercent);
 
-    debugger;
+
     BarAvordUserId = $('#HDFBarAvordUserID').val();
     NoeFB = parseInt($('#HDFNoeFB').val());
     Year = parseInt($('#HDFYear').val());
@@ -777,7 +773,6 @@ function BahayeVahedNewMeghdarChange($input, FBId, itemFbShomareh) {
         var bahayeKol = floatValEn * meghdar;
         $row.find('#bahayeKolFasl').text(formatNumber(bahayeKol.toFixed(0)));
     }
-    debugger;
 
     $input.value = formatNumber(floatValEn.toFixed(0));
 
@@ -789,7 +784,7 @@ function BahayeVahedNewMeghdarChange($input, FBId, itemFbShomareh) {
 
 function ItemZaribChange($input, FBId, itemFbShomareh) {
 
-    debugger;
+
     var newValue = $input.value;
     if (!$.isNumeric(newValue)) {
         toastr.error('مقدار وارد شده نامعتبر میباشد', 'خطا');
@@ -830,7 +825,6 @@ function ItemZaribChange($input, FBId, itemFbShomareh) {
         var bahayeKol = floatValEn * meghdar * bahayeVahedEn;
         $row.find('#bahayeKolFasl_' + itemFbShomareh).text(formatNumber(bahayeKol.toFixed(0)));
     }
-    debugger;
 
     $input.value = formatNumber(floatValEn.toFixed(3));
 
@@ -839,7 +833,7 @@ function ItemZaribChange($input, FBId, itemFbShomareh) {
 
 function ItemZaribStarChange($input, ItemStarId, itemFbShomareh) {
 
-    debugger;
+
     var newValue = $input.value;
     if (!$.isNumeric(newValue)) {
         toastr.error('مقدار وارد شده نامعتبر میباشد', 'خطا');
@@ -867,7 +861,7 @@ function ItemZaribStarChange($input, ItemStarId, itemFbShomareh) {
     var bahayeVahedText = $row.find('#bahayeVahedFaslStar_' + itemFbShomareh).text().replace(/٬/g, '').replace(/,/g, '').replace('٫', '.');
     var bahayeVahedEn = convertPersianToEnglish(bahayeVahedText);
     var bahayeVahed = parseFloat(bahayeVahedEn);
-    debugger;
+
     // // مدیریت کلاس blinking
     // if (meghdar > 0 && (!floatValEn || floatValEn === 0)) {
     //     $($input).addClass('blinking');
@@ -880,7 +874,6 @@ function ItemZaribStarChange($input, ItemStarId, itemFbShomareh) {
         var bahayeKol = floatValEn * meghdar * bahayeVahedEn;
         $row.find('#bahayeKolFaslStar_' + itemFbShomareh).text(formatNumber(bahayeKol.toFixed(0)));
     }
-    debugger;
 
     $input.value = formatNumber(floatValEn.toFixed(3));
 
@@ -906,7 +899,7 @@ function ItemZaribStarSave(element, ItemZarib, ItemStarId, itemFbShomareh) {
                 ///////////////
 
                 Code = itemFbShomareh.substring(0, 2);
-                debugger;
+
                 refreshBaseItem(element, itemFbShomareh, Code);
                 GetJamBarAvordAll();
                 GetJamFosoulAll();
@@ -962,7 +955,7 @@ function ItemZaribSave(element, ItemZarib, FBId, itemFbShomareh) {
                 ///////////////
 
                 Code = itemFbShomareh.substring(0, 2);
-                debugger;
+
                 refreshBaseItem(element, itemFbShomareh, Code);
                 GetJamBarAvordAll();
                 GetJamFosoulAll();
