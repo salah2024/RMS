@@ -445,6 +445,14 @@ public class ShowBarAvordCommon
 
             List<clsBahayeVahedItemsRelated> lstBVItemRelated = _context.BahayeVahedItemsRelateds.Where(x => lstItemFbShomarehs.Contains(x.ItemShomarehRelated.ToLower().Trim()) && x.NoeFB == NoeFBId && x.Year == Year).ToList();
 
+            var relatedByItemNumber = lstBVItemRelated
+                .GroupBy(x => x.ItemShomarehRelated.Trim(), StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
+
+            var outputByItemNumber = userBarAvordOutPutFiltered
+                .GroupBy(x => x.ItemFbShomareh.Trim(), StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
+
 
             foreach (var item in userBarAvordOutPutFiltered)
             {
@@ -482,10 +490,9 @@ public class ShowBarAvordCommon
                     decimal dBahayeKol = 0;
 
 
-                    clsBahayeVahedItemsRelated? BVItemsRelated = lstBVItemRelated.FirstOrDefault(x => x.ItemShomarehRelated.Trim().ToLower() == item.ItemFbShomareh.Trim().ToLower());
-                    if (BVItemsRelated != null)
+                    if (relatedByItemNumber.TryGetValue(item.ItemFbShomareh.Trim(), out var BVItemsRelated))
                     {
-                        var barAvordInFehrest1 = userBarAvordOutPutFiltered.FirstOrDefault(x => x.ItemFbShomareh.Trim() == BVItemsRelated.ItemShomareh.Trim());
+                        outputByItemNumber.TryGetValue(BVItemsRelated.ItemShomareh.Trim(), out var barAvordInFehrest1);
                         if (barAvordInFehrest1 != null)
                         {
                             long BahayeVahed1 = barAvordInFehrest1.BahayeVahedNew != 0 ? barAvordInFehrest1.BahayeVahedNew : (barAvordInFehrest1.BahayeVahed == null || barAvordInFehrest1.BahayeVahed == "") ? 0 : long.Parse(barAvordInFehrest1.BahayeVahed);
