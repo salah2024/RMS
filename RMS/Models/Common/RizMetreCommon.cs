@@ -322,26 +322,34 @@ public class RizMetreCommon
 
         List<RizMetreForGetAndShowAddItemsDto> lstFbs = new List<RizMetreForGetAndShowAddItemsDto>();
 
+        // رکوردهای تمام گروه‌های شرطی یک‌بار از دیتابیس دریافت می‌شوند.
+        var allItemsHasConditionAddedToFB = (from clsItemsHasConditionAddedToFB in _context.ItemsHasConditionAddedToFBs
+                                             join tblItemsHasCondition_ConditionContext in _context.ItemsHasCondition_ConditionContexts
+                                             on clsItemsHasConditionAddedToFB.ItemsHasCondition_ConditionContextId equals tblItemsHasCondition_ConditionContext.Id
+                                             join tblItemsHasCondition in _context.ItemsHasConditions on tblItemsHasCondition_ConditionContext.ItemsHasConditionId equals tblItemsHasCondition.Id
+                                             where tblItemsHasCondition.Year == Year
+                                                   && clsItemsHasConditionAddedToFB.FBShomareh.Substring(0, 6) == strItemsFBShomareh
+                                                   && clsItemsHasConditionAddedToFB.BarAvordId == BarAvordId
+                                                   && lngConditionGroupId.Contains(clsItemsHasConditionAddedToFB.ConditionGroupId)
+                                             select new
+                                             {
+                                                 clsItemsHasConditionAddedToFB.ID,
+                                                 clsItemsHasConditionAddedToFB.FBShomareh,
+                                                 clsItemsHasConditionAddedToFB.BarAvordId,
+                                                 clsItemsHasConditionAddedToFB.Meghdar,
+                                                 clsItemsHasConditionAddedToFB.ItemsHasCondition_ConditionContextId,
+                                                 clsItemsHasConditionAddedToFB.ConditionGroupId,
+                                                 ItemFBShomareh = tblItemsHasCondition.ItemFBShomareh,
+                                                 tblItemsHasCondition_ConditionContext.ViewCheckAllRecords,
+                                                 tblItemsHasCondition_ConditionContext.EnableEditing,
+                                                 tblItemsHasCondition_ConditionContext.EnableDeleting
+                                             }).ToList();
+
         foreach (var ConditionGroupId in lngConditionGroupId)
         {
-            var varItemsHasConditionAddedToFB = (from clsItemsHasConditionAddedToFB in _context.ItemsHasConditionAddedToFBs
-                                                 join tblItemsHasCondition_ConditionContext in _context.ItemsHasCondition_ConditionContexts
-                                                 on clsItemsHasConditionAddedToFB.ItemsHasCondition_ConditionContextId equals tblItemsHasCondition_ConditionContext.Id
-                                                 join tblItemsHasCondition in _context.ItemsHasConditions on tblItemsHasCondition_ConditionContext.ItemsHasConditionId equals tblItemsHasCondition.Id
-                                                 where tblItemsHasCondition.Year == Year
-                                                 select new
-                                                 {
-                                                     clsItemsHasConditionAddedToFB.ID,
-                                                     clsItemsHasConditionAddedToFB.FBShomareh,
-                                                     clsItemsHasConditionAddedToFB.BarAvordId,
-                                                     clsItemsHasConditionAddedToFB.Meghdar,
-                                                     clsItemsHasConditionAddedToFB.ItemsHasCondition_ConditionContextId,
-                                                     clsItemsHasConditionAddedToFB.ConditionGroupId,
-                                                     ItemFBShomareh = tblItemsHasCondition.ItemFBShomareh,
-                                                     tblItemsHasCondition_ConditionContext.ViewCheckAllRecords,
-                                                     tblItemsHasCondition_ConditionContext.EnableEditing,
-                                                     tblItemsHasCondition_ConditionContext.EnableDeleting
-                                                 }).Where(x => x.FBShomareh.Substring(0, 6) == strItemsFBShomareh && x.BarAvordId == BarAvordId && x.ConditionGroupId == ConditionGroupId).ToList();
+            var varItemsHasConditionAddedToFB = allItemsHasConditionAddedToFB
+                .Where(x => x.ConditionGroupId == ConditionGroupId)
+                .ToList();
             DataTable DtItemsHasConditionAddedToFB = clsConvert.ToDataTable(varItemsHasConditionAddedToFB);
 
             List<ItemFBShomarehForGetAndShowAddItemsDto> lstItemFBShomarehForGet = new List<ItemFBShomarehForGetAndShowAddItemsDto>();
