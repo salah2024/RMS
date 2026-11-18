@@ -264,7 +264,8 @@ public class ShowBarAvordCommon
 
         BahayeVahedNew = fb.BahayeVahedNew,
 
-        ItemZarib = fb.ItemZarib
+        ItemZarib = fb.ItemZarib,
+        SumRizMetre = fb.SumRizMetre
     }
 )
 .GroupBy(x => x.Shomareh)
@@ -399,6 +400,7 @@ public class ShowBarAvordCommon
                     Vahed = fb.Vahed,
                     FBId = fb.ID,
                     ItemZarib = fb.ItemZarib,
+                    Meghdar = fb.SumRizMetre ?? 0m,
                     RizMetre = new List<ViewUserBarAvordOutPutRizMetreDto>(),
                     ItemsFields = new List<ItemsFieldForUserBarAvordOutPutDto>()
                 }).ToList();
@@ -436,9 +438,9 @@ public class ShowBarAvordCommon
                     .Where(x => x.FBId == item.FBId)
                     .ToList();
 
+                // جزئیات برای نمایش از ریزمتره‌ها خوانده می‌شود؛ جمع از فیلد تجمیعی FB است.
                 item.RizMetre.AddRange(rizMetres);
-
-                Meghdar += rizMetres.Sum(x => x.MeghdarJoz ?? 0);
+                Meghdar = item.Meghdar;
 
                 
 
