@@ -49,10 +49,14 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
         //var lstFB = _context.FBs.Where(x => x.BarAvordId == request.BarAvordUserId && x.NoeFBId == NoeFBId).ToList();
 
 
+        // فقط جزئیات ریزمتره‌های فصل جاری دریافت می‌شود؛
+        // جمع مقدار هر FB از SumRizMetre خوانده می‌شود و نیازی به تجمیع این جزئیات نیست.
         var RizMetre = _context.RizMetreUserses
+    .AsNoTracking()
     .Where(x =>
         x.FB.BarAvordId == request.BarAvordUserId &&
-        x.FB.NoeFBId == NoeFBId)
+        x.FB.NoeFBId == NoeFBId &&
+        x.FB.Shomareh.StartsWith(request.ShomarehFasl))
     .OrderBy(x => x.Shomareh)
     .Select(riz => new ViewUserBarAvordOutPutRizMetreDto
     {
