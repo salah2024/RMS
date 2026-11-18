@@ -187,7 +187,8 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
 
         BahayeVahedNew = fb.BahayeVahedNew,
 
-        ItemZarib = fb.ItemZarib
+        ItemZarib = fb.ItemZarib,
+        SumRizMetre = fb.SumRizMetre
     }
 )
 .GroupBy(x => x.Shomareh)
@@ -254,6 +255,7 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
             ItemZarib = x.fbItem != null ? x.fbItem.ItemZarib : null,
             Vahed = x.fehrest.Vahed,
             FBId = x.fbItem?.ID,
+            Meghdar = x.fbItem?.SumRizMetre ?? 0m,
             RizMetre = new List<ViewUserBarAvordOutPutRizMetreDto>(),
             ItemsFields = new List<ItemsFieldForUserBarAvordOutPutDto>()
         }).ToList();
@@ -272,6 +274,7 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
                 Vahed = fb.Vahed,
                 FBId = fb.ID,
                 ItemZarib = fb.ItemZarib,
+                Meghdar = fb.SumRizMetre ?? 0m,
                 RizMetre = new List<ViewUserBarAvordOutPutRizMetreDto>(),
                 ItemsFields = new List<ItemsFieldForUserBarAvordOutPutDto>()
             }).ToList();
@@ -296,14 +299,13 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
 
         foreach (var item in userBarAvordOutPut)
         {
-            decimal Meghdar = 0;
             if (item.FBId is Guid fbId &&
                 rizMetreByFbId.TryGetValue(fbId, out var rms))
             {
                 item.RizMetre.AddRange(rms);
-
-                Meghdar = rms.Sum(x => x.MeghdarJoz ?? 0);
             }
+
+            decimal Meghdar = item.Meghdar;
 
             if (Meghdar != 0)
             {
