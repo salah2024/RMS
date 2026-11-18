@@ -1337,7 +1337,7 @@ public class RizMetreCommon
         Guid BarAvordId = request.BarAvordId;
         int Year = request.Year;
 
-        clsBaravordUser? baravordUser = _context.BaravordUsers.FirstOrDefault(x => x.ID == BarAvordId);
+        clsBaravordUser? baravordUser = await _context.BaravordUsers.AsNoTracking().FirstOrDefaultAsync(x => x.ID == BarAvordId);
 
         ////////////////////////////////
         //در صورتی که صورت وضعیت باشد، بایستی ضریب پیشنهادی پیمانکار را نیز در ضرایب منطقه و بالاسری برای هر فصل پیدا کرده و ضرب کنیم
@@ -1353,12 +1353,12 @@ public class RizMetreCommon
 
             if (NoeBAType != NoeBarAvord.BarAvord)
             {
-                clsBaravordUser? baravordUserMain = _context.BaravordUsers.FirstOrDefault(x => x.ID == baravordUser.ParentId);
+                clsBaravordUser? baravordUserMain = await _context.BaravordUsers.AsNoTracking().FirstOrDefaultAsync(x => x.ID == baravordUser.ParentId);
                 if (baravordUserMain != null)
                 {
                     //یافتن ضرایب پیشنهادی پیمانکار برای هر فصل
                     lstZaribPishnahadiPaymanKarFosoul =
-                          _context.ZaribPishnahadiPaymanKarFosouls.Include(x => x.ZaribPishnahadiPaymanKar).Where(x => x.ZaribPishnahadiPaymanKar.BarAvordUserId == baravordUserMain.ID).ToList();
+                          _context.ZaribPishnahadiPaymanKarFosouls.AsNoTracking().Where(x => x.ZaribPishnahadiPaymanKar.BarAvordUserId == baravordUserMain.ID).ToList();
                 }
             }
         }
@@ -1378,7 +1378,7 @@ public class RizMetreCommon
             decimal JameTajhizAll = 0;
             //decimal JameTajhizInZaribAll = 0;
 
-            List<clsFehrestBahaItemsReplace> lstFehrestBahaItemsReplace = _context.FehrestBahaItemsReplaces.Where(x => x.Year == Year).ToList();
+            List<clsFehrestBahaItemsReplace> lstFehrestBahaItemsReplace = await _context.FehrestBahaItemsReplaces.AsNoTracking().Where(x => x.Year == Year).ToListAsync();
             //List<clsZarayebFosoul> lstZarayebFosoul = _context.ZarayebFosouls.ToList();
 
             var FaslZarib = (from FehrestBahaItemsReplace in _context.FehrestBahaItemsReplaces
@@ -1392,6 +1392,33 @@ public class RizMetreCommon
                                  ZarayebFosoul.ZaribBalaSari,
                                  ZarayebFosoul.ZaribManteghe
                              }).ToList();
+
+            // اقلام ستاره‌دار و جمع ریزمتره آن‌ها را یک‌بار برای کل برآورد دریافت می‌کنیم.
+            // قبلاً برای هر NoeFB دو Query جداگانه اجرا می‌شد.
+            var noeFBIds = NoeFB
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Select(x => (NoeFehrestBaha)int.Parse(x))
+                .Distinct()
+                .ToList();
+
+            var allItemFBStars = await _context.ItemFBStars
+                .AsNoTracking()
+                .Where(x => x.BaravordId == BarAvordId && noeFBIds.Contains(x.NoeFBId))
+                .ToListAsync();
+
+            var itemFBStarIds = allItemFBStars.Select(x => x.ID).ToList();
+            var rizMetreStarSums = itemFBStarIds.Count == 0
+                ? new Dictionary<Guid, decimal>()
+                : await _context.RizMetreStars
+                    .AsNoTracking()
+                    .Where(x => itemFBStarIds.Contains(x.ItemFBStarId))
+                    .GroupBy(x => x.ItemFBStarId)
+                    .Select(g => new { ItemFBStarId = g.Key, SumMeghdar = g.Sum(x => x.MeghdarJoz ?? 0m) })
+                    .ToDictionaryAsync(x => x.ItemFBStarId, x => x.SumMeghdar);
+
+            var itemFBStarsByNoeFB = allItemFBStars
+                .GroupBy(x => x.NoeFBId)
+                .ToDictionary(g => g.Key, g => g.ToList());
 
             foreach (var noeFB in NoeFB)
             {
@@ -1769,19 +1796,9 @@ public class RizMetreCommon
                     //JameTajhizInZaribAll += JameTajhizInZarib;
 
 
-                    List<clsItemFBStar> lstItemFBStars = await _context.ItemFBStars
-                        .AsNoTracking()
-                        .Where(x => x.BaravordId == BarAvordId && x.NoeFBId == NoeFBId)
-                        .ToListAsync();
-
-                    // جمع ریزمتره‌های ستاره‌دار این نوع فهرست بها در یک Query
-                    var rizMetreStarSums = await _context.RizMetreStars
-                        .AsNoTracking()
-                        .Where(x => x.ItemFBStar.BaravordId == BarAvordId &&
-                                    x.ItemFBStar.NoeFBId == NoeFBId)
-                        .GroupBy(x => x.ItemFBStarId)
-                        .Select(g => new { ItemFBStarId = g.Key, SumMeghdar = g.Sum(x => x.MeghdarJoz ?? 0m) })
-                        .ToDictionaryAsync(x => x.ItemFBStarId, x => x.SumMeghdar);
+                    List<clsItemFBStar> lstItemFBStars = itemFBStarsByNoeFB.TryGetValue(NoeFBId, out var starsForNoeFB)
+                        ? starsForNoeFB
+                        : new List<clsItemFBStar>();
 
                     decimal JameFaslStar = 0;
                     decimal JameFaslStarWithZarib = 0;
