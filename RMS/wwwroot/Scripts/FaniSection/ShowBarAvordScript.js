@@ -1,4 +1,43 @@
 ﻿var lstVaheds;
+
+// بارگذاری تنبل فایل‌های اختصاصی این صفحه؛ درخواست‌های هم‌زمان از یک Promise مشترک استفاده می‌کنند.
+var showBarAvordAssetPromises = window.showBarAvordAssetPromises || (window.showBarAvordAssetPromises = {});
+
+function ensureShowBarAvordAsset(assetName) {
+    var $table = $('#fosoulTable');
+    var assetUrl = assetName === "star"
+        ? $table.attr('data-star-script-url')
+        : $table.attr('data-tree-script-url');
+
+    if (!assetUrl) {
+        return Promise.reject(new Error("URL for ShowBarAvord asset was not configured: " + assetName));
+    }
+
+    if (assetName === "tree" && $.fn.jstree) {
+        return Promise.resolve();
+    }
+
+    if (assetName === "star" && typeof window.SaveRMUStarClick === "function") {
+        return Promise.resolve();
+    }
+
+    if (!showBarAvordAssetPromises[assetName]) {
+        showBarAvordAssetPromises[assetName] = $.getScript(assetUrl).then(function () {
+            if (assetName === "tree" && !$.fn.jstree) {
+                throw new Error("jsTree script loaded but $.fn.jstree is unavailable.");
+            }
+            if (assetName === "star" && typeof window.SaveRMUStarClick !== "function") {
+                throw new Error("Star script loaded but expected functions were not registered.");
+            }
+        }).catch(function (error) {
+            delete showBarAvordAssetPromises[assetName];
+            throw error;
+        });
+    }
+
+    return showBarAvordAssetPromises[assetName];
+}
+
 function GetFosoul() {
     debugger;
     BarAvordUserId = $('#HDFBarAvordUserID').val();
@@ -639,11 +678,16 @@ function GetBarAvord(ItemId, Code, faslName, faslAsli) {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (response) {
-            userBarAvordOutPut = response.userBarAvordOutPut;
-            lstItemFBStars = response.lstItemFBStars;
-            //$('#aView').click();
-            //$('#ModalTitle').text('فصل  ' + Code +'  -  '+faslName);
-            renderTable(userBarAvordOutPut, lstItemFBStars, Code, ItemId, faslAsli);
+            userBarAvordOutPut = response.userBarAvordOutPut || [];
+            lstItemFBStars = response.lstItemFBStars || [];
+
+            // کد ویرایش ردیف‌های ستاره‌دار فقط در فصل‌هایی که واقعاً ردیف ستاره‌دار دارند بارگذاری شود.
+            ensureShowBarAvordAsset("star").then(function () {
+                renderTable(userBarAvordOutPut, lstItemFBStars, Code, ItemId, faslAsli);
+            }).catch(function (error) {
+                console.error(error);
+                toastr.error('بارگذاری امکانات ردیف‌های ستاره‌دار با خطا مواجه شد', 'خطا');
+            });
         },
         error: function (response) {
             toastr.error('خطا', 'خطا');
@@ -1067,6 +1111,17 @@ function StarReturn(element, FBId, itemFbShomareh) {
 }
 
 function ShowSelectTajmie(ItemFBShomareh) {
+
+    // افزونه درخت فقط هنگام درخواست انتخاب آیتم تجمیعی لازم است.
+    ensureShowBarAvordAsset("tree").then(function () {
+        openShowSelectTajmieTree(ItemFBShomareh);
+    }).catch(function (error) {
+        console.error(error);
+        toastr.error('بارگذاری درخت انتخاب آیتم تجمیعی با خطا مواجه شد', 'خطا');
+    });
+}
+
+function openShowSelectTajmieTree(ItemFBShomareh) {
 
     noeFB = parseInt($('#HDFNoeFB').val());
 
