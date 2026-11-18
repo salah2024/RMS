@@ -633,38 +633,14 @@ public class BaravordUserController(ApplicationDbContext context, UserManager<Ap
                     Vahed = x.fehrest.Vahed,
                     FBId = x.fbItem != null ? x.fbItem.ID : null,
                     BahayeVahedNew = x.fbItem != null ? x.fbItem.BahayeVahedNew : 0,
+                    Meghdar = x.fbItem?.SumRizMetre ?? 0m,
                     RizMetre = new List<ViewUserBarAvordOutPutRizMetreDto>()
                 }).ToList();
-
-            var RizMetreAll = await _context.RizMetreUserses.Include(x => x.FB).Where(x => x.FB.BarAvordId == BarAvordId && x.FB.NoeFBId == NoeFBId)
-                .Select(riz => new ViewUserBarAvordOutPutRizMetreDto
-                {
-                    Id = riz.ID,
-                    Sharh = riz.Sharh,
-                    Shomareh = riz.Shomareh,
-                    Arz = riz.Arz,
-                    Des = riz.Des,
-                    Ertefa = riz.Ertefa,
-                    Tedad = riz.Tedad,
-                    Tool = riz.Tool,
-                    Vazn = riz.Vazn,
-                    FBId = riz.FBId,
-                    MeghdarJoz = riz.MeghdarJoz
-                }).OrderBy(x => x.Shomareh).ToListAsync();
-
 
             decimal JameFasl = 0;
             foreach (var item in userBarAvordOutPut)
             {
-                decimal Meghdar = 0;
-                foreach (var RM in RizMetreAll)
-                {
-                    if (item.FBId == RM.FBId)
-                    {
-                        item.RizMetre.Add(RM);
-                        Meghdar += RM.MeghdarJoz != null ? RM.MeghdarJoz.Value : 0;
-                    }
-                }
+                decimal Meghdar = item.Meghdar;
                 decimal dBVahed = item.BahayeVahedNew != 0 ? item.BahayeVahedNew : item.BahayeVahed == null || item.BahayeVahed == "" ? 0 : decimal.Parse(item.BahayeVahed);
                 item.Meghdar = Meghdar;
                 decimal dBahayeKol = Meghdar * dBVahed;
@@ -838,23 +814,6 @@ public class BaravordUserController(ApplicationDbContext context, UserManager<Ap
                     BahayeVahedNew = x.fbItem != null ? x.fbItem.BahayeVahedNew : 0,
                     RizMetre = new List<ViewUserBarAvordOutPutRizMetreDto>()
                 }).ToList();
-
-            var RizMetreAll = await _context.RizMetreUserses.Include(x => x.FB).Where(x => x.FB.BarAvordId == BarAvordId && x.FB.NoeFBId == NoeFBId)
-                .Select(riz => new ViewUserBarAvordOutPutRizMetreDto
-                {
-                    Id = riz.ID,
-                    Sharh = riz.Sharh,
-                    Shomareh = riz.Shomareh,
-                    Arz = riz.Arz,
-                    Des = riz.Des,
-                    Ertefa = riz.Ertefa,
-                    Tedad = riz.Tedad,
-                    Tool = riz.Tool,
-                    Vazn = riz.Vazn,
-                    FBId = riz.FBId,
-                    MeghdarJoz = riz.MeghdarJoz
-                }).OrderBy(x => x.Shomareh).ToListAsync();
-
 
             decimal JameFasl = 0;
             foreach (var item in userBarAvordOutPut)
