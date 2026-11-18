@@ -681,7 +681,13 @@ function GetBarAvord(ItemId, Code, faslName, faslAsli) {
             userBarAvordOutPut = response.userBarAvordOutPut || [];
             lstItemFBStars = response.lstItemFBStars || [];
 
-            // کد ویرایش ردیف‌های ستاره‌دار فقط در فصل‌هایی که واقعاً ردیف ستاره‌دار دارند بارگذاری شود.
+            // اگر فصل ردیف ستاره‌دار ندارد، فایل مربوط به آن اصلاً دریافت نمی‌شود.
+            if (lstItemFBStars.length === 0) {
+                renderTable(userBarAvordOutPut, lstItemFBStars, Code, ItemId, faslAsli);
+                return;
+            }
+
+            // کد ویرایش ردیف‌های ستاره‌دار فقط در فصل‌های دارای ردیف ستاره‌دار بارگذاری شود.
             ensureShowBarAvordAsset("star").then(function () {
                 renderTable(userBarAvordOutPut, lstItemFBStars, Code, ItemId, faslAsli);
             }).catch(function (error) {
