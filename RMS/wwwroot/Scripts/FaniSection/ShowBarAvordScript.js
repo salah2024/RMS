@@ -142,6 +142,7 @@ function GetSumAllFosoulForSooratVaziat() {
 
 function GetJamBarAvordAll() {
 
+    var sumRequestStartedAt = window.performance.now();
     BarAvordId = $('#HDFBarAvordUserID').val();
     Year = parseInt($('#HDFYear').val());
 
@@ -155,7 +156,7 @@ function GetJamBarAvordAll() {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (response) {
-
+            console.log('[RIZ-SUM-PERF] CalculateBarAvordAll ms:', Number((window.performance.now() - sumRequestStartedAt).toFixed(1)));
 
             jameFasl = response.jameFasl;
             jameFaslStar = response.jameFaslStar;
@@ -177,6 +178,7 @@ function GetJamBarAvordAll() {
 }
 
 function GetJamFosoulAll() {
+    var sumRequestStartedAt = window.performance.now();
     BarAvordId = $('#HDFBarAvordUserID').val();
     NoeFBId = parseInt($('#HDFNoeFB').val());
     Year = parseInt($('#HDFYear').val());
@@ -192,6 +194,7 @@ function GetJamFosoulAll() {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (response) {
+            console.log('[RIZ-SUM-PERF] CalculateFosoulAll ms:', Number((window.performance.now() - sumRequestStartedAt).toFixed(1)));
 
             jameFasl = response.jameFasl;
             jameFaslWithOutTajhiz = response.jameFaslWithOutTajhiz;
