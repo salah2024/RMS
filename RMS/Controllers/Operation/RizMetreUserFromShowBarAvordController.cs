@@ -370,6 +370,21 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
             .Where(fehrest => fehrest.Shomareh.StartsWith(Code))
             .ToList();
 
+        // تشخیص ردیف‌های تکراری فهرست بها پس از اعمال جایگزینی شماره‌ها.
+        // این اطلاعات موقتاً برای ریشه‌یابی جمع غیرعادی فصل در پاسخ برمی‌گردد.
+        var duplicateFehrestNumbers = lstFehrestBahas
+            .GroupBy(x => x.Shomareh)
+            .Where(g => g.Count() > 1)
+            .Select(g => new
+            {
+                Shomareh = g.Key,
+                Count = g.Count(),
+                MainNumbers = g.Select(x => x.ShomarehMain).Distinct().ToList()
+            })
+            .OrderByDescending(x => x.Count)
+            .Take(30)
+            .ToList();
+
         // سپس ردیف‌های یکتای فهرست بها با FBهای برآورد تطبیق داده می‌شوند.
         List<ViewUserBarAvordOutPutDto> userBarAvordOutPut = lstFehrestBahas
                                                                              .Select(x => new ViewUserBarAvordOutPutDto
@@ -637,6 +652,17 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
             JameFaslWithoutBahaVahed = JameFaslWithoutBahaVahed + AllJameFaslStar,
             JameFaslWithoutBahaVahedWithZarib = JameFaslWithoutBahaVahedWithZarib + AllJameFaslStarWithZarib,
             JameFalsKolWithoutBahaVahedWithZarib = JameFaslInZarib + JameFaslWithoutBahaVahedWithZarib + AllJameFaslStarWithZarib,
+            Debug = new
+            {
+                FehrestRowsCount = lstFehrestBahas.Count,
+                FehrestDistinctNumbersCount = lstFehrestBahas.Select(x => x.Shomareh).Distinct().Count(),
+                FbItemsCount = fbItems.Count,
+                MatchedFbRowsCount = userBarAvordOutPutFiltered.Count,
+                DuplicateFehrestNumberGroupsCount = lstFehrestBahas
+                    .GroupBy(x => x.Shomareh)
+                    .Count(g => g.Count() > 1),
+                DuplicateFehrestNumbers = duplicateFehrestNumbers
+            },
             //FBId
         };
         return new JsonResult(result1);
