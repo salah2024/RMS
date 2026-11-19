@@ -557,7 +557,17 @@
 
 
     markRenderPerf('eventBinding');
-    $(`#${ItemId}`).slideDown(200);
+    const chapterAnimationStartedAt = window.performance.now();
+    $(`#${ItemId}`).stop(true, true).slideDown(200, function () {
+        const clickStartedAt = window.__showBarAvordClickStartedAt;
+        console.log('[ShowBarAvord][PERF][END-TO-END] chapter detail animation completed:', {
+            itemId: ItemId,
+            animationMs: Number((window.performance.now() - chapterAnimationStartedAt).toFixed(1)),
+            clickToVisibleMs: clickStartedAt
+                ? Number((window.performance.now() - clickStartedAt).toFixed(1))
+                : null
+        });
+    });
 
     $('.clickable-row').off('click').on('click', function (e) {
 
