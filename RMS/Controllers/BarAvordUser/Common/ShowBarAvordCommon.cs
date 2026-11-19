@@ -340,9 +340,9 @@ public class ShowBarAvordCommon
 
         // همان داده جایگزینی که بالاتر دریافت شده، دوباره از دیتابیس خوانده نمی‌شود.
         List<clsFehrestBahaItemsReplace> lstFehrestBahaItemsReplaces = lstFBItemReplaces;
-        var relevantFaslIds = lstFBItemReplaces
-            .Where(x => x.FaslId != null)
-            .Select(x => x.FaslId)
+        var relevantFaslIds = Fosoul
+            .Where(x => x.FaslAsli != true)
+            .Select(x => x.Id)
             .Distinct()
             .ToList();
 
