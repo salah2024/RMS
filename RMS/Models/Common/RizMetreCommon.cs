@@ -1026,8 +1026,8 @@ public class RizMetreCommon
                              select new
                              {
                                  FBShomareh = FehrestBahaItemsReplace.FBShomarehNew,
-                                 ZarayebFosoul.ZaribBalaSari,
-                                 ZarayebFosoul.ZaribManteghe
+                                 ZaribBalaSari = ZarayebFosoul.ZaribBalaSari,
+                                 ZaribManteghe = ZarayebFosoul.ZaribManteghe
                              }).ToList();
             var faslZaribByItemNumber = FaslZarib
                 .Where(x => x.FBShomareh != null)
@@ -1272,6 +1272,12 @@ public class RizMetreCommon
     }
 
 
+    private sealed class FaslZaribLookupValue
+    {
+        public decimal? ZaribBalaSari { get; set; }
+        public decimal? ZaribManteghe { get; set; }
+    }
+
     ////////
     ////////محاسبه کل برآورد
     /////
@@ -1325,8 +1331,8 @@ public class RizMetreCommon
             List<clsFehrestBahaItemsReplace> lstFehrestBahaItemsReplace = await _context.FehrestBahaItemsReplaces.AsNoTracking().Where(x => x.Year == Year).ToListAsync();
             //List<clsZarayebFosoul> lstZarayebFosoul = _context.ZarayebFosouls.ToList();
 
-            var FaslZarib = (from FehrestBahaItemsReplace in _context.FehrestBahaItemsReplaces
-                             join ZarayebFosoul in _context.ZarayebFosouls
+            var FaslZarib = (from FehrestBahaItemsReplace in _context.FehrestBahaItemsReplaces.AsNoTracking()
+                             join ZarayebFosoul in _context.ZarayebFosouls.AsNoTracking()
                              on FehrestBahaItemsReplace.FaslId equals ZarayebFosoul.FaslId
                              where FehrestBahaItemsReplace.Year == Year
                              select new
@@ -1336,6 +1342,23 @@ public class RizMetreCommon
                                  ZarayebFosoul.ZaribBalaSari,
                                  ZarayebFosoul.ZaribManteghe
                              }).ToList();
+
+            // داده‌های جایگزینی و ضرایب فصل را یک‌بار بر اساس نوع فهرست بها گروه‌بندی می‌کنیم.
+            // ترتیب First/Last مطابق رفتار قبلی حفظ می‌شود.
+            var replacementsByNoeFB = lstFehrestBahaItemsReplace
+                .GroupBy(x => x.NoeFB)
+                .ToDictionary(g => g.Key, g => g.ToList());
+
+            var faslZarayebByNoeFB = FaslZarib
+                .GroupBy(x => x.NoeFB)
+                .ToDictionary(g => g.Key, g => g
+                    .Where(x => x.FBShomareh != null)
+                    .GroupBy(x => x.FBShomareh)
+                    .ToDictionary(x => x.Key, x => new FaslZaribLookupValue
+                    {
+                        ZaribBalaSari = x.First().ZaribBalaSari,
+                        ZaribManteghe = x.First().ZaribManteghe
+                    }));
 
             // اقلام ستاره‌دار و جمع ریزمتره آن‌ها را یک‌بار برای کل برآورد دریافت می‌کنیم.
             // قبلاً برای هر NoeFB دو Query جداگانه اجرا می‌شد.
@@ -1369,13 +1392,15 @@ public class RizMetreCommon
                     //decimal SumMeghdarFasl = 0;
                     NoeFehrestBaha NoeFBId = (NoeFehrestBaha)int.Parse(noeFB);
 
-                    List<clsFehrestBahaItemsReplace> lstFehrestBahaItemsReplaceFilter = lstFehrestBahaItemsReplace.Where(x => x.NoeFB == NoeFBId).ToList();
+                    List<clsFehrestBahaItemsReplace> lstFehrestBahaItemsReplaceFilter =
+                        replacementsByNoeFB.TryGetValue(NoeFBId, out var replacementsForNoeFB)
+                            ? replacementsForNoeFB
+                            : new List<clsFehrestBahaItemsReplace>();
 
-                    var FaslZaribFilter = FaslZarib.Where(x => x.NoeFB == NoeFBId).ToList();
-                    var faslZaribByItemNumber = FaslZaribFilter
-                        .Where(x => x.FBShomareh != null)
-                        .GroupBy(x => x.FBShomareh)
-                        .ToDictionary(g => g.Key, g => g.First());
+                    var faslZaribByItemNumber =
+                        faslZarayebByNoeFB.TryGetValue(NoeFBId, out var faslZarayebForNoeFB)
+                            ? faslZarayebForNoeFB
+                            : new Dictionary<string, FaslZaribLookupValue>();
 
                     // اول FBs رو فیلتر و گروه‌بندی کن (در حافظه)
                     //var fbItems = _context.FBs
@@ -1408,7 +1433,7 @@ public class RizMetreCommon
 
 
                     var fbItems = await (
-                    from fb in _context.FBs
+                    from fb in _context.FBs.AsNoTracking()
 
                     join fehrestbaha in _context.FehrestBahas
                        on fb.Shomareh.Substring(0, 6)
@@ -1574,7 +1599,10 @@ public class RizMetreCommon
                     decimal JameFaslWithoutBahaVahedWithZarib = 0;//جمع آیتم های بدون بهای واحد در ضریب
 
 
-                    var fehrestShomarehs = userBarAvordOutPutFiltered.Select(x => x.ItemFbShomareh).ToList();
+                    // HashSet جست‌وجوی شماره‌ها را از O(n) به O(1) میانگین تبدیل می‌کند.
+                    var fehrestShomarehs = new HashSet<string>(
+                        userBarAvordOutPutFiltered.Select(x => x.ItemFbShomareh),
+                        StringComparer.Ordinal);
 
                     var barAvordOnlyInFbItems = fbItems
                         .Where(fb => !fehrestShomarehs.Contains(fb.Shomareh))
