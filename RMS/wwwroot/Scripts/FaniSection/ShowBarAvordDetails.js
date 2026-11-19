@@ -1,7 +1,18 @@
 ﻿function renderTable(data, Stars, Code, ItemId, faslAsli) {
 
+    const renderPerfStartedAt = window.performance.now();
+    const renderPerf = {};
+    let renderPerfMark = renderPerfStartedAt;
+    const markRenderPerf = function (stage) {
+        const now = window.performance.now();
+        renderPerf[stage] = Number((now - renderPerfMark).toFixed(1));
+        renderPerfMark = now;
+    };
+
     const container = $(`#barAvordContainer-${ItemId}`);
     container.empty();
+
+    markRenderPerf('containerReset');
 
     const table = $(`
 		<table class="table table-item table-bordered fixed-table mb-2">
@@ -30,6 +41,7 @@
 	`);
 
     const tbody = table.find('tbody');
+    markRenderPerf('tableShellBuild');
 
     var index = 0;
     data.forEach((item) => {
@@ -302,6 +314,7 @@
 
         index++;
     });
+    markRenderPerf('regularItemsBuild');
 
 
     Stars.forEach((item) => {
@@ -468,6 +481,7 @@
         index++;
 
     });
+    markRenderPerf('starItemsBuild');
 
     var RowNew = '';
 
@@ -505,7 +519,9 @@
         tbody.append(RowNew);
     }
 
+    markRenderPerf('newItemRowBuild');
     container.append(table);
+    markRenderPerf('tableAttach');
 
     container.on('keydown', '.riz-row-data input,.riz-input-row input', function (e) {
 
@@ -540,6 +556,7 @@
     });
 
 
+    markRenderPerf('eventBinding');
     $(`#${ItemId}`).slideDown(200);
 
     $('.clickable-row').off('click').on('click', function (e) {
@@ -747,7 +764,15 @@
 
     initRowEvents(RowNew);
 
+    const initialFilterStartedAt = window.performance.now();
     $(`#chkNonZeroMeghdar-${Code}`).click();
+    renderPerf.initialFilter = Number((window.performance.now() - initialFilterStartedAt).toFixed(1));
+    renderPerf.total = Number((window.performance.now() - renderPerfStartedAt).toFixed(1));
+    console.log('[ShowBarAvord][PERF][renderTable stages]', {
+        itemCount: Array.isArray(data) ? data.length : 0,
+        starCount: Array.isArray(Stars) ? Stars.length : 0,
+        timingsMs: renderPerf
+    });
 
 }
 
