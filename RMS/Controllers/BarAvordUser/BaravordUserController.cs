@@ -546,10 +546,10 @@ public class BaravordUserController(ApplicationDbContext context, UserManager<Ap
             //baravordZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe.Value : 1 : 1;
             //baravordZaribBalaSari != null ? baravordZaribBalaSari.ZaribBalasari != null ? baravordZaribBalaSari.ZaribBalasari.Value : 1 : 1;
 
-            List<clsFehrestBahaItemsReplace> lstFBItemReplaces = _context.FehrestBahaItemsReplaces.Where(x => x.Year == Year && x.NoeFB == NoeFBId).ToList();
+            List<clsFehrestBahaItemsReplace> lstFBItemReplaces = await _context.FehrestBahaItemsReplaces.AsNoTracking().Where(x => x.Year == Year && x.NoeFB == NoeFBId).ToListAsync();
 
-            var lstFehrestBahas = await (from FehrestBaha in _context.FehrestBahas
-                                         join FehrestBahaItemsReplace in _context.FehrestBahaItemsReplaces
+            var lstFehrestBahas = await (from FehrestBaha in _context.FehrestBahas.AsNoTracking()
+                                         join FehrestBahaItemsReplace in _context.FehrestBahaItemsReplaces.AsNoTracking()
                                          on FehrestBaha.Shomareh equals FehrestBahaItemsReplace.FBShomarehMain into joinGroup
                                          from FehrestBahaItemsReplace in joinGroup.DefaultIfEmpty()
                                          where FehrestBaha.Sal == Year && FehrestBaha.NoeFB == NoeFBId
@@ -571,20 +571,22 @@ public class BaravordUserController(ApplicationDbContext context, UserManager<Ap
             decimal JameFaslInZarib = 0;
 
             // اول FBs رو فیلتر و گروه‌بندی کن (در حافظه)
-            var fbItems = await _context.FBs
+            var fbItems = await _context.FBs.AsNoTracking()
                 .Where(f => f.BarAvordId == BarAvordId && f.NoeFBId == NoeFBId)
                 .GroupBy(f => f.Shomareh)
                 .Select(g => g.FirstOrDefault())
                 .ToListAsync(); // انتقال به حافظه، جلوگیری از خطای EF
 
+            // جایگزینی شماره‌ها با Dictionary؛ نتیجه همان آخرین جایگزینی متناظر در لیست قبلی است.
+            var replaceDictionary = lstFBItemReplaces
+                .GroupBy(x => x.FBShomarehMain)
+                .ToDictionary(group => group.Key, group => group.Last().FBShomarehNew);
+
             foreach (var item in fbItems)
             {
-                foreach (var fbItemReplace in lstFBItemReplaces)
+                if (replaceDictionary.TryGetValue(item.Shomareh, out var newShomareh))
                 {
-                    if (item.Shomareh == fbItemReplace.FBShomarehMain)
-                    {
-                        item.Shomareh = fbItemReplace.FBShomarehNew;
-                    }
+                    item.Shomareh = newShomareh;
                 }
             }
 
@@ -725,10 +727,10 @@ public class BaravordUserController(ApplicationDbContext context, UserManager<Ap
             //baravordZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe != null ? baravordZaribManteghe.ZaribManteghe.Value : 1 : 1;
             //baravordZaribBalaSari != null ? baravordZaribBalaSari.ZaribBalasari != null ? baravordZaribBalaSari.ZaribBalasari.Value : 1 : 1;
 
-            List<clsFehrestBahaItemsReplace> lstFBItemReplaces = _context.FehrestBahaItemsReplaces.Where(x => x.Year == Year && x.NoeFB == NoeFBId).ToList();
+            List<clsFehrestBahaItemsReplace> lstFBItemReplaces = await _context.FehrestBahaItemsReplaces.AsNoTracking().Where(x => x.Year == Year && x.NoeFB == NoeFBId).ToListAsync();
 
-            var lstFehrestBahas = await (from FehrestBaha in _context.FehrestBahas
-                                         join FehrestBahaItemsReplace in _context.FehrestBahaItemsReplaces
+            var lstFehrestBahas = await (from FehrestBaha in _context.FehrestBahas.AsNoTracking()
+                                         join FehrestBahaItemsReplace in _context.FehrestBahaItemsReplaces.AsNoTracking()
                                          on FehrestBaha.Shomareh equals FehrestBahaItemsReplace.FBShomarehMain into joinGroup
                                          from FehrestBahaItemsReplace in joinGroup.DefaultIfEmpty()
                                          where FehrestBaha.Sal == Year && FehrestBaha.NoeFB == NoeFBId
@@ -750,20 +752,22 @@ public class BaravordUserController(ApplicationDbContext context, UserManager<Ap
             decimal JameFaslInZarib = 0;
 
             // اول FBs رو فیلتر و گروه‌بندی کن (در حافظه)
-            var fbItems = await _context.FBs
+            var fbItems = await _context.FBs.AsNoTracking()
                 .Where(f => f.BarAvordId == BarAvordId && f.NoeFBId == NoeFBId)
                 .GroupBy(f => f.Shomareh)
                 .Select(g => g.FirstOrDefault())
                 .ToListAsync(); // انتقال به حافظه، جلوگیری از خطای EF
 
+            // جایگزینی شماره‌ها با Dictionary؛ نتیجه همان آخرین جایگزینی متناظر در لیست قبلی است.
+            var replaceDictionary = lstFBItemReplaces
+                .GroupBy(x => x.FBShomarehMain)
+                .ToDictionary(group => group.Key, group => group.Last().FBShomarehNew);
+
             foreach (var item in fbItems)
             {
-                foreach (var fbItemReplace in lstFBItemReplaces)
+                if (replaceDictionary.TryGetValue(item.Shomareh, out var newShomareh))
                 {
-                    if (item.Shomareh == fbItemReplace.FBShomarehMain)
-                    {
-                        item.Shomareh = fbItemReplace.FBShomarehNew;
-                    }
+                    item.Shomareh = newShomareh;
                 }
             }
 
