@@ -429,8 +429,15 @@ function renderTableFosoul(data) {
                 $('#fosoulTable tr[id]').not(detailRow).hide();
 
                 // باز کردن ردیف انتخاب‌شده
+                window.__showBarAvordClickStartedAt = window.performance.now();
+                console.log("[ShowBarAvord][PERF][CLICK] chapter click:", {
+                    code: item.code,
+                    itemId: item.id,
+                    startedAt: window.__showBarAvordClickStartedAt
+                });
                 detailRow.show();
-
+                console.log("[ShowBarAvord][PERF][CLICK] detail row show ms:",
+                    (window.performance.now() - window.__showBarAvordClickStartedAt).toFixed(1));
 
                 GetBarAvord(item.id, item.code, item.faslName, faslAsli);
             }
