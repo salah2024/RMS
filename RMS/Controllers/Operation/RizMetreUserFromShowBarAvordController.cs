@@ -325,34 +325,53 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
             }
         }
 
-        var lstFehrestBahas = await (
-             from fb in _context.FehrestBahas.AsNoTracking()
-             join replace in _context.FehrestBahaItemsReplaces.AsNoTracking()
-             on fb.Shomareh equals replace.FBShomarehMain into replaces
-             from replace in replaces.DefaultIfEmpty()
-             where fb.Sal == Year
-                 && fb.NoeFB == NoeFBId
-             select new
-             {
-                 Id = fb.Id,
-                 BahayeVahed = fb.BahayeVahed,
-                 Vahed = fb.Vahed,
-                 Sharh = fb.Sharh,
+        // هر ردیف فهرست بها باید فقط یک بار در جمع فصل شرکت کند.
+        // Join مستقیم با FehrestBahaItemsReplaces ممکن است به علت وجود رکوردهای
+        // چند سال یا چند نوع فهرست بها، یک ردیف را چندبار تکرار کند.
+        // جایگزین‌ها از قبل بر اساس سال و نوع فهرست بها محدود شده‌اند؛
+        // در صورت وجود چند نگاشت برای یک شماره اصلی، آخرین نگاشت مطابق رفتار قبلی انتخاب می‌شود.
+        var replacementsByMain = lstfehrestBahaItemsReplace
+            .GroupBy(x => x.FBShomarehMain)
+            .ToDictionary(g => g.Key, g => g.Last().FBShomarehNew);
 
-                 ShomarehMain = fb.Shomareh,
+        var fehrestBahaRows = await _context.FehrestBahas.AsNoTracking()
+            .Where(fb => fb.Sal == Year && fb.NoeFB == NoeFBId)
+            .Select(fb => new
+            {
+                Id = fb.Id,
+                BahayeVahed = fb.BahayeVahed,
+                Vahed = fb.Vahed,
+                Sharh = fb.Sharh,
+                ShomarehMain = fb.Shomareh,
+                Sal = fb.Sal,
+                NoeFB = fb.NoeFB
+            })
+            .ToListAsync();
 
-                 Shomareh = replace != null && replace.FBShomarehNew != null
-                 ? replace.FBShomarehNew
-                 : fb.Shomareh,
+        var lstFehrestBahas = fehrestBahaRows
+            .Select(fehrest =>
+            {
+                var shomareh = replacementsByMain.TryGetValue(fehrest.ShomarehMain, out var replacement)
+                    ? replacement
+                    : fehrest.ShomarehMain;
 
-                 Sal = fb.Sal,
-                 NoeFB = fb.NoeFB
-             }).ToListAsync();
+                return new
+                {
+                    fehrest.Id,
+                    fehrest.BahayeVahed,
+                    fehrest.Vahed,
+                    fehrest.Sharh,
+                    fehrest.ShomarehMain,
+                    Shomareh = shomareh,
+                    fehrest.Sal,
+                    fehrest.NoeFB
+                };
+            })
+            .Where(fehrest => fehrest.Shomareh.StartsWith(Code))
+            .ToList();
 
-
-        // سپس FehrestBahas رو از دیتابیس بگیر و join کن در حافظه
-        List<ViewUserBarAvordOutPutDto> userBarAvordOutPut = lstFehrestBahas //_context.FehrestBahas
-                                                                             .Where(fehrest => fehrest.Sal == Year && fehrest.NoeFB == NoeFBId && fehrest.Shomareh.StartsWith(Code))
+        // سپس ردیف‌های یکتای فهرست بها با FBهای برآورد تطبیق داده می‌شوند.
+        List<ViewUserBarAvordOutPutDto> userBarAvordOutPut = lstFehrestBahas
                                                                              .Select(x => new ViewUserBarAvordOutPutDto
                                                                              {
                                                                                  ItemFbShomareh = x.Shomareh,
