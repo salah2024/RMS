@@ -598,104 +598,112 @@ public class RizMetreCommon
         //////محاسبه کل فصل
         ///
         //decimal SumMeghdarFasl = 0;
-        List<clsFehrestBahaItemsReplace> lstFBItemReplaces = _context.FehrestBahaItemsReplaces.Where(x => x.Year == Year && x.NoeFB == NoeFBId).ToList();
+        List<clsFehrestBahaItemsReplace> lstFBItemReplaces = await _context.FehrestBahaItemsReplaces
+            .AsNoTracking()
+            .Where(x => x.Year == Year && x.NoeFB == NoeFBId)
+            .ToListAsync();
 
-        var lstFehrestBahas = (from FehrestBaha in _context.FehrestBahas
-                               join FehrestBahaItemsReplace in _context.FehrestBahaItemsReplaces
-                               on FehrestBaha.Shomareh equals FehrestBahaItemsReplace.FBShomarehMain into joinGroup
-                               from FehrestBahaItemsReplace in joinGroup.DefaultIfEmpty()
-                               where FehrestBaha.Sal == Year && FehrestBaha.NoeFB == NoeFBId
-                               select new
-                               {
-                                   Id = FehrestBaha.Id,
-                                   BahayeVahed = FehrestBaha.BahayeVahed,
-                                   Vahed = FehrestBaha.Vahed,
-                                   Sharh = FehrestBaha.Sharh,
-                                   ShomarehMain = FehrestBaha.Shomareh,
-                                   Shomareh = FehrestBahaItemsReplace != null && FehrestBahaItemsReplace.FBShomarehNew != null
-                                                             ? FehrestBahaItemsReplace.FBShomarehNew
-                                                             : FehrestBaha.Shomareh,
-                                   Sal = FehrestBaha.Sal,
-                                   NoeFB = FehrestBaha.NoeFB,
-                               }).ToList();
+        var lstFehrestBahas = await (
+            from fehrest in _context.FehrestBahas.AsNoTracking()
+            join replace in _context.FehrestBahaItemsReplaces
+                .AsNoTracking()
+                .Where(x => x.Year == Year && x.NoeFB == NoeFBId)
+                on fehrest.Shomareh equals replace.FBShomarehMain into replaceGroup
+            from replace in replaceGroup.DefaultIfEmpty()
+            where fehrest.Sal == Year && fehrest.NoeFB == NoeFBId
+            select new
+            {
+                Id = fehrest.Id,
+                BahayeVahed = fehrest.BahayeVahed,
+                Vahed = fehrest.Vahed,
+                Sharh = fehrest.Sharh,
+                ShomarehMain = fehrest.Shomareh,
+                Shomareh = replace != null && replace.FBShomarehNew != null
+                    ? replace.FBShomarehNew
+                    : fehrest.Shomareh,
+                Sal = fehrest.Sal,
+                NoeFB = fehrest.NoeFB
+            }).ToListAsync();
 
-        // اول FBs رو فیلتر و گروه‌بندی کن (در حافظه)
-        //var fbItems = _context.FBs
-        //    .Where(f => f.BarAvordId == BarAvordId && f.NoeFBId == NoeFBId)
-        //    .GroupBy(f => f.Shomareh)
-        //    .Select(g => g.FirstOrDefault())
-        //    .ToList(); // انتقال به حافظه، جلوگیری از خطای EF
+        // FBها با شماره کامل دریافت می‌شوند تا آیتم‌هایی مانند 150603 و 150603e
+        // مستقل بمانند؛ اتصال به فهرست بها فقط با شش رقم اصلی انجام می‌شود.
+        var fbItems = await _context.FBs
+            .AsNoTracking()
+            .Where(fb => fb.BarAvordId == BarAvordId && fb.NoeFBId == NoeFBId)
+            .Select(fb => new FBForGetUserBarAvordDto
+            {
+                ID = fb.ID,
+                Shomareh = fb.Shomareh,
+                BahayeVahedSharh = fb.BahayeVahedSharh,
+                BahayeVahed = "0",
+                Vahed = null,
+                BahayeVahedNew = fb.BahayeVahedNew,
+                ItemZarib = fb.ItemZarib,
+                SumRizMetre = fb.SumRizMetre
+            })
+            .ToListAsync();
 
-        var fbItems = await (from fb in _context.FBs
-                             join fehrestbaha in _context.FehrestBahas
-                             on fb.Shomareh.Substring(0, 6) equals fehrestbaha.Shomareh.Trim()
-                             where fb.BarAvordId == BarAvordId && fb.NoeFBId == NoeFBId
-                             select new FBForGetUserBarAvordDto
-                             {
-                                 ID = fb.ID,
-                                 BahayeVahedSharh = fb.BahayeVahedSharh,
-                                 Shomareh = fb.Shomareh.Substring(0, 6),
-                                 BahayeVahed = fehrestbaha == null ? "0" : fehrestbaha.BahayeVahed != null ? fehrestbaha.BahayeVahed.Trim() : "0",
-                                 Vahed = fehrestbaha.Vahed,
-                                 //BahayeVahedZarib = fb.BahayeVahedZarib,
-                                 BahayeVahedNew = fb.BahayeVahedNew,
-                                 ItemZarib = fb.ItemZarib,
-                                 SumRizMetre = fb.SumRizMetre
-                             })
-        .GroupBy(f => f.Shomareh)
-        .Select(g => g.FirstOrDefault())
-        .ToListAsync();
-
-
-        //foreach (var item in fbItems)
-        //{
-        //    foreach (var fbItemReplace in lstFBItemReplaces)
-        //    {
-        //        if (item.Shomareh == fbItemReplace.FBShomarehMain)
-        //        {
-        //            item.Shomareh = fbItemReplace.FBShomarehNew;
-        //        }
-        //    }
-        //}
-
+        fbItems = fbItems
+            .GroupBy(fb => fb.Shomareh)
+            .Select(group => group.First())
+            .ToList();
 
         var replaceDictionary = lstFBItemReplaces
-           .GroupBy(x => x.FBShomarehMain)
-           .ToDictionary(
-               x => x.Key,
-               x => x.Last().FBShomarehNew
-           );
+            .GroupBy(x => x.FBShomarehMain)
+            .ToDictionary(group => group.Key, group => group.Last().FBShomarehNew);
 
-        foreach (var item in fbItems)
-        {
-            if (replaceDictionary.TryGetValue(item.Shomareh, out var newShomareh))
+        // کلید تطبیق شماره اصلی (شش رقم) است، اما مقدار Dictionary تمام FBها را
+        // نگه می‌دارد؛ بنابراین پسوندها و ID/مقدار هر رکورد با هم ادغام نمی‌شوند.
+        var fbByMainNumber = fbItems
+            .GroupBy(fb =>
             {
-                item.Shomareh = newShomareh;
+                string mainNumber = fb.Shomareh.Length >= 6 ? fb.Shomareh[..6] : fb.Shomareh;
+                return replaceDictionary.TryGetValue(mainNumber, out var replacementNumber)
+                    ? replacementNumber
+                    : mainNumber;
+            })
+            .ToDictionary(group => group.Key, group => group.ToList());
+
+        var userBarAvordOutPut = new List<ViewUserBarAvordOutPutDto>();
+        foreach (var fehrest in lstFehrestBahas
+            .Where(item => item.Sal == Year && item.NoeFB == NoeFBId && item.Shomareh.StartsWith(Code))
+            .OrderBy(item => item.Shomareh))
+        {
+            if (fbByMainNumber.TryGetValue(fehrest.Shomareh, out var matchingFbs))
+            {
+                foreach (var fb in matchingFbs)
+                {
+                    userBarAvordOutPut.Add(new ViewUserBarAvordOutPutDto
+                    {
+                        ItemFbShomareh = fehrest.Shomareh,
+                        Sharh = fehrest.Sharh,
+                        BahayeVahed = fehrest.BahayeVahed,
+                        Vahed = fehrest.Vahed,
+                        FBId = fb.ID,
+                        ItemZarib = fb.ItemZarib,
+                        Meghdar = fb.SumRizMetre ?? 0m,
+                        RizMetre = new List<ViewUserBarAvordOutPutRizMetreDto>()
+                    });
+                }
+            }
+            else
+            {
+                userBarAvordOutPut.Add(new ViewUserBarAvordOutPutDto
+                {
+                    ItemFbShomareh = fehrest.Shomareh,
+                    Sharh = fehrest.Sharh,
+                    BahayeVahed = fehrest.BahayeVahed,
+                    Vahed = fehrest.Vahed,
+                    FBId = null,
+                    ItemZarib = 1,
+                    Meghdar = 0m,
+                    RizMetre = new List<ViewUserBarAvordOutPutRizMetreDto>()
+                });
             }
         }
 
-        // سپس FehrestBahas رو از دیتابیس بگیر و join کن در حافظه
-        var userBarAvordOutPut = lstFehrestBahas //_context.FehrestBahas
-            .Where(fehrest => fehrest.Sal == Year && fehrest.NoeFB == NoeFBId && fehrest.Shomareh.StartsWith(Code))
-            .ToList() // انتقال به حافظه
-            .GroupJoin(fbItems,
-                fehrest => fehrest.Shomareh,
-                fb => fb.Shomareh,
-                (fehrest, fbGroup) => new { fehrest, fbItem = fbGroup.FirstOrDefault() })
-            .OrderBy(x => x.fehrest.Shomareh)
-            .Select(x => new ViewUserBarAvordOutPutDto
-            {
-                ItemFbShomareh = x.fehrest.Shomareh,
-                Sharh = x.fehrest.Sharh,
-                BahayeVahed = x.fehrest.BahayeVahed,
-                Vahed = x.fehrest.Vahed,
-                FBId = x.fbItem != null ? x.fbItem.ID : null,
-                ItemZarib = x.fbItem != null ? x.fbItem.ItemZarib : 1,
-                Meghdar = x.fbItem?.SumRizMetre ?? 0m,
-                RizMetre = new List<ViewUserBarAvordOutPutRizMetreDto>()
-            }).ToList();
-
-        List<ViewUserBarAvordOutPutDto> userBarAvordOutPutFilter = userBarAvordOutPut.Where(x => x.FBId != null).ToList();
+        List<ViewUserBarAvordOutPutDto> userBarAvordOutPutFilter =
+            userBarAvordOutPut.Where(item => item.FBId != null).ToList();
 
         //clsBaravordZaribBalaSari? baravordZaribBalaSari = _context.BaravordZaribBalaSaris.FirstOrDefault(x => x.BaravordId == BarAvordId);
         //clsBaravordZaribManteghe? baravordZaribManteghe = _context.BaravordZaribManteghes.FirstOrDefault(x => x.BaravordId == BarAvordId);
