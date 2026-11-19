@@ -49,58 +49,49 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
         //var lstFB = _context.FBs.Where(x => x.BarAvordId == request.BarAvordUserId && x.NoeFBId == NoeFBId).ToList();
 
 
-        // فقط جزئیات ریزمتره‌های فصل جاری دریافت می‌شود؛
-        // جمع مقدار هر FB از SumRizMetre خوانده می‌شود و نیازی به تجمیع این جزئیات نیست.
-        var RizMetre = await _context.RizMetreUserses
-    .AsNoTracking()
-    .Where(x =>
-        x.FB.BarAvordId == request.BarAvordUserId &&
-        x.FB.NoeFBId == NoeFBId &&
-        x.FB.Shomareh.StartsWith(request.ShomarehFasl))
-    .OrderBy(x => x.Shomareh)
-    .Select(riz => new ViewUserBarAvordOutPutRizMetreDto
-    {
-        Id = riz.ID,
-        tajmieItem = riz.TajmieItem,
-        Sharh = riz.Sharh,
-        Shomareh = riz.Shomareh,
-        ShomarehNew = riz.ShomarehNew,
-        Arz = riz.Arz,
-        Des = riz.Des,
-        Ertefa = riz.Ertefa,
-        Tedad = riz.Tedad,
-        Tool = riz.Tool,
-        Vazn = riz.Vazn,
-        FBId = riz.FBId,
-        MeghdarJoz = riz.MeghdarJoz
-    })
-    .ToListAsync();
+        string chapterCode = request.ShomarehFasl?.Trim() ?? string.Empty;
 
+        // فقط جایگزینی‌هایی را دریافت می‌کنیم که شماره قدیم یا جدیدشان به فصل جاری مربوط است.
+        // هر دو حالت لازم‌اند؛ ممکن است یک آیتم از فصل دیگری به این فصل منتقل شده باشد.
         List<clsFehrestBahaItemsReplace> lstFBItemReplaces = await _context.FehrestBahaItemsReplaces
             .AsNoTracking()
-            .Where(x => x.Year == Year && x.NoeFB == NoeFBId)
+            .Where(x => x.Year == Year && x.NoeFB == NoeFBId &&
+                (x.FBShomarehMain.StartsWith(chapterCode) ||
+                 (x.FBShomarehNew != null && x.FBShomarehNew.StartsWith(chapterCode))))
             .ToListAsync();
 
+        var replacementSourceNumbers = lstFBItemReplaces
+            .Where(x => x.FBShomarehNew != null && x.FBShomarehNew.StartsWith(chapterCode))
+            .Select(x => x.FBShomarehMain)
+            .Distinct()
+            .ToList();
+
+        // فهرست بها از ابتدا در SQL به فصل جاری محدود می‌شود؛
+        // آیتم‌های منتقل‌شده به این فصل نیز از طریق شماره جایگزین‌شده لحاظ می‌شوند.
         var lstFehrestBahas = await (
             from fb in _context.FehrestBahas.AsNoTracking()
-            join replace in _context.FehrestBahaItemsReplaces.Where(x => x.Year == Year && x.NoeFB == NoeFBId).AsNoTracking()
+            join replace in _context.FehrestBahaItemsReplaces
+                .AsNoTracking()
+                .Where(x => x.Year == Year && x.NoeFB == NoeFBId &&
+                    (x.FBShomarehMain.StartsWith(chapterCode) ||
+                     (x.FBShomarehNew != null && x.FBShomarehNew.StartsWith(chapterCode))))
             on fb.Shomareh equals replace.FBShomarehMain into replaces
             from replace in replaces.DefaultIfEmpty()
             where fb.Sal == Year
                 && fb.NoeFB == NoeFBId
+                && (fb.Shomareh.StartsWith(chapterCode) ||
+                    (replace != null && replace.FBShomarehNew != null &&
+                     replace.FBShomarehNew.StartsWith(chapterCode)))
             select new
             {
                 Id = fb.Id,
                 BahayeVahed = fb.BahayeVahed,
                 Vahed = fb.Vahed,
                 Sharh = fb.Sharh,
-
                 ShomarehMain = fb.Shomareh,
-
                 Shomareh = replace != null && replace.FBShomarehNew != null
-                ? replace.FBShomarehNew
-                : fb.Shomareh,
-
+                    ? replace.FBShomarehNew
+                    : fb.Shomareh,
                 Sal = fb.Sal,
                 NoeFB = fb.NoeFB
             }).ToListAsync();
@@ -156,7 +147,9 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
         // مانند 150603e) حفظ می‌شود و اتصال به فهرست بها با کلید شش‌رقمی در حافظه انجام می‌گیرد.
         var fbItems = await _context.FBs
             .AsNoTracking()
-            .Where(fb => fb.BarAvordId == request.BarAvordUserId && fb.NoeFBId == NoeFBId)
+            .Where(fb => fb.BarAvordId == request.BarAvordUserId &&
+                fb.NoeFBId == NoeFBId &&
+                (fb.Shomareh.StartsWith(chapterCode) || replacementSourceNumbers.Contains(fb.Shomareh)))
             .Select(fb => new FBForGetUserBarAvordDto
             {
                 ID = fb.ID,
@@ -175,6 +168,33 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
             .GroupBy(fb => fb.Shomareh)
             .Select(group => group.First())
             .ToList();
+
+        // ریزمتره‌ها را فقط برای FBهای نهایی همین فصل دریافت می‌کنیم.
+        // فیلتر بر اساس ID باعث می‌شود شماره‌های جابه‌جاشده بین فصل‌ها نیز درست پوشش داده شوند.
+        var chapterFbIds = fbItems.Select(fb => fb.ID).Distinct().ToList();
+        var RizMetre = chapterFbIds.Count == 0
+            ? new List<ViewUserBarAvordOutPutRizMetreDto>()
+            : await _context.RizMetreUserses
+                .AsNoTracking()
+                .Where(riz => chapterFbIds.Contains(riz.FBId))
+                .OrderBy(riz => riz.Shomareh)
+                .Select(riz => new ViewUserBarAvordOutPutRizMetreDto
+                {
+                    Id = riz.ID,
+                    tajmieItem = riz.TajmieItem,
+                    Sharh = riz.Sharh,
+                    Shomareh = riz.Shomareh,
+                    ShomarehNew = riz.ShomarehNew,
+                    Arz = riz.Arz,
+                    Des = riz.Des,
+                    Ertefa = riz.Ertefa,
+                    Tedad = riz.Tedad,
+                    Tool = riz.Tool,
+                    Vazn = riz.Vazn,
+                    FBId = riz.FBId,
+                    MeghdarJoz = riz.MeghdarJoz
+                })
+                .ToListAsync();
 
         // کلید فهرست بها، شماره اصلی شش‌رقمی است؛ پسوند شماره FB در کلید دخالت ندارد.
         var fehrestByMainNumber = lstFehrestBahas
@@ -394,7 +414,7 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
 
         List<ItemFBStarForShowBaravordDto> lstItemFBStars = await
             _context.ItemFBStars.AsNoTracking()
-            .Where(x => x.BaravordId == request.BarAvordUserId && x.NoeFBId == NoeFBId && x.Shomareh.Substring(0, 2) == request.ShomarehFasl.Trim())
+            .Where(x => x.BaravordId == request.BarAvordUserId && x.NoeFBId == NoeFBId && x.Shomareh.StartsWith(chapterCode))
             .Select(x => new ItemFBStarForShowBaravordDto
             {
                 Id = x.ID,
