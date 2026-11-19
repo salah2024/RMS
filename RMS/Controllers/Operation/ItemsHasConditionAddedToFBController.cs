@@ -49,7 +49,7 @@ namespace RMS.Controllers.Operation
                                                      ItemShomareh = ItemsHasCondition.ItemFBShomareh,
                                                      IHC_CC_Related = ItemsHasCondition_ConditionContext.IHC_CC_Related,
                                                      ConditionContextId= ItemsHasCondition_ConditionContext.ConditionContextId
-                                                 }).Where(x => x.BarAvordId == BarAvordId && x.FBShomareh.Substring(0, 6) == strFBShomareh && x.ConditionGroupId == ConditionGroupId).ToList();
+                                                 }).Where(x => x.BarAvordId == BarAvordId && x.FBShomareh.StartsWith(strFBShomareh) && x.ConditionGroupId == ConditionGroupId).ToList();
 
 
             if (varItemsHasConditionAddedToFB.Count != 0)
@@ -63,7 +63,7 @@ namespace RMS.Controllers.Operation
                 bool blnCheckIsDel = false;
                 try
                 {
-                    var ItemsHasConditionAddedToFB = _context.ItemsHasConditionAddedToFBs.Where(x => x.BarAvordId == BarAvordId && x.FBShomareh.Substring(0, 6) == strFBShomareh && x.ConditionGroupId == ConditionGroupId).ToList();
+                    var ItemsHasConditionAddedToFB = _context.ItemsHasConditionAddedToFBs.Where(x => x.BarAvordId == BarAvordId && x.FBShomareh.StartsWith(strFBShomareh) && x.ConditionGroupId == ConditionGroupId).ToList();
                     if (ItemsHasConditionAddedToFB.Count != 0)
                     {
                         _context.ItemsHasConditionAddedToFBs.RemoveRange(ItemsHasConditionAddedToFB);
@@ -82,8 +82,29 @@ namespace RMS.Controllers.Operation
                 if (blnCheckIsDel)
                 {
 
-                    List<clsItemsAddingToFB> lstItemsAddingToFB = _context.ItemsAddingToFBs
-                                .Where(x => strItemsHasCondition_ConditionContext.Contains(x.ItemsHasCondition_ConditionContextId)).ToList();
+                    List<clsItemsAddingToFB> lstItemsAddingToFB = await _context.ItemsAddingToFBs
+                        .AsNoTracking()
+                        .Where(x => strItemsHasCondition_ConditionContext.Contains(x.ItemsHasCondition_ConditionContextId))
+                        .ToListAsync();
+
+                    // شماره آیتم‌های افزوده‌شده یک‌جا جمع‌آوری می‌شوند تا برای هر آیتم
+                    // یک درخواست جداگانه به جدول ۱۰هزار رکوردی فهرست بها اجرا نشود.
+                    var requestedItemNumbers = lstItemsAddingToFB
+                        .SelectMany(x => (x.AddedItems ?? string.Empty).Split('_'))
+                        .Select(x => x.Trim())
+                        .Where(x => x.Length != 0)
+                        .Distinct()
+                        .ToList();
+
+                    var fehrestRows = await _context.FehrestBahas
+                        .AsNoTracking()
+                        .Where(x => x.Sal == Year && x.NoeFB == NoeFB
+                            && requestedItemNumbers.Contains(x.Shomareh.Trim()))
+                        .ToListAsync();
+
+                    var fehrestByNumber = fehrestRows
+                        .GroupBy(x => x.Shomareh.Trim())
+                        .ToDictionary(group => group.Key, group => group.First());
 
                     List<ItemsAddingToFBForShowAddItemsDto> lstItemsAddingToFBForShowAddItems = new List<ItemsAddingToFBForShowAddItemsDto>();
 
@@ -93,9 +114,7 @@ namespace RMS.Controllers.Operation
 
                         foreach (var ItemsAdding in currentItemsAdding)
                         {
-                            clsFehrestBaha? FehrestBaha = _context.FehrestBahas.FirstOrDefault(x => x.Sal == Year && x.NoeFB == NoeFB && x.Shomareh.Trim() == ItemsAdding.Trim());
-
-                            if (FehrestBaha != null)
+                            if (fehrestByNumber.TryGetValue(ItemsAdding.Trim(), out var FehrestBaha))
                             {
                                 ItemsAddingToFBForShowAddItemsDto ItemsAddingToFBForShowAddItems = new ItemsAddingToFBForShowAddItemsDto
                                 {
@@ -127,7 +146,7 @@ namespace RMS.Controllers.Operation
                         long ItemsHasCondition_ConditionContextId = long.Parse(RBCode);
 
                         clsItemsHasConditionAddedToFB? itemsHasConditionAddedToFB =
-                            _context.ItemsHasConditionAddedToFBs.FirstOrDefault(x => x.FBShomareh.Substring(0, 6) == strFBShomareh &&
+                            _context.ItemsHasConditionAddedToFBs.FirstOrDefault(x => x.FBShomareh.StartsWith(strFBShomareh) &&
                                 x.BarAvordId == BarAvordId && x.ItemsHasCondition_ConditionContextId == ItemsHasCondition_ConditionContextId && x.NoeFB == NoeFB);
 
 
