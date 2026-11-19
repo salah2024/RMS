@@ -1289,29 +1289,8 @@ public class RizMetreCommon
 
         clsBaravordUser? baravordUser = await _context.BaravordUsers.AsNoTracking().FirstOrDefaultAsync(x => x.ID == BarAvordId);
 
-        ////////////////////////////////
-        //در صورتی که صورت وضعیت باشد، بایستی ضریب پیشنهادی پیمانکار را نیز در ضرایب منطقه و بالاسری برای هر فصل پیدا کرده و ضرب کنیم
-        ////////////////////////////////
-        NoeBarAvord NoeBAType = NoeBarAvord.BarAvord;
-
-        List<clsZaribPishnahadiPaymanKarFosoul> lstZaribPishnahadiPaymanKarFosoul = new List<clsZaribPishnahadiPaymanKarFosoul>();
-
-        if (baravordUser != null)
-        {
-
-            NoeBAType = baravordUser.Type;
-
-            if (NoeBAType != NoeBarAvord.BarAvord)
-            {
-                clsBaravordUser? baravordUserMain = await _context.BaravordUsers.AsNoTracking().FirstOrDefaultAsync(x => x.ID == baravordUser.ParentId);
-                if (baravordUserMain != null)
-                {
-                    //یافتن ضرایب پیشنهادی پیمانکار برای هر فصل
-                    lstZaribPishnahadiPaymanKarFosoul =
-                          _context.ZaribPishnahadiPaymanKarFosouls.AsNoTracking().Where(x => x.ZaribPishnahadiPaymanKar.BarAvordUserId == baravordUserMain.ID).ToList();
-                }
-            }
-        }
+        // بلوک قبلی دریافت ضرایب پیشنهادی پیمانکار در این تابع هیچ‌گاه در خروجی یا محاسبات استفاده نمی‌شد؛
+        // حذف آن از اجرای دو Query غیرضروری جلوگیری می‌کند.
         ////////////////////////
         ////////////////////////
         ////////////////////////
@@ -1586,7 +1565,9 @@ public class RizMetreCommon
 
                     bool blnCheckUsePercent = false;
 
-                    clsTajhizKargahDarsad? TajhizKargahDarsad = _context.TajhizKargahDarsads.FirstOrDefault(x => x.BarAvordUserId == request.BarAvordId && x.NoeFB == NoeFBId);
+                    clsTajhizKargahDarsad? TajhizKargahDarsad = _context.TajhizKargahDarsads
+                        .AsNoTracking()
+                        .FirstOrDefault(x => x.BarAvordUserId == request.BarAvordId && x.NoeFB == NoeFBId);
                     if (TajhizKargahDarsad != null)
                     {
                         blnCheckUsePercent = true;
