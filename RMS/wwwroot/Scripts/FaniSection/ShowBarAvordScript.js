@@ -673,6 +673,11 @@ function GetBarAvord(ItemId, Code, faslName, faslAsli) {
     vardata.Year = Year;
     vardata.BarAvordUserId = BarAvordUserId;
     vardata.ShomarehFasl = Code;
+
+    // دانلود فایل جزئیات را هم‌زمان با درخواست اطلاعات فصل آغاز می‌کنیم؛
+    // قبلاً دانلود فایل بعد از پاسخ سرور شروع می‌شد و این دو زمان به هم اضافه می‌شدند.
+    var detailAssetPromise = ensureShowBarAvordAsset("detail");
+
     $.ajax({
         type: "post",
         url: "/ShowBarAvordUser/GetUserBarAvord",
@@ -683,8 +688,8 @@ function GetBarAvord(ItemId, Code, faslName, faslAsli) {
             userBarAvordOutPut = response.userBarAvordOutPut || [];
             lstItemFBStars = response.lstItemFBStars || [];
 
-            // کد سنگین جدول و عملیات ریزمتره فقط بعد از باز کردن یک فصل دریافت شود.
-            ensureShowBarAvordAsset("detail").then(function () {
+            // فایل جزئیات از ابتدای درخواست فصل در حال دانلود بوده یا از قبل آماده است.
+            detailAssetPromise.then(function () {
                 if (lstItemFBStars.length === 0) {
                     renderTable(userBarAvordOutPut, lstItemFBStars, Code, ItemId, faslAsli);
                     return;
