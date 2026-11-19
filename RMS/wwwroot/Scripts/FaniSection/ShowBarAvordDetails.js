@@ -1607,6 +1607,7 @@ function refreshBaseItem(object, Shomareh, Code) {
             data: JSON.stringify(vardata),
             contentType: "application/json; charset=utf-8",
             success: function (data) {
+                console.log('[RIZ-SUM-PERF] GetJameCurrentFasl (Baravord) ms:', Number((window.performance.now() - chapterSumStartedAt).toFixed(1)));
 
 
                 ///////////////
