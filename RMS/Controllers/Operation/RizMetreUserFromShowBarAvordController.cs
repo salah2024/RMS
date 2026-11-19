@@ -325,6 +325,13 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
             }
         }
 
+        // فقط آیتم‌های فصل جاری باید در جمع این فصل شرکت کنند.
+        // این فیلتر بعد از اعمال شماره‌های جایگزین انجام می‌شود تا آیتم‌هایی
+        // که شماره اصلی و شماره جدیدشان در فصل‌های متفاوت است درست شناسایی شوند.
+        fbItems = fbItems
+            .Where(item => item.Shomareh.StartsWith(Code))
+            .ToList();
+
         // هر ردیف فهرست بها باید فقط یک بار در جمع فصل شرکت کند.
         // Join مستقیم با FehrestBahaItemsReplaces ممکن است به علت وجود رکوردهای
         // چند سال یا چند نوع فهرست بها، یک ردیف را چندبار تکرار کند.
