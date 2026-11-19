@@ -152,54 +152,49 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
 
 
 
-        var fbItems = await (
-    from fb in _context.FBs
+        // اطلاعات FB بدون Join رشته‌ای از SQL دریافت می‌شود؛ شماره کامل (از جمله پسوندهایی
+        // مانند 150603e) حفظ می‌شود و اتصال به فهرست بها با کلید شش‌رقمی در حافظه انجام می‌گیرد.
+        var fbItems = await _context.FBs
+            .AsNoTracking()
+            .Where(fb => fb.BarAvordId == request.BarAvordUserId && fb.NoeFBId == NoeFBId)
+            .Select(fb => new FBForGetUserBarAvordDto
+            {
+                ID = fb.ID,
+                BahayeVahedSharh = fb.BahayeVahedSharh,
+                Shomareh = fb.Shomareh,
+                BahayeVahed = "0",
+                Vahed = null,
+                BahayeVahedNew = fb.BahayeVahedNew,
+                ItemZarib = fb.ItemZarib,
+                SumRizMetre = fb.SumRizMetre
+            })
+            .ToListAsync();
 
-    join fehrestbaha in _context.FehrestBahas
-        on fb.Shomareh.Substring(0, 6)
-        equals fehrestbaha.Shomareh.Trim()
-        into fehrestGroup
+        // رفتار انتخاب یک FB برای هر شماره کامل مانند GroupBy/First قبلی حفظ می‌شود.
+        fbItems = fbItems
+            .GroupBy(fb => fb.Shomareh)
+            .Select(group => group.First())
+            .ToList();
 
-    from fehrestbaha in fehrestGroup
-        .Where(x =>
-            x.NoeFB == NoeFBId &&
-            x.Sal == request.Year)
-        .DefaultIfEmpty()
+        // کلید فهرست بها، شماره اصلی شش‌رقمی است؛ پسوند شماره FB در کلید دخالت ندارد.
+        var fehrestByMainNumber = lstFehrestBahas
+            .GroupBy(item => item.ShomarehMain.Trim())
+            .ToDictionary(group => group.Key, group => group.First());
 
-    where fb.BarAvordId == request.BarAvordUserId
-          && fb.NoeFBId == NoeFBId
+        foreach (var fb in fbItems)
+        {
+            var mainNumber = fb.Shomareh.Length >= 6
+                ? fb.Shomareh[..6]
+                : fb.Shomareh;
 
-    select new FBForGetUserBarAvordDto
-    {
-        ID = fb.ID,
-
-        BahayeVahedSharh = fb.BahayeVahedSharh.Trim(),
-
-        // شماره واقعی FB حفظ شود
-        Shomareh = fb.Shomareh,
-
-        BahayeVahed =
-            fehrestbaha == null
-                ? "0"
-                : fehrestbaha.BahayeVahed != null
-                    ? fehrestbaha.BahayeVahed.Trim()
-                    : "0",
-
-        Vahed = fehrestbaha != null
-            ? fehrestbaha.Vahed
-            : null,
-
-        //BahayeVahedZarib = fb.BahayeVahedZarib,
-
-        BahayeVahedNew = fb.BahayeVahedNew,
-
-        ItemZarib = fb.ItemZarib,
-        SumRizMetre = fb.SumRizMetre
-    }
-)
-.GroupBy(x => x.Shomareh)
-.Select(g => g.First())
-.ToListAsync();
+            if (fehrestByMainNumber.TryGetValue(mainNumber, out var fehrest))
+            {
+                fb.BahayeVahed = string.IsNullOrWhiteSpace(fehrest.BahayeVahed)
+                    ? "0"
+                    : fehrest.BahayeVahed.Trim();
+                fb.Vahed = fehrest.Vahed;
+            }
+        }
 
 
 
