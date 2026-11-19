@@ -146,8 +146,6 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
         //                .GroupBy(f => f.Shomareh)
         //                .Select(g => g.FirstOrDefault())
         //                .ToListAsync();
-        perfStages["fbQuery"] = perfWatch.ElapsedMilliseconds;
-        perfWatch.Restart();
 
 
 
@@ -170,7 +168,7 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
                 SumRizMetre = fb.SumRizMetre
             })
             .ToListAsync();
-        perfStages["rizMetreQuery"] = perfWatch.ElapsedMilliseconds;
+        perfStages["fbQuery"] = perfWatch.ElapsedMilliseconds;
         perfWatch.Restart();
 
         // رفتار انتخاب یک FB برای هر شماره کامل مانند GroupBy/First قبلی حفظ می‌شود.
@@ -205,7 +203,7 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
                     MeghdarJoz = riz.MeghdarJoz
                 })
                 .ToListAsync();
-        perfStages["itemsFieldsQuery"] = perfWatch.ElapsedMilliseconds;
+        perfStages["rizMetreQuery"] = perfWatch.ElapsedMilliseconds;
         perfWatch.Restart();
 
         // کلید فهرست بها، شماره اصلی شش‌رقمی است؛ پسوند شماره FB در کلید دخالت ندارد.
@@ -342,14 +340,14 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
             .Where(x => x.NoeFB == NoeFBId && lstItemFbShomarehs.Contains(x.ItemShomareh))
             .OrderBy(x => x.FieldType)
             .ToListAsync();
-        perfStages["relatedItemsQuery"] = perfWatch.ElapsedMilliseconds;
+        perfStages["itemsFieldsQuery"] = perfWatch.ElapsedMilliseconds;
         perfWatch.Restart();
 
         List<clsBahayeVahedItemsRelated> lstBVItemRelated = await _context.BahayeVahedItemsRelateds
             .AsNoTracking()
             .Where(x => lstItemFbShomarehs.Contains(x.ItemShomarehRelated.ToLower().Trim()) && x.NoeFB == NoeFBId && x.Year == Year)
             .ToListAsync();
-        perfStages["starItemsQuery"] = perfWatch.ElapsedMilliseconds;
+        perfStages["relatedItemsQuery"] = perfWatch.ElapsedMilliseconds;
         perfWatch.Restart();
 
         var relatedByItem = lstBVItemRelated
@@ -444,7 +442,7 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
                 ItemZaribStar = x.ItemZaribStar,
                 RizMetre = new List<ViewBarAvordItemStarOutPutRizMetreDto>()
             }).ToListAsync();
-        perfStages["starRizMetreQuery"] = perfWatch.ElapsedMilliseconds;
+        perfStages["starItemsQuery"] = perfWatch.ElapsedMilliseconds;
         perfWatch.Restart();
 
         List<Guid> lstItemFBStarIds = lstItemFBStars.Select(x => x.Id).ToList();
@@ -466,7 +464,8 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
             MeghdarJoz = riz.MeghdarJoz,
             ItemFBStarId = riz.ItemFBStarId
         }).OrderBy(x => x.Shomareh).ToListAsync();
-
+        perfStages["starRizMetreQuery"] = perfWatch.ElapsedMilliseconds;
+        perfWatch.Restart();
 
         var rizMetreStarByItemId = RizMetreStar
             .GroupBy(x => x.ItemFBStarId)
@@ -491,6 +490,9 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
             item.BahayeKol = dBahayeKol;
         }
 
+        perfStages["mappingAndDtoBuild"] = perfWatch.ElapsedMilliseconds;
+        perfWatch.Stop();
+
         var result = new
         {
             userBarAvordOutPut,
@@ -509,7 +511,5 @@ public class ShowBarAvordUserController(ApplicationDbContext context) : Controll
         };
 
         return new JsonResult(result);
-        perfStages["mappingAndDtoBuild"] = perfWatch.ElapsedMilliseconds;
-        perfWatch.Stop();
     }
 }
