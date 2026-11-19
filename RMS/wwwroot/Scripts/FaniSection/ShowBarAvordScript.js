@@ -674,8 +674,7 @@ function GetBarAvord(ItemId, Code, faslName, faslAsli) {
     vardata.BarAvordUserId = BarAvordUserId;
     vardata.ShomarehFasl = Code;
 
-    // دانلود فایل جزئیات را هم‌زمان با درخواست اطلاعات فصل آغاز می‌کنیم؛
-    // قبلاً دانلود فایل بعد از پاسخ سرور شروع می‌شد و این دو زمان به هم اضافه می‌شدند.
+    var chapterRequestStartedAt = window.performance.now();
     var detailAssetPromise = ensureShowBarAvordAsset("detail");
 
     $.ajax({
@@ -685,19 +684,34 @@ function GetBarAvord(ItemId, Code, faslName, faslAsli) {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (response) {
+            var chapterResponseReceivedAt = window.performance.now();
+            console.debug("[ShowBarAvord][PERF] GetUserBarAvord AJAX ms:",
+                (chapterResponseReceivedAt - chapterRequestStartedAt).toFixed(1),
+                "server:", response.debug || null);
             userBarAvordOutPut = response.userBarAvordOutPut || [];
             lstItemFBStars = response.lstItemFBStars || [];
 
             // فایل جزئیات از ابتدای درخواست فصل در حال دانلود بوده یا از قبل آماده است.
             detailAssetPromise.then(function () {
+                var detailAssetReadyAt = window.performance.now();
+                console.debug("[ShowBarAvord][PERF] detail asset wait ms:",
+                    (detailAssetReadyAt - chapterResponseReceivedAt).toFixed(1));
                 if (lstItemFBStars.length === 0) {
+                    var renderStartedAt = window.performance.now();
                     renderTable(userBarAvordOutPut, lstItemFBStars, Code, ItemId, faslAsli);
+                    console.debug("[ShowBarAvord][PERF] renderTable ms:",
+                        (window.performance.now() - renderStartedAt).toFixed(1));
                     return;
                 }
 
                 // فایل عملیات ستاره‌دار فقط در فصل‌هایی دریافت می‌شود که ردیف ستاره‌دار دارند.
                 return ensureShowBarAvordAsset("star").then(function () {
+                    console.debug("[ShowBarAvord][PERF] star asset wait ms:",
+                        (window.performance.now() - detailAssetReadyAt).toFixed(1));
+                    var renderStartedAt = window.performance.now();
                     renderTable(userBarAvordOutPut, lstItemFBStars, Code, ItemId, faslAsli);
+                    console.debug("[ShowBarAvord][PERF] renderTable ms:",
+                        (window.performance.now() - renderStartedAt).toFixed(1));
                 });
             }).catch(function (error) {
                 console.error(error);
