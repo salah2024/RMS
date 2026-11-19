@@ -813,11 +813,11 @@ public class RizMetreCommon
         NoeFehrestBaha NoeFBId = request.NoeFBId;
         int Year = request.Year;
 
-        clsBaravordUser? baravordUser = _context.BaravordUsers.FirstOrDefault(x => x.ID == BarAvordId);
+        clsBaravordUser? baravordUser = _context.BaravordUsers.AsNoTracking().FirstOrDefault(x => x.ID == BarAvordId);
         if (baravordUser != null)
         {
 
-            List<clsFehrestBahaItemsReplace> lstFBItemReplaces = _context.FehrestBahaItemsReplaces.Where(x => x.Year == Year && x.NoeFB == NoeFBId).ToList();
+            List<clsFehrestBahaItemsReplace> lstFBItemReplaces = _context.FehrestBahaItemsReplaces.AsNoTracking().Where(x => x.Year == Year && x.NoeFB == NoeFBId).ToList();
 
 
             // اول FBs رو فیلتر و گروه‌بندی کن (در حافظه)
@@ -1029,7 +1029,7 @@ public class RizMetreCommon
 
             bool blnCheckUsePercent = false;
             //در صورتی که تجهیزکارگاه بصورت درصدی حساب شود
-            clsTajhizKargahDarsad? TajhizKargahDarsad = _context.TajhizKargahDarsads.FirstOrDefault(x => x.BarAvordUserId == request.BarAvordId && x.NoeFB == request.NoeFBId);
+            clsTajhizKargahDarsad? TajhizKargahDarsad = _context.TajhizKargahDarsads.AsNoTracking().FirstOrDefault(x => x.BarAvordUserId == request.BarAvordId && x.NoeFB == request.NoeFBId);
             if (TajhizKargahDarsad != null)
             {
                 blnCheckUsePercent = true;
