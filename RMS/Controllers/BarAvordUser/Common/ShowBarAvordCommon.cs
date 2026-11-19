@@ -241,53 +241,67 @@ public class ShowBarAvordCommon
 
 
 
-        var fbItems = await (
-    from fb in _context.FBs.AsNoTracking()
+        // فهرست بها یک بار برای کل بارگذاری فصول دریافت می‌شود.
+        var lstFehrestBahas =await (
+            from fb in _context.FehrestBahas.AsNoTracking()
+            join replace in _context.FehrestBahaItemsReplaces.AsNoTracking()
+            on fb.Shomareh equals replace.FBShomarehMain into replaces
+            from replace in replaces.DefaultIfEmpty()
+            where fb.Sal == Year
+                && fb.NoeFB == NoeFBId
+            select new
+            {
+                Id = fb.Id,
+                BahayeVahed = fb.BahayeVahed,
+                Vahed = fb.Vahed,
+                Sharh = fb.Sharh,
 
-    join fehrestbaha in _context.FehrestBahas
-        on fb.Shomareh.Substring(0, 6)
-        equals fehrestbaha.Shomareh.Trim()
-        into fehrestGroup
+                ShomarehMain = fb.Shomareh,
 
-    from fehrestbaha in fehrestGroup
-        .Where(x =>
-            x.NoeFB == NoeFBId &&
-            x.Sal == request.Year)
-        .DefaultIfEmpty()
+                Shomareh = replace != null && replace.FBShomarehNew != null
+                ? replace.FBShomarehNew
+                : fb.Shomareh,
 
-    where fb.BarAvordId == request.BarAvordUserId
-          && fb.NoeFBId == NoeFBId
+                Sal = fb.Sal,
+                NoeFB = fb.NoeFB
+            }).ToListAsync();
 
-    select new FBForGetUserBarAvordDto
-    {
-        ID = fb.ID,
+        var fehrestByMainNumber = lstFehrestBahas
+            .GroupBy(x => x.ShomarehMain.Trim(), StringComparer.Ordinal)
+            .ToDictionary(g => g.Key, g => g.First(), StringComparer.Ordinal);
 
-        BahayeVahedSharh = fb.BahayeVahedSharh,
+        // دریافت FB بدون Join رشته‌ای؛ شماره کامل و پسوندهایی مانند e حفظ می‌شوند.
+        var fbItems = await _context.FBs
+            .AsNoTracking()
+            .Where(fb => fb.BarAvordId == request.BarAvordUserId && fb.NoeFBId == NoeFBId)
+            .Select(fb => new FBForGetUserBarAvordDto
+            {
+                ID = fb.ID,
+                BahayeVahedSharh = fb.BahayeVahedSharh,
+                Shomareh = fb.Shomareh,
+                BahayeVahed = "0",
+                Vahed = null,
+                BahayeVahedNew = fb.BahayeVahedNew,
+                ItemZarib = fb.ItemZarib,
+                SumRizMetre = fb.SumRizMetre
+            })
+            .ToListAsync();
 
-        // شماره واقعی FB حفظ شود
-        Shomareh = fb.Shomareh,
+        fbItems = fbItems
+            .GroupBy(x => x.Shomareh)
+            .Select(g => g.First())
+            .ToList();
 
-        BahayeVahed =
-            fehrestbaha == null
-                ? "0"
-                : fehrestbaha.BahayeVahed != null
-                    ?  fehrestbaha.BahayeVahed.Trim():"0",
-
-        Vahed = fehrestbaha != null
-            ? fehrestbaha.Vahed
-            : null,
-
-        //BahayeVahedZarib = fb.BahayeVahedZarib,
-
-        BahayeVahedNew = fb.BahayeVahedNew,
-
-        ItemZarib = fb.ItemZarib,
-        SumRizMetre = fb.SumRizMetre
-    }
-)
-.GroupBy(x => x.Shomareh)
-.Select(g => g.First())
-.ToListAsync();
+        foreach (var fb in fbItems)
+        {
+            string number = fb.Shomareh;
+            string mainNumber = number.Length >= 6 ? number.Substring(0, 6) : number;
+            if (fehrestByMainNumber.TryGetValue(mainNumber, out var fehrest))
+            {
+                fb.BahayeVahed = fehrest.BahayeVahed?.Trim() ?? "0";
+                fb.Vahed = fehrest.Vahed;
+            }
+        }
 
 
         var replaceDictionary = lstFBItemReplaces
@@ -322,35 +336,22 @@ public class ShowBarAvordCommon
 
         decimal AllZarib = zaribManteghe * zaribBalaSari;
 
-        var lstFehrestBahas =await (
-            from fb in _context.FehrestBahas.AsNoTracking()
-            join replace in _context.FehrestBahaItemsReplaces.AsNoTracking()
-            on fb.Shomareh equals replace.FBShomarehMain into replaces
-            from replace in replaces.DefaultIfEmpty()
-            where fb.Sal == Year
-                && fb.NoeFB == NoeFBId
-            select new
-            {
-                Id = fb.Id,
-                BahayeVahed = fb.BahayeVahed,
-                Vahed = fb.Vahed,
-                Sharh = fb.Sharh,
 
-                ShomarehMain = fb.Shomareh,
-
-                Shomareh = replace != null && replace.FBShomarehNew != null
-                ? replace.FBShomarehNew
-                : fb.Shomareh,
-
-                Sal = fb.Sal,
-                NoeFB = fb.NoeFB
-            }).ToListAsync();
 
         // همان داده جایگزینی که بالاتر دریافت شده، دوباره از دیتابیس خوانده نمی‌شود.
         List<clsFehrestBahaItemsReplace> lstFehrestBahaItemsReplaces = lstFBItemReplaces;
-        List<clsZarayebFosoul> lstZarayebFosouls = await _context.ZarayebFosouls
-            .AsNoTracking()
-            .ToListAsync();
+        var relevantFaslIds = lstFBItemReplaces
+            .Where(x => x.FaslId != null)
+            .Select(x => x.FaslId)
+            .Distinct()
+            .ToList();
+
+        List<clsZarayebFosoul> lstZarayebFosouls = relevantFaslIds.Count == 0
+            ? new List<clsZarayebFosoul>()
+            : await _context.ZarayebFosouls
+                .AsNoTracking()
+                .Where(x => relevantFaslIds.Contains(x.FaslId))
+                .ToListAsync();
 
         // جدول آیتم‌های مرتبط در محدوده سال و نوع فهرست بها فقط یک‌بار خوانده می‌شود.
         // این روش از Query تکراری هر فصل و نیز ساخت IN بزرگ با احتمال عبور از محدودیت پارامترهای SQL Server جلوگیری می‌کند.
@@ -393,31 +394,54 @@ public class ShowBarAvordCommon
             })
             .ToDictionaryAsync(x => x.Shomareh, x => x.SumMeghdar);
 
+        // داده‌های فهرست بها و اقلام ستاره‌دار را یک بار بر اساس کد فصل دسته‌بندی می‌کنیم.
+        static string GetFaslPrefix(string? number) =>
+            string.IsNullOrEmpty(number) ? string.Empty :
+            number.Length >= 2 ? number.Substring(0, 2) : number;
+
+        var fehrestByFaslCode = lstFehrestBahas
+            .GroupBy(x => GetFaslPrefix(x.Shomareh), StringComparer.Ordinal)
+            .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.Ordinal);
+
+        // کلید اتصال دقیقاً معادل شش رقم اول شماره FB پس از اعمال جایگزینی است.
+        var fbByMainNumber = fbItems
+            .GroupBy(x => x.Shomareh.Length >= 6 ? x.Shomareh.Substring(0, 6) : x.Shomareh,
+                StringComparer.Ordinal)
+            .ToDictionary(g => g.Key, g => g.First(), StringComparer.Ordinal);
+
+        var starsByFaslCode = allItemFBStars
+            .GroupBy(x => GetFaslPrefix(x.Shomareh), StringComparer.Ordinal)
+            .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.Ordinal);
+
         foreach (var fasl in Fosoul)
         {
             // اول FBs رو فیلتر و گروه‌بندی کن (در حافظه)
             // سپس FehrestBahas رو از دیتابیس بگیر و join کن در حافظه
-            List<ViewUserBarAvordOutPutDto> userBarAvordOutPut = lstFehrestBahas//_context.FehrestBahas
-                .Where(fehrest => fehrest.Sal == request.Year && fehrest.NoeFB == NoeFBId && fehrest.Shomareh.StartsWith(fasl.Code))
-                .ToList() // انتقال به حافظه
-                .GroupJoin(fbItems,
-                    fehrest => fehrest.Shomareh,
-                    fb => fb.Shomareh.Substring(0, 6),
-                    (fehrest, fbGroup) => new { fehrest, fbItem = fbGroup.FirstOrDefault() })
-                .OrderBy(x => x.fehrest.Shomareh)
-                .Select(x => new ViewUserBarAvordOutPutDto
-                {
-                    ItemFbShomareh = x.fehrest.Shomareh,
-                    ItemFbShomarehMain = x.fehrest.ShomarehMain,
-                    Sharh = x.fehrest.Sharh,
-                    BahayeVahed = x.fehrest.BahayeVahed,
-                    Vahed = x.fehrest.Vahed,
-                    FBId = x.fbItem != null ? x.fbItem.ID : null,
-                    BahayeVahedNew = x.fbItem != null ? x.fbItem.BahayeVahedNew : 0,
-                    ItemZarib = x.fbItem != null ? x.fbItem.ItemZarib : null,
-                    Meghdar = x.fbItem?.SumRizMetre ?? 0m,
-                    RizMetre = new List<ViewUserBarAvordOutPutRizMetreDto>()
-                }).ToList();
+            List<ViewUserBarAvordOutPutDto> userBarAvordOutPut = new List<ViewUserBarAvordOutPutDto>();
+
+            if (fehrestByFaslCode.TryGetValue(fasl.Code, out var chapterFehrestItems))
+            {
+                userBarAvordOutPut = chapterFehrestItems
+                    .Select(fehrest =>
+                    {
+                        fbByMainNumber.TryGetValue(fehrest.Shomareh, out var fbItem);
+                        return new ViewUserBarAvordOutPutDto
+                        {
+                            ItemFbShomareh = fehrest.Shomareh,
+                            ItemFbShomarehMain = fehrest.ShomarehMain,
+                            Sharh = fehrest.Sharh,
+                            BahayeVahed = fehrest.BahayeVahed,
+                            Vahed = fehrest.Vahed,
+                            FBId = fbItem != null ? fbItem.ID : null,
+                            BahayeVahedNew = fbItem != null ? fbItem.BahayeVahedNew : 0,
+                            ItemZarib = fbItem != null ? fbItem.ItemZarib : null,
+                            Meghdar = fbItem?.SumRizMetre ?? 0m,
+                            RizMetre = new List<ViewUserBarAvordOutPutRizMetreDto>()
+                        };
+                    })
+                    .OrderBy(x => x.ItemFbShomareh)
+                    .ToList();
+            }
 
             //ضرایب مربوط به فصول را در سایر ضرایب ضرب میکنیم
             decimal? ZaribFasl = null;
@@ -629,9 +653,9 @@ public class ShowBarAvordCommon
             decimal AllJameFaslStarWithZarib = 0;
 
 
-            List<clsItemFBStar> lstItemFBStars = allItemFBStars
-                .Where(x => x.Shomareh.Substring(0, 2) == fasl.Code)
-                .ToList();
+            List<clsItemFBStar> lstItemFBStars = starsByFaslCode.TryGetValue(fasl.Code, out var chapterStars)
+                ? chapterStars
+                : new List<clsItemFBStar>();
             foreach (var itemFBStarCurrent in lstItemFBStars)
             {
                 decimal ItemZaribStar = itemFBStarCurrent.ItemZaribStar == null ? 1 : itemFBStarCurrent.ItemZaribStar.Value;
