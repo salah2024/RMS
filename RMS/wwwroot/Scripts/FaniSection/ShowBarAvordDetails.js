@@ -688,7 +688,8 @@
             });
         }
 
-        $('#rowFaslNew-' + ItemId).show();
+        // در حالت نمایش مقادیر غیرصفر، امکان درج آیتم ستاره‌دار غیرفعال باشد.
+        $('#rowFaslNew-' + ItemId).toggle(!showOnlyNonZero);
     });
     //function KharidTajhizatChange(Id, blnKharidTajhizat, code)
 
