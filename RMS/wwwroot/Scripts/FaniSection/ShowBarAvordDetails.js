@@ -792,8 +792,11 @@
     } catch (storageError) {
         console.warn('[ShowBarAvord] خواندن وضعیت فیلتر ممکن نشد:', storageError);
     }
-    // اگر قبلاً وضعیت ذخیره شده باشد همان را بازیابی کن؛ در اولین بار فیلتر خاموش است.
-    $nonZeroFilter.prop('checked', savedNonZeroFilterState === '1').trigger('change');
+    // در اولین بارگذاری فیلتر روشن باشد؛ پس از آن آخرین وضعیت انتخاب‌شده کاربر بازیابی شود.
+    const shouldShowOnlyNonZero = savedNonZeroFilterState === null
+        ? true
+        : savedNonZeroFilterState === '1';
+    $nonZeroFilter.prop('checked', shouldShowOnlyNonZero).trigger('change');
     renderPerf.initialFilter = Number((window.performance.now() - initialFilterStartedAt).toFixed(1));
     renderPerf.total = Number((window.performance.now() - renderPerfStartedAt).toFixed(1));
     console.log('[ShowBarAvord][PERF][renderTable stages]', {
