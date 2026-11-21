@@ -246,56 +246,77 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
 
 
 
-        var fbItems = await (
-   from fb in _context.FBs
+        // ابتدا فقط FBهای همین برآورد و نوع فهرست بها را دریافت می‌کنیم.
+        // این کار از اجرای SUBSTRING روی ستون FB و TRIM روی ستون فهرست‌بها در JOIN جلوگیری می‌کند.
+        // شماره کامل FB حفظ می‌شود تا پسوندهایی مانند e از بین نروند.
+        var fbRows = await _context.FBs
+            .AsNoTracking()
+            .Where(fb => fb.BarAvordId == BarAvordId && fb.NoeFBId == NoeFBId)
+            .Select(fb => new
+            {
+                fb.ID,
+                fb.Shomareh,
+                fb.BahayeVahedSharh,
+                fb.BahayeVahedNew,
+                fb.ItemZarib,
+                fb.SumRizMetre
+            })
+            .ToListAsync();
 
-   join fehrestbaha in _context.FehrestBahas
-       on fb.Shomareh.Substring(0, 6)
-       equals fehrestbaha.Shomareh.Trim()
-       into fehrestGroup
+        // فهرست‌بهای سال/نوع جاری یک بار خوانده و در حافظه ایندکس می‌شود.
+        var fehrestRows = await _context.FehrestBahas
+            .AsNoTracking()
+            .Where(x => x.NoeFB == NoeFBId && x.Sal == Year)
+            .Select(x => new
+            {
+                x.Shomareh,
+                x.BahayeVahed,
+                x.Vahed
+            })
+            .ToListAsync();
 
-   from fehrestbaha in fehrestGroup
-       .Where(x =>
-           x.NoeFB == NoeFBId &&
-           x.Sal == Year)
-       .DefaultIfEmpty()
+        var fehrestByMainNumber = new Dictionary<string, (string? BahayeVahed, string? Vahed)>(
+            StringComparer.OrdinalIgnoreCase);
 
-   where fb.BarAvordId == BarAvordId
-         && fb.NoeFBId == NoeFBId
+        foreach (var fehrest in fehrestRows)
+        {
+            var key = fehrest.Shomareh?.Trim();
+            if (!string.IsNullOrEmpty(key) && !fehrestByMainNumber.ContainsKey(key))
+            {
+                fehrestByMainNumber.Add(key, (
+                    string.IsNullOrWhiteSpace(fehrest.BahayeVahed) ? "0" : fehrest.BahayeVahed.Trim(),
+                    fehrest.Vahed));
+            }
+        }
 
-   select new FBForGetUserBarAvordDto
-   {
-       ID = fb.ID,
+        // معادل GroupBy(Shomareh).First() با حفظ اولین رکورد برگشتی از دیتابیس؛
+        // حذف تکراری‌ها قبل از تطبیق باعث جلوگیری از تولید ردیف‌های JOIN اضافی می‌شود.
+        var seenFbNumbers = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var fbItems = new List<FBForGetUserBarAvordDto>(fbRows.Count);
 
-       BahayeVahedSharh = fb.BahayeVahedSharh,
+        foreach (var fb in fbRows)
+        {
+            if (string.IsNullOrEmpty(fb.Shomareh) || !seenFbNumbers.Add(fb.Shomareh))
+                continue;
 
-       // شماره واقعی FB حفظ شود
-       Shomareh = fb.Shomareh,
+            var mainNumber = fb.Shomareh.Length >= 6
+                ? fb.Shomareh[..6]
+                : fb.Shomareh;
 
-       BahayeVahed =
-           fehrestbaha == null
-               ? "0"
-               : fehrestbaha.BahayeVahed != null
-                   ? fehrestbaha.BahayeVahed
-                   : "0",
+            fehrestByMainNumber.TryGetValue(mainNumber, out var fehrest);
 
-       Vahed = fehrestbaha != null
-           ? fehrestbaha.Vahed
-           : null,
-
-       //BahayeVahedZarib = fb.BahayeVahedZarib,
-
-       BahayeVahedNew = fb.BahayeVahedNew,
-
-       ItemZarib = fb.ItemZarib,
-       SumRizMetre = fb.SumRizMetre
-   }
-)
-.GroupBy(x => x.Shomareh)
-.Select(g => g.First())
-.ToListAsync();
-
-
+            fbItems.Add(new FBForGetUserBarAvordDto
+            {
+                ID = fb.ID,
+                BahayeVahedSharh = fb.BahayeVahedSharh,
+                Shomareh = fb.Shomareh,
+                BahayeVahed = fehrest.BahayeVahed ?? "0",
+                Vahed = fehrest.Vahed,
+                BahayeVahedNew = fb.BahayeVahedNew,
+                ItemZarib = fb.ItemZarib,
+                SumRizMetre = fb.SumRizMetre
+            });
+        }
 
 
         //foreach (var item in fbItems)
