@@ -777,7 +777,9 @@
     initRowEvents(RowNew);
 
     const initialFilterStartedAt = window.performance.now();
-    $(`#chkNonZeroMeghdar-${Code}`).click();
+    const $nonZeroFilter = $(`#chkNonZeroMeghdar-${Code}`);
+    // پس از هر بار بارگذاری فصل، فیلتر خاموش باشد تا آیتم‌های تازه درج‌شده نیز دیده شوند.
+    $nonZeroFilter.prop('checked', false).trigger('change');
     renderPerf.initialFilter = Number((window.performance.now() - initialFilterStartedAt).toFixed(1));
     renderPerf.total = Number((window.performance.now() - renderPerfStartedAt).toFixed(1));
     console.log('[ShowBarAvord][PERF][renderTable stages]', {
