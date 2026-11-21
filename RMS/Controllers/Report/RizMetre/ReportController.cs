@@ -184,10 +184,13 @@ namespace RMS.Controllers.Report.RizMetre
                                      NoeFB = FehrestBaha.NoeFB,
                                  }).ToListAsync();
 
+            var itemsByMainCode = allItemsWithRizMetre
+                .Where(x => !string.IsNullOrEmpty(x.ItemShomareh) && x.ItemShomareh.Length >= 6)
+                .ToLookup(x => x.ItemShomareh.Substring(0, 6), StringComparer.Ordinal);
+
             List<RizMetreForReportDto> lstFehrestBahas =
                 (from f in fehrest
-                 join i in allItemsWithRizMetre
-                 on f.Shomareh equals i.ItemShomareh.Substring(0,6)
+                 from i in itemsByMainCode[f.Shomareh ?? string.Empty]
                  where f.Sal == i.Year
                     && f.NoeFB == (NoeFehrestBaha)i.NoeFB
                  select new RizMetreForReportDto
@@ -895,10 +898,13 @@ namespace RMS.Controllers.Report.RizMetre
                                      NoeFB = FehrestBaha.NoeFB,
                                  }).ToListAsync();
 
+            var itemsByMainCode = allItemsWithRizMetre
+                .Where(x => !string.IsNullOrEmpty(x.ItemShomareh) && x.ItemShomareh.Length >= 6)
+                .ToLookup(x => x.ItemShomareh.Substring(0, 6), StringComparer.Ordinal);
+
             List<RizMetreForReportDto> lstFehrestBahas =
                 (from f in fehrest
-                 join i in allItemsWithRizMetre
-                 on f.ShomarehMain equals i.ItemShomareh.Substring(0,6)
+                 from i in itemsByMainCode[f.ShomarehMain ?? string.Empty]
                  where f.Sal == i.Year
                     && f.NoeFB == (NoeFehrestBaha)i.NoeFB
                  select new RizMetreForReportDto
@@ -1082,9 +1088,22 @@ namespace RMS.Controllers.Report.RizMetre
 
 
 
+            // چون سمت اول Join در حافظه است، جایگزین‌ها را با فیلتر سال و نوع فهرست بها
+            // یک‌بار از دیتابیس می‌خوانیم تا کل جدول Replace ناخواسته enumerate نشود.
+            var itemYears = allItemsWithRizMetre.Select(x => x.Year).Distinct().ToArray();
+            var itemNoeFBs = allItemsWithRizMetre
+                .Select(x => (NoeFehrestBaha)x.NoeFB)
+                .Distinct()
+                .ToArray();
+
+            var replacements = await _context.FehrestBahaItemsReplaces
+                .AsNoTracking()
+                .Where(x => itemYears.Contains(x.Year) && itemNoeFBs.Contains(x.NoeFB))
+                .ToListAsync();
+
             var allItemsWithRizMetre1 =
     (from itemRM in allItemsWithRizMetre
-     join replace in _context.FehrestBahaItemsReplaces
+     join replace in replacements
      on new
      {
          FBShomarehMain = itemRM.ItemShomareh,
@@ -1191,10 +1210,13 @@ namespace RMS.Controllers.Report.RizMetre
 
             #region اتصال ریز متره به آیتم
 
+            var itemsByMainCode = allItemsWithRizMetre1
+                .Where(x => !string.IsNullOrEmpty(x.ShomarehMain) && x.ShomarehMain.Length >= 6)
+                .ToLookup(x => x.ShomarehMain.Substring(0, 6), StringComparer.Ordinal);
+
             var items =
                 (from f in fehrest
-                 join r in allItemsWithRizMetre1
-                 on f.ShomarehMain equals r.ShomarehMain.Substring(0,6)
+                 from r in itemsByMainCode[f.ShomarehMain ?? string.Empty]
 
                  where
                      f.NoeFB == (NoeFehrestBaha)r.NoeFB &&
@@ -1440,6 +1462,18 @@ namespace RMS.Controllers.Report.RizMetre
             List<clsTajhizKargahDarsad> lstTajhizKargahDarsad =
                 _context.TajhizKargahDarsads.Where(x => x.BarAvordUserId == barAvordId).ToList();
 
+            // Lookupها جای FirstOrDefaultهای تکراری داخل حلقه‌های گزارش را می‌گیرند.
+            // GroupBy + First رفتار قبلی (اولین رکورد مطابق ترتیب لیست) را حفظ می‌کند.
+            var replaceByNewCode = lstFBItemReplaces
+                .Where(x => x.FBShomarehNew != null)
+                .GroupBy(x => x.FBShomarehNew)
+                .ToDictionary(g => g.Key, g => g.First());
+
+            var tajhizByNoeFB = lstTajhizKargahDarsad
+                .Where(x => x.Meghdar != 0)
+                .GroupBy(x => (int)x.NoeFB)
+                .ToDictionary(g => g.Key, g => g.First());
+
             foreach (var chapter in report)
             {
                 foreach (var chap in chapter.Chapters)
@@ -1447,7 +1481,7 @@ namespace RMS.Controllers.Report.RizMetre
                     string strChapterCode = chap.ChapterCode;
                     foreach (var baseItem in chap.BaseItems)
                     {
-                        clsFehrestBahaItemsReplace? fehrestBahaItemsReplace = lstFBItemReplaces.FirstOrDefault(x => x.FBShomarehNew == baseItem.ItemCode);
+                        replaceByNewCode.TryGetValue(baseItem.ItemCode, out clsFehrestBahaItemsReplace? fehrestBahaItemsReplace);
                         if (fehrestBahaItemsReplace != null)
                         {
                             baseItem.ItemCode = fehrestBahaItemsReplace.FBShomarehMain;
@@ -1457,7 +1491,7 @@ namespace RMS.Controllers.Report.RizMetre
                     }
                     chap.ChapterCode = strChapterCode;
                 }
-                var tajhiz = lstTajhizKargahDarsad.FirstOrDefault(x => (int)x.NoeFB == chapter.NoeFB && x.Meghdar != 0);
+                tajhizByNoeFB.TryGetValue(chapter.NoeFB, out var tajhiz);
                 if (tajhiz != null)
                 {
                     chapter.TajhizKargahAmount = tajhiz.Meghdar;
@@ -1948,9 +1982,22 @@ namespace RMS.Controllers.Report.RizMetre
 
 
 
+            // چون سمت اول Join در حافظه است، جایگزین‌ها را با فیلتر سال و نوع فهرست بها
+            // یک‌بار از دیتابیس می‌خوانیم تا کل جدول Replace ناخواسته enumerate نشود.
+            var itemYears = allItemsWithRizMetre.Select(x => x.Year).Distinct().ToArray();
+            var itemNoeFBs = allItemsWithRizMetre
+                .Select(x => (NoeFehrestBaha)x.NoeFB)
+                .Distinct()
+                .ToArray();
+
+            var replacements = await _context.FehrestBahaItemsReplaces
+                .AsNoTracking()
+                .Where(x => itemYears.Contains(x.Year) && itemNoeFBs.Contains(x.NoeFB))
+                .ToListAsync();
+
             var allItemsWithRizMetre1 =
     (from itemRM in allItemsWithRizMetre
-     join replace in _context.FehrestBahaItemsReplaces
+     join replace in replacements
      on new
      {
          FBShomarehMain = itemRM.ItemShomareh,
@@ -2057,10 +2104,13 @@ namespace RMS.Controllers.Report.RizMetre
 
             #region اتصال ریز متره به آیتم
 
+            var itemsByMainCode = allItemsWithRizMetre1
+                .Where(x => !string.IsNullOrEmpty(x.ShomarehMain) && x.ShomarehMain.Length >= 6)
+                .ToLookup(x => x.ShomarehMain.Substring(0, 6), StringComparer.Ordinal);
+
             var items =
                 (from f in fehrest
-                 join r in allItemsWithRizMetre1
-                 on f.ShomarehMain equals r.ShomarehMain.Substring(0, 6)
+                 from r in itemsByMainCode[f.ShomarehMain ?? string.Empty]
 
                  where
                      f.NoeFB == (NoeFehrestBaha)r.NoeFB &&
@@ -2283,6 +2333,18 @@ namespace RMS.Controllers.Report.RizMetre
             List<clsTajhizKargahDarsad> lstTajhizKargahDarsad =
                 _context.TajhizKargahDarsads.Where(x => x.BarAvordUserId == BarAvordId).ToList();
 
+            // Lookupها جای FirstOrDefaultهای تکراری داخل حلقه‌های گزارش را می‌گیرند.
+            // GroupBy + First رفتار قبلی (اولین رکورد مطابق ترتیب لیست) را حفظ می‌کند.
+            var replaceByNewCode = lstFBItemReplaces
+                .Where(x => x.FBShomarehNew != null)
+                .GroupBy(x => x.FBShomarehNew)
+                .ToDictionary(g => g.Key, g => g.First());
+
+            var tajhizByNoeFB = lstTajhizKargahDarsad
+                .Where(x => x.Meghdar != 0)
+                .GroupBy(x => (int)x.NoeFB)
+                .ToDictionary(g => g.Key, g => g.First());
+
             foreach (var chapter in report)
             {
                 foreach (var chap in chapter.Chapters)
@@ -2290,7 +2352,7 @@ namespace RMS.Controllers.Report.RizMetre
                     string strChapterCode = chap.ChapterCode;
                     foreach (var baseItem in chap.BaseItems)
                     {
-                        clsFehrestBahaItemsReplace? fehrestBahaItemsReplace = lstFBItemReplaces.FirstOrDefault(x => x.FBShomarehNew == baseItem.ItemCode);
+                        replaceByNewCode.TryGetValue(baseItem.ItemCode, out clsFehrestBahaItemsReplace? fehrestBahaItemsReplace);
                         if (fehrestBahaItemsReplace != null)
                         {
                             baseItem.ItemCode = fehrestBahaItemsReplace.FBShomarehMain;
@@ -2300,7 +2362,7 @@ namespace RMS.Controllers.Report.RizMetre
                     }
                     chap.ChapterCode = strChapterCode;
                 }
-                var tajhiz = lstTajhizKargahDarsad.FirstOrDefault(x => (int)x.NoeFB == chapter.NoeFB && x.Meghdar != 0);
+                tajhizByNoeFB.TryGetValue(chapter.NoeFB, out var tajhiz);
                 if (tajhiz != null)
                 {
                     chapter.TajhizKargahAmount = tajhiz.Meghdar;
@@ -2397,10 +2459,13 @@ namespace RMS.Controllers.Report.RizMetre
             //                         NoeFB = FehrestBaha.NoeFB,
             //                     }).ToListAsync();
 
+            var itemsByMainCode = allItemsWithRizMetre
+                .Where(x => !string.IsNullOrEmpty(x.ItemShomareh) && x.ItemShomareh.Length >= 6)
+                .ToLookup(x => x.ItemShomareh.Substring(0, 6), StringComparer.Ordinal);
+
             List<RizMetreForReportDto> lstFehrestBahas =
                 (from f in fehrest
-                 join i in allItemsWithRizMetre
-                 on f.ShomarehMain equals i.ItemShomareh.Substring(0, 6)
+                 from i in itemsByMainCode[f.ShomarehMain ?? string.Empty]
                  where f.Sal == i.Year
                     && f.NoeFB == (NoeFehrestBaha)i.NoeFB
                  select new RizMetreForReportDto
