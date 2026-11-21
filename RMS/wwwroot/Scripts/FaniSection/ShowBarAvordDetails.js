@@ -650,9 +650,17 @@
 
     //convertNumbersInPage();
 
+    // وضعیت فیلتر برای هر برآورد و هر فصل، بین بارگذاری‌های مجدد حفظ شود.
+    const nonZeroFilterStorageKey = 'showBarAvordNonZeroFilter:' + $('#HDFBarAvordUserID').val() + ':' + Code;
+
     $('[id^="chkNonZeroMeghdar-"]').off('change').on('change', function () {
 
         const showOnlyNonZero = $(this).is(':checked');
+        try {
+            localStorage.setItem(nonZeroFilterStorageKey, showOnlyNonZero ? '1' : '0');
+        } catch (storageError) {
+            console.warn('[ShowBarAvord] ذخیره وضعیت فیلتر ممکن نشد:', storageError);
+        }
             isOneRowFilledRizMetre = false;
         $(`#barAvordContainer-${ItemId} .main-row`).each(function () {
 
@@ -778,8 +786,14 @@
 
     const initialFilterStartedAt = window.performance.now();
     const $nonZeroFilter = $(`#chkNonZeroMeghdar-${Code}`);
-    // پس از هر بار بارگذاری فصل، فیلتر خاموش باشد تا آیتم‌های تازه درج‌شده نیز دیده شوند.
-    $nonZeroFilter.prop('checked', false).trigger('change');
+    let savedNonZeroFilterState = null;
+    try {
+        savedNonZeroFilterState = localStorage.getItem(nonZeroFilterStorageKey);
+    } catch (storageError) {
+        console.warn('[ShowBarAvord] خواندن وضعیت فیلتر ممکن نشد:', storageError);
+    }
+    // اگر قبلاً وضعیت ذخیره شده باشد همان را بازیابی کن؛ در اولین بار فیلتر خاموش است.
+    $nonZeroFilter.prop('checked', savedNonZeroFilterState === '1').trigger('change');
     renderPerf.initialFilter = Number((window.performance.now() - initialFilterStartedAt).toFixed(1));
     renderPerf.total = Number((window.performance.now() - renderPerfStartedAt).toFixed(1));
     console.log('[ShowBarAvord][PERF][renderTable stages]', {
