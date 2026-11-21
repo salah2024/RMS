@@ -283,8 +283,10 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
             var key = fehrest.Shomareh?.Trim();
             if (!string.IsNullOrEmpty(key) && !fehrestByMainNumber.ContainsKey(key))
             {
+                // مقدار بهای واحد دقیقاً مطابق Query قبلی نگه داشته می‌شود:
+                // فقط NULL به "0" تبدیل می‌شود و رشته خالی/فاصله‌دار دست‌کاری نمی‌شود.
                 fehrestByMainNumber.Add(key, (
-                    string.IsNullOrWhiteSpace(fehrest.BahayeVahed) ? "0" : fehrest.BahayeVahed.Trim(),
+                    fehrest.BahayeVahed ?? "0",
                     fehrest.Vahed));
             }
         }
