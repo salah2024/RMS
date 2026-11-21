@@ -46,13 +46,13 @@
     var index = 0;
     data.forEach((item) => {
 
-
-        var Field0 = item.itemsFields[0] == undefined ? "" : item.itemsFields[0].vahed;
-        var Field1 = item.itemsFields[1] == undefined ? "" : item.itemsFields[1].vahed;
-        var Field2 = item.itemsFields[2] == undefined ? "" : item.itemsFields[2].vahed;
-        var Field3 = item.itemsFields[3] == undefined ? "" : item.itemsFields[3].vahed;
-        var Field4 = item.itemsFields[4] == undefined ? "" : item.itemsFields[4].vahed;
-        var Field5 = item.itemsFields[5] == undefined ? "" : item.itemsFields[5].vahed;
+        const itemFields = Array.isArray(item.itemsFields) ? item.itemsFields : [];
+        var Field0 = itemFields[0] == undefined ? "" : itemFields[0].vahed;
+        var Field1 = itemFields[1] == undefined ? "" : itemFields[1].vahed;
+        var Field2 = itemFields[2] == undefined ? "" : itemFields[2].vahed;
+        var Field3 = itemFields[3] == undefined ? "" : itemFields[3].vahed;
+        var Field4 = itemFields[4] == undefined ? "" : itemFields[4].vahed;
+        var Field5 = itemFields[5] == undefined ? "" : itemFields[5].vahed;
 
         const rizId = `riz-${ItemId}-${index}`;
         const clickableClass = 'clickable-row table-active';
@@ -126,7 +126,7 @@
         if (Array.isArray(item.rizMetre) && item.rizMetre.length > 0) {
             rizRowsHtml += item.rizMetre.map(riz =>
                 `
-		<tr class="riz-row-data" data-id="${riz.id}" data-itemsFields='${JSON.stringify(item.itemsFields).replace(/"/g, '&quot;')}'
+		<tr class="riz-row-data" data-id="${riz.id}" data-itemsFields='${JSON.stringify(itemFields).replace(/"/g, '&quot;')}'
                 onclick="EditRizMetreRow(this,'${riz.id}','${item.itemFbShomareh}','${rizId}','${item.fbId}','${Code}')" style="cursor:pointer;">
 		<td style="text-align:center;width:4%">${riz.shomarehNew == null ? '' : toPersianDigits(riz.shomarehNew)}</td>
         <td style="text-align:center;width:6%"><span>${toPersianDigits(riz.tajmieItem)}</span></td>
@@ -146,7 +146,7 @@
         }
 
 
-        field = item.itemsFields;
+        const field = itemFields;
         const defaultField = { id: null, itemShomareh: item.itemShomareh || '', fieldType: null, vahed: '', isEnteringValue: false, essentialValue: false };
 
         const getField = (i) => (i >= 0 && i < field.length ? field[i] : defaultField);
@@ -319,6 +319,7 @@
 
     Stars.forEach((item) => {
 
+        const itemFields = Array.isArray(item.itemsFields) ? item.itemsFields : [];
         currentId = item.id;
 
         const rizId = `riz-${currentId}-${index}`;
@@ -373,7 +374,7 @@
         if (Array.isArray(item.rizMetre) && item.rizMetre.length > 0) {
             rizRowsHtmlStar += item.rizMetre.map(riz =>
                 `
-		<tr class="riz-row-data" data-id="${riz.id}" data-itemsFields='${JSON.stringify(item.itemsFields).replace(/"/g, '&quot;')}'
+		<tr class="riz-row-data" data-id="${riz.id}" data-itemsFields='${JSON.stringify(itemFields).replace(/"/g, '&quot;')}'
         onclick="EditRizMetreRowStar(this,'${riz.id}','${item.shomareh}','${rizId}','${Code}')" style="cursor:pointer;">
 		<td style="text-align:center;width:4%">${riz.shomarehNew == null ? '' : toPersianDigits(riz.shomarehNew)}</td>
 		<td style="text-align:center;width:6%">
