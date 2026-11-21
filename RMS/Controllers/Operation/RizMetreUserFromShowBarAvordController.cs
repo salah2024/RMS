@@ -471,6 +471,7 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
         userBarAvordOutPutFiltered = barAvordOnlyInFbItems
             .Concat(userBarAvordOutPutFiltered)
             .OrderBy(x => x.ItemFbShomareh)
+            .DistinctBy(x => x.FBId)
             .ToList();
 
         List<string> lstItemFbShomarehs = userBarAvordOutPut.Select(x => x.ItemFbShomareh).Distinct().ToList();

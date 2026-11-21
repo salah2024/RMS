@@ -995,6 +995,7 @@ public class RizMetreCommon
             lstuserBarAvordOutPut = lstuserBarAvordOutPut
             .Concat(barAvordOnlyInFbItems)
             .OrderBy(x => x.ItemFbShomareh)
+            .DistinctBy(x => x.FBId)
             .ToList();
 
 
