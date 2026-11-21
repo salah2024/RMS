@@ -1411,54 +1411,79 @@ public class RizMetreCommon
                     //    .ToListAsync();
 
 
-                    var fbItems = await (
-                    from fb in _context.FBs.AsNoTracking()
+                    // ابتدا فقط FBهای همین برآورد/نوع را می‌خوانیم؛
+                    // از اجرای SUBSTRING روی ستون FB و TRIM روی ستون فهرست‌بها در JOIN جلوگیری می‌شود.
+                    // شماره کامل FB نگه داشته می‌شود تا پسوندهایی مانند e از بین نروند.
+                    var fbRows = await _context.FBs
+                        .AsNoTracking()
+                        .Where(fb => fb.BarAvordId == BarAvordId && fb.NoeFBId == NoeFBId)
+                        .Select(fb => new
+                        {
+                            fb.ID,
+                            fb.Shomareh,
+                            fb.BahayeVahedSharh,
+                            fb.BahayeVahedNew,
+                            fb.ItemZarib,
+                            fb.SumRizMetre
+                        })
+                        .ToListAsync();
 
-                    join fehrestbaha in _context.FehrestBahas
-                       on fb.Shomareh.Substring(0, 6)
-                       equals fehrestbaha.Shomareh.Trim()
-                       into fehrestGroup
+                    // فهرست بها در هر سال/نوع حدود ۱۰هزار رکورد دارد.
+                    // یک بار خواندن این مجموعه و ساخت Lookup در حافظه، از JOIN غیرقابل‌ایندکس
+                    // روی SUBSTRING/TRIM سریع‌تر و قابل‌پیش‌بینی‌تر است.
+                    var fehrestRows = await _context.FehrestBahas
+                        .AsNoTracking()
+                        .Where(x => x.NoeFB == NoeFBId && x.Sal == Year)
+                        .Select(x => new
+                        {
+                            x.Shomareh,
+                            x.BahayeVahed,
+                            x.Vahed
+                        })
+                        .ToListAsync();
 
-                    from fehrestbaha in fehrestGroup
-                       .Where(x =>
-                           x.NoeFB == NoeFBId &&
-                           x.Sal == request.Year)
-                       .DefaultIfEmpty()
+                    var fehrestByMainNumber = new Dictionary<string, (string? BahayeVahed, string? Vahed)>(
+                        StringComparer.OrdinalIgnoreCase);
 
-                    where fb.BarAvordId == request.BarAvordId
-                         && fb.NoeFBId == NoeFBId
-
-                    select new FBForGetUserBarAvordDto
+                    foreach (var fehrest in fehrestRows)
                     {
-                        ID = fb.ID,
-
-                        BahayeVahedSharh = fb.BahayeVahedSharh,
-
-                        // شماره واقعی FB حفظ شود
-                        Shomareh = fb.Shomareh,
-
-                        BahayeVahed =
-                           fehrestbaha == null
-                               ? "0"
-                               : fehrestbaha.BahayeVahed != null
-                                   ? fehrestbaha.BahayeVahed.Trim()
-                                   : "0",
-
-                        Vahed = fehrestbaha != null
-                           ? fehrestbaha.Vahed
-                           : null,
-
-                        //BahayeVahedZarib = fb.BahayeVahedZarib,
-
-                        BahayeVahedNew = fb.BahayeVahedNew,
-
-                        ItemZarib = fb.ItemZarib,
-                        SumRizMetre = fb.SumRizMetre
+                        var key = fehrest.Shomareh?.Trim();
+                        if (!string.IsNullOrEmpty(key) && !fehrestByMainNumber.ContainsKey(key))
+                        {
+                            fehrestByMainNumber.Add(key, (
+                                string.IsNullOrWhiteSpace(fehrest.BahayeVahed) ? "0" : fehrest.BahayeVahed.Trim(),
+                                fehrest.Vahed));
+                        }
                     }
-                    )
-                    .GroupBy(x => x.Shomareh)
-                    .Select(g => g.First())
-                    .ToListAsync();
+
+                    // حذف FBهای تکراری بر اساس شماره کامل، پیش از تطبیق با فهرست‌بها؛
+                    // در نتیجه رکوردهای JOIN تکراری اصلاً تولید نمی‌شوند.
+                    var seenFbNumbers = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                    var fbItems = new List<FBForGetUserBarAvordDto>(fbRows.Count);
+
+                    foreach (var fb in fbRows)
+                    {
+                        if (string.IsNullOrEmpty(fb.Shomareh) || !seenFbNumbers.Add(fb.Shomareh))
+                            continue;
+
+                        var mainNumber = fb.Shomareh.Length >= 6
+                            ? fb.Shomareh[..6]
+                            : fb.Shomareh;
+
+                        fehrestByMainNumber.TryGetValue(mainNumber, out var fehrest);
+
+                        fbItems.Add(new FBForGetUserBarAvordDto
+                        {
+                            ID = fb.ID,
+                            BahayeVahedSharh = fb.BahayeVahedSharh,
+                            Shomareh = fb.Shomareh,
+                            BahayeVahed = fehrest.BahayeVahed ?? "0",
+                            Vahed = fehrest.Vahed,
+                            BahayeVahedNew = fb.BahayeVahedNew,
+                            ItemZarib = fb.ItemZarib,
+                            SumRizMetre = fb.SumRizMetre
+                        });
+                    }
 
                     //foreach (var item in fbItems)
                     //{
@@ -1624,122 +1649,103 @@ public class RizMetreCommon
             .GroupBy(x => x.ItemFbShomareh.Trim())
             .ToDictionary(g => g.Key, g => g.First());
 
+                    // قیمت آیتم‌های مرتبط را در صورت نیاز یک بار محاسبه می‌کنیم؛
+                    // تا برای هر آیتم وابسته، مقدار بهای واحد آیتم مرجع دوباره Parse نشود.
+                    var relatedUnitPriceCache = new Dictionary<string, long>(StringComparer.Ordinal);
+
                     foreach (var item in userBarAvordOutPutFiltered)
                     {
-                        decimal ItemZarib = (item.ItemZarib == null || item.ItemZarib == 0) ? 1 : item.ItemZarib.Value;
-                        decimal Meghdar = blnCheckUsePercent && item.ItemFbShomareh.Substring(0, 2) == "99"
+                        var itemNumber = item.ItemFbShomareh?.Trim() ?? string.Empty;
+                        var isPercentItem = itemNumber.Length >= 2 &&
+                                            itemNumber[0] == '9' && itemNumber[1] == '9';
+
+                        decimal itemZarib = item.ItemZarib.GetValueOrDefault();
+                        if (itemZarib == 0)
+                            itemZarib = 1;
+
+                        decimal meghdar = blnCheckUsePercent && isPercentItem
                             ? 0m
                             : item.Meghdar;
 
-                        if (Meghdar != 0)
+                        if (meghdar == 0)
+                            continue;
+
+                        decimal dBVahed;
+                        decimal dBahayeKol = 0m;
+
+                        if (relatedItemsByNumber.TryGetValue(itemNumber, out var relatedItem))
                         {
-                            decimal dBVahed = 0;// item.BahayeVahedNew != 0 ? item.BahayeVahedNew : item.BahayeVahed == null || item.BahayeVahed == "" ? 0 : decimal.Parse(item.BahayeVahed);
-                            decimal dBahayeKol = 0;
+                            var relatedNumber = relatedItem.ItemShomareh?.Trim() ?? string.Empty;
 
-
-                            relatedItemsByNumber.TryGetValue(item.ItemFbShomareh.Trim(), out var BVItemsRelated);
-                            if (BVItemsRelated != null)
+                            if (outputItemsByNumber.TryGetValue(relatedNumber, out var referenceItem))
                             {
-                                outputItemsByNumber.TryGetValue(BVItemsRelated.ItemShomareh.Trim(), out var barAvordInFehrest1);
-                                if (barAvordInFehrest1 != null)
+                                if (!relatedUnitPriceCache.TryGetValue(relatedNumber, out var referenceUnitPrice))
                                 {
-                                    long BahayeVahed1 = barAvordInFehrest1.BahayeVahedNew != 0 ? barAvordInFehrest1.BahayeVahedNew :
-                                        (barAvordInFehrest1.BahayeVahed == null || barAvordInFehrest1.BahayeVahed == "") ? 0 : long.Parse(barAvordInFehrest1.BahayeVahed);
-                                    item.BahayeVahed = (BVItemsRelated.Value * BahayeVahed1).ToString("G0");
+                                    referenceUnitPrice = referenceItem.BahayeVahedNew != 0
+                                        ? referenceItem.BahayeVahedNew
+                                        : string.IsNullOrWhiteSpace(referenceItem.BahayeVahed)
+                                            ? 0L
+                                            : long.Parse(referenceItem.BahayeVahed);
+
+                                    relatedUnitPriceCache[relatedNumber] = referenceUnitPrice;
                                 }
+
+                                item.BahayeVahed = (relatedItem.Value * referenceUnitPrice).ToString("G0");
                             }
+                        }
 
+                        if (item.BahayeVahedNew != 0)
+                        {
+                            dBVahed = item.BahayeVahedNew;
+                            dBahayeKol = meghdar * dBVahed * itemZarib;
+                            JameFaslWithoutBahaVahed += dBahayeKol;
 
-                            if (item.BahayeVahedNew != 0)
+                            if (!(zaribBalaSari == 0 && zaribBalaSari == 0))
                             {
-                                dBVahed = item.BahayeVahedNew;
-                                dBahayeKol = Meghdar * dBVahed * ItemZarib;
-                                JameFaslWithoutBahaVahed += dBahayeKol;
-
-                                if (zaribBalaSari == 0 && zaribBalaSari == 0)
+                                if (faslZaribByItemNumber.TryGetValue(itemNumber, out var currentFaslZarib))
                                 {
+                                    decimal newZaribBalaSari = currentFaslZarib.ZaribBalaSari ?? zaribBalaSari;
+                                    decimal newZaribManteghe = currentFaslZarib.ZaribManteghe ?? zaribManteghe;
 
+                                    JameFaslWithoutBahaVahedWithZarib += isPercentItem
+                                        ? dBahayeKol
+                                        : dBahayeKol * newZaribBalaSari * newZaribManteghe;
                                 }
                                 else
                                 {
-                                    if (faslZaribByItemNumber.TryGetValue(item.ItemFbShomareh, out var currentFaslZarib))
-                                    {
-                                        
-
-                                        decimal newZaribBalaSari = currentFaslZarib.ZaribBalaSari == null ? zaribBalaSari : currentFaslZarib.ZaribBalaSari.Value;
-                                        decimal newZaribManteghe = currentFaslZarib.ZaribManteghe == null ? zaribManteghe : currentFaslZarib.ZaribManteghe.Value;
-
-                                        if (item.ItemFbShomareh.Substring(0, 2) != "99")
-                                        {
-                                            JameFaslWithoutBahaVahedWithZarib += dBahayeKol * newZaribBalaSari * newZaribManteghe;
-                                        }
-                                        else
-                                            JameFaslWithoutBahaVahedWithZarib += dBahayeKol;
-
-                                    }
-                                    else
-                                    {
-                                        if (item.ItemFbShomareh.Substring(0, 2) != "99")
-                                        {
-                                            JameFaslWithoutBahaVahedWithZarib += dBahayeKol * AllZarib; //zaribBalaSari * zaribManteghe;
-                                        }
-                                        else
-                                            JameFaslWithoutBahaVahedWithZarib += dBahayeKol;
-
-                                    }
+                                    JameFaslWithoutBahaVahedWithZarib += isPercentItem
+                                        ? dBahayeKol
+                                        : dBahayeKol * AllZarib;
                                 }
                             }
-                            else
+                        }
+                        else if (!string.IsNullOrWhiteSpace(item.BahayeVahed))
+                        {
+                            dBVahed = decimal.Parse(item.BahayeVahed);
+                            dBahayeKol = meghdar * dBVahed * itemZarib;
+                            JameFasl += dBahayeKol;
+
+                            if (!(zaribBalaSari == 0 && zaribBalaSari == 0))
                             {
-                                if (item.BahayeVahed == null || item.BahayeVahed == "")
+                                if (faslZaribByItemNumber.TryGetValue(itemNumber, out var currentFaslZarib))
                                 {
-                                    dBVahed = 0;
+                                    decimal newZaribBalaSari = currentFaslZarib.ZaribBalaSari ?? zaribBalaSari;
+                                    decimal newZaribManteghe = currentFaslZarib.ZaribManteghe ?? zaribManteghe;
+
+                                    JameFaslInZarib += isPercentItem
+                                        ? dBahayeKol
+                                        : dBahayeKol * newZaribBalaSari * newZaribManteghe;
                                 }
                                 else
                                 {
-                                    dBVahed = decimal.Parse(item.BahayeVahed);
-
-                                    //item.Meghdar = Meghdar;
-                                    dBahayeKol = Meghdar * dBVahed * ItemZarib;
-                                    //item.BahayeKol = dBahayeKol;
-                                    JameFasl += dBahayeKol;
-
-                                    if (zaribBalaSari == 0 && zaribBalaSari == 0)
-                                    {
-
-                                    }
-                                    else
-                                    {
-                                        if (faslZaribByItemNumber.TryGetValue(item.ItemFbShomareh, out var currentFaslZarib))
-                                        {
-                                            
-
-                                            decimal newZaribBalaSari = currentFaslZarib.ZaribBalaSari == null ? zaribBalaSari : currentFaslZarib.ZaribBalaSari.Value;
-                                            decimal newZaribManteghe = currentFaslZarib.ZaribManteghe == null ? zaribManteghe : currentFaslZarib.ZaribManteghe.Value;
-
-                                            if (item.ItemFbShomareh.Substring(0, 2) != "99")
-                                            {
-                                                JameFaslInZarib += dBahayeKol * newZaribBalaSari * newZaribManteghe;
-                                            }
-                                            else
-                                                JameFaslInZarib += dBahayeKol;
-
-                                        }
-                                        else
-                                        {
-                                            if (item.ItemFbShomareh.Substring(0, 2) != "99")
-                                            {
-                                                JameFaslInZarib += dBahayeKol * zaribBalaSari * zaribManteghe;
-                                            }
-                                            else
-                                                JameFaslInZarib += dBahayeKol;
-
-                                        }
-                                    }
+                                    JameFaslInZarib += isPercentItem
+                                        ? dBahayeKol
+                                        : dBahayeKol * zaribBalaSari * zaribManteghe;
                                 }
                             }
                         }
                     }
+
                     JameFaslAll += JameFasl;
                     JameFaslInZaribAll += JameFaslInZarib;
 
