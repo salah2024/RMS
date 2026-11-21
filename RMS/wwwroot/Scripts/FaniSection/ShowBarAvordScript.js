@@ -221,6 +221,10 @@ function GetJamFosoulAll() {
             $('#tdjameFaslAllBaZarib-101').html(formatNumber(jameFaslKolWithOutTajhizInZarib.toFixed(0)));
             $('#tdjameFaslAllBaZarib-102').html(formatNumber(jameFaslKolInZarib.toFixed(0)));
 
+            // جمع ردیف‌های 101 و 102 در همین پاسخ AJAX تکمیل می‌شود؛
+            // پس فیلتر باید بعد از به‌روزرسانی آن‌ها دوباره اعمال شود.
+            applyNonZeroMeghdarFaslFilter();
+
             if (check.check) {
                 let des = check.des;
                 str = `
@@ -323,6 +327,43 @@ function LoadDarsadTajhizKargah() {
     });
 }
 
+
+function applyNonZeroMeghdarFaslFilter() {
+    const showOnlyNonZero = $('#chkNonZeroMeghdarFasl').is(':checked');
+    let hasNonZeroRow = false;
+
+    $('#fosoulTable tbody tr').each(function () {
+        const $row = $(this);
+        const $sumCell = $row.find('[id^="tdjameFaslAllBaZarib-"]');
+
+        // فقط ردیف‌های اصلی فصل دارای این سلول هستند؛ ردیف جزئیات بررسی نمی‌شود.
+        if (!$sumCell.length) return;
+
+        if (!showOnlyNonZero) {
+            $row.show();
+            return;
+        }
+
+        const rawValue = $sumCell.text()
+            .replace(/\s+/g, '')
+            .replace(/[٬,]/g, '');
+        const normalizedValue = convertPersianToEnglish(rawValue);
+        const amount = normalizedValue !== '' ? parseFloat(normalizedValue) : 0;
+        const hasAmount = Number.isFinite(amount) && amount !== 0;
+
+        $row.toggle(hasAmount);
+        if (hasAmount) hasNonZeroRow = true;
+    });
+
+    // اگر هیچ فصلی مقدار نداشت، رفتار قبلی حفظ شود و همه ردیف‌ها نمایش داده شوند.
+    if (showOnlyNonZero && !hasNonZeroRow) {
+        $('#fosoulTable tbody tr').each(function () {
+            if ($(this).find('[id^="tdjameFaslAllBaZarib-"]').length) {
+                $(this).show();
+            }
+        });
+    }
+}
 
 function renderTableFosoul(data) {
 
@@ -446,65 +487,7 @@ function renderTableFosoul(data) {
             }
         });
 
-        $('#chkNonZeroMeghdarFasl').off('change').on('change', function () {
 
-            isOneRowFilled = false;
-
-            const showOnlyNonZero = $(this).is(':checked');
-            // همه‌ی ردیف‌های اصلی (نه ردیف دوم مربوط به barAvordContainer)
-            $('#fosoulTable tbody tr').each(function () {
-
-
-                const $row = $(this);
-
-                const tdjameFaslAllBaZarib = $row.find('[id^="tdjameFaslAllBaZarib-"]');
-
-                if (tdjameFaslAllBaZarib.length > 0) {
-
-                    let jameFaslAllBaZarib = tdjameFaslAllBaZarib.text().replace(/\s+/g, '').replace(/[٬,]/g, '');
-
-                    let EnNumjameFaslAllBaZarib = convertPersianToEnglish(jameFaslAllBaZarib);
-
-                    const jameFaslAllBaZarib1 = EnNumjameFaslAllBaZarib != "" ? parseFloat(EnNumjameFaslAllBaZarib) : 0;
-
-                    if (showOnlyNonZero) {
-
-                        if (jameFaslAllBaZarib1 === 0) {
-                            $row.hide(); // مخفی‌سازی ردیف اصلی
-
-                        } else {
-                            $row.show();
-                            isOneRowFilled = true;
-                        }
-                    } else {
-                        $row.show();
-
-                    }
-                }
-            });
-
-            if (!isOneRowFilled) {
-                $('#fosoulTable tbody tr').each(function () {
-
-
-                    const $row = $(this);
-
-                    const tdjameFaslAllBaZarib = $row.find('[id^="tdjameFaslAllBaZarib-"]');
-
-                    if (tdjameFaslAllBaZarib.length > 0) {
-
-                        let jameFaslAllBaZarib = tdjameFaslAllBaZarib.text().replace(/\s+/g, '').replace(/[٬,]/g, '');
-
-                        let EnNumjameFaslAllBaZarib = convertPersianToEnglish(jameFaslAllBaZarib);
-
-                        const jameFaslAllBaZarib1 = EnNumjameFaslAllBaZarib != "" ? parseFloat(EnNumjameFaslAllBaZarib) : 0;
-
-                        $row.show();
-                        
-                    }
-                });
-            }
-        });
 
         tbody.append(mainRow);
 
@@ -543,7 +526,15 @@ function renderTableFosoul(data) {
     else
         GetJamFosoulAll();
 
-    $('#chkNonZeroMeghdarFasl').click();
+    // رویداد فقط یک بار و به‌صورت namespaceدار ثبت شود؛ کلیک برنامه‌ای
+    // روی checkbox باعث تغییر ناخواسته وضعیت checked نمی‌شود.
+    $('#chkNonZeroMeghdarFasl')
+        .off('change.nonZeroFasl')
+        .on('change.nonZeroFasl', applyNonZeroMeghdarFaslFilter);
+
+    // فیلتر اولیه؛ مقادیر نهایی جمع‌ها ممکن است در پاسخ AJAX تکمیل شوند.
+    $('#chkNonZeroMeghdarFasl').prop('checked', true);
+    applyNonZeroMeghdarFaslFilter();
 
 
 }
