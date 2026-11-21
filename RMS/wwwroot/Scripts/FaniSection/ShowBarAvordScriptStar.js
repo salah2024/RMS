@@ -365,9 +365,11 @@ function SaveRMUStarClick(object, Shomareh, rizId, Code) {
 
                     GetCurrentRizMetreItemFBStar(Shomareh, rizId, Code);
 
-
-
                     toastr.success('ریزه متره جدید بدرستی درج گردید', 'موفقیت');
+                }
+                else if (info[0] == "NOK")
+                {
+                    toastr.info('کد فعالیت مربوطه در آیتم های تجمیعی یافت نشد، در صورت عدم نیاز کد فعالیت وارد نشود', 'هشدار');
                 }
                 else
                     toastr.info('مشکل در درج ریزه متره جدید', 'اطلاع');
