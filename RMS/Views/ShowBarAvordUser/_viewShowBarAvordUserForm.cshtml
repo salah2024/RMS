@@ -44,7 +44,7 @@
 
 
 <script src="~/Scripts/FaniSection/ShowBarAvordScript.js"></script>
-<script src="~/Scripts/FaniSection/ShowBarAvordDetails.js"></script>
+
 
 
 <link rel="stylesheet" href="~/Scripts/SelfStyle/FosoulDesStyle.css" />
@@ -55,6 +55,11 @@
 
 
 		$(document).ready(function () {
+			// فایل جزئیات از ابتدای آماده‌شدن صفحه دریافت شود؛ کلیک فصل منتظر دانلود آن نمی‌ماند.
+			ensureShowBarAvordAsset("detail").catch(function (error) {
+				console.error("ShowBarAvordDetails.js preload failed:", error);
+			});
+
 			  GetViewBag();
 
 
