@@ -736,6 +736,14 @@ public class ConditionCaseCommon
 
     public async Task<ConditionCaseCommonCaseResultDto> Case2(ConditionCaseCommonCase1Dto Request, ApplicationDbContext _context)
     {
+        // رکوردهایی که در همین DbContext برای حذف علامت‌گذاری شده‌اند،
+        // تا قبل از SaveChanges هنوز در خروجی کوئری دیتابیس دیده می‌شوند.
+        var deletedRizMetreUserIds = _context.ChangeTracker
+            .Entries<clsRizMetreUsers>()
+            .Where(entry => entry.State == EntityState.Deleted)
+            .Select(entry => entry.Entity.ID)
+            .ToHashSet();
+
         string strFinalWorking = Request.strFinalWorking;
         string strFinalWorking1 = "";
         string strFinalWorking2 = "";
@@ -1702,6 +1710,14 @@ public class ConditionCaseCommon
 
     public async Task<ConditionCaseCommonCaseResultDto> Case15(ConditionCaseCommonCase1Dto Request, ApplicationDbContext _context)
     {
+        // رکوردهایی که در همین DbContext برای حذف علامت‌گذاری شده‌اند،
+        // تا قبل از SaveChanges هنوز در خروجی کوئری دیتابیس دیده می‌شوند.
+        var deletedRizMetreUserIds = _context.ChangeTracker
+            .Entries<clsRizMetreUsers>()
+            .Where(entry => entry.State == EntityState.Deleted)
+            .Select(entry => entry.Entity.ID)
+            .ToHashSet();
+
         string strFinalWorking = Request.strFinalWorking;
         string strCondition = Request.strCondition;
         string strItemsFBShomareh = Request.strItemsFBShomareh;
