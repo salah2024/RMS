@@ -8008,6 +8008,20 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                     rizMetreUsersBase.Ertefa = rizMetreUsersHistory.Ertefa;
                     rizMetreUsersBase.MeghdarJoz = rizMetreUsersHistory.MeghdarJoz;
                     rizMetreUsersBase.Des = rizMetreUsersHistory.Des;
+
+                    if (rizMetreUsersBase.Type != "3")
+                    {
+                        HamlCommon.UpdateHaml(new UpdateHamlDto
+                        {
+                            BarAvordId = BarAvordId,
+                            FBShomareh = rizMetreUsersBase.FB.Shomareh,
+                            Year = Year,
+                            RMShomareh = rizMetreUsersBase.Shomareh,
+                            NoeFB = rizMetreUsersBase.FB.NoeFBId,
+                            MeghdarJoz = rizMetreUsersBase.MeghdarJoz
+                        }, context);
+                    }
+
                     context.RizMetreUsersHistories.Remove(rizMetreUsersHistory);
                 }
             }
