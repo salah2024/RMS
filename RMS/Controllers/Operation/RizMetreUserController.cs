@@ -1840,7 +1840,8 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                             BarAvordId = ItemHasCon.BarAvordId,
                             FBShomareh = ItemHasCon.FBShomareh,
                             RMShomareh = RMetre.Shomareh,
-                            NoeFBId = NoeFBId
+                            NoeFBId = NoeFBId,
+                            ConditionContextId = ItemHasCon.ConditionContextId
                         };
                         await HamlCommon.DeleteHaml(deleteHaml, _context);
                     }
@@ -8198,7 +8199,8 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                             BarAvordId = ItemHasCon.BarAvordId,
                             FBShomareh = ItemHasCon.AddedItems,
                             RMShomareh = RMetre.Shomareh,
-                            NoeFBId = NoeFB
+                            NoeFBId = NoeFB,
+                            ConditionContextId = ItemHasCon.ConditionContextId
                         };
                         await HamlCommon.DeleteHaml(deleteHaml, _context);
                     }
