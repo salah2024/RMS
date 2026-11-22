@@ -779,7 +779,7 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
             }
 
 
-            if (entity.Type == "1")
+            if (entity.Type != "3")
             {
                 HamlCommon.UpdateHaml(new UpdateHamlDto
                 {
