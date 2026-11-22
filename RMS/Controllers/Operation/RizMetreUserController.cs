@@ -7353,7 +7353,8 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                     BarAvordId = BarAvordUserId,
                     FBShomareh = FB.Shomareh,
                     RMShomareh = entity.Shomareh,
-                    NoeFBId = NoeFB
+                    NoeFBId = NoeFB,
+                    ConditionContextId = entity.ConditionContextId
                 };
                 await HamlCommon.DeleteHaml(deleteHaml, context);
             }
