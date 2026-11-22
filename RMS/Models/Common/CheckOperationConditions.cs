@@ -6256,6 +6256,7 @@ namespace RMS.Models.Common
                                             ///////////
                                             DeleteHamlDto deleteHaml = new DeleteHamlDto
                                             {
+                                                ConditionContextId = ItemHasCon.ConditionContextId,
                                                 BarAvordId = ItemHasCon.BarAvordId,
                                                 FBShomareh = varFBUsersAdded.Shomareh,
                                                 RMShomareh = RizMetre.Shomareh,
@@ -7053,6 +7054,7 @@ namespace RMS.Models.Common
                             ///////////
                             DeleteHamlDto deleteHaml = new DeleteHamlDto
                             {
+                                                ConditionContextId = ItemHasCon.ConditionContextId,
                                 BarAvordId = ItemHasCon.BarAvordId,
                                 FBShomareh = strAddedItems,
                                 RMShomareh = RizMetre.Shomareh,
@@ -7800,6 +7802,7 @@ namespace RMS.Models.Common
                                 ///////////
                                 DeleteHamlDto deleteHaml = new DeleteHamlDto
                                 {
+                                                ConditionContextId = ItemHasCon.ConditionContextId,
                                     BarAvordId = ItemHasCon.BarAvordId,
                                     FBShomareh = strItemShomareh,
                                     RMShomareh = RizMetre.Shomareh,
@@ -7984,6 +7987,7 @@ namespace RMS.Models.Common
                             ///////////
                             DeleteHamlDto deleteHaml = new DeleteHamlDto
                             {
+                                                ConditionContextId = ItemHasCon.ConditionContextId,
                                 BarAvordId = ItemHasCon.BarAvordId,
                                 FBShomareh = strItemShomareh1,
                                 RMShomareh = RizMetre.Shomareh,
