@@ -251,8 +251,10 @@ public static class HamlCommon
             newShomareh++;
         }
 
-        // ذخیره‌سازی به فراخواننده واگذار می‌شود تا تمام تغییرات این عملیات
-        // همراه با ریزمتره اصلی، در یک SaveChanges و یک واحد کاری ذخیره شوند.
+        // این SaveChanges برای سازگاری با فراخوانی‌های چندباره در یک عملیات حفظ شده است:
+        // فراخوانی بعدی باید بتواند BarAvordHaml و FB درج‌شده در فراخوانی قبلی را از دیتابیس ببیند.
+        await _context.SaveChangesAsync();
+
         return rizMetreIds;
     }
 
