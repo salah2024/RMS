@@ -1214,6 +1214,20 @@ namespace RMS.Controllers.Operation
                                                 if (Fb != null)
                                                 {
                                                     var deletedRizMetresForSum9 = _context.RizMetreUserses.Where(x => x.FBId == Fb.ID).ToList();
+
+                                                    foreach (clsRizMetreUsers sourceRizMetre in deletedRizMetresForSum9.Where(x => x.Type != "3"))
+                                                    {
+                                                        await HamlCommon.DeleteHaml(new DeleteHamlDto
+                                                        {
+                                                            BarAvordId = BarAvordId,
+                                                            RIzMetreId = sourceRizMetre.ID,
+                                                            FBShomareh = Fb.Shomareh,
+                                                            RMShomareh = sourceRizMetre.Shomareh,
+                                                            NoeFBId = NoeFBId,
+                                                            ConditionContextId = sourceRizMetre.ConditionContextId
+                                                        }, _context);
+                                                    }
+
                                                     _context.RizMetreUserses.RemoveRange(deletedRizMetresForSum9);
                                                     _context.SaveChanges();
                                                     _context.FBs.Remove(Fb);
