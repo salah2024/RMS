@@ -134,9 +134,10 @@ function UpdateRizMetreFromRowStar(el, rizMetreId, Shomareh, rizId1, Code) {
         vardata.Vazn = values[6] != "" ? values[6] : null;
         vardata.Des = values[7];
         vardata.Code = Code;
-        if (!beginBarAvordButtonWait($(el))) return;
+        var $waitButton = $(el).is('button') ? $(el) : $(el).closest('tr').find('.ButtonRowsSaveStyle').first();
+    if (!beginBarAvordButtonWait($waitButton)) return;
     $.ajax({
-            complete: function () { endBarAvordButtonWait($(el)); },
+            complete: function () { endBarAvordButtonWait($waitButton); },
             type: "POST",
             url: '/ItemFBStar/UpdateRizMetreItemStarFrmShowBarAvord',
             dataType: "json",
