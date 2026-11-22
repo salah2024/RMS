@@ -1125,9 +1125,10 @@ function UpdateRizMetreFromRow(el, rizMetreId, Shomareh, rizId1, FBId, Code) {
         vardata.BarAvordUserId = BarAvordUserId;
         vardata.Code = Code;
         vardata.LevelNumber = 1;
-        if (!beginBarAvordButtonWait($(el))) return;
+        var $waitButton = $(el).is('button') ? $(el) : $(el).closest('tr').find('.ButtonRowsSaveStyle').first();
+    if (!beginBarAvordButtonWait($waitButton)) return;
     $.ajax({
-            complete: function () { endBarAvordButtonWait($(el)); },
+            complete: function () { endBarAvordButtonWait($waitButton); },
             type: "POST",
             url: '/RizMetreUserFromShowBarAvord/UpdateRizMetreUsersFrmShowBarAvord',
             dataType: "json",
