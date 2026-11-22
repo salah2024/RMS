@@ -1,3 +1,24 @@
+// جلوگیری از ارسال چندباره عملیات و نمایش وضعیت انتظار دکمه
+function beginBarAvordButtonWait(button) {
+    var $button = button && button.jquery ? button.first() : $(button).first();
+    if (!$button.length) return true;
+    if ($button.data('barAvordBusy') === true) return false;
+    $button.data('barAvordBusy', true);
+    $button.data('barAvordOriginalHtml', $button.html());
+    $button.prop('disabled', true).attr('aria-busy', 'true')
+        .addClass('baravord-operation-waiting')
+        .html('<i class="fa fa-spinner fa-spin" aria-hidden="true"></i>');
+    return true;
+}
+function endBarAvordButtonWait(button) {
+    var $button = button && button.jquery ? button.first() : $(button).first();
+    if (!$button.length || $button.data('barAvordBusy') !== true) return;
+    var originalHtml = $button.data('barAvordOriginalHtml');
+    $button.html(originalHtml == null ? '<i class="fa fa-save"></i>' : originalHtml)
+        .prop('disabled', false).removeAttr('aria-busy')
+        .removeClass('baravord-operation-waiting')
+        .removeData('barAvordBusy').removeData('barAvordOriginalHtml');
+}
 ﻿var lstVaheds;
 
 // بارگذاری تنبل فایل‌های اختصاصی این صفحه؛ درخواست‌های هم‌زمان از یک Promise مشترک استفاده می‌کنند.
@@ -583,7 +604,9 @@ function SaveTajhizKargahDarsad(Obj, Darsad, MeghdarPercent) {
     vardata.Darsad = Darsad;
     vardata.Meghdar = MeghdarPercent;
     vardata.Year = Year;
+    if (!beginBarAvordButtonWait($(Obj))) return;
     $.ajax({
+            complete: function () { endBarAvordButtonWait($(Obj)); },
         type: "post",
         url: "/TajhizKargahDarsad/TajhizKargahDarsadSave",
         data: JSON.stringify(vardata),
@@ -906,7 +929,9 @@ function ItemZaribStarSave(element, ItemZarib, ItemStarId, itemFbShomareh) {
     vardata.ItemStarId = ItemStarId;
     vardata.ItemZarib = ItemZarib;
 
+    if (!beginBarAvordButtonWait($(element))) return;
     $.ajax({
+            complete: function () { endBarAvordButtonWait($(element)); },
         type: "POST",
         url: '/BaravordUser/ConfirmItemZaribStar',
         dataType: "json",
@@ -950,7 +975,9 @@ function ItemZaribSave(element, ItemZarib, FBId, itemFbShomareh) {
     vardata.NoeFBId = NoeFBId;
     vardata.Year = Year;
 
+    if (!beginBarAvordButtonWait($(element))) return;
     $.ajax({
+            complete: function () { endBarAvordButtonWait($(element)); },
         type: "POST",
         url: '/BaravordUser/ConfirmItemZarib',
         dataType: "json",
@@ -1005,7 +1032,9 @@ function BahayeVahedNewSave(element, BahayeVahedNew, FBId, itemFbShomareh) {
     vardata.itemFbShomareh = itemFbShomareh;
     vardata.NoeFBId = NoeFBId;
     vardata.Year = Year;
+    if (!beginBarAvordButtonWait($(element))) return;
     $.ajax({
+            complete: function () { endBarAvordButtonWait($(element)); },
         type: "POST",
         url: '/BaravordUser/ConfirmBahayeVahedNew',
         dataType: "json",
