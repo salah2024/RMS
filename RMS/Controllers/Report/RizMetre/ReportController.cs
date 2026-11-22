@@ -2459,13 +2459,13 @@ namespace RMS.Controllers.Report.RizMetre
             //                         NoeFB = FehrestBaha.NoeFB,
             //                     }).ToListAsync();
 
-            var itemsByMainCode = allItemsWithRizMetre
+            var itemsByMainCode1 = allItemsWithRizMetre
                 .Where(x => !string.IsNullOrEmpty(x.ItemShomareh) && x.ItemShomareh.Length >= 6)
                 .ToLookup(x => x.ItemShomareh.Substring(0, 6), StringComparer.Ordinal);
 
             List<RizMetreForReportDto> lstFehrestBahas =
                 (from f in fehrest
-                 from i in itemsByMainCode[f.ShomarehMain ?? string.Empty]
+                 from i in itemsByMainCode1[f.ShomarehMain ?? string.Empty]
                  where f.Sal == i.Year
                     && f.NoeFB == (NoeFehrestBaha)i.NoeFB
                  select new RizMetreForReportDto

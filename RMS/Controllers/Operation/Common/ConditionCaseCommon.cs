@@ -886,27 +886,70 @@ public class ConditionCaseCommon
 
                 //string strShomareh1 = varFBShomareh;
                 Guid guFBId = BaseFBId;
-                var varRizMetreUsersesCurrent = (from RizMetreUserses in _context.RizMetreUserses
-                                                 join FB in _context.FBs on RizMetreUserses.FBId equals FB.ID
-                                                 where RizMetreUserses.LevelNumber == LevelNumber
-                                                 select new
-                                                 {
-                                                     ID = RizMetreUserses.ID,
-                                                     Shomareh = RizMetreUserses.Shomareh,
-                                                     Tedad = RizMetreUserses.Tedad,
-                                                     Tool = RizMetreUserses.Tool,
-                                                     Arz = RizMetreUserses.Arz,
-                                                     Ertefa = RizMetreUserses.Ertefa,
-                                                     Vazn = RizMetreUserses.Vazn,
-                                                     Des = RizMetreUserses.Des,
-                                                     FBId = RizMetreUserses.FBId,
-                                                     OperationsOfHamlId = RizMetreUserses.OperationsOfHamlId,
-                                                     ForItem = RizMetreUserses.ForItem,
-                                                     Type = RizMetreUserses.Type,
-                                                     UseItem = RizMetreUserses.UseItem,
-                                                     BarAvordId = FB.BarAvordId
-                                                 }).Where(x => x.FBId == FBId && x.ForItem == strItemsFBShomareh && x.Type == "2").ToList();
-                DataTable DtRizMetreUsersesCurrent = clsConvert.ToDataTable(varRizMetreUsersesCurrent);
+                // شناسه ریزمتره‌هایی که در همین عملیات ویرایش حذف شده‌اند
+                List<Guid> deletedRizMetreIds = _context.ChangeTracker
+                    .Entries<clsRizMetreUsers>()
+                    .Where(x => x.State == EntityState.Deleted)
+                    .Select(x => x.Entity.ID)
+                    .ToList();
+
+
+
+                var varRizMetreUsersCurrent =
+    (from RizMetreUsers in _context.RizMetreUserses
+     join FB in _context.FBs
+        on RizMetreUsers.FBId equals FB.ID
+     where RizMetreUsers.LevelNumber == LevelNumber
+        && !deletedRizMetreIds.Contains(RizMetreUsers.ID)
+     select new
+     {
+         RizMetreUsers.ID,
+         RizMetreUsers.Shomareh,
+         RizMetreUsers.Tedad,
+         RizMetreUsers.Tool,
+         RizMetreUsers.Arz,
+         RizMetreUsers.Ertefa,
+         RizMetreUsers.Vazn,
+         RizMetreUsers.Sharh,
+         RizMetreUsers.Des,
+         RizMetreUsers.FBId,
+         RizMetreUsers.OperationsOfHamlId,
+         RizMetreUsers.ForItem,
+         RizMetreUsers.Type,
+         RizMetreUsers.UseItem,
+         FB.BarAvordId
+     })
+    .Where(x =>
+        x.FBId == FBId &&
+        x.ForItem == strItemsFBShomareh &&
+        x.Type == "2")
+    .OrderBy(x => x.Shomareh)
+    .ToList();
+
+                DataTable DtRizMetreUsersesCurrent =
+                    clsConvert.ToDataTable(varRizMetreUsersCurrent);
+
+                //var varRizMetreUsersesCurrent = (from RizMetreUserses in _context.RizMetreUserses
+                //                                 join FB in _context.FBs on RizMetreUserses.FBId equals FB.ID
+                //                                 where RizMetreUserses.LevelNumber == LevelNumber
+                //                                 select new
+                //                                 {
+                //                                     ID = RizMetreUserses.ID,
+                //                                     Shomareh = RizMetreUserses.Shomareh,
+                //                                     Tedad = RizMetreUserses.Tedad,
+                //                                     Tool = RizMetreUserses.Tool,
+                //                                     Arz = RizMetreUserses.Arz,
+                //                                     Ertefa = RizMetreUserses.Ertefa,
+                //                                     Vazn = RizMetreUserses.Vazn,
+                //                                     Des = RizMetreUserses.Des,
+                //                                     FBId = RizMetreUserses.FBId,
+                //                                     OperationsOfHamlId = RizMetreUserses.OperationsOfHamlId,
+                //                                     ForItem = RizMetreUserses.ForItem,
+                //                                     Type = RizMetreUserses.Type,
+                //                                     UseItem = RizMetreUserses.UseItem,
+                //                                     BarAvordId = FB.BarAvordId
+                //                                 }).Where(x => x.FBId == FBId && x.ForItem == strItemsFBShomareh && x.Type == "2").ToList();
+                //DataTable DtRizMetreUsersesCurrent = clsConvert.ToDataTable(varRizMetreUsersesCurrent);
 
                 //var matchCondition = Regex.Match(strFinalWorking, @"\b([a-zA-Z])\b");
                 //string variableNameCondition = matchCondition.Success ? matchCondition.Groups[1].Value : null;
