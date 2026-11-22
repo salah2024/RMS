@@ -957,6 +957,8 @@ function EditRizMetreRow(rowEl, rizMetreId, Shomareh, rizId, FBId, Code) {
         //cancelEditRow($(this), rizMetreId, Shomareh, rizId, FBId);
     });
 
+    // نگهداری HTML اصلی برای بازگردانی کامل ردیف هنگام انصراف
+    $row.data('editOriginalHtml', $row.html());
     $row.addClass('editing');
 
     $row.find('td').each(function (index) {
@@ -1010,16 +1012,26 @@ function EditRizMetreRow(rowEl, rizMetreId, Shomareh, rizId, FBId, Code) {
     // جایگزینی آیکن عملیات با دکمه ذخیره
     const $actionCell = $row.find('td').eq(10);
     $actionCell.html(`
-    <button type="button"
-      onclick="event.stopPropagation();UpdateRizMetreFromRow($(this),'${rizMetreId}','${Shomareh}','${rizId}','${FBId}','${Code}')"
-      class="ButtonRowsSaveStyle">
-      <i id="iSave" class="fa fa-save SaveRMUStyle"></i>
-    </button>
+    <div class="d-flex align-items-center justify-content-center gap-1">
+      <button type="button" onclick="event.stopPropagation();UpdateRizMetreFromRow($(this),'${rizMetreId}','${Shomareh}','${rizId}','${FBId}','${Code}')" class="ButtonRowsSaveStyle" title="ذخیره">
+        <i class="fa fa-save SaveRMUStyle"></i>
+      </button>
+      <button type="button" class="btn btn-sm btn-outline-secondary" onclick="event.stopPropagation();CancelRizMetreRowEdit(this)" title="انصراف">
+        <i class="fa fa-times"></i>
+      </button>
+    </div>
 	`);
 
     $row.find('td').eq(2).find('input').focus().select();
 }
 
+
+function CancelRizMetreRowEdit(button) {
+    const $row = $(button).closest('tr');
+    const originalHtml = $row.data('editOriginalHtml');
+    if (originalHtml == null) return;
+    $row.html(originalHtml).removeClass('editing').removeData('editOriginalHtml');
+}
 
 function cancelEditRow(row, rizMetreId, Shomareh, rizId1, FBId) {
     //row.removeClass('editing');
