@@ -3,7 +3,6 @@ using RMS.Controllers.Operation.Dto;
 using RMS.Models.Common;
 using RMS.Models.Common.Dto;
 using RMS.Models.Entity;
-using System.Data;
 using System.Text.RegularExpressions;
 using static RMS.Models.Common.EnumForEntity;
 
@@ -347,7 +346,6 @@ public class ConditionCaseCommon
                     string strDesOfAddingItems = DesOfAddingItems.ToString().Replace("x", FinalMeghdar.ToString().Trim()).Replace("y", strItemsFBShomareh).Replace("z", (dPercent * 100).ToString("0.##")).Trim();
 
                     clsBaravordUser? varBA = _context.BaravordUsers.First(x => x.ID == BarAvordId);
-                    //DataTable DtBA = clsConvert.ToDataTable(varBA);
 
                     Guid guBAId = varBA.ID; //Guid.Parse(DtBA.Rows[0]["ID"].ToString());
 
@@ -361,7 +359,6 @@ public class ConditionCaseCommon
 
                     string FBShomarehAddedItemPlus = FBShomarehAddedItem + strCharacterPlus; //"A";
                     clsFB? varFBUser = await _context.FBs.FirstOrDefaultAsync(x => x.BarAvordId == BarAvordId && x.Shomareh == FBShomarehAddedItemPlus && x.NoeFBId == NoeFBId);
-                    //DataTable DtFBUser = clsConvert.ToDataTable(varFBUser);
 
 
                     Guid FBId = new Guid();
@@ -441,7 +438,6 @@ public class ConditionCaseCommon
                                        FBId = RUsers.FBId
                                    }).OrderBy(x => x.Shomareh).ToListAsync();
                     }
-                    //DataTable DtRizMetreUserses = clsConvert.ToDataTable(varRizMetreUserses);
 
 
                     string strShomareh1 = strItemsFBShomareh;//DtFB.Rows[0]["Shomareh"].ToString().Trim();
