@@ -1007,7 +1007,8 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
                         BarAvordId = BarAvordUserId,
                         FBShomareh = FB.Shomareh,
                         RMShomareh = entity.Shomareh,
-                        NoeFBId = NoeFBId
+                        NoeFBId = NoeFBId,
+                        ConditionContextId = entity.ConditionContextId
                     };
                     await HamlCommon.DeleteHaml(deleteHaml, context);
                     /////////////
