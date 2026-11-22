@@ -781,7 +781,7 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
 
             if (entity.Type == "1")
             {
-                await HamlCommon.UpdateHaml(new UpdateHamlDto
+                HamlCommon.UpdateHaml(new UpdateHamlDto
                 {
                     BarAvordId = BarAvordId,
                     FBShomareh = currentFb.Shomareh,
