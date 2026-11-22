@@ -7396,7 +7396,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                     }
 
                                     //clsRizMetreUserss.Delete("clsRizMetreUserss.Id=" + DtRizMetreUsers.Rows[0]["Id"].ToString());
-                                    string strResult = DeleteSubItemsAddingToFB(long.Parse(DtItemsAddingToFB.Rows[i]["ID"].ToString()), Ertefa, RizMetreId, BarAvordId, NoeFBId, strAddedItems);
+                                    string strResult = await DeleteSubItemsAddingToFB(long.Parse(DtItemsAddingToFB.Rows[i]["ID"].ToString()), Ertefa, RizMetreId, BarAvordId, NoeFBId, strAddedItems);
                                 }
                                 break;
                             }
@@ -7750,7 +7750,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
         }
     }
 
-    public string DeleteSubItemsAddingToFB(long Id, string Ertefa, Guid RizMetreId, Guid BarAvordId, NoeFehrestBaha NoeFBId, string ItemShomareh)
+    public async Task<string> DeleteSubItemsAddingToFB(long Id, string Ertefa, Guid RizMetreId, Guid BarAvordId, NoeFehrestBaha NoeFBId, string ItemShomareh)
     {
         int LevelNumber = 1;
         var varItemsAddingToFB = context.SubItemsAddingToFBs.Where(x => x.ItemsAddingToFBId == Id).ToList();
@@ -7846,9 +7846,26 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                 DataTable DtRizMetreUsers = clsConvert.ToDataTable(varRizMetreUsers);
                 //DataTable DtRizMetreUsers = clsRizMetreUserss.RizMetreUsersesListWithParameter("FBId=" + FBId + " and ForItem='" + ItemShomareh + "' and clsRizMetreUserss.Shomareh='" + DtRizMetreUsersCurrent.Rows[0]["Shomareh"].ToString() + "'");
                 Guid guID = Guid.Parse(DtRizMetreUsers.Rows[0]["ID"].ToString());
-                var clsRizMetreUsers = context.RizMetreUserses.Where(x => x.ID == guID).ToList();
-                if (clsRizMetreUsers != null)
+                List<clsRizMetreUsers> clsRizMetreUsers = context.RizMetreUserses.Where(x => x.ID == guID).ToList();
+                if (clsRizMetreUsers.Count > 0)
                 {
+                    clsFB? fbForDeleteHaml = context.FBs.FirstOrDefault(x => x.ID == FBId);
+                    if (fbForDeleteHaml != null)
+                    {
+                        foreach (clsRizMetreUsers sourceRizMetre in clsRizMetreUsers.Where(x => x.Type != "3"))
+                        {
+                            await HamlCommon.DeleteHaml(new DeleteHamlDto
+                            {
+                                BarAvordId = BarAvordId,
+                                RIzMetreId = sourceRizMetre.ID,
+                                FBShomareh = fbForDeleteHaml.Shomareh,
+                                RMShomareh = sourceRizMetre.Shomareh,
+                                NoeFBId = NoeFBId,
+                                ConditionContextId = sourceRizMetre.ConditionContextId
+                            }, context);
+                        }
+                    }
+
                     context.RizMetreUserses.RemoveRange(clsRizMetreUsers);
                     context.SaveChanges();
                 }
