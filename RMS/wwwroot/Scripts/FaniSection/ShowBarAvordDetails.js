@@ -1,3 +1,24 @@
+// جلوگیری از ارسال چندباره عملیات و نمایش وضعیت انتظار دکمه
+function beginBarAvordButtonWait(button) {
+    var $button = button && button.jquery ? button.first() : $(button).first();
+    if (!$button.length) return true;
+    if ($button.data('barAvordBusy') === true) return false;
+    $button.data('barAvordBusy', true);
+    $button.data('barAvordOriginalHtml', $button.html());
+    $button.prop('disabled', true).attr('aria-busy', 'true')
+        .addClass('baravord-operation-waiting')
+        .html('<i class="fa fa-spinner fa-spin" aria-hidden="true"></i>');
+    return true;
+}
+function endBarAvordButtonWait(button) {
+    var $button = button && button.jquery ? button.first() : $(button).first();
+    if (!$button.length || $button.data('barAvordBusy') !== true) return;
+    var originalHtml = $button.data('barAvordOriginalHtml');
+    $button.html(originalHtml == null ? '<i class="fa fa-save"></i>' : originalHtml)
+        .prop('disabled', false).removeAttr('aria-busy')
+        .removeClass('baravord-operation-waiting')
+        .removeData('barAvordBusy').removeData('barAvordOriginalHtml');
+}
 ﻿function renderTable(data, Stars, Code, ItemId, faslAsli) {
 
     const renderPerfStartedAt = window.performance.now();
@@ -804,7 +825,9 @@ function DeleteItemFB(obj, Shomareh, Code, ItemId) {
     vardata.Id = thisId[1];
     vardata.Year = Year;
 
+    if (!beginBarAvordButtonWait($(obj))) return;
     $.ajax({
+            complete: function () { endBarAvordButtonWait($(obj)); },
         type: "POST",
         url: '/ItemFBStar/DeleteItemFBStar',
         dataType: "json",
@@ -1090,7 +1113,10 @@ function UpdateRizMetreFromRow(el, rizMetreId, Shomareh, rizId1, FBId, Code) {
         vardata.BarAvordUserId = BarAvordUserId;
         vardata.Code = Code;
         vardata.LevelNumber = 1;
-        $.ajax({
+        var $waitButton = $(el).is('button') ? $(el) : $(el).closest('tr').find('.ButtonRowsSaveStyle').first();
+    if (!beginBarAvordButtonWait($waitButton)) return;
+    $.ajax({
+            complete: function () { endBarAvordButtonWait($waitButton); },
             type: "POST",
             url: '/RizMetreUserFromShowBarAvord/UpdateRizMetreUsersFrmShowBarAvord',
             dataType: "json",
@@ -1247,7 +1273,9 @@ function SaveNewRMUClick($btn) {
     vardata.Year = Year;
 
 
+    if (!beginBarAvordButtonWait($button)) return;
     $.ajax({
+            complete: function () { endBarAvordButtonWait($button); },
         type: "POST",
         url: '/ItemFBStar/SaveItemFBStar',
         dataType: "json",
@@ -1273,10 +1301,8 @@ function SaveNewRMUClick($btn) {
 function SaveRMUClick(object, Shomareh, rizId, Code) {
 
     var rizOperationStartedAt = window.performance.now();
-
-    object.attr('disabled', true);
-
-    object.parent().parent().find('input[type=text]').each(function () {
+    console.log('[RIZ-SUM-PERF] INSERT started:', { item: Shomareh, code: Code }); 
+object.parent().parent().find('input[type=text]').each(function () {
         $(this).removeClass('ErrorValueStyle');
     });
 
@@ -1436,7 +1462,9 @@ function SaveRMUClick(object, Shomareh, rizId, Code) {
         vardata.Shomareh = Shomareh;
         vardata.Year = Year;
         vardata.NoeFBId = NoeFBId;
-        $.ajax({
+        if (!beginBarAvordButtonWait($(object))) return;
+    $.ajax({
+            complete: function () { endBarAvordButtonWait($(object)); },
             type: "POST",
             url: '/RizMetreUserFromShowBarAvord/ConfirmRizMetreUsersFromShowBarAvord',
             dataType: "json",
@@ -1929,7 +1957,9 @@ function DeleteRizMetre(object, RizMetreId, Shomareh, rizId, FBId, Code) {
     vardata.NoeFBId = NoeFBId;
     vardata.Year = Year;
 
+    if (!beginBarAvordButtonWait($(object))) return;
     $.ajax({
+            complete: function () { endBarAvordButtonWait($(object)); },
         url: "/RizMetreUserFromShowBarAvord/DeleteRizMetre",
         method: "POST",
         data: JSON.stringify(vardata),
