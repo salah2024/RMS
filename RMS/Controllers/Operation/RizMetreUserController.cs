@@ -5376,7 +5376,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                 //    }
                                 //    //clsRizMetreUserss.Delete("clsRizMetreUserss.Id=" + DtRizMetreUsers.Rows[0]["Id"].ToString());
                                 //}
-                                string strResult = SubItemsAddingToFB(AddingToFB.ID, Ertefa, RizMetreId, BarAvordId, NoeFBId, strAddedItems, ShomareNew);
+                                string strResult = await SubItemsAddingToFB(AddingToFB.ID, Ertefa, RizMetreId, BarAvordId, NoeFBId, strAddedItems, ShomareNew);
                             }
                             //else
                             //{
@@ -5463,7 +5463,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                             //            context.SaveChanges();
                             //        }
                             //        //clsRizMetreUserss.Delete("clsRizMetreUserss.Id=" + DtRizMetreUsers.Rows[0]["Id"].ToString());
-                            //        string strResult = SubItemsAddingToFB(int.Parse(DtItemsAddingToFB.Rows[i]["ID"].ToString()), Ertefa, RizMetreId, BarAvordId, strAddedItems);
+                            //        string strResult = await SubItemsAddingToFB(int.Parse(DtItemsAddingToFB.Rows[i]["ID"].ToString()), Ertefa, RizMetreId, BarAvordId, strAddedItems);
                             //    }
                             //}
                             break;
@@ -5939,7 +5939,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                 //    }
                                 //    //clsRizMetreUserss.Delete("clsRizMetreUserss.Id=" + DtRizMetreUsers.Rows[0]["Id"].ToString());
                                 //}
-                                string strResult = SubItemsAddingToFB(AddingToFB.ID, Ertefa, RizMetreId, BarAvordId, NoeFBId, strAddedItems, ShomareNew);
+                                string strResult = await SubItemsAddingToFB(AddingToFB.ID, Ertefa, RizMetreId, BarAvordId, NoeFBId, strAddedItems, ShomareNew);
                             }
                             break;
                         }
@@ -6441,7 +6441,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                     //clsRizMetreUserss.Delete("clsRizMetreUserss.Id=" + DtRizMetreUsers.Rows[0]["Id"].ToString());
                                     strTypeOp = "Del";
                                 }
-                                string strResult = SubItemsAddingToFB(long.Parse(DtItemsAddingToFB.Rows[i]["ID"].ToString()), Ertefa, RizMetreId, BarAvordId, NoeFBId, strAddedItems, ShomareNew);
+                                string strResult = await SubItemsAddingToFB(long.Parse(DtItemsAddingToFB.Rows[i]["ID"].ToString()), Ertefa, RizMetreId, BarAvordId, NoeFBId, strAddedItems, ShomareNew);
                             }
                             else
                             {
@@ -6505,7 +6505,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                         await context.SaveChangesAsync();
                                     }
                                     //clsRizMetreUserss.Delete("clsRizMetreUserss.Id=" + DtRizMetreUsers.Rows[0]["Id"].ToString());
-                                    string strResult = SubItemsAddingToFB(long.Parse(DtItemsAddingToFB.Rows[i]["ID"].ToString()), Ertefa, RizMetreId, BarAvordId, NoeFBId, strAddedItems, ShomareNew);
+                                    string strResult = await SubItemsAddingToFB(long.Parse(DtItemsAddingToFB.Rows[i]["ID"].ToString()), Ertefa, RizMetreId, BarAvordId, NoeFBId, strAddedItems, ShomareNew);
                                 }
                             }
                             break;
@@ -6771,7 +6771,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
         }
     }
 
-    public string SubItemsAddingToFB(long Id, string Ertefa, Guid RizMetreId, Guid BarAvordId, NoeFehrestBaha NoeFBId, string ItemShomareh, long ShomareNew)
+    public async Task<string> SubItemsAddingToFB(long Id, string Ertefa, Guid RizMetreId, Guid BarAvordId, NoeFehrestBaha NoeFBId, string ItemShomareh, long ShomareNew)
     {
         var varItemsAddingToFB = context.SubItemsAddingToFBs.Where(x => x.ItemsAddingToFBId == Id).ToList();
         DataTable DtItemsAddingToFB = clsConvert.ToDataTable(varItemsAddingToFB);
@@ -6965,12 +6965,32 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                 else
                 {
                     Guid guID = Guid.Parse(DtRizMetreUsers.Rows[0]["ID"].ToString());
-                    var clsRizMetreUsers = context.RizMetreUserses.Where(x => x.ID == guID);
-                    if (clsRizMetreUsers != null)
+                List<clsRizMetreUsers> rizMetresForDelete = context.RizMetreUserses
+                    .Where(x => x.ID == guID)
+                    .ToList();
+
+                if (rizMetresForDelete.Count > 0)
+                {
+                    clsFB? fbForDeleteHaml = context.FBs.FirstOrDefault(x => x.ID == FBId);
+                    if (fbForDeleteHaml != null)
                     {
-                        context.RizMetreUserses.RemoveRange(clsRizMetreUsers);
-                        context.SaveChanges();
+                        foreach (clsRizMetreUsers sourceRizMetre in rizMetresForDelete.Where(x => x.Type != "3"))
+                        {
+                            await HamlCommon.DeleteHaml(new DeleteHamlDto
+                            {
+                                BarAvordId = BarAvordId,
+                                RIzMetreId = sourceRizMetre.ID,
+                                FBShomareh = fbForDeleteHaml.Shomareh,
+                                RMShomareh = sourceRizMetre.Shomareh,
+                                NoeFBId = NoeFBId,
+                                ConditionContextId = sourceRizMetre.ConditionContextId
+                            }, context);
+                        }
                     }
+
+                    context.RizMetreUserses.RemoveRange(rizMetresForDelete);
+                    await context.SaveChangesAsync();
+                }
                     //clsRizMetreUserss.Delete("clsRizMetreUserss.Id=" + DtRizMetreUsers.Rows[0]["Id"].ToString());
                 }
             }
