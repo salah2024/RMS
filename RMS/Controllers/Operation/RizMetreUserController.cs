@@ -4961,7 +4961,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
     }
 
 
-    public JsonResult SaveEzafeBahaAndLakeGiriRizMetreAll([FromBody] SaveEzafeBahaAndLakeGiriRizMetreAllInputDto request)
+    public async Task<JsonResult> SaveEzafeBahaAndLakeGiriRizMetreAll([FromBody] SaveEzafeBahaAndLakeGiriRizMetreAllInputDto request)
     {
         //string Param = request.Param;
         string ItemShomareh = request.ItemShomareh.Trim();
@@ -5301,6 +5301,58 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
 
 
                                     context.RizMetreUserses.Add(RizMetreUsers);
+
+
+
+                                    clsFB? fbForHaml = context.FBs.FirstOrDefault(x => x.ID == RizMetreUsers.FBId);
+
+
+                                    if (fbForHaml != null)
+
+
+                                    {
+
+
+                                        await HamlCommon.SaveHaml(new SaveHamlDto
+
+
+                                        {
+
+
+                                            BarAvordUserId = BarAvordId,
+
+
+                                            Year = request.Year,
+
+
+                                            ItemFBShomareh = fbForHaml.Shomareh,
+
+
+                                            NoeFBId = NoeFBId,
+
+
+                                            Shomareh = RizMetreUsers.Shomareh,
+
+
+                                            MeghdarJoz = RizMetreUsers.MeghdarJoz,
+
+
+                                            LevelNumber = LevelNumber,
+
+
+                                            ConditionContextId = RizMetreUsers.ConditionContextId,
+
+
+                                            BaseFBItem = ItemShomareh
+
+
+                                        }, context);
+
+
+                                    }
+
+
+
                                     context.SaveChanges();
                                     //RizMetreUsers.Save();
                                 }
@@ -5545,6 +5597,58 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
 
 
                                     context.RizMetreUserses.Add(RizMetreUsers);
+
+
+
+                                    clsFB? fbForHaml = context.FBs.FirstOrDefault(x => x.ID == RizMetreUsers.FBId);
+
+
+                                    if (fbForHaml != null)
+
+
+                                    {
+
+
+                                        await HamlCommon.SaveHaml(new SaveHamlDto
+
+
+                                        {
+
+
+                                            BarAvordUserId = BarAvordId,
+
+
+                                            Year = request.Year,
+
+
+                                            ItemFBShomareh = fbForHaml.Shomareh,
+
+
+                                            NoeFBId = NoeFBId,
+
+
+                                            Shomareh = RizMetreUsers.Shomareh,
+
+
+                                            MeghdarJoz = RizMetreUsers.MeghdarJoz,
+
+
+                                            LevelNumber = LevelNumber,
+
+
+                                            ConditionContextId = RizMetreUsers.ConditionContextId,
+
+
+                                            BaseFBItem = ItemShomareh
+
+
+                                        }, context);
+
+
+                                    }
+
+
+
                                     context.SaveChanges();
                                     //RizMetreUsers.Save();
                                 }
@@ -5788,6 +5892,58 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
 
 
                                     context.RizMetreUserses.Add(RizMetreUsers);
+
+
+
+                                    clsFB? fbForHaml = context.FBs.FirstOrDefault(x => x.ID == RizMetreUsers.FBId);
+
+
+                                    if (fbForHaml != null)
+
+
+                                    {
+
+
+                                        await HamlCommon.SaveHaml(new SaveHamlDto
+
+
+                                        {
+
+
+                                            BarAvordUserId = BarAvordId,
+
+
+                                            Year = request.Year,
+
+
+                                            ItemFBShomareh = fbForHaml.Shomareh,
+
+
+                                            NoeFBId = NoeFBId,
+
+
+                                            Shomareh = RizMetreUsers.Shomareh,
+
+
+                                            MeghdarJoz = RizMetreUsers.MeghdarJoz,
+
+
+                                            LevelNumber = LevelNumber,
+
+
+                                            ConditionContextId = RizMetreUsers.ConditionContextId,
+
+
+                                            BaseFBItem = ItemShomareh
+
+
+                                        }, context);
+
+
+                                    }
+
+
+
                                     context.SaveChanges();
                                     //RizMetreUsers.Save();
                                 }
@@ -5986,6 +6142,58 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
 
 
                                             context.RizMetreUserses.Add(RizMetreUsers);
+
+
+
+                                            clsFB? fbForHaml = context.FBs.FirstOrDefault(x => x.ID == RizMetreUsers.FBId);
+
+
+                                            if (fbForHaml != null)
+
+
+                                            {
+
+
+                                                await HamlCommon.SaveHaml(new SaveHamlDto
+
+
+                                                {
+
+
+                                                    BarAvordUserId = BarAvordId,
+
+
+                                                    Year = request.Year,
+
+
+                                                    ItemFBShomareh = fbForHaml.Shomareh,
+
+
+                                                    NoeFBId = NoeFBId,
+
+
+                                                    Shomareh = RizMetreUsers.Shomareh,
+
+
+                                                    MeghdarJoz = RizMetreUsers.MeghdarJoz,
+
+
+                                                    LevelNumber = LevelNumber,
+
+
+                                                    ConditionContextId = RizMetreUsers.ConditionContextId,
+
+
+                                                    BaseFBItem = ItemShomareh
+
+
+                                                }, context);
+
+
+                                            }
+
+
+
                                             context.SaveChanges();
                                             //RizMetreUsers.Save();
                                         }
@@ -6013,7 +6221,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
         //}
     }
 
-    public JsonResult SaveEzafeBahaAndLakeGiriRizMetre([FromBody] SaveEzafeBahaAndLakeGiriRizMetreInputDto request)
+    public async Task<JsonResult> SaveEzafeBahaAndLakeGiriRizMetre([FromBody] SaveEzafeBahaAndLakeGiriRizMetreInputDto request)
     {
         try
         {
@@ -6227,6 +6435,58 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
 
 
                                     context.RizMetreUserses.Add(RizMetreUsers);
+
+
+
+                                    clsFB? fbForHaml = context.FBs.FirstOrDefault(x => x.ID == RizMetreUsers.FBId);
+
+
+                                    if (fbForHaml != null)
+
+
+                                    {
+
+
+                                        await HamlCommon.SaveHaml(new SaveHamlDto
+
+
+                                        {
+
+
+                                            BarAvordUserId = BarAvordId,
+
+
+                                            Year = request.Year,
+
+
+                                            ItemFBShomareh = fbForHaml.Shomareh,
+
+
+                                            NoeFBId = NoeFBId,
+
+
+                                            Shomareh = RizMetreUsers.Shomareh,
+
+
+                                            MeghdarJoz = RizMetreUsers.MeghdarJoz,
+
+
+                                            LevelNumber = LevelNumber,
+
+
+                                            ConditionContextId = RizMetreUsers.ConditionContextId,
+
+
+                                            BaseFBItem = ItemShomareh
+
+
+                                        }, context);
+
+
+                                    }
+
+
+
                                     context.SaveChanges();
                                     //RizMetreUsers.Save();
                                     strTypeOp = "Add";
@@ -6426,6 +6686,41 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                     RizMetreUsers.MeghdarJoz = dMeghdarJoz;
 
                                     context.RizMetreUserses.Add(RizMetreUsers);
+
+
+                                    clsFB? fbForHaml = context.FBs.FirstOrDefault(x => x.ID == RizMetreUsers.FBId);
+
+                                    if (fbForHaml != null)
+
+                                    {
+
+                                        await HamlCommon.SaveHaml(new SaveHamlDto
+
+                                        {
+
+                                            BarAvordUserId = BarAvordId,
+
+                                            Year = request.Year,
+
+                                            ItemFBShomareh = fbForHaml.Shomareh,
+
+                                            NoeFBId = NoeFBId,
+
+                                            Shomareh = RizMetreUsers.Shomareh,
+
+                                            MeghdarJoz = RizMetreUsers.MeghdarJoz,
+
+                                            LevelNumber = LevelNumber,
+
+                                            ConditionContextId = RizMetreUsers.ConditionContextId,
+
+                                            BaseFBItem = ItemShomareh
+
+                                        }, context);
+
+                                    }
+
+
                                     context.SaveChanges();
                                     //RizMetreUsers.Save();
                                     strTypeOp = "Add";
@@ -6677,6 +6972,41 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                     RizMetreUsers.MeghdarJoz = dMeghdarJoz;
 
                     context.RizMetreUserses.Add(RizMetreUsers);
+
+
+                    clsFB? fbForHaml = context.FBs.FirstOrDefault(x => x.ID == RizMetreUsers.FBId);
+
+                    if (fbForHaml != null)
+
+                    {
+
+                        await HamlCommon.SaveHaml(new SaveHamlDto
+
+                        {
+
+                            BarAvordUserId = BarAvordId,
+
+                            Year = request.Year,
+
+                            ItemFBShomareh = fbForHaml.Shomareh,
+
+                            NoeFBId = NoeFBId,
+
+                            Shomareh = RizMetreUsers.Shomareh,
+
+                            MeghdarJoz = RizMetreUsers.MeghdarJoz,
+
+                            LevelNumber = LevelNumber,
+
+                            ConditionContextId = RizMetreUsers.ConditionContextId,
+
+                            BaseFBItem = ItemShomareh
+
+                        }, context);
+
+                    }
+
+
                     context.SaveChanges();
                     //RizMetreUsers.Save();
                 }
