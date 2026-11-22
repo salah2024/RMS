@@ -1703,7 +1703,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                 clsFB? currentFb = await context.FBs.FirstOrDefaultAsync(x => x.ID == RizMetre.FBId);
                 if (currentFb != null && Type == "1")
                 {
-                    await HamlCommon.UpdateHaml(new UpdateHamlDto
+                    HamlCommon.UpdateHaml(new UpdateHamlDto
                     {
                         BarAvordId = request.BarAvordUserId,
                         FBShomareh = currentFb.Shomareh,
