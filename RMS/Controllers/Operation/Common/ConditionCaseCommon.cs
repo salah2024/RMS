@@ -46,6 +46,15 @@ public class ConditionCaseCommon
         bool blnItemsHasConditionAddedToContext = false;
 
         decimal dSumAllRizMetre = 0;
+
+        // رکوردهایی که در همین DbContext برای حذف علامت‌گذاری شده‌اند،
+        // تا قبل از SaveChanges هنوز در خروجی کوئری دیتابیس دیده می‌شوند.
+        // در بررسی وجود ریزمتره‌های تولیدشده، آن‌ها را موجود در نظر نمی‌گیریم.
+        var deletedRizMetreUserIds = _context.ChangeTracker
+            .Entries<clsRizMetreUsers>()
+            .Where(entry => entry.State == EntityState.Deleted)
+            .Select(entry => entry.Entity.ID)
+            .ToHashSet();
         var matchCondition = Regex.Match(strCondition, @"\b([a-zA-Z])\b");
         //string variableNameCondition = matchCondition.Success ? matchCondition.Groups[1].Value : null;
         clsItemsHasConditionAddedToFB ItemsHasConditionAddedToFB = new clsItemsHasConditionAddedToFB();
@@ -458,6 +467,11 @@ public class ConditionCaseCommon
                                                                UseItem = RizMetreUserses.UseItem,
                                                                BarAvordId = FB.BarAvordId
                                                            }).Where(x => x.FBId == FBId && x.ForItem == strShomareh1 && x.Type == "2").ToListAsync();
+                    
+                    // حذف‌های درون ChangeTracker هنوز در دیتابیس اعمال نشده‌اند.
+                    varRizMetreUsersesCurrent = varRizMetreUsersesCurrent
+                        .Where(x => !deletedRizMetreUserIds.Contains(x.ID))
+                        .ToList();
 
                     string[] FieldsAddingSplit = FieldsAdding.Split(",");
 
@@ -906,6 +920,11 @@ public class ConditionCaseCommon
                                                      UseItem = RizMetreUserses.UseItem,
                                                      BarAvordId = FB.BarAvordId
                                                  }).Where(x => x.FBId == FBId && x.ForItem == strItemsFBShomareh && x.Type == "2").ToList();
+                
+                // رکوردهای علامت‌گذاری‌شده برای حذف نباید مانع تولید مجدد شوند.
+                varRizMetreUsersesCurrent = varRizMetreUsersesCurrent
+                    .Where(x => !deletedRizMetreUserIds.Contains(x.ID))
+                    .ToList();
                 DataTable DtRizMetreUsersesCurrent = clsConvert.ToDataTable(varRizMetreUsersesCurrent);
 
                 //var matchCondition = Regex.Match(strFinalWorking, @"\b([a-zA-Z])\b");
@@ -1844,6 +1863,11 @@ public class ConditionCaseCommon
                                                  UseItem = RizMetreUserses.UseItem,
                                                  BarAvordId = FB.BarAvordId
                                              }).Where(x => x.ForItem == strForItem && x.Type == "2" && x.UseItem == strUseItem).ToList();
+            
+            // حذف‌های ثبت‌نشده در دیتابیس را از بررسی وجود رکورد خارج می‌کنیم.
+            varRizMetreUsersesCurrent = varRizMetreUsersesCurrent
+                .Where(x => !deletedRizMetreUserIds.Contains(x.ID))
+                .ToList();
 
             //DataTable DtRizMetreUsersesCurrent = clsConvert.ToDataTable(varRizMetreUsersesCurrent);
 
