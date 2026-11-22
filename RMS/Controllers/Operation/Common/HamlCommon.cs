@@ -330,50 +330,50 @@ public static class HamlCommon
         return true;
     }
 
-    public static async Task<bool> UpdateHaml(UpdateHamlDto request, ApplicationDbContext context)
+    public static bool UpdateHaml(UpdateHamlDto request, ApplicationDbContext context)
     {
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(context);
 
         string itemFBShomareh = request.FBShomareh.Trim();
 
-        List<clsItemsRelatedToItemHaml> relatedItems = await context.ItemsRelatedToItemHamls
+        // این متد به‌صورت همگام نگه داشته شده چون چند فراخواننده قدیمی
+        // در اکشن‌های همگام پروژه از آن استفاده می‌کنند.
+        List<clsItemsRelatedToItemHaml> relatedItems = context.ItemsRelatedToItemHamls
             .AsNoTracking()
             .Where(x => x.Year == request.Year
                 && x.NoeFB == request.NoeFB
                 && x.ItemFB.Trim() == itemFBShomareh)
-            .ToListAsync();
+            .ToList();
 
         if (relatedItems.Count == 0)
             return true;
 
-        List<clsBarAvordHaml> itemHamls = await context.BarAvordHamls
+        List<clsBarAvordHaml> itemHamls = context.BarAvordHamls
             .Where(x => x.BarAvordId == request.BarAvordId
                 && x.NoeFBId == request.NoeFB
                 && x.FBShomareh == itemFBShomareh)
-            .ToListAsync();
+            .ToList();
 
         if (itemHamls.Count == 0)
             return true;
 
         List<Guid> itemHamlIds = itemHamls.Select(x => x.ID).ToList();
 
-        List<clsBarAvordHamlRizMetre> links = await context.BarAvordHamlRizMetres
+        List<clsBarAvordHamlRizMetre> links = context.BarAvordHamlRizMetres
             .Where(x => itemHamlIds.Contains(x.BarAvordHamlId))
-            .ToListAsync();
+            .ToList();
 
         if (links.Count == 0)
             return true;
 
         List<Guid> hamlRizMetreIds = links.Select(x => x.RizMetreId).Distinct().ToList();
 
-        List<clsRizMetreUsers> hamlRizMetres = await context.RizMetreUserses
+        List<clsRizMetreUsers> hamlRizMetres = context.RizMetreUserses
             .Where(x => hamlRizMetreIds.Contains(x.ID)
                 && x.Shomareh == request.RMShomareh)
-            .ToListAsync();
+            .ToList();
 
-        // ضرایب حمل از جدول ارتباطات خوانده می‌شوند و دست‌نخورده می‌مانند.
-        // فقط مقدار پایه‌ای که از ریزمتره آیتم اصلی می‌آید به‌روزرسانی می‌شود.
         Dictionary<string, decimal> coefficientsByHamlItem = relatedItems
             .Where(x => (x.Zarib1 ?? 1m) * (x.Zarib2 ?? 1m) * (x.Zarib3 ?? 1m) >= 0)
             .GroupBy(x => x.ItemHamlFB.Trim())
