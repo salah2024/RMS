@@ -251,10 +251,8 @@ public static class HamlCommon
             newShomareh++;
         }
 
-        // برای سازگاری با فراخواننده‌های فعلی، SaveChanges در همین متد باقی مانده است.
-        // فراخواننده‌ها نیز در حال حاضر پس از این متد SaveChangesAsync اجرا می‌کنند.
-        await _context.SaveChangesAsync();
-
+        // ذخیره‌سازی به فراخواننده واگذار می‌شود تا تمام تغییرات این عملیات
+        // همراه با ریزمتره اصلی، در یک SaveChanges و یک واحد کاری ذخیره شوند.
         return rizMetreIds;
     }
 
