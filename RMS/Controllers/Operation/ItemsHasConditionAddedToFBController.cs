@@ -1018,6 +1018,23 @@ namespace RMS.Controllers.Operation
                                                         RMCurrent.Vazn = RMHistory.Vazn;
                                                         RMCurrent.MeghdarJoz = RMHistory.MeghdarJoz;
                                                         RMCurrent.Des = RMHistory.Des;
+
+                                                        if (RMCurrent.Type != "3")
+                                                        {
+                                                            clsFB? fbForHamlUpdate = await _context.FBs.FirstOrDefaultAsync(x => x.ID == RMCurrent.FBId);
+                                                            if (fbForHamlUpdate != null)
+                                                            {
+                                                                HamlCommon.UpdateHaml(new UpdateHamlDto
+                                                                {
+                                                                    BarAvordId = BarAvordId,
+                                                                    FBShomareh = fbForHamlUpdate.Shomareh,
+                                                                    Year = Year,
+                                                                    RMShomareh = RMCurrent.Shomareh,
+                                                                    NoeFB = NoeFB,
+                                                                    MeghdarJoz = RMCurrent.MeghdarJoz
+                                                                }, _context);
+                                                            }
+                                                        }
                                                     }
                                                 }
 
