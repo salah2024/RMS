@@ -1,3 +1,24 @@
+// جلوگیری از ارسال چندباره عملیات و نمایش وضعیت انتظار دکمه
+function beginBarAvordButtonWait(button) {
+    var $button = button && button.jquery ? button.first() : $(button).first();
+    if (!$button.length) return true;
+    if ($button.data('barAvordBusy') === true) return false;
+    $button.data('barAvordBusy', true);
+    $button.data('barAvordOriginalHtml', $button.html());
+    $button.prop('disabled', true).attr('aria-busy', 'true')
+        .addClass('baravord-operation-waiting')
+        .html('<i class="fa fa-spinner fa-spin" aria-hidden="true"></i>');
+    return true;
+}
+function endBarAvordButtonWait(button) {
+    var $button = button && button.jquery ? button.first() : $(button).first();
+    if (!$button.length || $button.data('barAvordBusy') !== true) return;
+    var originalHtml = $button.data('barAvordOriginalHtml');
+    $button.html(originalHtml == null ? '<i class="fa fa-save"></i>' : originalHtml)
+        .prop('disabled', false).removeAttr('aria-busy')
+        .removeClass('baravord-operation-waiting')
+        .removeData('barAvordBusy').removeData('barAvordOriginalHtml');
+}
 ﻿function EditRizMetreRowStar(rowEl, rizMetreId, Shomareh, rizId, Code) {
 
 
@@ -113,7 +134,9 @@ function UpdateRizMetreFromRowStar(el, rizMetreId, Shomareh, rizId1, Code) {
         vardata.Vazn = values[6] != "" ? values[6] : null;
         vardata.Des = values[7];
         vardata.Code = Code;
-        $.ajax({
+        if (!beginBarAvordButtonWait($(el))) return;
+    $.ajax({
+            complete: function () { endBarAvordButtonWait($(el)); },
             type: "POST",
             url: '/ItemFBStar/UpdateRizMetreItemStarFrmShowBarAvord',
             dataType: "json",
@@ -316,7 +339,9 @@ function SaveRMUStarClick(object, Shomareh, rizId, Code) {
         vardata.Shomareh = Shomareh;
         vardata.Year = Year;
         vardata.NoeFBId = NoeFBId;
-        $.ajax({
+        if (!beginBarAvordButtonWait($(object))) return;
+    $.ajax({
+            complete: function () { endBarAvordButtonWait($(object)); },
             type: "POST",
             url: '/ItemFBStar/ConfirmRizMetreItemFBStar',
             dataType: "json",
@@ -541,7 +566,9 @@ function DeleteRizMetreStar(object, RizMetreId, Shomareh, rizId, Code) {
     vardata.FBShomareh = Shomareh;
     vardata.NoeFBId = NoeFBId;
     vardata.Year = Year;
+    if (!beginBarAvordButtonWait($(object))) return;
     $.ajax({
+            complete: function () { endBarAvordButtonWait($(object)); },
         url: "/ItemFBStar/DeleteRizMetreStar",
         method: "POST",
         data: JSON.stringify(vardata),
