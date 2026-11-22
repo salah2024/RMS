@@ -7875,7 +7875,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
         return "OK";
     }
 
-    public JsonResult DeleteItemsFBShomarehValueShomareh([FromBody] DeleteItemsFBShomarehValueShomarehInputDto request)
+    public async Task<JsonResult> DeleteItemsFBShomarehValueShomareh([FromBody] DeleteItemsFBShomarehValueShomarehInputDto request)
     {
         try
         {
@@ -7892,13 +7892,31 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
             if (DtItemsFBShomarehValueShomareh.Rows.Count != 0)
             {
                 string strShomareh = DtItemsFBShomarehValueShomareh.Rows[0]["GetValuesShomareh"].ToString().Trim();
-                var clsRizMetreUsers = context.RizMetreUserses.Where(x => x.FB.Shomareh == strShomareh && x.FB.BarAvordId == BarAvordId
-                && x.ForItem == ItemsFBShomareh && x.LevelNumber == LevelNumber).ToList();
+                var clsRizMetreUsers = context.RizMetreUserses
+                    .Include(x => x.FB)
+                    .Where(x => x.FB.Shomareh == strShomareh
+                        && x.FB.BarAvordId == BarAvordId
+                        && x.ForItem == ItemsFBShomareh
+                        && x.LevelNumber == LevelNumber)
+                    .ToList();
 
                 if (clsRizMetreUsers.Count != 0)
                 {
+                    foreach (clsRizMetreUsers sourceRizMetre in clsRizMetreUsers.Where(x => x.Type != "3"))
+                    {
+                        await HamlCommon.DeleteHaml(new DeleteHamlDto
+                        {
+                            BarAvordId = BarAvordId,
+                            RIzMetreId = sourceRizMetre.ID,
+                            FBShomareh = sourceRizMetre.FB.Shomareh,
+                            RMShomareh = sourceRizMetre.Shomareh,
+                            NoeFBId = sourceRizMetre.FB.NoeFBId,
+                            ConditionContextId = sourceRizMetre.ConditionContextId
+                        }, context);
+                    }
+
                     context.RizMetreUserses.RemoveRange(clsRizMetreUsers);
-                    context.SaveChanges();
+                    await context.SaveChangesAsync();
                 }
                 //clsRizMetreUserss.Delete("clsFB.Shomareh='" + DtItemsFBShomarehValueShomareh.Rows[0]["GetValuesShomareh"].ToString().Trim() + "' and BarAvordId=" + BarAvordId + " and ForItem='" + ItemsFBShomareh.Trim() + "'");
                 var varItemsFBShomarehValueShomarehs = context.ItemsFBShomarehValueShomarehs.Where(x => x.FBShomareh == ItemsFBShomareh && x.BarAvordId == BarAvordId && x.Type == Type).ToList();
