@@ -818,12 +818,7 @@ public class ConditionCaseCommon
 
             if (blnCheckSave)
             {
-
-                var varBA = _context.BaravordUsers.Where(x => x.ID == BarAvordId).ToList();
-                DataTable DtBA = clsConvert.ToDataTable(varBA);
-
-
-                ///////////////////////////////////////
+///////////////////////////////////////
                 /////فیلدهای آیتمی که درج میگردد//////
                 ///////////////////////////////////////
 
@@ -933,9 +928,7 @@ public class ConditionCaseCommon
                 varRizMetreUsersesCurrent = varRizMetreUsersesCurrent
                     .Where(x => !deletedRizMetreUserIds.Contains(x.ID))
                     .ToList();
-                DataTable DtRizMetreUsersesCurrent = clsConvert.ToDataTable(varRizMetreUsersesCurrent);
-
-                //var matchCondition = Regex.Match(strFinalWorking, @"\b([a-zA-Z])\b");
+//var matchCondition = Regex.Match(strFinalWorking, @"\b([a-zA-Z])\b");
                 //string variableNameCondition = matchCondition.Success ? matchCondition.Groups[1].Value : null;
                 //string strConditionOp = "";
 
@@ -1523,8 +1516,7 @@ public class ConditionCaseCommon
 
                         }
 
-                        DataRow[] DrRizMetreUsersesCurrent = DtRizMetreUsersesCurrent.Select("shomareh=" + DtRizMetreUserses11.Shomareh);
-                        if (DrRizMetreUsersesCurrent.Length == 0)
+                        if (!varRizMetreUsersesCurrent.Any(x => x.Shomareh == DtRizMetreUserses11.Shomareh))
                         {
                             List<string> lst = new List<string>();
                             for (int j = 0; j < FieldsAddingSplit.Length; j++)
@@ -1777,9 +1769,7 @@ public class ConditionCaseCommon
         string[] strFinalWorkingSplit = strFinalWorking1.Split('_');
         string strFinalWorking2 = strFinalWorkingSplit[0];
         //decimal dBahayeVahedZarib = strFinalWorkingSplit.Length > 1 ? decimal.Parse(strFinalWorkingSplit[1]) : 0;
-
-        DataTable DtRizMetreUserses = new DataTable();
-        string strForItem = "";
+string strForItem = "";
         string strUseItem = "";
         string strItemFBShomareh = strItemsFBShomareh;
         string strDesOfAddingItems = DesOfAddingItems;
@@ -1885,9 +1875,8 @@ public class ConditionCaseCommon
                 .Where(x => !deletedRizMetreUserIds.Contains(x.ID))
                 .ToList();
 
-            //DataTable DtRizMetreUsersesCurrent = clsConvert.ToDataTable(varRizMetreUsersesCurrent);
-
-            List<clsFB> lstFBUser = _context.FBs.Where(x => x.BarAvordId == BarAvordId && x.NoeFBId == NoeFBId).ToList();
+            //
+List<clsFB> lstFBUser = _context.FBs.Where(x => x.BarAvordId == BarAvordId && x.NoeFBId == NoeFBId).ToList();
             string strItemShomareh = FBShomarehAddedItem + strCharacterPlus;
             clsFB? varFBUser = lstFBUser.FirstOrDefault(x => x.Shomareh == strItemShomareh);
 
@@ -2217,9 +2206,7 @@ public class ConditionCaseCommon
         if (blnCheckAgain)
         {
             //decimal dSumAllRizMetre = 0;
-
-            DataTable DtRizMetreUserses = new DataTable();
-            string strForItem = "";
+string strForItem = "";
             string strUseItem = "";
             string strItemFBShomareh = strItemsFBShomareh;
 
