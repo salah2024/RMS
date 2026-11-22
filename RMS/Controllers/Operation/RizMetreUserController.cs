@@ -7125,7 +7125,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
         return "OK";
     }
 
-    public JsonResult DeleteEzafeBahaAndLakeGiriRizMetreAll([FromBody] DeleteEzafeBahaAndLakeGiriRizMetreAllInputDto request)
+    public async Task<JsonResult> DeleteEzafeBahaAndLakeGiriRizMetreAll([FromBody] DeleteEzafeBahaAndLakeGiriRizMetreAllInputDto request)
     {
         try
         {
@@ -7333,9 +7333,66 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                     List<clsRizMetreUsers> lstRizMetreUsers = context.RizMetreUserses.Where(x => x.FBId == FBId && x.ForItem == ItemShomareh && x.Shomareh == lngShomareh).OrderBy(x => x.Shomareh).ToList();
 
                                     if (lstRizMetreUsers.Count != 0)
+
+
                                     {
+
+
+                                        clsFB? fbForDeleteHaml = context.FBs.FirstOrDefault(x => x.ID == FBId);
+
+
+                                        if (fbForDeleteHaml != null)
+
+
+                                        {
+
+
+                                            foreach (clsRizMetreUsers sourceRizMetre in lstRizMetreUsers.Where(x => x.Type != "3"))
+
+
+                                            {
+
+
+                                                await HamlCommon.DeleteHaml(new DeleteHamlDto
+
+
+                                                {
+
+
+                                                    BarAvordId = BarAvordId,
+
+
+                                                    RIzMetreId = sourceRizMetre.ID,
+
+
+                                                    FBShomareh = fbForDeleteHaml.Shomareh,
+
+
+                                                    RMShomareh = sourceRizMetre.Shomareh,
+
+
+                                                    NoeFBId = NoeFBId,
+
+
+                                                    ConditionContextId = sourceRizMetre.ConditionContextId
+
+
+                                                }, context);
+
+
+                                            }
+
+
+                                        }
+
+
+
                                         context.RizMetreUserses.RemoveRange(lstRizMetreUsers);
-                                        context.SaveChanges();
+
+
+                                        await context.SaveChangesAsync();
+
+
                                     }
 
                                     //clsRizMetreUserss.Delete("clsRizMetreUserss.Id=" + DtRizMetreUsers.Rows[0]["Id"].ToString());
@@ -7388,9 +7445,66 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                     List<clsRizMetreUsers> lstRizMetreUsers = context.RizMetreUserses.Where(x => x.FBId == FBId && x.ForItem == ItemShomareh && x.Shomareh == lngShomareh).OrderBy(x => x.Shomareh).ToList();
 
                                     if (lstRizMetreUsers.Count != 0)
+
+
                                     {
+
+
+                                        clsFB? fbForDeleteHaml = context.FBs.FirstOrDefault(x => x.ID == FBId);
+
+
+                                        if (fbForDeleteHaml != null)
+
+
+                                        {
+
+
+                                            foreach (clsRizMetreUsers sourceRizMetre in lstRizMetreUsers.Where(x => x.Type != "3"))
+
+
+                                            {
+
+
+                                                await HamlCommon.DeleteHaml(new DeleteHamlDto
+
+
+                                                {
+
+
+                                                    BarAvordId = BarAvordId,
+
+
+                                                    RIzMetreId = sourceRizMetre.ID,
+
+
+                                                    FBShomareh = fbForDeleteHaml.Shomareh,
+
+
+                                                    RMShomareh = sourceRizMetre.Shomareh,
+
+
+                                                    NoeFBId = NoeFBId,
+
+
+                                                    ConditionContextId = sourceRizMetre.ConditionContextId
+
+
+                                                }, context);
+
+
+                                            }
+
+
+                                        }
+
+
+
                                         context.RizMetreUserses.RemoveRange(lstRizMetreUsers);
-                                        context.SaveChanges();
+
+
+                                        await context.SaveChangesAsync();
+
+
                                     }
 
                                     //clsRizMetreUserss.Delete("clsRizMetreUserss.Id=" + DtRizMetreUsers.Rows[0]["Id"].ToString());
@@ -7432,9 +7546,66 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                     List<clsRizMetreUsers> lstRizMetreUsers = context.RizMetreUserses.Where(x => x.FBId == FBId && x.ForItem == ItemShomareh && x.Shomareh == lngShomareh).OrderBy(x => x.Shomareh).ToList();
 
                                     if (lstRizMetreUsers.Count != 0)
+
+
                                     {
+
+
+                                        clsFB? fbForDeleteHaml = context.FBs.FirstOrDefault(x => x.ID == FBId);
+
+
+                                        if (fbForDeleteHaml != null)
+
+
+                                        {
+
+
+                                            foreach (clsRizMetreUsers sourceRizMetre in lstRizMetreUsers.Where(x => x.Type != "3"))
+
+
+                                            {
+
+
+                                                await HamlCommon.DeleteHaml(new DeleteHamlDto
+
+
+                                                {
+
+
+                                                    BarAvordId = BarAvordId,
+
+
+                                                    RIzMetreId = sourceRizMetre.ID,
+
+
+                                                    FBShomareh = fbForDeleteHaml.Shomareh,
+
+
+                                                    RMShomareh = sourceRizMetre.Shomareh,
+
+
+                                                    NoeFBId = NoeFBId,
+
+
+                                                    ConditionContextId = sourceRizMetre.ConditionContextId
+
+
+                                                }, context);
+
+
+                                            }
+
+
+                                        }
+
+
+
                                         context.RizMetreUserses.RemoveRange(lstRizMetreUsers);
-                                        context.SaveChanges();
+
+
+                                        await context.SaveChangesAsync();
+
+
                                     }
                                     //string strResult = DeleteSubItemsAddingToFB(long.Parse(DtItemsAddingToFB.Rows[i]["ID"].ToString()), Ertefa, RizMetreId, BarAvordId, strAddedItems);
                                 }
@@ -7496,9 +7667,66 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                             List<clsRizMetreUsers> lstRizMetreUsers = context.RizMetreUserses.Where(x => x.FBId == FBId && x.ForItem == ItemShomareh && x.Shomareh == lngShomareh).OrderBy(x => x.Shomareh).ToList();
 
                                             if (lstRizMetreUsers.Count != 0)
+
+
                                             {
+
+
+                                                clsFB? fbForDeleteHaml = context.FBs.FirstOrDefault(x => x.ID == FBId);
+
+
+                                                if (fbForDeleteHaml != null)
+
+
+                                                {
+
+
+                                                    foreach (clsRizMetreUsers sourceRizMetre in lstRizMetreUsers.Where(x => x.Type != "3"))
+
+
+                                                    {
+
+
+                                                        await HamlCommon.DeleteHaml(new DeleteHamlDto
+
+
+                                                        {
+
+
+                                                            BarAvordId = BarAvordId,
+
+
+                                                            RIzMetreId = sourceRizMetre.ID,
+
+
+                                                            FBShomareh = fbForDeleteHaml.Shomareh,
+
+
+                                                            RMShomareh = sourceRizMetre.Shomareh,
+
+
+                                                            NoeFBId = NoeFBId,
+
+
+                                                            ConditionContextId = sourceRizMetre.ConditionContextId
+
+
+                                                        }, context);
+
+
+                                                    }
+
+
+                                                }
+
+
+
                                                 context.RizMetreUserses.RemoveRange(lstRizMetreUsers);
-                                                context.SaveChanges();
+
+
+                                                await context.SaveChangesAsync();
+
+
                                             }
                                         }
                                     }
