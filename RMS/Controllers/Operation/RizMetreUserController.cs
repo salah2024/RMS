@@ -3200,6 +3200,24 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                 try
                 {
                     context.Entry(clsRizMetreUsers1).CurrentValues.SetValues(RizMetre);
+
+                    if (Type != "3")
+                    {
+                        clsFB? fbForHamlUpdate = context.FBs.FirstOrDefault(x => x.ID == clsRizMetreUsers1.FBId);
+                        if (fbForHamlUpdate != null)
+                        {
+                            HamlCommon.UpdateHaml(new UpdateHamlDto
+                            {
+                                BarAvordId = intBarAvordId,
+                                FBShomareh = fbForHamlUpdate.Shomareh,
+                                Year = Year,
+                                RMShomareh = clsRizMetreUsers1.Shomareh,
+                                NoeFB = NoeFB,
+                                MeghdarJoz = dMeghdarJoz
+                            }, context);
+                        }
+                    }
+
                     context.SaveChanges();
                 }
                 catch (Exception e)
@@ -3250,6 +3268,23 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
             dMeghdarJoz += (Tedad == null ? 1 : Tedad.Value) * (Tool == null ? 1 : Tool.Value) *
             (Arz == null ? 1 : Arz.Value) * (Ertefa == null ? 1 : Ertefa.Value) * (Vazn == null ? 1 : Vazn.Value);
         entity.MeghdarJoz = dMeghdarJoz;
+
+        if (entity.Type != "3")
+        {
+            clsFB? fbForHamlUpdate = context.FBs.FirstOrDefault(x => x.ID == entity.FBId);
+            if (fbForHamlUpdate != null)
+            {
+                HamlCommon.UpdateHaml(new UpdateHamlDto
+                {
+                    BarAvordId = fbForHamlUpdate.BarAvordId,
+                    FBShomareh = fbForHamlUpdate.Shomareh,
+                    Year = Year,
+                    RMShomareh = entity.Shomareh,
+                    NoeFB = NoeFB,
+                    MeghdarJoz = dMeghdarJoz
+                }, context);
+            }
+        }
 
         context.SaveChanges();
         return new JsonResult("OK_");
