@@ -5341,33 +5341,19 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
 
 
                                     clsFB? fbForHaml = context.FBs.FirstOrDefault(x => x.ID == RizMetreUsers.FBId);
-
                                     if (fbForHaml != null)
-
                                     {
-
                                         await HamlCommon.SaveHaml(new SaveHamlDto
-
                                         {
-
                                             BarAvordUserId = BarAvordId,
-
                                             Year = request.Year,
-
                                             ItemFBShomareh = fbForHaml.Shomareh,
-
                                             NoeFBId = NoeFBId,
-
                                             Shomareh = RizMetreUsers.Shomareh,
-
                                             MeghdarJoz = RizMetreUsers.MeghdarJoz,
-
                                             LevelNumber = LevelNumber,
-
                                             ConditionContextId = RizMetreUsers.ConditionContextId,
-
                                             BaseFBItem = ItemShomareh
-
                                         }, context);
 
 
@@ -5623,33 +5609,19 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
 
 
                                     clsFB? fbForHaml = context.FBs.FirstOrDefault(x => x.ID == RizMetreUsers.FBId);
-
                                     if (fbForHaml != null)
-
                                     {
-
                                         await HamlCommon.SaveHaml(new SaveHamlDto
-
                                         {
-
                                             BarAvordUserId = BarAvordId,
-
                                             Year = request.Year,
-
                                             ItemFBShomareh = fbForHaml.Shomareh,
-
                                             NoeFBId = NoeFBId,
-
                                             Shomareh = RizMetreUsers.Shomareh,
-
                                             MeghdarJoz = RizMetreUsers.MeghdarJoz,
-
                                             LevelNumber = LevelNumber,
-
                                             ConditionContextId = RizMetreUsers.ConditionContextId,
-
                                             BaseFBItem = ItemShomareh
-
                                         }, context);
 
 
@@ -5932,33 +5904,19 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
 
 
                                     clsFB? fbForHaml = context.FBs.FirstOrDefault(x => x.ID == RizMetreUsers.FBId);
-
                                     if (fbForHaml != null)
-
                                     {
-
                                         await HamlCommon.SaveHaml(new SaveHamlDto
-
                                         {
-
                                             BarAvordUserId = BarAvordId,
-
                                             Year = request.Year,
-
                                             ItemFBShomareh = fbForHaml.Shomareh,
-
                                             NoeFBId = NoeFBId,
-
                                             Shomareh = RizMetreUsers.Shomareh,
-
                                             MeghdarJoz = RizMetreUsers.MeghdarJoz,
-
                                             LevelNumber = LevelNumber,
-
                                             ConditionContextId = RizMetreUsers.ConditionContextId,
-
                                             BaseFBItem = ItemShomareh
-
                                         }, context);
 
 
@@ -6168,33 +6126,19 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
 
 
                                             clsFB? fbForHaml = context.FBs.FirstOrDefault(x => x.ID == RizMetreUsers.FBId);
-
                                             if (fbForHaml != null)
-
                                             {
-
                                                 await HamlCommon.SaveHaml(new SaveHamlDto
-
                                                 {
-
                                                     BarAvordUserId = BarAvordId,
-
                                                     Year = request.Year,
-
                                                     ItemFBShomareh = fbForHaml.Shomareh,
-
                                                     NoeFBId = NoeFBId,
-
                                                     Shomareh = RizMetreUsers.Shomareh,
-
                                                     MeghdarJoz = RizMetreUsers.MeghdarJoz,
-
                                                     LevelNumber = LevelNumber,
-
                                                     ConditionContextId = RizMetreUsers.ConditionContextId,
-
                                                     BaseFBItem = ItemShomareh
-
                                                 }, context);
 
 
@@ -6447,33 +6391,19 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
 
 
                                     clsFB? fbForHaml = context.FBs.FirstOrDefault(x => x.ID == RizMetreUsers.FBId);
-
                                     if (fbForHaml != null)
-
                                     {
-
                                         await HamlCommon.SaveHaml(new SaveHamlDto
-
                                         {
-
                                             BarAvordUserId = BarAvordId,
-
                                             Year = request.Year,
-
                                             ItemFBShomareh = fbForHaml.Shomareh,
-
                                             NoeFBId = NoeFBId,
-
                                             Shomareh = RizMetreUsers.Shomareh,
-
                                             MeghdarJoz = RizMetreUsers.MeghdarJoz,
-
                                             LevelNumber = LevelNumber,
-
                                             ConditionContextId = RizMetreUsers.ConditionContextId,
-
                                             BaseFBItem = ItemShomareh
-
                                         }, context);
 
 
@@ -6711,33 +6641,19 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
 
 
                                     clsFB? fbForHaml = context.FBs.FirstOrDefault(x => x.ID == RizMetreUsers.FBId);
-
                                     if (fbForHaml != null)
-
                                     {
-
                                         await HamlCommon.SaveHaml(new SaveHamlDto
-
                                         {
-
                                             BarAvordUserId = BarAvordId,
-
                                             Year = request.Year,
-
                                             ItemFBShomareh = fbForHaml.Shomareh,
-
                                             NoeFBId = NoeFBId,
-
                                             Shomareh = RizMetreUsers.Shomareh,
-
                                             MeghdarJoz = RizMetreUsers.MeghdarJoz,
-
                                             LevelNumber = LevelNumber,
-
                                             ConditionContextId = RizMetreUsers.ConditionContextId,
-
                                             BaseFBItem = ItemShomareh
-
                                         }, context);
 
                                     }
@@ -7025,33 +6941,19 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
 
 
                     clsFB? fbForHaml = context.FBs.FirstOrDefault(x => x.ID == RizMetreUsers.FBId);
-
                     if (fbForHaml != null)
-
                     {
-
                         await HamlCommon.SaveHaml(new SaveHamlDto
-
                         {
-
                             BarAvordUserId = BarAvordId,
-
                             Year = request.Year,
-
                             ItemFBShomareh = fbForHaml.Shomareh,
-
                             NoeFBId = NoeFBId,
-
                             Shomareh = RizMetreUsers.Shomareh,
-
                             MeghdarJoz = RizMetreUsers.MeghdarJoz,
-
                             LevelNumber = LevelNumber,
-
                             ConditionContextId = RizMetreUsers.ConditionContextId,
-
                             BaseFBItem = ItemShomareh
-
                         }, context);
 
                     }
@@ -7305,31 +7207,18 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
 
 
                                         clsFB? fbForDeleteHaml = context.FBs.FirstOrDefault(x => x.ID == FBId);
-
                                         if (fbForDeleteHaml != null)
-
                                         {
-
                                             foreach (clsRizMetreUsers sourceRizMetre in lstRizMetreUsers.Where(x => x.Type != "3"))
-
                                             {
-
                                                 await HamlCommon.DeleteHaml(new DeleteHamlDto
-
                                                 {
-
                                                     BarAvordId = BarAvordId,
-
                                                     RIzMetreId = sourceRizMetre.ID,
-
                                                     FBShomareh = fbForDeleteHaml.Shomareh,
-
                                                     RMShomareh = sourceRizMetre.Shomareh,
-
                                                     NoeFBId = NoeFBId,
-
                                                     ConditionContextId = sourceRizMetre.ConditionContextId
-
                                                 }, context);
 
 
@@ -7404,31 +7293,18 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
 
 
                                         clsFB? fbForDeleteHaml = context.FBs.FirstOrDefault(x => x.ID == FBId);
-
                                         if (fbForDeleteHaml != null)
-
                                         {
-
                                             foreach (clsRizMetreUsers sourceRizMetre in lstRizMetreUsers.Where(x => x.Type != "3"))
-
                                             {
-
                                                 await HamlCommon.DeleteHaml(new DeleteHamlDto
-
                                                 {
-
                                                     BarAvordId = BarAvordId,
-
                                                     RIzMetreId = sourceRizMetre.ID,
-
                                                     FBShomareh = fbForDeleteHaml.Shomareh,
-
                                                     RMShomareh = sourceRizMetre.Shomareh,
-
                                                     NoeFBId = NoeFBId,
-
                                                     ConditionContextId = sourceRizMetre.ConditionContextId
-
                                                 }, context);
 
 
@@ -7492,31 +7368,18 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
 
 
                                         clsFB? fbForDeleteHaml = context.FBs.FirstOrDefault(x => x.ID == FBId);
-
                                         if (fbForDeleteHaml != null)
-
                                         {
-
                                             foreach (clsRizMetreUsers sourceRizMetre in lstRizMetreUsers.Where(x => x.Type != "3"))
-
                                             {
-
                                                 await HamlCommon.DeleteHaml(new DeleteHamlDto
-
                                                 {
-
                                                     BarAvordId = BarAvordId,
-
                                                     RIzMetreId = sourceRizMetre.ID,
-
                                                     FBShomareh = fbForDeleteHaml.Shomareh,
-
                                                     RMShomareh = sourceRizMetre.Shomareh,
-
                                                     NoeFBId = NoeFBId,
-
                                                     ConditionContextId = sourceRizMetre.ConditionContextId
-
                                                 }, context);
 
 
@@ -7600,31 +7463,18 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
 
 
                                                 clsFB? fbForDeleteHaml = context.FBs.FirstOrDefault(x => x.ID == FBId);
-
                                                 if (fbForDeleteHaml != null)
-
                                                 {
-
                                                     foreach (clsRizMetreUsers sourceRizMetre in lstRizMetreUsers.Where(x => x.Type != "3"))
-
                                                     {
-
                                                         await HamlCommon.DeleteHaml(new DeleteHamlDto
-
                                                         {
-
                                                             BarAvordId = BarAvordId,
-
                                                             RIzMetreId = sourceRizMetre.ID,
-
                                                             FBShomareh = fbForDeleteHaml.Shomareh,
-
                                                             RMShomareh = sourceRizMetre.Shomareh,
-
                                                             NoeFBId = NoeFBId,
-
                                                             ConditionContextId = sourceRizMetre.ConditionContextId
-
                                                         }, context);
 
 
