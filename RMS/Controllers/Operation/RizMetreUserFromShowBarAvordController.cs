@@ -779,35 +779,17 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
             }
 
 
-            string currentShomareh = currentFb.Shomareh;
-            List<clsBarAvordHaml> lstBarAvordHaml = await context.BarAvordHamls.Where(x => x.BarAvordId == BarAvordId && x.NoeFBId == NoeFBId && x.FBShomareh == currentShomareh).ToListAsync();
-            if (lstBarAvordHaml.Count != 0)
+            if (entity.Type == "1")
             {
-                List<Guid> lstBarAvordHamlIds = lstBarAvordHaml.Select(x => x.ID).ToList();
-                List<clsBarAvordHamlRizMetre> lstBAHRM =
-                    context.BarAvordHamlRizMetres.Where(x => lstBarAvordHamlIds.Contains(x.BarAvordHamlId)).ToList();
-                List<Guid> lstRizMetreIds = lstBAHRM.Select(x => x.RizMetreId).ToList();
-                if (lstBAHRM.Count != 0)
+                await HamlCommon.UpdateHaml(new UpdateHamlDto
                 {
-                    clsRizMetreUsers? RizMetreForHaml = await context.RizMetreUserses.FirstOrDefaultAsync(x => lstRizMetreIds.Contains(x.ID) && x.Shomareh == entity.Shomareh);
-                    if (RizMetreForHaml != null)
-                    {
-                        //    RizMetreForHaml.Tedad = Tedad;
-                        //    RizMetreForHaml.Tool = Tool;
-                        //    RizMetreForHaml.Arz = Arz;
-                        //    RizMetreForHaml.Ertefa = Ertefa;
-                        decimal? dMeghdarJozHaml = null;
-                        if (RizMetreForHaml.Tedad == null && RizMetreForHaml.Tool == null && RizMetreForHaml.Arz == null && RizMetreForHaml.Ertefa == null)
-                            dMeghdarJozHaml = null;
-                        else
-                            dMeghdarJozHaml = (RizMetreForHaml.Tedad == null ? 1 : RizMetreForHaml.Tedad.Value) * (RizMetreForHaml.Tool == null ? 1 : RizMetreForHaml.Tool.Value) *
-                            (RizMetreForHaml.Arz == null ? 1 : RizMetreForHaml.Arz.Value) * (RizMetreForHaml.Ertefa == null ? 1 : RizMetreForHaml.Ertefa.Value)
-                            * (RizMetreForHaml.Vazn == null ? 1 : RizMetreForHaml.Vazn.Value);
-
-                        RizMetreForHaml.Vazn = dMeghdarJoz;
-                        RizMetreForHaml.MeghdarJoz = (dMeghdarJozHaml == null ? 1 : dMeghdarJozHaml) * dMeghdarJoz;
-                    }
-                }
+                    BarAvordId = BarAvordId,
+                    FBShomareh = currentFb.Shomareh,
+                    Year = Year,
+                    RMShomareh = entity.Shomareh,
+                    NoeFB = NoeFBId,
+                    MeghdarJoz = dMeghdarJoz
+                }, context);
             }
         }
 
