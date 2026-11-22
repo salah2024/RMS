@@ -1701,7 +1701,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                 context.Entry(clsRizMetreUsers1).CurrentValues.SetValues(RizMetre);
 
                 clsFB? currentFb = await context.FBs.FirstOrDefaultAsync(x => x.ID == RizMetre.FBId);
-                if (currentFb != null && Type == "1")
+                if (currentFb != null && Type != "3")
                 {
                     HamlCommon.UpdateHaml(new UpdateHamlDto
                     {
