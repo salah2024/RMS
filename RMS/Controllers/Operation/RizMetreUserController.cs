@@ -1700,38 +1700,18 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
             {
                 context.Entry(clsRizMetreUsers1).CurrentValues.SetValues(RizMetre);
 
-                clsFB? currentFb = context.FBs.FirstOrDefault(x => x.ID == RizMetre.FBId);
-                if (currentFb != null)
+                clsFB? currentFb = await context.FBs.FirstOrDefaultAsync(x => x.ID == RizMetre.FBId);
+                if (currentFb != null && Type == "1")
                 {
-                    string currentShomareh = currentFb.Shomareh;
-                    clsBarAvordHaml? barAvordHaml = context.BarAvordHamls.FirstOrDefault(x => x.BarAvordId == request.BarAvordUserId && x.NoeFBId == NoeFBId && x.FBShomareh == currentShomareh);
-                    if (barAvordHaml != null)
+                    await HamlCommon.UpdateHaml(new UpdateHamlDto
                     {
-                        List<clsBarAvordHamlRizMetre> lstBAHRM =
-                            context.BarAvordHamlRizMetres.Where(x => x.BarAvordHamlId == barAvordHaml.ID).ToList();
-                        List<Guid> lstRizMetreIds = lstBAHRM.Select(x => x.RizMetreId).ToList();
-                        if (lstBAHRM.Count != 0)
-                        {
-                            List<clsRizMetreUsers> lstRizMetreForHaml = context.RizMetreUserses.Where(x => lstRizMetreIds.Contains(x.ID) && x.Shomareh == RizMetre.Shomareh).ToList();
-                            if (lstRizMetreForHaml.Count != 0)
-                            {
-                                foreach (var RizMetreForHaml in lstRizMetreForHaml)
-                                {
-                                    RizMetreForHaml.Tedad = Tedad;
-                                    RizMetreForHaml.Tool = Tool;
-                                    RizMetreForHaml.Arz = Arz;
-                                    RizMetreForHaml.Ertefa = Ertefa;
-                                    decimal dMeghdarJozHaml = 0;
-                                    if (Tedad == null && Tool == null && Arz == null && Ertefa == null)
-                                        dMeghdarJozHaml = 0;
-                                    else
-                                        dMeghdarJozHaml += (Tedad == null ? 1 : Tedad.Value) * (Tool == null ? 1 : Tool.Value) *
-                                        (Arz == null ? 1 : Arz.Value) * (Ertefa == null ? 1 : Ertefa.Value) * (RizMetreForHaml.Vazn == null ? 1 : RizMetreForHaml.Vazn.Value);
-                                    RizMetreForHaml.MeghdarJoz = dMeghdarJozHaml;
-                                }
-                            }
-                        }
-                    }
+                        BarAvordId = request.BarAvordUserId,
+                        FBShomareh = currentFb.Shomareh,
+                        Year = Year,
+                        RMShomareh = RizMetre.Shomareh,
+                        NoeFB = NoeFBId,
+                        MeghdarJoz = dMeghdarJoz
+                    }, context);
                 }
 
 
