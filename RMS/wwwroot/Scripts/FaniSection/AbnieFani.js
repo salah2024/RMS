@@ -107,16 +107,6 @@ function TabClick(currentTab) {
                 hMax = h + t;
                 hMin = hMax - ((2 - (alfaw1 / 90)) * (hMax - 1));
 
-                console.log({
-                    ObjectId: ObjectId,
-                    alfaw1: alfaw1,
-                    h: h,
-                    t: t,
-                    hMax: hMax,
-                    calculatedHMin: hMin
-                });
-
-
                 debugger;
                 $('#hMinw1-' + PolExistingId).val(hMin.toFixed(2));
             }
@@ -1683,11 +1673,6 @@ function ShowSelctionPol(IsNew, PolExistingId, PolNum, GetTedadDahaneh, GetDahan
 
                             const inputId = '#hMinw1-' + PolExistingId;
 
-                            console.log('بعد از تنظیم دیتابیس:', $(inputId).val());
-
-                            setTimeout(function () {
-                                console.log('بعد از 100 میلی‌ثانیه:', $(inputId).val());
-                            }, 100);
                         }
                         else if (Shomareh == 2) {
                             $('#w2-' + PolExistingId).val(ToolW);

@@ -1800,7 +1800,7 @@ function MainTableClick(Obj, Type) {
     //$('#HDFNoeFB').val($(Obj).find("td:nth-child(8)").html());
 
     $('#aCurrentProject').html($(Obj).find("td:nth-child(7)").html() + " - " + $(Obj).find("td:nth-child(3)").html());
-    if (Type == 3) {
+    if (Type == 2) {
         GetSooratVaziat($(Obj).find("td:nth-child(1)").html());
     }
 }

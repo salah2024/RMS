@@ -156,7 +156,6 @@ function GetJamBarAvordAll() {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (response) {
-            console.log('[RIZ-SUM-PERF] CalculateBarAvordAll ms:', Number((window.performance.now() - sumRequestStartedAt).toFixed(1)));
 
             jameFasl = response.jameFasl;
             jameFaslStar = response.jameFaslStar;
@@ -194,7 +193,6 @@ function GetJamFosoulAll() {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (response) {
-            console.log('[RIZ-SUM-PERF] CalculateFosoulAll ms:', Number((window.performance.now() - sumRequestStartedAt).toFixed(1)));
 
             jameFasl = response.jameFasl;
             jameFaslWithOutTajhiz = response.jameFaslWithOutTajhiz;
@@ -209,15 +207,15 @@ function GetJamFosoulAll() {
             check = response.check;
 
             $('#tdjameFasl-101').html(formatNumber(jameFaslWithOutTajhiz.toFixed(0)));
-            //$('#tdjameFasl-102').html(formatNumber(jameFasl.toFixed(0)));
+
             $('#tdjameFaslStar-101').html(formatNumber(jameFaslStar.toFixed(0)));
-            //$('#tdjameFaslStar-102').html(formatNumber(jameFaslStar.toFixed(0)));
+
             $('#tdjameFaslAll-101').html(formatNumber(jameFaslKolWithOutTajhiz.toFixed(0)));
-            //$('#tdjameFaslAll-102').html(formatNumber(jameFaslKol.toFixed(0)));
+
             $('#tdjameFaslBaZarib-101').html(formatNumber(jameFaslWithOutTajhizInZarib.toFixed(0)));
-            //$('#tdjameFaslBaZarib-102').html(formatNumber(jameFaslInZarib.toFixed(0)));
+
             $('#tdjameFaslStarBaZarib-101').html(formatNumber(jameFaslStarInZarib.toFixed(0)));
-            //$('#tdjameFaslStarBaZarib-102').html(formatNumber(jameFaslStarInZarib.toFixed(0)));
+
             $('#tdjameFaslAllBaZarib-101').html(formatNumber(jameFaslKolWithOutTajhizInZarib.toFixed(0)));
             $('#tdjameFaslAllBaZarib-102').html(formatNumber(jameFaslKolInZarib.toFixed(0)));
 
@@ -305,16 +303,11 @@ function LoadDarsadTajhizKargah() {
                 zaribBalaSari = Zarayeb.zaribBalaSari;
                 zaribManteghe = Zarayeb.zaribManteghe;
 
-                //MeghdarInZarib = Meghdar * zaribBalaSari * zaribManteghe;
 
                 $('#txtDarsadTajhiz-99').val(Darsad);
-                //$('#tdjameFaslStar-99').html(formatNumber(Meghdar.toFixed(0)));
+
 
                 $('#chkDarsadTajhiz-99').prop('checked', true);
-
-                //$('#tdjameFaslAll-99').html(formatNumber(Meghdar.toFixed(0)));
-
-                //$('#tdjameFaslStarBaZarib-99').html(formatNumber(Meghdar.toFixed(0)));
 
 
                 $('#tdjameFaslAllBaZarib-99').html(formatNumber(Meghdar.toFixed(0)));
@@ -474,15 +467,9 @@ function renderTableFosoul(data) {
 
                 // باز کردن ردیف انتخاب‌شده
                 window.__showBarAvordClickStartedAt = window.performance.now();
-                console.log("[ShowBarAvord][PERF][CLICK] chapter click:", {
-                    code: item.code,
-                    itemId: item.id,
-                    startedAt: window.__showBarAvordClickStartedAt
-                });
+               
                 detailRow.show();
-                console.log("[ShowBarAvord][PERF][CLICK] detail row show ms:",
-                    (window.performance.now() - window.__showBarAvordClickStartedAt).toFixed(1));
-
+               
                 GetBarAvord(item.id, item.code, item.faslName, faslAsli);
             }
         });

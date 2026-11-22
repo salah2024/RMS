@@ -703,8 +703,6 @@ function loadSteps(workflowId) {
         }
         ,
         error: function (xhr) {
-            console.log(xhr.status);
-            console.log(xhr.responseText);
         }
 
     });

@@ -561,13 +561,6 @@
     const chapterAnimationStartedAt = window.performance.now();
     $(`#${ItemId}`).stop(true, true).slideDown(200, function () {
         const clickStartedAt = window.__showBarAvordClickStartedAt;
-        console.log('[ShowBarAvord][PERF][END-TO-END] chapter detail animation completed:', {
-            itemId: ItemId,
-            animationMs: Number((window.performance.now() - chapterAnimationStartedAt).toFixed(1)),
-            clickToVisibleMs: clickStartedAt
-                ? Number((window.performance.now() - clickStartedAt).toFixed(1))
-                : null
-        });
     });
 
     $('.clickable-row').off('click').on('click', function (e) {
@@ -799,11 +792,6 @@
     $nonZeroFilter.prop('checked', shouldShowOnlyNonZero).trigger('change');
     renderPerf.initialFilter = Number((window.performance.now() - initialFilterStartedAt).toFixed(1));
     renderPerf.total = Number((window.performance.now() - renderPerfStartedAt).toFixed(1));
-    console.log('[ShowBarAvord][PERF][renderTable stages]', {
-        itemCount: Array.isArray(data) ? data.length : 0,
-        starCount: Array.isArray(Stars) ? Stars.length : 0,
-        timingsMs: renderPerf
-    });
 
 }
 
@@ -1109,7 +1097,7 @@ function UpdateRizMetreFromRow(el, rizMetreId, Shomareh, rizId1, FBId, Code) {
             data: JSON.stringify(vardata),
             contentType: "application/json; charset=utf-8",
             success: function (data) {
-                console.log('[RIZ-SUM-PERF] INSERT save endpoint ms:', Number((window.performance.now() - rizOperationStartedAt).toFixed(1)));
+
                 var info = data.split('_');
                 if (info[0] == "OK") {
                     row.removeClass('editing');
@@ -1285,7 +1273,7 @@ function SaveNewRMUClick($btn) {
 function SaveRMUClick(object, Shomareh, rizId, Code) {
 
     var rizOperationStartedAt = window.performance.now();
-    console.log('[RIZ-SUM-PERF] INSERT started:', { item: Shomareh, code: Code });
+
     object.attr('disabled', true);
 
     object.parent().parent().find('input[type=text]').each(function () {
@@ -1553,7 +1541,6 @@ function refreshBaseItem(object, Shomareh, Code) {
             data: JSON.stringify(vardata),
             contentType: "application/json; charset=utf-8",
             success: function (data) {
-                console.log('[RIZ-SUM-PERF] GetJameCurrentFasl ms:', Number((window.performance.now() - chapterSumStartedAt).toFixed(1)));
 
                 ///////////////
                 ///////////////
@@ -1628,7 +1615,6 @@ function refreshBaseItem(object, Shomareh, Code) {
             data: JSON.stringify(vardata),
             contentType: "application/json; charset=utf-8",
             success: function (data) {
-                console.log('[RIZ-SUM-PERF] GetJameCurrentFasl (Baravord) ms:', Number((window.performance.now() - chapterSumStartedAt).toFixed(1)));
 
 
                 ///////////////
@@ -1760,7 +1746,6 @@ function GetCurrentRizMetreUsers(Shomareh, rizId, FBId, Code) {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (response) {
-            console.log('[RIZ-SUM-PERF] GetCurrentRizMetreUsers ms:', Number((window.performance.now() - rizListStartedAt).toFixed(1)), 'rows:', (response.rizMetreUsers || []).length);
 
             rizMetreUsers = response.rizMetreUsers;
             lstItemsFields = response.lstItemsFields;
@@ -1933,7 +1918,7 @@ function TajmieItemChange(Obj) {
 
 function DeleteRizMetre(object, RizMetreId, Shomareh, rizId, FBId, Code) {
     var rizOperationStartedAt = window.performance.now();
-    console.log('[RIZ-SUM-PERF] DELETE started:', { item: Shomareh, code: Code, rizMetreId: RizMetreId });
+
     BarAvordUserId = $('#HDFBarAvordUserID').val();
     NoeFBId = parseInt($('#HDFNoeFB').val());
     Year = parseInt($('#HDFYear').val());
@@ -1951,7 +1936,7 @@ function DeleteRizMetre(object, RizMetreId, Shomareh, rizId, FBId, Code) {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (response) {
-            console.log('[RIZ-SUM-PERF] DELETE endpoint ms:', Number((window.performance.now() - rizOperationStartedAt).toFixed(1)));
+
             info = response.split('_');
             if (info[0] == "OK") {
                 SumMeghdarJoz = info[2];

@@ -402,10 +402,6 @@ function saveItem() {
             $('#frmItemsFields input[name="__RequestVerificationToken"]').val()
     };
 
-
-    console.log(data);
-
-
     $.ajax({
 
         url: url,
@@ -434,10 +430,6 @@ function saveItem() {
         },
 
         error: function (xhr) {
-
-            console.log("Status:", xhr.status);
-
-            console.log("Response:", xhr.responseText);
 
             toastr.error(
                 xhr.responseJSON?.message ||

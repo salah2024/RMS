@@ -146,7 +146,6 @@ option5 = {
 // Enable data zoom when user click bar.
 var zoomSize = 6;
 myChart5.on('click', function (params) {
-	console.log(dataAxis[Math.max(params.dataIndex - zoomSize / 2, 0)]);
 	myChart.dispatchAction({
 		type: 'dataZoom',
 		startValue: dataAxis[Math.max(params.dataIndex - zoomSize / 2, 0)],
