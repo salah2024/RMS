@@ -7513,7 +7513,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
         else
             return new JsonResult("NOK");
     }
-    public ActionResult DeleteRelRizMetre([FromBody] DeleteRelRizMetreInputDto request)
+    public async Task<ActionResult> DeleteRelRizMetre([FromBody] DeleteRelRizMetreInputDto request)
     {
         Guid BarAvordId = request.BarAvordUserId;
         long OperationId = request.OperationId;
@@ -7549,6 +7549,24 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                     context.RizMetreUsersHistories.Remove(rizMetreUsersHistory);
                 }
             }
+            // حذف حمل وابسته به خود ریزمتره، پیش از حذف رکورد اصلی.
+            if (entity.Type != "3")
+            {
+                clsFB? entityFB = await context.FBs.FirstOrDefaultAsync(x => x.ID == entity.FBId);
+                if (entityFB != null)
+                {
+                    await HamlCommon.DeleteHaml(new DeleteHamlDto
+                    {
+                        BarAvordId = BarAvordId,
+                        RIzMetreId = entity.ID,
+                        FBShomareh = entityFB.Shomareh,
+                        RMShomareh = entity.Shomareh,
+                        NoeFBId = entityFB.NoeFBId,
+                        ConditionContextId = entity.ConditionContextId
+                    }, context);
+                }
+            }
+
             context.RizMetreUserses.Remove(entity);
             // context.SaveChanges();
 
@@ -7564,6 +7582,19 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                             long? lngconditionContextRel = long.Parse(conditionContextRel);
                             if (RM.ConditionContextId == lngconditionContextRel && RM.Shomareh == entity.Shomareh)
                             {
+                                if (RM.Type != "3" && RM.FB != null)
+                                {
+                                    await HamlCommon.DeleteHaml(new DeleteHamlDto
+                                    {
+                                        BarAvordId = BarAvordId,
+                                        RIzMetreId = RM.ID,
+                                        FBShomareh = RM.FB.Shomareh,
+                                        RMShomareh = RM.Shomareh,
+                                        NoeFBId = RM.FB.NoeFBId,
+                                        ConditionContextId = RM.ConditionContextId
+                                    }, context);
+                                }
+
                                 context.RizMetreUserses.Remove(RM);
                             }
                         }
@@ -7577,7 +7608,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
             ///
 
 
-            context.SaveChanges();
+            await context.SaveChangesAsync();
 
             //////////
             ///////////////
