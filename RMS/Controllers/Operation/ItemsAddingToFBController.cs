@@ -5589,6 +5589,19 @@ namespace RMS.Controllers.Operation
 
                                                         _context.RizMetreUserses.Add(RizMetreUserses1);
 
+                                                        SaveHamlDto repeatedSaveHaml = new SaveHamlDto
+                                                        {
+                                                            BarAvordUserId = BarAvordId,
+                                                            Year = Year,
+                                                            ItemFBShomareh = strItemShomareh,
+                                                            NoeFBId = NoeFBId,
+                                                            Shomareh = RizMetreUserses1.Shomareh,
+                                                            MeghdarJoz = dMeghdarJoz1,
+                                                            LevelNumber = LevelNumber,
+                                                            ConditionContextId = ConditionContextId,
+                                                            BaseFBItem = ConditionContextId.HasValue ? strForItem : null
+                                                        };
+                                                        await HamlCommon.SaveHaml(repeatedSaveHaml, context);
                                                     }
 
 
