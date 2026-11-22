@@ -267,36 +267,36 @@ public static class HamlCommon
                 && x.FBShomareh == request.FBShomareh)
             .ToListAsync();
 
-        if (itemHamls.Count == 0)
-            return true;
+        if (itemHamls.Count > 0)
+        {
+            List<Guid> itemHamlIds = itemHamls.Select(x => x.ID).ToList();
 
-        List<Guid> itemHamlIds = itemHamls.Select(x => x.ID).ToList();
-
-        // فقط ریزمتره‌های حملی حذف می‌شوند که به همین آیتم و همین شماره ریزمتره وصل‌اند.
-        List<clsBarAvordHamlRizMetre> links = await context.BarAvordHamlRizMetres
-            .Where(x => itemHamlIds.Contains(x.BarAvordHamlId))
-            .ToListAsync();
-
-        List<Guid> hamlRizMetreIds = links.Select(x => x.RizMetreId).Distinct().ToList();
-
-        List<clsRizMetreUsers> hamlRizMetres = hamlRizMetreIds.Count == 0
-            ? new List<clsRizMetreUsers>()
-            : await context.RizMetreUserses
-                .Where(x => hamlRizMetreIds.Contains(x.ID)
-                    && x.Shomareh == request.RMShomareh)
+            // فقط ریزمتره‌های حملی حذف می‌شوند که به همین آیتم و همین شماره ریزمتره وصل‌اند.
+            List<clsBarAvordHamlRizMetre> links = await context.BarAvordHamlRizMetres
+                .Where(x => itemHamlIds.Contains(x.BarAvordHamlId))
                 .ToListAsync();
 
-        if (hamlRizMetres.Count > 0)
-        {
-            List<Guid> deletedHamlRizMetreIds = hamlRizMetres.Select(x => x.ID).ToList();
+            List<Guid> hamlRizMetreIds = links.Select(x => x.RizMetreId).Distinct().ToList();
 
-            // ابتدا ارتباط‌ها حذف می‌شوند تا رکورد یتیم در جدول واسط باقی نماند.
-            List<clsBarAvordHamlRizMetre> linksToDelete = links
-                .Where(x => deletedHamlRizMetreIds.Contains(x.RizMetreId))
-                .ToList();
+            List<clsRizMetreUsers> hamlRizMetres = hamlRizMetreIds.Count == 0
+                ? new List<clsRizMetreUsers>()
+                : await context.RizMetreUserses
+                    .Where(x => hamlRizMetreIds.Contains(x.ID)
+                        && x.Shomareh == request.RMShomareh)
+                    .ToListAsync();
 
-            context.BarAvordHamlRizMetres.RemoveRange(linksToDelete);
-            context.RizMetreUserses.RemoveRange(hamlRizMetres);
+            if (hamlRizMetres.Count > 0)
+            {
+                List<Guid> deletedHamlRizMetreIds = hamlRizMetres.Select(x => x.ID).ToList();
+
+                // ابتدا ارتباط‌ها حذف می‌شوند تا رکورد یتیم در جدول واسط باقی نماند.
+                List<clsBarAvordHamlRizMetre> linksToDelete = links
+                    .Where(x => deletedHamlRizMetreIds.Contains(x.RizMetreId))
+                    .ToList();
+
+                context.BarAvordHamlRizMetres.RemoveRange(linksToDelete);
+                context.RizMetreUserses.RemoveRange(hamlRizMetres);
+            }
         }
 
         // در صورت حذف آیتم شرطی، ریزمتره‌های آیتم پایه که قبلاً غیرفعال شده بودند برگردانده می‌شوند.
