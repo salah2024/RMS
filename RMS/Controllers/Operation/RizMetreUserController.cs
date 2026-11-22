@@ -5353,7 +5353,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                             MeghdarJoz = RizMetreUsers.MeghdarJoz,
                                             LevelNumber = LevelNumber,
                                             ConditionContextId = RizMetreUsers.ConditionContextId,
-                                            BaseFBItem = ItemShomareh
+                                            BaseFBItem = RizMetreUsers.ConditionContextId.HasValue ? ItemShomareh : null
                                         }, context);
 
 
@@ -5621,7 +5621,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                             MeghdarJoz = RizMetreUsers.MeghdarJoz,
                                             LevelNumber = LevelNumber,
                                             ConditionContextId = RizMetreUsers.ConditionContextId,
-                                            BaseFBItem = ItemShomareh
+                                            BaseFBItem = RizMetreUsers.ConditionContextId.HasValue ? ItemShomareh : null
                                         }, context);
 
 
@@ -5916,7 +5916,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                             MeghdarJoz = RizMetreUsers.MeghdarJoz,
                                             LevelNumber = LevelNumber,
                                             ConditionContextId = RizMetreUsers.ConditionContextId,
-                                            BaseFBItem = ItemShomareh
+                                            BaseFBItem = RizMetreUsers.ConditionContextId.HasValue ? ItemShomareh : null
                                         }, context);
 
 
@@ -6138,7 +6138,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                                     MeghdarJoz = RizMetreUsers.MeghdarJoz,
                                                     LevelNumber = LevelNumber,
                                                     ConditionContextId = RizMetreUsers.ConditionContextId,
-                                                    BaseFBItem = ItemShomareh
+                                                    BaseFBItem = RizMetreUsers.ConditionContextId.HasValue ? ItemShomareh : null
                                                 }, context);
 
 
@@ -6403,7 +6403,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                             MeghdarJoz = RizMetreUsers.MeghdarJoz,
                                             LevelNumber = LevelNumber,
                                             ConditionContextId = RizMetreUsers.ConditionContextId,
-                                            BaseFBItem = ItemShomareh
+                                            BaseFBItem = RizMetreUsers.ConditionContextId.HasValue ? ItemShomareh : null
                                         }, context);
 
 
@@ -6653,7 +6653,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                                             MeghdarJoz = RizMetreUsers.MeghdarJoz,
                                             LevelNumber = LevelNumber,
                                             ConditionContextId = RizMetreUsers.ConditionContextId,
-                                            BaseFBItem = ItemShomareh
+                                            BaseFBItem = RizMetreUsers.ConditionContextId.HasValue ? ItemShomareh : null
                                         }, context);
 
                                     }
@@ -6953,7 +6953,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                             MeghdarJoz = RizMetreUsers.MeghdarJoz,
                             LevelNumber = LevelNumber,
                             ConditionContextId = RizMetreUsers.ConditionContextId,
-                            BaseFBItem = ItemShomareh
+                            BaseFBItem = RizMetreUsers.ConditionContextId.HasValue ? ItemShomareh : null
                         }, context);
 
                     }
