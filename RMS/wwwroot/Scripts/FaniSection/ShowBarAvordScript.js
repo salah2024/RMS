@@ -1,3 +1,13 @@
+// با فوکوس روی ورودی‌های متنی صفحه برآورد، کل مقدار انتخاب شود؛
+ // رویداد delegated است تا ورودی‌هایی که بعداً با AJAX ساخته می‌شوند نیز پوشش داده شوند.
+$(document)
+    .off('focusin.barAvordSelectAll', 'input[type="text"], input[type="number"], input[type="search"], textarea')
+    .on('focusin.barAvordSelectAll', 'input[type="text"], input[type="number"], input[type="search"], textarea', function () {
+        if (!this.disabled && !this.readOnly) {
+            this.select();
+        }
+    });
+
 // جلوگیری از ارسال چندباره عملیات و نمایش وضعیت انتظار دکمه
 function beginBarAvordButtonWait(button) {
     var $button = button && button.jquery ? button.first() : $(button).first();
