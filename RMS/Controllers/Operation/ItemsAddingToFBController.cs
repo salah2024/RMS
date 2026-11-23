@@ -3575,7 +3575,7 @@ namespace RMS.Controllers.Operation
                                                         {
                                                             await HamlCommon.DeleteHaml(new DeleteHamlDto
                                                             {
-                                                                ConditionContextId = itemHCATFB.ConditionContextId,
+                                                                ConditionContextId = ConditionContextId,
                                                                 BarAvordId = BarAvordId,
                                                                 RIzMetreId = sourceRizMetre.ID,
                                                                 FBShomareh = Fb.Shomareh,
