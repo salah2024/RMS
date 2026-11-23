@@ -8,7 +8,10 @@ namespace RMS.Controllers.Operation.Common;
 
 public static class HamlCommon
 {
-    public static async Task<List<Guid>> SaveHaml(SaveHamlDto request, ApplicationDbContext _context)
+    public static async Task<List<Guid>> SaveHaml(
+        SaveHamlDto request,
+        ApplicationDbContext _context,
+        bool saveChanges = true)
     {
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(_context);
@@ -238,6 +241,7 @@ public static class HamlCommon
             {
                 fbHaml = new clsFB
                 {
+                    ID = Guid.NewGuid(),
                     BarAvordId = barAvordUserId,
                     InsertDateTime = now,
                     Shomareh = hamlItemFB,
@@ -252,6 +256,7 @@ public static class HamlCommon
             // جست‌وجوی قبلی بدون FBShomareh می‌توانست مقدار آیتم دیگری را برگرداند.
             clsRizMetreUsers rizMetre = new()
             {
+                ID = Guid.NewGuid(),
                 Shomareh = shomareh,
                 ShomarehNew = newShomareh.ToString(),
                 Sharh = " حمل ",
@@ -274,6 +279,7 @@ public static class HamlCommon
 
             _context.BarAvordHamlRizMetres.Add(new clsBarAvordHamlRizMetre
             {
+                ID = Guid.NewGuid(),
                 BarAvordHamlId = currentHaml.ID,
                 RizMetreId = rizMetre.ID
             });
@@ -282,9 +288,10 @@ public static class HamlCommon
             newShomareh++;
         }
 
-        // این SaveChanges برای سازگاری با فراخوانی‌های چندباره در یک عملیات حفظ شده است:
-        // فراخوانی بعدی باید بتواند BarAvordHaml و FB درج‌شده در فراخوانی قبلی را از دیتابیس ببیند.
-        await _context.SaveChangesAsync();
+        // حالت پیش‌فرض، رفتار قبلی فراخواننده‌ها را حفظ می‌کند.
+        // فراخواننده‌ای که تراکنش و ذخیره نهایی را مدیریت می‌کند می‌تواند ذخیره را به تعویق بیندازد.
+        if (saveChanges)
+            await _context.SaveChangesAsync();
 
         return rizMetreIds;
     }
