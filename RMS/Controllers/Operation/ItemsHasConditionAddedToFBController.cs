@@ -1027,6 +1027,7 @@ namespace RMS.Controllers.Operation
                                                                 HamlCommon.UpdateHaml(new UpdateHamlDto
                                                                 {
                                                                     BarAvordId = BarAvordId,
+                                                                    RIzMetreId = RMCurrent.ID,
                                                                     FBShomareh = fbForHamlUpdate.Shomareh,
                                                                     Year = Year,
                                                                     RMShomareh = RMCurrent.Shomareh,
