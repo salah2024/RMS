@@ -16,6 +16,7 @@ public class DeleteHamlDto
 public class UpdateHamlDto
 {
     public Guid BarAvordId { get; set; }
+    public Guid RIzMetreId { get; set; }
     public string FBShomareh { get; set; }
     public decimal? MeghdarJoz { get; set; }
     public int Year { get; set; }
