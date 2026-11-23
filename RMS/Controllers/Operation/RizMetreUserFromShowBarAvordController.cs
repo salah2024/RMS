@@ -71,6 +71,17 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
         }
 
 
+        // مقدار جزء پیش از هرگونه درج در دیتابیس اعتبارسنجی می‌شود تا FB خالی ایجاد نشود.
+        decimal? dMeghdarJoz = null;
+        if (Tedad != null || Tool != null || Arz != null || Ertefa != null || Vazn != null)
+        {
+            dMeghdarJoz = (Tedad ?? 1m) * (Tool ?? 1m) * (Arz ?? 1m)
+                * (Ertefa ?? 1m) * (Vazn ?? 1m);
+        }
+
+        if (!dMeghdarJoz.HasValue)
+            return new JsonResult("NOOK_");
+
         DateTime Now = DateTime.Now;
 
 
@@ -83,6 +94,8 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
         }
         //try
         //{
+        await using var transaction = await context.Database.BeginTransactionAsync();
+
         clsFB? FB = await _context.FBs.Where(x => x.BarAvordId == BarAvordId && x.NoeFBId == NoeFBId && x.Shomareh == FBShomareh).FirstOrDefaultAsync();
 
         decimal dBahayeVahed = 0;
@@ -99,6 +112,7 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
         if (FB == null)
         {
             clsFB newFB = new clsFB();
+            newFB.ID = Guid.NewGuid();
             newFB.BarAvordId = BarAvordId;
             newFB.Shomareh = FBShomareh;
             newFB.BahayeVahedZarib = 0;
@@ -145,16 +159,8 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
         RizMetre.InsertDateTime = Now;
 
 
-        ///محاسبه مقدار جزء
-        decimal? dMeghdarJoz = null;
-        if (Tedad == null && Tool == null && Arz == null && Ertefa == null && Vazn == null)
-            dMeghdarJoz = null;
-        else
-            dMeghdarJoz = (Tedad == null ? 1 : Tedad) * (Tool == null ? 1 : Tool) *
-            (Arz == null ? 1 : Arz) * (Ertefa == null ? 1 : Ertefa) * (Vazn == null ? 1 : Vazn);
         RizMetre.MeghdarJoz = dMeghdarJoz;
 
-        if (dMeghdarJoz != null)
         {
             context.RizMetreUserses.Add(RizMetre);
 
@@ -176,9 +182,10 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
                 MeghdarJoz = dMeghdarJoz,
                 LevelNumber = 1,
             };
-            await HamlCommon.SaveHaml(requestSaveHaml, context);
+            await HamlCommon.SaveHaml(requestSaveHaml, context, saveChanges: false);
 
             await context.SaveChangesAsync();
+            await transaction.CommitAsync();
 
             decimal dSumMeghdarJoz = await _context.FBs.AsNoTracking()
                 .Where(x => x.ID == FBId)
