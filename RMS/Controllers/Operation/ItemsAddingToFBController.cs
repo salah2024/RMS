@@ -377,6 +377,7 @@ namespace RMS.Controllers.Operation
                                                                 ConditionContextId = itemHCATFB.ConditionContextId,
                                                                 BarAvordId = BarAvordId,
                                                                 FBShomareh = varFBUsersAdded.Shomareh,
+                                                                RIzMetreId = item.ID,
                                                                 RMShomareh = item.Shomareh,
                                                                 NoeFBId = NoeFBId
                                                             };
@@ -422,6 +423,7 @@ namespace RMS.Controllers.Operation
                                                         ConditionContextId = itemHCATFB.ConditionContextId,
                                                         BarAvordId = BarAvordId,
                                                         FBShomareh = Fb.Shomareh,
+                                                        RIzMetreId = item.ID,
                                                         RMShomareh = item.Shomareh,
                                                         NoeFBId = NoeFBId
                                                     };
@@ -466,6 +468,7 @@ namespace RMS.Controllers.Operation
                                                         ConditionContextId = itemHCATFB.ConditionContextId,
                                                         BarAvordId = BarAvordId,
                                                         FBShomareh = Fb.Shomareh,
+                                                        RIzMetreId = item.ID,
                                                         RMShomareh = item.Shomareh,
                                                         NoeFBId = NoeFBId
                                                     };
@@ -480,6 +483,7 @@ namespace RMS.Controllers.Operation
                                                         ConditionContextId = itemHCATFB.ConditionContextId,
                                                         BarAvordId = BarAvordId,
                                                         FBShomareh = Fb.Shomareh,
+                                                        RIzMetreId = item.ID,
                                                         RMShomareh = item.Shomareh,
                                                         NoeFBId = NoeFBId
                                                     };
@@ -526,6 +530,7 @@ namespace RMS.Controllers.Operation
                                                         ConditionContextId = itemHCATFB.ConditionContextId,
                                                         BarAvordId = BarAvordId,
                                                         FBShomareh = Fb.Shomareh,
+                                                        RIzMetreId = item.ID,
                                                         RMShomareh = item.Shomareh,
                                                         NoeFBId = NoeFBId
                                                     };
@@ -575,6 +580,7 @@ namespace RMS.Controllers.Operation
                                                         ConditionContextId = itemHCATFB.ConditionContextId,
                                                         BarAvordId = BarAvordId,
                                                         FBShomareh = Fb.Shomareh,
+                                                        RIzMetreId = item.ID,
                                                         RMShomareh = item.Shomareh,
                                                         NoeFBId = NoeFBId
                                                     };
@@ -621,6 +627,7 @@ namespace RMS.Controllers.Operation
                                                         ConditionContextId = itemHCATFB.ConditionContextId,
                                                         BarAvordId = BarAvordId,
                                                         FBShomareh = Fb.Shomareh,
+                                                        RIzMetreId = item.ID,
                                                         RMShomareh = item.Shomareh,
                                                         NoeFBId = NoeFBId
                                                     };
@@ -724,6 +731,7 @@ namespace RMS.Controllers.Operation
                                                                             ConditionContextId = itemHCATFB.ConditionContextId,
                                                                             BarAvordId = BarAvordId,
                                                                             FBShomareh = varFBUser.Shomareh,
+                                                                            RIzMetreId = item.ID,
                                                                             RMShomareh = item.Shomareh,
                                                                             NoeFBId = NoeFBId
                                                                         };
@@ -795,6 +803,7 @@ namespace RMS.Controllers.Operation
                                                                     ConditionContextId = itemHCATFB.ConditionContextId,
                                                                     BarAvordId = BarAvordId,
                                                                     FBShomareh = varFBUser.Shomareh,
+                                                                    RIzMetreId = item.ID,
                                                                     RMShomareh = item.Shomareh,
                                                                     NoeFBId = NoeFBId
                                                                 };
@@ -838,6 +847,7 @@ namespace RMS.Controllers.Operation
                                                         ConditionContextId = itemHCATFB.ConditionContextId,
                                                         BarAvordId = BarAvordId,
                                                         FBShomareh = Fb.Shomareh,
+                                                        RIzMetreId = item.ID,
                                                         RMShomareh = item.Shomareh,
                                                         NoeFBId = NoeFBId
                                                     };
