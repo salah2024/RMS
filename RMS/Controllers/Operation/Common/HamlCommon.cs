@@ -34,7 +34,9 @@ public static class HamlCommon
             .AsNoTracking()
             .Where(x => x.FB.BarAvordId == barAvordUserId)
             .MaxAsync(x => (long?)x.Shomareh) ?? 0L;
-        long newShomareh = lastShomareh + 1;
+        // ریزمتره مبدأ ممکن است هنوز در دیتابیس ذخیره نشده باشد؛
+        // بنابراین شماره خودش نیز باید در محاسبه شماره بعدی لحاظ شود.
+        long newShomareh = Math.Max(lastShomareh, shomareh) + 1;
 
         // فقط ارتباطات مربوط به آیتم جاری از دیتابیس دریافت می‌شوند.
         // Trim روی ItemFB برای حفظ سازگاری با داده‌های قدیمی دارای فاصله نگه داشته شده است.
@@ -189,6 +191,16 @@ public static class HamlCommon
             fbByHamlItem = existingFbs
                 .GroupBy(x => x.Shomareh)
                 .ToDictionary(g => g.Key, g => g.First());
+
+            // کوئری دیتابیس، Entityهای Added را برنمی‌گرداند؛
+            // آن‌ها را هم وارد دیکشنری می‌کنیم تا FB تکراری ساخته نشود.
+            foreach (clsFB trackedFb in _context.FBs.Local.Where(x =>
+                x.BarAvordId == barAvordUserId
+                && x.NoeFBId == noeFBId
+                && positiveHamlItems.Contains(x.Shomareh)))
+            {
+                fbByHamlItem.TryAdd(trackedFb.Shomareh, trackedFb);
+            }
         }
 
         List<Guid> rizMetreIds = new();
