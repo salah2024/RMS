@@ -284,7 +284,9 @@ public static class HamlCommon
                 ? new List<clsRizMetreUsers>()
                 : await context.RizMetreUserses
                     .Where(x => hamlRizMetreIds.Contains(x.ID)
-                        && x.Shomareh == request.RMShomareh)
+                        && (request.RIzMetreId != Guid.Empty
+                            ? x.ID == request.RIzMetreId
+                            : x.Shomareh == request.RMShomareh))
                     .ToListAsync();
 
             if (hamlRizMetres.Count > 0)
@@ -370,9 +372,6 @@ public static class HamlCommon
                 && x.ItemFB.Trim() == itemFBShomareh)
             .ToList();
 
-        if (relatedItems.Count == 0)
-            return true;
-
         List<clsBarAvordHaml> itemHamls = context.BarAvordHamls
             .Where(x => x.BarAvordId == request.BarAvordId
                 && x.NoeFBId == request.NoeFB
@@ -412,10 +411,54 @@ public static class HamlCommon
                         * item.Zarib3.GetValueOrDefault(1m);
                 });
 
+        // اگر ارتباط یک حمل با آیتم حذف شده یا ضریب آن منفی شده باشد،
+        // ریزمتره حمل متناظر با همین ریزمتره مبدأ باید حذف شود.
+        HashSet<string> validHamlItems = coefficientsByHamlItem.Keys.ToHashSet();
+        List<clsRizMetreUsers> obsoleteHamlRizMetres = hamlRizMetres
+            .Where(x => !validHamlItems.Contains(x.ForItem?.Trim() ?? string.Empty))
+            .ToList();
+
+        if (obsoleteHamlRizMetres.Count > 0)
+        {
+            HashSet<Guid> obsoleteRizMetreIds = obsoleteHamlRizMetres
+                .Select(x => x.ID)
+                .ToHashSet();
+
+            List<clsBarAvordHamlRizMetre> obsoleteLinks = links
+                .Where(x => obsoleteRizMetreIds.Contains(x.RizMetreId))
+                .ToList();
+
+            context.BarAvordHamlRizMetres.RemoveRange(obsoleteLinks);
+            context.RizMetreUserses.RemoveRange(obsoleteHamlRizMetres);
+
+            HashSet<Guid> removedLinkIds = obsoleteLinks
+                .Select(x => x.ID)
+                .ToHashSet();
+
+            // رکورد اصلی حمل فقط وقتی حذف می‌شود که هیچ ریزمتره دیگری
+            // (از همین یا ریزمتره‌های دیگر آیتم) به آن متصل نباشد.
+            List<Guid> orphanHamlIds = itemHamls
+                .Where(haml => !links.Any(link =>
+                    link.BarAvordHamlId == haml.ID
+                    && !removedLinkIds.Contains(link.ID)))
+                .Select(haml => haml.ID)
+                .ToList();
+
+            if (orphanHamlIds.Count > 0)
+            {
+                context.BarAvordHamls.RemoveRange(
+                    itemHamls.Where(x => orphanHamlIds.Contains(x.ID)));
+            }
+        }
+
         foreach (clsRizMetreUsers hamlRizMetre in hamlRizMetres)
         {
-            if (!coefficientsByHamlItem.TryGetValue(hamlRizMetre.ForItem?.Trim() ?? string.Empty, out decimal coefficient))
+            if (!coefficientsByHamlItem.TryGetValue(
+                hamlRizMetre.ForItem?.Trim() ?? string.Empty,
+                out decimal coefficient))
+            {
                 continue;
+            }
 
             hamlRizMetre.Vazn = request.MeghdarJoz;
             hamlRizMetre.MeghdarJoz = coefficient * request.MeghdarJoz;
@@ -423,4 +466,5 @@ public static class HamlCommon
 
         return true;
     }
+}
 }
