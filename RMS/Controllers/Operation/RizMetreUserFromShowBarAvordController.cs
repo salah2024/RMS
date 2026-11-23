@@ -784,6 +784,7 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
                 HamlCommon.UpdateHaml(new UpdateHamlDto
                 {
                     BarAvordId = BarAvordId,
+                    RIzMetreId = entity.ID,
                     FBShomareh = currentFb.Shomareh,
                     Year = Year,
                     RMShomareh = entity.Shomareh,
