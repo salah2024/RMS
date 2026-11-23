@@ -127,7 +127,6 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
             newFB.BahayeVahedZarib = 0;
             newFB.NoeFBId = NoeFBId;
             _context.FBs.Add(newFB);
-            await _context.SaveChangesAsync();
             FBId = newFB.ID;
         }
         else
