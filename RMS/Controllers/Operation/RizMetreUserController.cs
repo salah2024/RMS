@@ -588,7 +588,6 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                     {
                         DeleteHamlDto deleteHaml = new DeleteHamlDto
                         {
-                            RIzMetreId=RMetre.ID,
                             BarAvordId = ItemHasCon.BarAvordId,
                             FBShomareh = ItemHasCon.FBShomareh,
                             RIzMetreId = RMetre.ID,
