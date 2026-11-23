@@ -101,8 +101,6 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
         {
             FBShomareh = fehrestBahaItemsReplace.FBShomarehMain;
         }
-        //try
-        //{
         await using var transaction = await context.Database.BeginTransactionAsync();
 
         clsFB? FB = await _context.FBs
