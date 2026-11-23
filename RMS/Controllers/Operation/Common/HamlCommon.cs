@@ -91,6 +91,33 @@ public static class HamlCommon
             .GroupBy(x => x.FBShomarehHaml.Trim())
             .ToDictionary(g => g.Key, g => g.First());
 
+        // جلوگیری از درج تکراری حمل در فراخوانی مجدد SaveHaml برای همان ریزمتره مبدأ.
+        HashSet<string> existingHamlItemsForSource = new();
+        if (currentHamls.Count > 0)
+        {
+            List<Guid> currentHamlIds = currentHamls.Select(x => x.ID).ToList();
+            List<Guid> linkedRizMetreIds = await _context.BarAvordHamlRizMetres
+                .Where(x => currentHamlIds.Contains(x.BarAvordHamlId))
+                .Select(x => x.RizMetreId)
+                .ToListAsync();
+
+            if (linkedRizMetreIds.Count > 0)
+            {
+                List<string?> existingForItems = await _context.RizMetreUserses
+                    .Where(x => linkedRizMetreIds.Contains(x.ID)
+                        && x.Shomareh == shomareh
+                        && x.LevelNumber == levelNumber
+                        && x.Type == "3")
+                    .Select(x => x.ForItem)
+                    .ToListAsync();
+
+                existingHamlItemsForSource = existingForItems
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .Select(x => x!.Trim())
+                    .ToHashSet();
+            }
+        }
+
         // برای ضرایب منفی، همه حمل‌های آیتم پایه به‌صورت یک‌جا دریافت می‌شوند.
         List<clsBarAvordHaml> removedBaseHamls = new();
         if (negativeHamlItems.Count > 0 && !string.IsNullOrWhiteSpace(baseFBItem))
@@ -174,6 +201,10 @@ public static class HamlCommon
 
             // ضرایب منفی در بخش بالا پردازش شده‌اند و ریزمتره حمل جدید ندارند.
             if (allZarib < 0)
+                continue;
+
+            // اگر این ریزمتره قبلاً برای همین آیتم حمل ثبت شده، از درج مجدد جلوگیری می‌شود.
+            if (!existingHamlItemsForSource.Add(hamlItemFB))
                 continue;
 
             if (!currentHamlByItem.TryGetValue(hamlItemFB, out clsBarAvordHaml? currentHaml))
