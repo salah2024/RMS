@@ -4422,7 +4422,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                         await HamlCommon.SaveHaml(new SaveHamlDto
                         {
                             BarAvordUserId = BarAvordId,
-                            Year = request.Year,
+                            //Year = request.Year,
                             ItemFBShomareh = fbForHaml.Shomareh,
                             NoeFBId = NoeFBId,
                             Shomareh = RizMetreUsers.Shomareh,
@@ -5491,7 +5491,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                         {
                             BarAvordId = BarAvordId,
                             FBShomareh = rizMetreUsersBase.FB.Shomareh,
-                            Year = Year,
+                            //Year = Year,
                             RMShomareh = rizMetreUsersBase.Shomareh,
                             NoeFB = rizMetreUsersBase.FB.NoeFBId,
                             MeghdarJoz = rizMetreUsersBase.MeghdarJoz
