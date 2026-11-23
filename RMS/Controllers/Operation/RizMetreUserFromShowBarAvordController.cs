@@ -195,8 +195,6 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
 
             return new JsonResult("OK_" + dMeghdarJoz + "_" + dSumMeghdarJoz + "_" + dBahayeItem + "_" + FBId);
         }
-        else
-            return new JsonResult("NOOK_");
     }
 
     public async Task<JsonResult> GetJameCurrentFasl([FromBody] JameCurrentFaslDto Request)
