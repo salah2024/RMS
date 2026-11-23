@@ -5494,6 +5494,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                         HamlCommon.UpdateHaml(new UpdateHamlDto
                         {
                             BarAvordId = BarAvordId,
+                            RIzMetreId = rizMetreUsersBase.ID,
                             FBShomareh = rizMetreUsersBase.FB.Shomareh,
                             //Year = Year,
                             RMShomareh = rizMetreUsersBase.Shomareh,
