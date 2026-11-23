@@ -149,8 +149,6 @@ public class AmalyateKhakiCommon
                                 MeghdarJoz = MeghdarJoz,
                                 LevelNumber = 1,
                             };
-                            await HamlCommon.SaveHaml(requestSaveHaml, _context);
-
                             List<Guid> lstRMHaml = await HamlCommon.SaveHaml(requestSaveHaml, _context);
 
                             clsAmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetre AmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetre
@@ -327,8 +325,6 @@ public class AmalyateKhakiCommon
                             MeghdarJoz = null,
                             LevelNumber = 1,
                         };
-                        await HamlCommon.SaveHaml(requestSaveHaml, _context);
-
                         List<Guid> lstRMHaml = await HamlCommon.SaveHaml(requestSaveHaml, _context);
 
                         clsAmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetre AmalyateKhakiInfoForBarAvordEzafeBahaHamlRizMetre
