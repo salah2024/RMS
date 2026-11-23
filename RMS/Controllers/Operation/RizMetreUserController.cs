@@ -5495,7 +5495,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                             BarAvordId = BarAvordId,
                             RIzMetreId = rizMetreUsersBase.ID,
                             FBShomareh = rizMetreUsersBase.FB.Shomareh,
-                            //Year = Year,
+                            Year = context.BaravordUsers.Where(x => x.ID == BarAvordId).Select(x => x.Year).FirstOrDefault(),
                             RMShomareh = rizMetreUsersBase.Shomareh,
                             NoeFB = rizMetreUsersBase.FB.NoeFBId,
                             MeghdarJoz = rizMetreUsersBase.MeghdarJoz
