@@ -457,6 +457,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                     HamlCommon.UpdateHaml(new UpdateHamlDto
                     {
                         BarAvordId = request.BarAvordUserId,
+                        RIzMetreId = RizMetre.ID,
                         FBShomareh = currentFb.Shomareh,
                         Year = Year,
                         RMShomareh = RizMetre.Shomareh,
@@ -590,6 +591,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                             RIzMetreId=RMetre.ID,
                             BarAvordId = ItemHasCon.BarAvordId,
                             FBShomareh = ItemHasCon.FBShomareh,
+                            RIzMetreId = RMetre.ID,
                             RMShomareh = RMetre.Shomareh,
                             NoeFBId = NoeFBId,
                             ConditionContextId = ItemHasCon.ConditionContextId
@@ -787,6 +789,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                             HamlCommon.UpdateHaml(new UpdateHamlDto
                             {
                                 BarAvordId = intBarAvordId,
+                                RIzMetreId = clsRizMetreUsers1.ID,
                                 FBShomareh = fbForHamlUpdate.Shomareh,
                                 Year = Year,
                                 RMShomareh = clsRizMetreUsers1.Shomareh,
@@ -855,6 +858,7 @@ public class RizMetreUserController(ApplicationDbContext _context) : Controller
                 HamlCommon.UpdateHaml(new UpdateHamlDto
                 {
                     BarAvordId = fbForHamlUpdate.BarAvordId,
+                    RIzMetreId = entity.ID,
                     FBShomareh = fbForHamlUpdate.Shomareh,
                     Year = Year,
                     RMShomareh = entity.Shomareh,
