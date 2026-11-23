@@ -311,11 +311,24 @@ public static class HamlCommon
 
             List<Guid> hamlRizMetreIds = links.Select(x => x.RizMetreId).Distinct().ToList();
 
+            // شناسه ارسالی، متعلق به ریزمتره مبدأ است؛ از آن برای تشخیص سطح دقیق
+            // استفاده می‌کنیم تا ریزمتره حملِ سطح دیگری با شماره یکسان حذف نشود.
+            int? sourceLevelNumber = null;
+            if (request.RIzMetreId != Guid.Empty)
+            {
+                sourceLevelNumber = await context.RizMetreUserses
+                    .AsNoTracking()
+                    .Where(x => x.ID == request.RIzMetreId)
+                    .Select(x => (int?)x.LevelNumber)
+                    .FirstOrDefaultAsync();
+            }
+
             List<clsRizMetreUsers> hamlRizMetres = hamlRizMetreIds.Count == 0
                 ? new List<clsRizMetreUsers>()
                 : await context.RizMetreUserses
                     .Where(x => hamlRizMetreIds.Contains(x.ID)
-                        && x.Shomareh == request.RMShomareh)
+                        && x.Shomareh == request.RMShomareh
+                        && (!sourceLevelNumber.HasValue || x.LevelNumber == sourceLevelNumber.Value))
                     .ToListAsync();
 
             if (hamlRizMetres.Count > 0)
@@ -421,9 +434,22 @@ public static class HamlCommon
 
         List<Guid> hamlRizMetreIds = links.Select(x => x.RizMetreId).Distinct().ToList();
 
+        // در ویرایش نیز سطح ریزمتره مبدأ ملاک است؛ شماره ریزمتره به‌تنهایی
+        // برای تفکیک ردیف‌های چندسطحی کافی نیست.
+        int? sourceLevelNumber = null;
+        if (request.RIzMetreId != Guid.Empty)
+        {
+            sourceLevelNumber = context.RizMetreUserses
+                .AsNoTracking()
+                .Where(x => x.ID == request.RIzMetreId)
+                .Select(x => (int?)x.LevelNumber)
+                .FirstOrDefault();
+        }
+
         List<clsRizMetreUsers> hamlRizMetres = context.RizMetreUserses
             .Where(x => hamlRizMetreIds.Contains(x.ID)
-                && x.Shomareh == request.RMShomareh)
+                && x.Shomareh == request.RMShomareh
+                && (!sourceLevelNumber.HasValue || x.LevelNumber == sourceLevelNumber.Value))
             .ToList();
 
         Dictionary<string, decimal> coefficientsByHamlItem = relatedItems
