@@ -298,35 +298,28 @@ namespace RMS.Controllers.Operation
                                             clsFB? Fb = _context.FBs.Where(x => x.ID == guFBUsersAddedId).FirstOrDefault();
                                             if (Fb != null)
                                             {
-                                                var deletedRizMetresForSum1 = _context.RizMetreUserses.Where(x => x.FBId == Fb.ID).ToList();
-                                                _context.RizMetreUserses.RemoveRange(deletedRizMetresForSum1);
-                                                _context.SaveChanges();
-                                                _context.FBs.Remove(Fb);
+                                                var deletedRizMetresForSum1 = _context.RizMetreUserses
+                                                    .Where(x => x.FBId == Fb.ID)
+                                                    .ToList();
 
-                                                ///////////
-                                                //حذف حمل//
-                                                ///////////
-                                                ///
-
-                                                List<clsRizMetreUsers> lstRM = _context.RizMetreUserses.Where(x => x.FBId == Fb.ID).ToList();
-                                                foreach (var item in lstRM)
+                                                // ابتدا حملِ ریزمتره‌های مبدأ را حذف می‌کنیم؛
+                                                // تا قبل از خواندن LevelNumber، رکورد مبدأ از دیتابیس حذف نشده باشد.
+                                                foreach (clsRizMetreUsers sourceRizMetre in deletedRizMetresForSum1.Where(x => x.Type != "3"))
                                                 {
-                                                    DeleteHamlDto deleteHaml = new DeleteHamlDto
+                                                    await HamlCommon.DeleteHaml(new DeleteHamlDto
                                                     {
-                                                        ConditionContextId = itemHCATFB.ConditionContextId,
-                                                        RIzMetreId = item.ID,
+                                                        ConditionContextId = sourceRizMetre.ConditionContextId,
+                                                        RIzMetreId = sourceRizMetre.ID,
                                                         BarAvordId = BarAvordId,
                                                         FBShomareh = Fb.Shomareh,
-                                                        RMShomareh = item.Shomareh,
+                                                        RMShomareh = sourceRizMetre.Shomareh,
                                                         NoeFBId = NoeFBId
-                                                    };
-                                                    await HamlCommon.DeleteHaml(deleteHaml, context);
+                                                    }, context);
                                                 }
-                                                /////////////
-                                                //////////////
-                                                //////////////
 
-                                                _context.SaveChanges();
+                                                _context.RizMetreUserses.RemoveRange(deletedRizMetresForSum1);
+                                                _context.FBs.Remove(Fb);
+                                                await _context.SaveChangesAsync();
                                             }
                                         }
                                         break;
