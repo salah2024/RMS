@@ -10,349 +10,390 @@ public static class HamlCommon
 {
     public static async Task<List<Guid>> SaveHaml(SaveHamlDto request, ApplicationDbContext _context)
     {
-        try
-        {
-            DateTime Now = DateTime.Now;
-            Guid BarAvordUserId = request.BarAvordUserId;
-            NoeFehrestBaha NoeFBId = request.NoeFBId;
-            long Year = request.Year;
-            string ItemFBShomareh = request.ItemFBShomareh.Trim();
-            //Guid BarAvordHamlId = request.BarAvordHamlId;
-            long Shomareh = request.Shomareh;
-            decimal? MeghdarJoz = request.MeghdarJoz;
-            int LevelNumber = request.LevelNumber;
-            long? ConditionContextId = request.ConditionContextId;
-            string? BaseFBItem = request.BaseFBItem;
+        ArgumentNullException.ThrowIfNull(request);
+        ArgumentNullException.ThrowIfNull(_context);
 
+        DateTime now = DateTime.Now;
+        Guid barAvordUserId = request.BarAvordUserId;
+        NoeFehrestBaha noeFBId = request.NoeFBId;
+        long year = request.Year;
+        string itemFBShomareh = request.ItemFBShomareh?.Trim()
+            ?? throw new ArgumentException("شماره آیتم فهرست بها الزامی است.", nameof(request));
+        long shomareh = request.Shomareh;
+        decimal? meghdarJoz = request.MeghdarJoz;
+        int levelNumber = request.LevelNumber;
+        long? conditionContextId = request.ConditionContextId;
+        string? baseFBItem = request.BaseFBItem?.Trim();
 
-            long NewShomareh = 1;
-            clsRizMetreUsers? rizMetreUser = await _context.RizMetreUserses.Include(x => x.FB).OrderByDescending(x => x.Shomareh).FirstOrDefaultAsync(x => x.FB.BarAvordId == BarAvordUserId);
-            if (rizMetreUser != null)
-            {
-                NewShomareh = rizMetreUser.Shomareh + 1;
-            }
-            List<clsItemsRelatedToItemHaml> lstRelatedToItemHaml = await _context.ItemsRelatedToItemHamls.Where(x => x.Year == Year && x.NoeFB == NoeFBId).ToListAsync();
+        // همان منطق قبلی حفظ شده است: شماره جدید در کل برآورد محاسبه می‌شود،
+        // نه فقط برای یک نوع فهرست بها یا یک FB.
+        long lastShomareh = await _context.RizMetreUserses
+            .AsNoTracking()
+            .Where(x => x.FB.BarAvordId == barAvordUserId)
+            .MaxAsync(x => (long?)x.Shomareh) ?? 0L;
+        long newShomareh = lastShomareh + 1;
 
-            clsBaravordUser? baravordUser = await _context.BaravordUsers.FirstOrDefaultAsync(x => x.ID == BarAvordUserId);
-            clsBaravordUser? baravordUserBase = null;
-            List<clsBarAvordHaml> lstBaseCurrentBarAvordHaml = new List<clsBarAvordHaml>();
-            string FBShomareh = ItemFBShomareh;
-            if (baravordUser != null)
-            {
-                if (baravordUser.Type == NoeBarAvord.SooratVaziat)
-                {
-                    baravordUserBase = await _context.BaravordUsers.FirstOrDefaultAsync(x => x.ID == baravordUser.ParentId);
-                    if (baravordUserBase != null)
-                        lstBaseCurrentBarAvordHaml = await _context.BarAvordHamls.Where(x => x.BarAvordId == baravordUserBase.ID
-                                                            && x.NoeFBId == NoeFBId && x.FBShomareh == FBShomareh).ToListAsync();
-                }
-            }
-            ///آیتم های حمل درج میگردد
-            //bool blnHasHaml = false;
-            List<clsItemsRelatedToItemHaml> lstItemsRelatedToItemHaml = lstRelatedToItemHaml.Where(x => x.ItemFB.Trim() == FBShomareh).ToList();
-            string strItemHamlFB = "";
-            decimal? Zarib1 = null;
-            decimal? Zarib2 = null;
-            decimal? Zarib3 = null;
+        // فقط ارتباطات مربوط به آیتم جاری از دیتابیس دریافت می‌شوند.
+        // Trim روی ItemFB برای حفظ سازگاری با داده‌های قدیمی دارای فاصله نگه داشته شده است.
+        List<clsItemsRelatedToItemHaml> relatedItems = await _context.ItemsRelatedToItemHamls
+            .AsNoTracking()
+            .Where(x => x.Year == year
+                && x.NoeFB == noeFBId
+                && x.ItemFB.Trim() == itemFBShomareh)
+            .ToListAsync();
 
-            List<clsBarAvordHaml> lstCurrentBarAvordHaml = await _context.BarAvordHamls.Where(x => x.BarAvordId == BarAvordUserId
-                                                && x.NoeFBId == NoeFBId && x.FBShomareh == FBShomareh).ToListAsync();
-
-
-            List<Guid> lstRMIds = new List<Guid>();
-            if (lstItemsRelatedToItemHaml.Count != 0)
-            {
-                foreach (var itemsRelatedToItemHaml in lstItemsRelatedToItemHaml)
-                {
-                    Guid gBarAvordHamlId = new Guid();
-                    strItemHamlFB = itemsRelatedToItemHaml.ItemHamlFB.Trim();
-                    Zarib1 = itemsRelatedToItemHaml.Zarib1;
-                    Zarib2 = itemsRelatedToItemHaml.Zarib2;
-                    Zarib3 = itemsRelatedToItemHaml.Zarib3;
-
-                    decimal? dAllZarib = (Zarib1 != null ? Zarib1.Value : 1) * (Zarib2 != null ? Zarib2.Value : 1) * (Zarib3 != null ? Zarib3.Value : 1);
-
-                    if (dAllZarib < 0)
-                    {
-                        List<clsBarAvordHaml> lstBarAvordHaml =
-                            _context.BarAvordHamls.Where(x => x.BarAvordId == BarAvordUserId && x.NoeFBId == NoeFBId && x.FBShomareh == BaseFBItem && x.FBShomarehHaml == itemsRelatedToItemHaml.ItemHamlFB).ToList();
-
-                        if (lstBarAvordHaml.Count != 0)
-                        {
-                            List<clsBarAvordHamlRizMetre> lstBarAvordHamlRizMetre = _context.BarAvordHamlRizMetres.Where(x => lstBarAvordHaml.Select(x => x.ID).Contains(x.BarAvordHamlId)).ToList();
-
-                            List<Guid> lstBarAvordHamlRMIds = lstBarAvordHamlRizMetre.Select(x => x.RizMetreId).ToList();
-                            List<clsRizMetreUsers> lstRizMetre = _context.RizMetreUserses.Where(x => lstBarAvordHamlRMIds.Contains(x.ID)).ToList();
-                            if (lstRizMetre.Count != 0)
-                            {
-                                //_context.RizMetreUserses.RemoveRange(lstRizMetre);
-
-                                clsItemHasConditionBaseItemRemoved itemHasConditionBaseItemRemoved = new clsItemHasConditionBaseItemRemoved
-                                {
-                                    BarAvordId = BarAvordUserId,
-                                    ConditionContextId = ConditionContextId.Value,
-                                };
-                                ///
-                                /// درج در جدول
-                                /// tblItemHasConditionBaseItemRemoved
-                                /// تا موقعی که اضافه بها حذف شد موارد مربوط به آیتم اصلی اضافه گردد
-                                foreach (var RizMetre in lstRizMetre)
-                                {
-                                    itemHasConditionBaseItemRemoved.RizMetreId = RizMetre.ID;
-                                    _context.ItemHasConditionBaseItemRemoveds.Add(itemHasConditionBaseItemRemoved);
-                                    RizMetre.IsDeleted = true;
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-
-                        clsBarAvordHaml? currentBarAvordHaml = lstCurrentBarAvordHaml.FirstOrDefault(x => x.FBShomarehHaml == strItemHamlFB);
-                        if (currentBarAvordHaml == null)
-                        {
-                            decimal? dBAHamlValue = null;
-                            decimal? dBAHamlValueBase = null;
-                            NoeBarAvord NoeBAType = NoeBarAvord.BarAvord;
-                            if (baravordUser != null)
-                            {
-                                NoeBAType = baravordUser.Type;
-                            }
-                            if (NoeBAType == NoeBarAvord.SooratVaziat)
-                            {
-                                clsBarAvordHaml? BaseCurrentBarAvordHaml = lstBaseCurrentBarAvordHaml.FirstOrDefault(x => x.FBShomarehHaml == strItemHamlFB);
-                                if (BaseCurrentBarAvordHaml != null)
-                                {
-                                    dBAHamlValue = BaseCurrentBarAvordHaml.Value;
-                                    dBAHamlValueBase = BaseCurrentBarAvordHaml.ValueBase;
-                                }
-                            }
-
-                            gBarAvordHamlId = Guid.NewGuid();
-                            clsBarAvordHaml barAvordHaml = new clsBarAvordHaml
-                            {
-                                ID = gBarAvordHamlId,
-                                BarAvordId = BarAvordUserId,
-                                FBShomareh = FBShomareh,
-                                FBShomarehHaml = strItemHamlFB,
-                                NoeFBId = NoeFBId,
-                                Value = dBAHamlValue,
-                                ValueBase = dBAHamlValueBase,
-                            };
-                            _context.BarAvordHamls.Add(barAvordHaml);
-                        }
-                        else
-                        {
-                            gBarAvordHamlId = currentBarAvordHaml.ID;
-                        }
-
-                        //blnHasHaml = true;
-                        //if (blnHasHaml)
-                        //{
-                        clsFB? FBHaml = await _context.FBs.FirstOrDefaultAsync(x => x.BarAvordId == BarAvordUserId && x.Shomareh == strItemHamlFB && x.NoeFBId == NoeFBId);
-
-                        Guid gFBIdHaml = new Guid();
-                        if (FBHaml != null)
-                        {
-                            gFBIdHaml = FBHaml.ID;
-                        }
-                        else
-                        {
-                            clsFB newFBHaml = new clsFB
-                            {
-                                BarAvordId = BarAvordUserId,
-                                InsertDateTime = Now,
-                                Shomareh = strItemHamlFB,
-                                NoeFBId = NoeFBId
-                            };
-                            _context.FBs.Add(newFBHaml);
-                            gFBIdHaml = newFBHaml.ID;
-                            FBHaml = newFBHaml;
-                        }
-
-                        ///
-                        ///درج ریز متره
-                        ///
-
-                        clsBarAvordHaml? barAvordHamlCurrent =
-                                        await _context.BarAvordHamls.FirstOrDefaultAsync(x => x.BarAvordId == BarAvordUserId && x.NoeFBId == NoeFBId && x.FBShomarehHaml.Trim() == strItemHamlFB.Trim());// && x.FBShomareh == ItemFBShomareh);
-
-                        decimal? dTedad = null;
-                        if (barAvordHamlCurrent != null)
-                        {
-                            dTedad = barAvordHamlCurrent.Value;
-                        }
-
-                        clsRizMetreUsers RizMetre = new clsRizMetreUsers();
-                        RizMetre.Shomareh = Shomareh;
-                        RizMetre.ShomarehNew = NewShomareh.ToString();
-                        RizMetre.Sharh = " حمل ";
-                        RizMetre.Tedad = dTedad;
-                        RizMetre.Tool = Zarib1;
-                        RizMetre.Arz = Zarib2;
-                        RizMetre.Ertefa = Zarib3;
-                        //RizMetre.Vazn = null;
-                        RizMetre.Des = " آیتم - " + ItemFBShomareh;
-                        RizMetre.FBId = gFBIdHaml;
-                        RizMetre.OperationsOfHamlId = 1;
-                        RizMetre.Type = "3";
-                        RizMetre.ForItem = strItemHamlFB;
-                        RizMetre.UseItem = "";
-                        RizMetre.LevelNumber = LevelNumber;
-
-                        NewShomareh++;
-
-                        ///محاسبه مقدار جزء
-                        //decimal? dMeghdarJozHaml = dAllZarib;
-                        //if (Tedad == null && Tool == null && Arz == null && Ertefa == null)
-                        //    dMeghdarJozHaml = 0;
-                        //else
-                        //    dMeghdarJozHaml += (Tedad == null ? 1 : Tedad.Value) * (Tool == null ? 1 : Tool.Value) *
-                        //    (Arz == null ? 1 : Arz.Value) * (Ertefa == null ? 1 : Ertefa.Value) * (Zarib == null ? 1 : Zarib.Value);
-
-                        RizMetre.Vazn = MeghdarJoz;
-                        RizMetre.MeghdarJoz = dAllZarib * MeghdarJoz;
-
-                        _context.RizMetreUserses.Add(RizMetre);
-
-                        /////////////////////////////////////
-                        //////درج حمل////////////////////////
-                        /////////////////////////////////////
-                        
-
-                        clsBarAvordHamlRizMetre BarAvordHamlRizMetre
-                            = new clsBarAvordHamlRizMetre
-                            {
-                                BarAvordHamlId = gBarAvordHamlId,
-                                RizMetreId = RizMetre.ID
-                            };
-                        _context.BarAvordHamlRizMetres.Add(BarAvordHamlRizMetre);
-
-                        lstRMIds.Add(RizMetre.ID);
-
-                        //}
-                    }
-                }
-                await _context.SaveChangesAsync();
-            }
-            return lstRMIds;// true;
-        }
-        catch (Exception)
-        {
+        if (relatedItems.Count == 0)
             return new List<Guid>();
-        }
-    }
 
-    public static async Task<bool> DeleteHaml(DeleteHamlDto request, ApplicationDbContext _context)
-    {
-        try
+        clsBaravordUser? baravordUser = await _context.BaravordUsers
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.ID == barAvordUserId);
+
+        // برای صورت‌وضعیت، مقادیر حمل از برآورد پایه خوانده می‌شوند.
+        Dictionary<string, clsBarAvordHaml> baseHamlByItem = new();
+        if (baravordUser?.Type == NoeBarAvord.SooratVaziat
+            && baravordUser.ParentId.HasValue)
         {
-            Guid BarAvordId = request.BarAvordId;
-            Guid RizMetreId = request.RIzMetreId;
-            string FBShomareh = request.FBShomareh;
-            long RMShomareh = request.RMShomareh;
-            NoeFehrestBaha NoeFBId = request.NoeFBId;
-            long? ConditionContextId = request.ConditionContextId;
+            List<clsBarAvordHaml> baseHamls = await _context.BarAvordHamls
+                .AsNoTracking()
+                .Where(x => x.BarAvordId == baravordUser.ParentId.Value
+                    && x.NoeFBId == noeFBId
+                    && x.FBShomareh == itemFBShomareh)
+                .ToListAsync();
 
-            //List<Guid> lstBarAvordHamlRizMetreIds = _context.BarAvordHamlRizMetres.Where(x => x.RizMetreId == RizMetreId).Select(x => x.RizMetreId).ToList();
+            baseHamlByItem = baseHamls
+                .GroupBy(x => x.FBShomarehHaml)
+                .ToDictionary(g => g.Key, g => g.First());
+        }
 
-            //List<clsRizMetreUsers> lstRizMetre = _context.RizMetreUserses.Where(x => lstBarAvordHamlRizMetreIds.Contains(x.ID)).ToList();
+        List<string> positiveHamlItems = relatedItems
+            .Where(x => ((x.Zarib1 ?? 1m) * (x.Zarib2 ?? 1m) * (x.Zarib3 ?? 1m)) >= 0)
+            .Select(x => x.ItemHamlFB.Trim())
+            .Where(x => x.Length > 0)
+            .Distinct()
+            .ToList();
 
-            List<clsBarAvordHaml> lstBarAvordHaml = _context.BarAvordHamls.Where(x => x.BarAvordId == BarAvordId && x.NoeFBId == NoeFBId && x.FBShomareh == FBShomareh).ToList();
-            if (lstBarAvordHaml.Count != 0)
+        List<string> negativeHamlItems = relatedItems
+            .Where(x => ((x.Zarib1 ?? 1m) * (x.Zarib2 ?? 1m) * (x.Zarib3 ?? 1m)) < 0)
+            .Select(x => x.ItemHamlFB)
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Distinct()
+            .ToList();
+
+        // رکوردهای حمل موجودِ آیتم جاری یک‌بار خوانده می‌شوند.
+        List<clsBarAvordHaml> currentHamls = await _context.BarAvordHamls
+            .Where(x => x.BarAvordId == barAvordUserId
+                && x.NoeFBId == noeFBId
+                && x.FBShomareh == itemFBShomareh)
+            .ToListAsync();
+
+        Dictionary<string, clsBarAvordHaml> currentHamlByItem = currentHamls
+            .GroupBy(x => x.FBShomarehHaml)
+            .ToDictionary(g => g.Key, g => g.First());
+
+        // برای ضرایب منفی، همه حمل‌های آیتم پایه به‌صورت یک‌جا دریافت می‌شوند.
+        List<clsBarAvordHaml> removedBaseHamls = new();
+        if (negativeHamlItems.Count > 0 && !string.IsNullOrWhiteSpace(baseFBItem))
+        {
+            removedBaseHamls = await _context.BarAvordHamls
+                .Where(x => x.BarAvordId == barAvordUserId
+                    && x.NoeFBId == noeFBId
+                    && x.FBShomareh == baseFBItem
+                    && negativeHamlItems.Contains(x.FBShomarehHaml))
+                .ToListAsync();
+        }
+
+        if (removedBaseHamls.Count > 0)
+        {
+            List<Guid> removedHamlIds = removedBaseHamls
+                .Select(x => x.ID)
+                .Distinct()
+                .ToList();
+
+            List<Guid> removedRizMetreIds = await _context.BarAvordHamlRizMetres
+                .Where(x => removedHamlIds.Contains(x.BarAvordHamlId))
+                .Select(x => x.RizMetreId)
+                .Distinct()
+                .ToListAsync();
+
+            if (removedRizMetreIds.Count > 0)
             {
-                List<clsBarAvordHamlRizMetre> lstBarAvordHamlRizMetre = _context.BarAvordHamlRizMetres.Where(x => lstBarAvordHaml.Select(x => x.ID).Contains(x.BarAvordHamlId)).ToList();
-
-                List<Guid> lstBarAvordHamlRMIds = lstBarAvordHamlRizMetre.Select(x => x.RizMetreId).ToList();
-                List<clsRizMetreUsers> lstRizMetre = _context.RizMetreUserses.Where(x => x.Shomareh == RMShomareh && lstBarAvordHamlRMIds.Contains(x.ID)).ToList();
-                if (lstRizMetre.Count != 0)
+                if (!conditionContextId.HasValue)
                 {
-                    _context.RizMetreUserses.RemoveRange(lstRizMetre);
+                    throw new InvalidOperationException(
+                        "برای حذف ریزمتره آیتم پایه، ConditionContextId الزامی است.");
+                }
 
+                List<clsRizMetreUsers> rizMetresToRemove = await _context.RizMetreUserses
+                    .Where(x => removedRizMetreIds.Contains(x.ID))
+                    .ToListAsync();
 
-                    ///
-                    ///بررسی اینکه در صورتی که تیک اضافه بهایی برداشته شود
-                    ///بایستی بررسی گردد که آیتم حملی جایگزین آیتم حمل آیتم اصلی شده اشت یا خیر
-                    ///
-                    if (ConditionContextId != null)
-                    {
-                        List<clsItemHasConditionBaseItemRemoved> lstItemHasConditionBaseItemRemoved =
-                            await _context.ItemHasConditionBaseItemRemoveds.Where(x => x.BarAvordId == BarAvordId && ConditionContextId == ConditionContextId.Value).ToListAsync();
-
-                        if (lstItemHasConditionBaseItemRemoved.Count != 0)
+                if (rizMetresToRemove.Count > 0)
+                {
+                    // برای هر ریزمتره یک Entity مستقل ساخته می‌شود.
+                    _context.ItemHasConditionBaseItemRemoveds.AddRange(
+                        rizMetresToRemove.Select(x => new clsItemHasConditionBaseItemRemoved
                         {
-                            List<Guid> lstRizMetreIds = lstItemHasConditionBaseItemRemoved.Select(x => x.RizMetreId).ToList();
+                            BarAvordId = barAvordUserId,
+                            ConditionContextId = conditionContextId.Value,
+                            RizMetreId = x.ID
+                        }));
 
-                            List<clsRizMetreUsers> lstRizMetreHaml = await _context.RizMetreUserses.IgnoreQueryFilters().Where(x => lstRizMetreIds.Contains(x.ID) && x.IsDeleted==true).ToListAsync();
-                            if (lstRizMetreHaml.Count != 0)
-                            {
-                                foreach (var RM in lstRizMetreHaml)
-                                {
-                                    RM.IsDeleted = false;
-                                }
-                            }
-
-                            _context.ItemHasConditionBaseItemRemoveds.RemoveRange(lstItemHasConditionBaseItemRemoved);
-                        }
-                    }
+                    foreach (clsRizMetreUsers rizMetre in rizMetresToRemove)
+                        rizMetre.IsDeleted = true;
                 }
             }
-            return true;
         }
-        catch (Exception)
+
+        // FBهای حمل نیز به‌صورت دسته‌ای دریافت می‌شوند تا در حلقه برای هر حمل
+        // یک رفت‌وبرگشت جداگانه به دیتابیس نداشته باشیم.
+        Dictionary<string, clsFB> fbByHamlItem = new();
+        if (positiveHamlItems.Count > 0)
         {
-            return false;
+            List<clsFB> existingFbs = await _context.FBs
+                .Where(x => x.BarAvordId == barAvordUserId
+                    && x.NoeFBId == noeFBId
+                    && positiveHamlItems.Contains(x.Shomareh))
+                .ToListAsync();
+
+            fbByHamlItem = existingFbs
+                .GroupBy(x => x.Shomareh)
+                .ToDictionary(g => g.Key, g => g.First());
         }
+
+        List<Guid> rizMetreIds = new();
+
+        foreach (clsItemsRelatedToItemHaml relatedItem in relatedItems)
+        {
+            string hamlItemFB = relatedItem.ItemHamlFB.Trim();
+            decimal? zarib1 = relatedItem.Zarib1;
+            decimal? zarib2 = relatedItem.Zarib2;
+            decimal? zarib3 = relatedItem.Zarib3;
+
+            decimal allZarib = (zarib1 ?? 1m) * (zarib2 ?? 1m) * (zarib3 ?? 1m);
+
+            // ضرایب منفی در بخش بالا پردازش شده‌اند و ریزمتره حمل جدید ندارند.
+            if (allZarib < 0)
+                continue;
+
+            if (!currentHamlByItem.TryGetValue(hamlItemFB, out clsBarAvordHaml? currentHaml))
+            {
+                decimal? baseValue = null;
+                decimal? baseValueBase = null;
+
+                if (baravordUser?.Type == NoeBarAvord.SooratVaziat
+                    && baseHamlByItem.TryGetValue(hamlItemFB, out clsBarAvordHaml? baseHaml))
+                {
+                    baseValue = baseHaml.Value;
+                    baseValueBase = baseHaml.ValueBase;
+                }
+
+                currentHaml = new clsBarAvordHaml
+                {
+                    ID = Guid.NewGuid(),
+                    BarAvordId = barAvordUserId,
+                    FBShomareh = itemFBShomareh,
+                    FBShomarehHaml = hamlItemFB,
+                    NoeFBId = noeFBId,
+                    Value = baseValue,
+                    ValueBase = baseValueBase
+                };
+
+                _context.BarAvordHamls.Add(currentHaml);
+                currentHamlByItem.Add(hamlItemFB, currentHaml);
+            }
+
+            if (!fbByHamlItem.TryGetValue(hamlItemFB, out clsFB? fbHaml))
+            {
+                fbHaml = new clsFB
+                {
+                    BarAvordId = barAvordUserId,
+                    InsertDateTime = now,
+                    Shomareh = hamlItemFB,
+                    NoeFBId = noeFBId
+                };
+
+                _context.FBs.Add(fbHaml);
+                fbByHamlItem.Add(hamlItemFB, fbHaml);
+            }
+
+            // مقدار Tedad از حمل متعلق به همین آیتم جاری خوانده می‌شود؛
+            // جست‌وجوی قبلی بدون FBShomareh می‌توانست مقدار آیتم دیگری را برگرداند.
+            clsRizMetreUsers rizMetre = new()
+            {
+                Shomareh = shomareh,
+                ShomarehNew = newShomareh.ToString(),
+                Sharh = " حمل ",
+                Tedad = currentHaml.Value,
+                Tool = zarib1,
+                Arz = zarib2,
+                Ertefa = zarib3,
+                Des = " آیتم - " + itemFBShomareh,
+                FBId = fbHaml.ID,
+                OperationsOfHamlId = 1,
+                Type = "3",
+                ForItem = hamlItemFB,
+                UseItem = "",
+                LevelNumber = levelNumber,
+                Vazn = meghdarJoz,
+                MeghdarJoz = allZarib * meghdarJoz
+            };
+
+            _context.RizMetreUserses.Add(rizMetre);
+
+            _context.BarAvordHamlRizMetres.Add(new clsBarAvordHamlRizMetre
+            {
+                BarAvordHamlId = currentHaml.ID,
+                RizMetreId = rizMetre.ID
+            });
+
+            rizMetreIds.Add(rizMetre.ID);
+            newShomareh++;
+        }
+
+        // این SaveChanges برای سازگاری با فراخوانی‌های چندباره در یک عملیات حفظ شده است:
+        // فراخوانی بعدی باید بتواند BarAvordHaml و FB درج‌شده در فراخوانی قبلی را از دیتابیس ببیند.
+        await _context.SaveChangesAsync();
+
+        return rizMetreIds;
     }
 
-    public static bool UpdateHaml(UpdateHamlDto request, ApplicationDbContext _context)
+    public static async Task<bool> DeleteHaml(DeleteHamlDto request, ApplicationDbContext context)
     {
-        try
+        ArgumentNullException.ThrowIfNull(request);
+        ArgumentNullException.ThrowIfNull(context);
+
+        List<clsBarAvordHaml> itemHamls = await context.BarAvordHamls
+            .Where(x => x.BarAvordId == request.BarAvordId
+                && x.NoeFBId == request.NoeFBId
+                && x.FBShomareh == request.FBShomareh)
+            .ToListAsync();
+
+        if (itemHamls.Count > 0)
         {
-            int Year = request.Year;
-            string FBShomareh = request.FBShomareh;
-            decimal? dMeghdarJoz = request.MeghdarJoz;
-            Guid BarAvordId = request.BarAvordId;
-            long RMShomareh = request.RMShomareh;
-            NoeFehrestBaha NoeFB = request.NoeFB;
+            List<Guid> itemHamlIds = itemHamls.Select(x => x.ID).ToList();
 
-            List<clsItemsRelatedToItemHaml> lstItemsRelatedToItemHaml = _context.ItemsRelatedToItemHamls
-                                .Where(x => x.ItemFB.Trim() == FBShomareh && x.Year == Year && x.NoeFB == NoeFB).ToList();
+            // فقط ریزمتره‌های حملی حذف می‌شوند که به همین آیتم و همین شماره ریزمتره وصل‌اند.
+            List<clsBarAvordHamlRizMetre> links = await context.BarAvordHamlRizMetres
+                .Where(x => itemHamlIds.Contains(x.BarAvordHamlId))
+                .ToListAsync();
 
-            foreach (var itemsRelatedToItemHaml in lstItemsRelatedToItemHaml)
+            List<Guid> hamlRizMetreIds = links.Select(x => x.RizMetreId).Distinct().ToList();
+
+            List<clsRizMetreUsers> hamlRizMetres = hamlRizMetreIds.Count == 0
+                ? new List<clsRizMetreUsers>()
+                : await context.RizMetreUserses
+                    .Where(x => hamlRizMetreIds.Contains(x.ID)
+                        && x.Shomareh == request.RMShomareh)
+                    .ToListAsync();
+
+            if (hamlRizMetres.Count > 0)
             {
-                string strItemHamlFB = "";
-                if (itemsRelatedToItemHaml != null)
-                {
-                    strItemHamlFB = itemsRelatedToItemHaml.ItemHamlFB.Trim();
-                    decimal? Zarib1 = itemsRelatedToItemHaml.Zarib1;
-                    decimal? Zarib2 = itemsRelatedToItemHaml.Zarib2;
-                    decimal? Zarib3 = itemsRelatedToItemHaml.Zarib3;
-                    decimal? dAllZarib = (Zarib1 != null ? Zarib1.Value : 1) * (Zarib2 != null ? Zarib2.Value : 1) * (Zarib3 != null ? Zarib3.Value : 1);
+                List<Guid> deletedHamlRizMetreIds = hamlRizMetres.Select(x => x.ID).ToList();
 
-                    string ItemHamlFB = itemsRelatedToItemHaml.ItemHamlFB;
-                    clsFB? FbHaml = _context.FBs.FirstOrDefault(x => x.BarAvordId == BarAvordId && x.Shomareh == ItemHamlFB);
-                    if (FbHaml != null)
-                    {
-                        List<clsRizMetreUsers> lstRMForDelForHaml = _context.RizMetreUserses.Where(x => x.FBId == FbHaml.ID
-                            && x.ForItem == FBShomareh.Substring(0, 6).Trim() && x.Type == "3" && x.Shomareh == RMShomareh).ToList();
+                // ابتدا ارتباط‌ها حذف می‌شوند تا رکورد یتیم در جدول واسط باقی نماند.
+                List<clsBarAvordHamlRizMetre> linksToDelete = links
+                    .Where(x => deletedHamlRizMetreIds.Contains(x.RizMetreId))
+                    .ToList();
 
-                        foreach (var RMForDelForHaml in lstRMForDelForHaml)
-                        {
-                            _context.Entry(RMForDelForHaml).CurrentValues.SetValues(new
-                            {
-                                Vazn = dMeghdarJoz,
-                                MeghdarJoz = dAllZarib * dMeghdarJoz
-                            });
-                        }
-                    }
-                }
+                context.BarAvordHamlRizMetres.RemoveRange(linksToDelete);
+                context.RizMetreUserses.RemoveRange(hamlRizMetres);
             }
-            return true;
         }
-        catch (Exception)
+
+        // در صورت حذف آیتم شرطی، ریزمتره‌های آیتم پایه که قبلاً غیرفعال شده بودند برگردانده می‌شوند.
+        if (request.ConditionContextId.HasValue)
         {
-            return false;
+            List<clsItemHasConditionBaseItemRemoved> removedBaseItems =
+                await context.ItemHasConditionBaseItemRemoveds
+                    .Where(x => x.BarAvordId == request.BarAvordId
+                        && x.ConditionContextId == request.ConditionContextId.Value)
+                    .ToListAsync();
+
+            if (removedBaseItems.Count > 0)
+            {
+                List<Guid> baseRizMetreIds = removedBaseItems
+                    .Select(x => x.RizMetreId)
+                    .Distinct()
+                    .ToList();
+
+                List<clsRizMetreUsers> baseRizMetres = await context.RizMetreUserses
+                    .IgnoreQueryFilters()
+                    .Where(x => baseRizMetreIds.Contains(x.ID) && x.IsDeleted == true)
+                    .ToListAsync();
+
+                foreach (clsRizMetreUsers baseRizMetre in baseRizMetres)
+                    baseRizMetre.IsDeleted = false;
+
+                context.ItemHasConditionBaseItemRemoveds.RemoveRange(removedBaseItems);
+            }
         }
+
+        return true;
+    }
+
+    public static bool UpdateHaml(UpdateHamlDto request, ApplicationDbContext context)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        ArgumentNullException.ThrowIfNull(context);
+
+        string itemFBShomareh = request.FBShomareh.Trim();
+
+        // این متد به‌صورت همگام نگه داشته شده چون چند فراخواننده قدیمی
+        // در اکشن‌های همگام پروژه از آن استفاده می‌کنند.
+        List<clsItemsRelatedToItemHaml> relatedItems = context.ItemsRelatedToItemHamls
+            .AsNoTracking()
+            .Where(x => x.Year == request.Year
+                && x.NoeFB == request.NoeFB
+                && x.ItemFB.Trim() == itemFBShomareh)
+            .ToList();
+
+        if (relatedItems.Count == 0)
+            return true;
+
+        List<clsBarAvordHaml> itemHamls = context.BarAvordHamls
+            .Where(x => x.BarAvordId == request.BarAvordId
+                && x.NoeFBId == request.NoeFB
+                && x.FBShomareh == itemFBShomareh)
+            .ToList();
+
+        if (itemHamls.Count == 0)
+            return true;
+
+        List<Guid> itemHamlIds = itemHamls.Select(x => x.ID).ToList();
+
+        List<clsBarAvordHamlRizMetre> links = context.BarAvordHamlRizMetres
+            .Where(x => itemHamlIds.Contains(x.BarAvordHamlId))
+            .ToList();
+
+        if (links.Count == 0)
+            return true;
+
+        List<Guid> hamlRizMetreIds = links.Select(x => x.RizMetreId).Distinct().ToList();
+
+        List<clsRizMetreUsers> hamlRizMetres = context.RizMetreUserses
+            .Where(x => hamlRizMetreIds.Contains(x.ID)
+                && x.Shomareh == request.RMShomareh)
+            .ToList();
+
+        Dictionary<string, decimal> coefficientsByHamlItem = relatedItems
+            .Where(x => (x.Zarib1 ?? 1m) * (x.Zarib2 ?? 1m) * (x.Zarib3 ?? 1m) >= 0)
+            .GroupBy(x => x.ItemHamlFB.Trim())
+            .ToDictionary(
+                group => group.Key,
+                group => group.First().Zarib1.GetValueOrDefault(1m)
+                    * group.First().Zarib2.GetValueOrDefault(1m)
+                    * group.First().Zarib3.GetValueOrDefault(1m));
+
+        foreach (clsRizMetreUsers hamlRizMetre in hamlRizMetres)
+        {
+            if (!coefficientsByHamlItem.TryGetValue(hamlRizMetre.ForItem?.Trim() ?? string.Empty, out decimal coefficient))
+                continue;
+
+            hamlRizMetre.Vazn = request.MeghdarJoz;
+            hamlRizMetre.MeghdarJoz = coefficient * request.MeghdarJoz;
+        }
+
+        return true;
     }
 }

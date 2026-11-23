@@ -1016,6 +1016,20 @@ namespace RMS.Models.Common
                                         if (Fb != null)
                                         {
                                             var deletedRizMetresForSum1 = _context.RizMetreUserses.Where(x => x.FBId == Fb.ID).ToList();
+
+                                            foreach (clsRizMetreUsers sourceRizMetre in deletedRizMetresForSum1.Where(x => x.Type != "3"))
+                                            {
+                                                await HamlCommon.DeleteHaml(new DeleteHamlDto
+                                                {
+                                                    BarAvordId = ItemHasCon.BarAvordId,
+                                                    RIzMetreId = sourceRizMetre.ID,
+                                                    FBShomareh = Fb.Shomareh,
+                                                    RMShomareh = sourceRizMetre.Shomareh,
+                                                    NoeFBId = NoeFBId,
+                                                    ConditionContextId = sourceRizMetre.ConditionContextId
+                                                }, _context);
+                                            }
+
                                             _context.RizMetreUserses.RemoveRange(deletedRizMetresForSum1);
                                             _context.SaveChanges();
                                             _context.FBs.Remove(Fb);
@@ -6242,6 +6256,7 @@ namespace RMS.Models.Common
                                             ///////////
                                             DeleteHamlDto deleteHaml = new DeleteHamlDto
                                             {
+                                                ConditionContextId = ItemHasCon.ConditionContextId,
                                                 BarAvordId = ItemHasCon.BarAvordId,
                                                 FBShomareh = varFBUsersAdded.Shomareh,
                                                 RMShomareh = RizMetre.Shomareh,
@@ -7039,6 +7054,7 @@ namespace RMS.Models.Common
                             ///////////
                             DeleteHamlDto deleteHaml = new DeleteHamlDto
                             {
+                                                ConditionContextId = ItemHasCon.ConditionContextId,
                                 BarAvordId = ItemHasCon.BarAvordId,
                                 FBShomareh = strAddedItems,
                                 RMShomareh = RizMetre.Shomareh,
@@ -7786,6 +7802,7 @@ namespace RMS.Models.Common
                                 ///////////
                                 DeleteHamlDto deleteHaml = new DeleteHamlDto
                                 {
+                                                ConditionContextId = ItemHasCon.ConditionContextId,
                                     BarAvordId = ItemHasCon.BarAvordId,
                                     FBShomareh = strItemShomareh,
                                     RMShomareh = RizMetre.Shomareh,
@@ -7970,6 +7987,7 @@ namespace RMS.Models.Common
                             ///////////
                             DeleteHamlDto deleteHaml = new DeleteHamlDto
                             {
+                                                ConditionContextId = ItemHasCon.ConditionContextId,
                                 BarAvordId = ItemHasCon.BarAvordId,
                                 FBShomareh = strItemShomareh1,
                                 RMShomareh = RizMetre.Shomareh,

@@ -2545,6 +2545,23 @@ string strForItem = "";
 
                                         _context.RizMetreUserses.Add(RizMetreUserses1);
 
+                                        clsFB? fbForHaml = _context.FBs.FirstOrDefault(x => x.ID == RizMetreUserses1.FBId);
+                                        if (fbForHaml != null)
+                                        {
+                                            await HamlCommon.SaveHaml(new SaveHamlDto
+                                            {
+                                                BarAvordUserId = BarAvordId,
+                                                Year = Year,
+                                                ItemFBShomareh = fbForHaml.Shomareh,
+                                                NoeFBId = NoeFBId,
+                                                Shomareh = RizMetreUserses1.Shomareh,
+                                                MeghdarJoz = dMeghdarJoz1,
+                                                LevelNumber = LevelNumber,
+                                                ConditionContextId = ConditionContextId,
+                                                BaseFBItem = strForItem
+                                            }, _context);
+                                        }
+
                                         blnCheckIsExistWarning = false;
                                         strWarning = "";
                                         Status = true;

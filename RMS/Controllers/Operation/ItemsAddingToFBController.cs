@@ -78,6 +78,7 @@ namespace RMS.Controllers.Operation
                                                      clsItemsHasConditionAddedToFB.Meghdar2,
                                                      clsItemsHasConditionAddedToFB.ItemsHasCondition_ConditionContextId,
                                                      clsItemsHasConditionAddedToFB.ConditionGroupId,
+                                                     ConditionContextId = tblItemsHasCondition_ConditionContext.ConditionContextId,
                                                      ItemFBShomareh = tblItemsHasCondition.ItemFBShomareh,
                                                  }).Where(x => x.FBShomareh.Substring(0, 6) == strItemsFBShomareh && x.BarAvordId == BarAvordId && x.ConditionGroupId == ConditionGroupId).ToList();
 
@@ -188,6 +189,7 @@ namespace RMS.Controllers.Operation
                                             {
                                                 DeleteHamlDto deleteHaml = new DeleteHamlDto
                                                 {
+                                                    ConditionContextId = itemHCATFB.ConditionContextId,
                                                     RIzMetreId = RMetre.ID,
                                                     BarAvordId = BarAvordId,
                                                     FBShomareh = strItemsFBShomareh,
@@ -265,6 +267,7 @@ namespace RMS.Controllers.Operation
                                                     {
                                                         DeleteHamlDto deleteHaml = new DeleteHamlDto
                                                         {
+                                                            ConditionContextId = itemHCATFB.ConditionContextId,
                                                             RIzMetreId = item.ID,
                                                             BarAvordId = BarAvordId,
                                                             FBShomareh = varFBUsersAdded.Shomareh,
@@ -310,6 +313,7 @@ namespace RMS.Controllers.Operation
                                                 {
                                                     DeleteHamlDto deleteHaml = new DeleteHamlDto
                                                     {
+                                                        ConditionContextId = itemHCATFB.ConditionContextId,
                                                         RIzMetreId = item.ID,
                                                         BarAvordId = BarAvordId,
                                                         FBShomareh = Fb.Shomareh,
@@ -370,6 +374,7 @@ namespace RMS.Controllers.Operation
                                                         {
                                                             DeleteHamlDto deleteHaml = new DeleteHamlDto
                                                             {
+                                                                ConditionContextId = itemHCATFB.ConditionContextId,
                                                                 BarAvordId = BarAvordId,
                                                                 FBShomareh = varFBUsersAdded.Shomareh,
                                                                 RMShomareh = item.Shomareh,
@@ -414,6 +419,7 @@ namespace RMS.Controllers.Operation
                                                 {
                                                     DeleteHamlDto deleteHaml = new DeleteHamlDto
                                                     {
+                                                        ConditionContextId = itemHCATFB.ConditionContextId,
                                                         BarAvordId = BarAvordId,
                                                         FBShomareh = Fb.Shomareh,
                                                         RMShomareh = item.Shomareh,
@@ -457,6 +463,7 @@ namespace RMS.Controllers.Operation
                                                 {
                                                     DeleteHamlDto deleteHaml = new DeleteHamlDto
                                                     {
+                                                        ConditionContextId = itemHCATFB.ConditionContextId,
                                                         BarAvordId = BarAvordId,
                                                         FBShomareh = Fb.Shomareh,
                                                         RMShomareh = item.Shomareh,
@@ -470,6 +477,7 @@ namespace RMS.Controllers.Operation
                                                 {
                                                     DeleteHamlDto deleteHaml = new DeleteHamlDto
                                                     {
+                                                        ConditionContextId = itemHCATFB.ConditionContextId,
                                                         BarAvordId = BarAvordId,
                                                         FBShomareh = Fb.Shomareh,
                                                         RMShomareh = item.Shomareh,
@@ -515,6 +523,7 @@ namespace RMS.Controllers.Operation
                                                 {
                                                     DeleteHamlDto deleteHaml = new DeleteHamlDto
                                                     {
+                                                        ConditionContextId = itemHCATFB.ConditionContextId,
                                                         BarAvordId = BarAvordId,
                                                         FBShomareh = Fb.Shomareh,
                                                         RMShomareh = item.Shomareh,
@@ -563,6 +572,7 @@ namespace RMS.Controllers.Operation
                                                 {
                                                     DeleteHamlDto deleteHaml = new DeleteHamlDto
                                                     {
+                                                        ConditionContextId = itemHCATFB.ConditionContextId,
                                                         BarAvordId = BarAvordId,
                                                         FBShomareh = Fb.Shomareh,
                                                         RMShomareh = item.Shomareh,
@@ -608,6 +618,7 @@ namespace RMS.Controllers.Operation
                                                 {
                                                     DeleteHamlDto deleteHaml = new DeleteHamlDto
                                                     {
+                                                        ConditionContextId = itemHCATFB.ConditionContextId,
                                                         BarAvordId = BarAvordId,
                                                         FBShomareh = Fb.Shomareh,
                                                         RMShomareh = item.Shomareh,
@@ -710,6 +721,7 @@ namespace RMS.Controllers.Operation
                                                                     {
                                                                         DeleteHamlDto deleteHaml = new DeleteHamlDto
                                                                         {
+                                                                            ConditionContextId = itemHCATFB.ConditionContextId,
                                                                             BarAvordId = BarAvordId,
                                                                             FBShomareh = varFBUser.Shomareh,
                                                                             RMShomareh = item.Shomareh,
@@ -780,6 +792,7 @@ namespace RMS.Controllers.Operation
                                                             {
                                                                 DeleteHamlDto deleteHaml = new DeleteHamlDto
                                                                 {
+                                                                    ConditionContextId = itemHCATFB.ConditionContextId,
                                                                     BarAvordId = BarAvordId,
                                                                     FBShomareh = varFBUser.Shomareh,
                                                                     RMShomareh = item.Shomareh,
@@ -822,6 +835,7 @@ namespace RMS.Controllers.Operation
                                                 {
                                                     DeleteHamlDto deleteHaml = new DeleteHamlDto
                                                     {
+                                                        ConditionContextId = itemHCATFB.ConditionContextId,
                                                         BarAvordId = BarAvordId,
                                                         FBShomareh = Fb.Shomareh,
                                                         RMShomareh = item.Shomareh,
@@ -867,6 +881,7 @@ namespace RMS.Controllers.Operation
                                                 {
                                                     DeleteHamlDto deleteHaml = new DeleteHamlDto
                                                     {
+                                                        ConditionContextId = itemHCATFB.ConditionContextId,
                                                         RIzMetreId = item.ID,
                                                         BarAvordId = BarAvordId,
                                                         FBShomareh = varFBUsersAdded.Shomareh,
@@ -961,6 +976,7 @@ namespace RMS.Controllers.Operation
                                                     {
                                                         DeleteHamlDto deleteHaml = new DeleteHamlDto
                                                         {
+                                                            ConditionContextId = itemHCATFB.ConditionContextId,
                                                             RIzMetreId=item.ID,
                                                             BarAvordId = BarAvordId,
                                                             FBShomareh = FBUser.Shomareh,
@@ -1214,6 +1230,20 @@ namespace RMS.Controllers.Operation
                                                 if (Fb != null)
                                                 {
                                                     var deletedRizMetresForSum9 = _context.RizMetreUserses.Where(x => x.FBId == Fb.ID).ToList();
+
+                                                    foreach (clsRizMetreUsers sourceRizMetre in deletedRizMetresForSum9.Where(x => x.Type != "3"))
+                                                    {
+                                                        await HamlCommon.DeleteHaml(new DeleteHamlDto
+                                                        {
+                                                            BarAvordId = BarAvordId,
+                                                            RIzMetreId = sourceRizMetre.ID,
+                                                            FBShomareh = Fb.Shomareh,
+                                                            RMShomareh = sourceRizMetre.Shomareh,
+                                                            NoeFBId = NoeFBId,
+                                                            ConditionContextId = sourceRizMetre.ConditionContextId
+                                                        }, _context);
+                                                    }
+
                                                     _context.RizMetreUserses.RemoveRange(deletedRizMetresForSum9);
                                                     _context.SaveChanges();
                                                     _context.FBs.Remove(Fb);
@@ -3540,6 +3570,20 @@ namespace RMS.Controllers.Operation
                                                     if (Fb != null)
                                                     {
                                                         var deletedRizMetresForSum10 = _context.RizMetreUserses.Where(x => x.FBId == Fb.ID).ToList();
+
+                                                        foreach (clsRizMetreUsers sourceRizMetre in deletedRizMetresForSum10.Where(x => x.Type != "3"))
+                                                        {
+                                                            await HamlCommon.DeleteHaml(new DeleteHamlDto
+                                                            {
+                                                                ConditionContextId = itemHCATFB.ConditionContextId,
+                                                                BarAvordId = BarAvordId,
+                                                                RIzMetreId = sourceRizMetre.ID,
+                                                                FBShomareh = Fb.Shomareh,
+                                                                RMShomareh = sourceRizMetre.Shomareh,
+                                                                NoeFBId = NoeFBId
+                                                            }, _context);
+                                                        }
+
                                                         _context.RizMetreUserses.RemoveRange(deletedRizMetresForSum10);
                                                         _context.SaveChanges();
                                                         _context.FBs.Remove(Fb);
@@ -5545,6 +5589,19 @@ namespace RMS.Controllers.Operation
 
                                                         _context.RizMetreUserses.Add(RizMetreUserses1);
 
+                                                        SaveHamlDto repeatedSaveHaml = new SaveHamlDto
+                                                        {
+                                                            BarAvordUserId = BarAvordId,
+                                                            Year = Year,
+                                                            ItemFBShomareh = strItemShomareh,
+                                                            NoeFBId = NoeFBId,
+                                                            Shomareh = RizMetreUserses1.Shomareh,
+                                                            MeghdarJoz = dMeghdarJoz1,
+                                                            LevelNumber = LevelNumber,
+                                                            ConditionContextId = ConditionContextId,
+                                                            BaseFBItem = ConditionContextId.HasValue ? strForItem : null
+                                                        };
+                                                        await HamlCommon.SaveHaml(repeatedSaveHaml, context);
                                                     }
 
 
