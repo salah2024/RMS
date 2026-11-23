@@ -284,9 +284,7 @@ public static class HamlCommon
                 ? new List<clsRizMetreUsers>()
                 : await context.RizMetreUserses
                     .Where(x => hamlRizMetreIds.Contains(x.ID)
-                        && (request.RIzMetreId != Guid.Empty
-                            ? x.ID == request.RIzMetreId
-                            : x.Shomareh == request.RMShomareh))
+                        && x.Shomareh == request.RMShomareh)
                     .ToListAsync();
 
             if (hamlRizMetres.Count > 0)
