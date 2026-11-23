@@ -28,16 +28,6 @@ public static class HamlCommon
         long? conditionContextId = request.ConditionContextId;
         string? baseFBItem = request.BaseFBItem?.Trim();
 
-        // همان منطق قبلی حفظ شده است: شماره جدید در کل برآورد محاسبه می‌شود،
-        // نه فقط برای یک نوع فهرست بها یا یک FB.
-        long lastShomareh = await _context.RizMetreUserses
-            .AsNoTracking()
-            .Where(x => x.FB.BarAvordId == barAvordUserId)
-            .MaxAsync(x => (long?)x.Shomareh) ?? 0L;
-        // ریزمتره مبدأ ممکن است هنوز در دیتابیس ذخیره نشده باشد؛
-        // بنابراین شماره خودش نیز باید در محاسبه شماره بعدی لحاظ شود.
-        long newShomareh = Math.Max(lastShomareh, shomareh) + 1;
-
         // فقط ارتباطات مربوط به آیتم جاری از دیتابیس دریافت می‌شوند.
         // Trim روی ItemFB برای حفظ سازگاری با داده‌های قدیمی دارای فاصله نگه داشته شده است.
         List<clsItemsRelatedToItemHaml> relatedItems = await _context.ItemsRelatedToItemHamls
@@ -49,6 +39,14 @@ public static class HamlCommon
 
         if (relatedItems.Count == 0)
             return new List<Guid>();
+
+        // شماره جدید در کل برآورد محاسبه می‌شود، نه فقط برای یک FB.
+        // شماره ریزمتره مبدأ نیز لحاظ می‌شود چون ممکن است هنوز ذخیره نشده باشد.
+        long lastShomareh = await _context.RizMetreUserses
+            .AsNoTracking()
+            .Where(x => x.FB.BarAvordId == barAvordUserId)
+            .MaxAsync(x => (long?)x.Shomareh) ?? 0L;
+        long newShomareh = Math.Max(lastShomareh, shomareh) + 1;
 
         clsBaravordUser? baravordUser = await _context.BaravordUsers
             .AsNoTracking()
