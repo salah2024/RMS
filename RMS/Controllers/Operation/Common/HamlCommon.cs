@@ -62,7 +62,7 @@ public static class HamlCommon
                 .ToListAsync();
 
             baseHamlByItem = baseHamls
-                .GroupBy(x => x.FBShomarehHaml)
+                .GroupBy(x => x.FBShomarehHaml.Trim())
                 .ToDictionary(g => g.Key, g => g.First());
         }
 
@@ -75,8 +75,8 @@ public static class HamlCommon
 
         List<string> negativeHamlItems = relatedItems
             .Where(x => ((x.Zarib1 ?? 1m) * (x.Zarib2 ?? 1m) * (x.Zarib3 ?? 1m)) < 0)
-            .Select(x => x.ItemHamlFB)
-            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Select(x => x.ItemHamlFB.Trim())
+            .Where(x => x.Length > 0)
             .Distinct()
             .ToList();
 
@@ -88,7 +88,7 @@ public static class HamlCommon
             .ToListAsync();
 
         Dictionary<string, clsBarAvordHaml> currentHamlByItem = currentHamls
-            .GroupBy(x => x.FBShomarehHaml)
+            .GroupBy(x => x.FBShomarehHaml.Trim())
             .ToDictionary(g => g.Key, g => g.First());
 
         // برای ضرایب منفی، همه حمل‌های آیتم پایه به‌صورت یک‌جا دریافت می‌شوند.
@@ -298,6 +298,28 @@ public static class HamlCommon
 
                 context.BarAvordHamlRizMetres.RemoveRange(linksToDelete);
                 context.RizMetreUserses.RemoveRange(hamlRizMetres);
+
+                // رکورد اصلی حمل فقط زمانی حذف می‌شود که دیگر هیچ ریزمتره‌ای
+                // به آن متصل نباشد؛ ممکن است چند ریزمتره از یک حمل مشترک استفاده کنند.
+                HashSet<Guid> removedLinkIds = linksToDelete
+                    .Select(x => x.ID)
+                    .ToHashSet();
+
+                List<Guid> hamlIdsWithoutLinks = itemHamls
+                    .Where(haml => !links.Any(link =>
+                        link.BarAvordHamlId == haml.ID
+                        && !removedLinkIds.Contains(link.ID)))
+                    .Select(haml => haml.ID)
+                    .ToList();
+
+                if (hamlIdsWithoutLinks.Count > 0)
+                {
+                    List<clsBarAvordHaml> orphanHamls = itemHamls
+                        .Where(x => hamlIdsWithoutLinks.Contains(x.ID))
+                        .ToList();
+
+                    context.BarAvordHamls.RemoveRange(orphanHamls);
+                }
             }
         }
 
@@ -377,13 +399,18 @@ public static class HamlCommon
             .ToList();
 
         Dictionary<string, decimal> coefficientsByHamlItem = relatedItems
-            .Where(x => (x.Zarib1 ?? 1m) * (x.Zarib2 ?? 1m) * (x.Zarib3 ?? 1m) >= 0)
+            .Where(x => !string.IsNullOrWhiteSpace(x.ItemHamlFB)
+                && (x.Zarib1 ?? 1m) * (x.Zarib2 ?? 1m) * (x.Zarib3 ?? 1m) >= 0)
             .GroupBy(x => x.ItemHamlFB.Trim())
             .ToDictionary(
                 group => group.Key,
-                group => group.First().Zarib1.GetValueOrDefault(1m)
-                    * group.First().Zarib2.GetValueOrDefault(1m)
-                    * group.First().Zarib3.GetValueOrDefault(1m));
+                group =>
+                {
+                    clsItemsRelatedToItemHaml item = group.First();
+                    return item.Zarib1.GetValueOrDefault(1m)
+                        * item.Zarib2.GetValueOrDefault(1m)
+                        * item.Zarib3.GetValueOrDefault(1m);
+                });
 
         foreach (clsRizMetreUsers hamlRizMetre in hamlRizMetres)
         {
