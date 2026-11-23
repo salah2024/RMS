@@ -58,7 +58,6 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
         int Year = Request.Year;
         Guid BarAvordId = Request.BarAvordUserId;
         NoeFehrestBaha NoeFBId = Request.NoeFBId;
-        string Code = Request.Shomareh.Substring(0, 2);
 
 
         if (TajmieItem.Trim() != "")
@@ -85,9 +84,11 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
         DateTime Now = DateTime.Now;
 
 
-        List<clsFehrestBahaItemsReplace> lstfehrestBahaItemsReplace = await _context.FehrestBahaItemsReplaces.Where(x => x.FBShomarehNew == FBShomareh && x.NoeFB == NoeFBId && x.Year == Year).ToListAsync();
-
-        clsFehrestBahaItemsReplace? fehrestBahaItemsReplace = lstfehrestBahaItemsReplace.Where(x => x.FBShomarehNew == FBShomareh && x.NoeFB == NoeFBId && x.Year == Year).FirstOrDefault();
+        clsFehrestBahaItemsReplace? fehrestBahaItemsReplace = await _context.FehrestBahaItemsReplaces
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.FBShomarehNew == FBShomareh
+                && x.NoeFB == NoeFBId
+                && x.Year == Year);
         if (fehrestBahaItemsReplace != null)
         {
             FBShomareh = fehrestBahaItemsReplace.FBShomarehMain;
@@ -96,13 +97,21 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
         //{
         await using var transaction = await context.Database.BeginTransactionAsync();
 
-        clsFB? FB = await _context.FBs.Where(x => x.BarAvordId == BarAvordId && x.NoeFBId == NoeFBId && x.Shomareh == FBShomareh).FirstOrDefaultAsync();
+        clsFB? FB = await _context.FBs
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.BarAvordId == BarAvordId
+                && x.NoeFBId == NoeFBId
+                && x.Shomareh == FBShomareh);
 
         decimal dBahayeVahed = 0;
         decimal ItemZarib = 1;
 
 
-        clsFehrestBaha? fehrestBaha = await _context.FehrestBahas.Where(x => x.Sal == Year && x.NoeFB == NoeFBId && x.Shomareh == FBShomareh).FirstOrDefaultAsync();
+        clsFehrestBaha? fehrestBaha = await _context.FehrestBahas
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Sal == Year
+                && x.NoeFB == NoeFBId
+                && x.Shomareh == FBShomareh);
         if (fehrestBaha != null)
         {
             dBahayeVahed = decimal.Parse((fehrestBaha.BahayeVahed != null && fehrestBaha.BahayeVahed != "") ? fehrestBaha.BahayeVahed : "0");
@@ -161,8 +170,7 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
 
         RizMetre.MeghdarJoz = dMeghdarJoz;
 
-        {
-            context.RizMetreUserses.Add(RizMetre);
+        context.RizMetreUserses.Add(RizMetre);
 
 
             /////////////
@@ -193,8 +201,7 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
                 .FirstOrDefaultAsync();
             decimal? dBahayeItem = dSumMeghdarJoz * dBahayeVahed * ItemZarib;
 
-            return new JsonResult("OK_" + dMeghdarJoz + "_" + dSumMeghdarJoz + "_" + dBahayeItem + "_" + FBId);
-        }
+        return new JsonResult("OK_" + dMeghdarJoz + "_" + dSumMeghdarJoz + "_" + dBahayeItem + "_" + FBId);
     }
 
     public async Task<JsonResult> GetJameCurrentFasl([FromBody] JameCurrentFaslDto Request)
