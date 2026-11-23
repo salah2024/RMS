@@ -46,21 +46,29 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
     [HttpPost]
     public async Task<JsonResult> ConfirmRizMetreUsersFromShowBarAvord([FromBody] RizMetreFromShowBarAvordInputDto Request)
     {
-        string Sharh = Request.Sharh;
-        string TajmieItem = Request.TajmieItem;
+        if (Request is null
+            || string.IsNullOrWhiteSpace(Request.Shomareh)
+            || Request.BarAvordUserId == Guid.Empty
+            || Request.Year <= 0)
+        {
+            return new JsonResult("NOK");
+        }
+
+        string Sharh = Request.Sharh?.Trim() ?? string.Empty;
+        string TajmieItem = Request.TajmieItem?.Trim() ?? string.Empty;
         decimal? Tedad = Request.Tedad;
         decimal? Tool = Request.Tool;
         decimal? Arz = Request.Arz;
         decimal? Ertefa = Request.Ertefa;
         decimal? Vazn = Request.Vazn;
-        string Des = Request.Des;
-        string FBShomareh = Request.Shomareh;
+        string Des = Request.Des?.Trim() ?? string.Empty;
+        string FBShomareh = Request.Shomareh.Trim();
         int Year = Request.Year;
         Guid BarAvordId = Request.BarAvordUserId;
         NoeFehrestBaha NoeFBId = Request.NoeFBId;
 
 
-        if (TajmieItem.Trim() != "")
+        if (!string.IsNullOrWhiteSpace(TajmieItem))
         {
             clsTajmieFosoulItems? item = await _context.TajmieFosoulItemses.Include(x => x.TajmieFosoul).FirstOrDefaultAsync(x => x.ItemCode.Trim() == TajmieItem.Trim() && x.TajmieFosoul.NoeFBId == NoeFBId);
 
@@ -150,14 +158,14 @@ public class RizMetreUserFromShowBarAvordController(ApplicationDbContext _contex
         RizMetre.ID = Guid.NewGuid();
         RizMetre.Shomareh = Shomareh;
         RizMetre.ShomarehNew = Shomareh.ToString();
-        RizMetre.TajmieItem = TajmieItem.Trim();
-        RizMetre.Sharh = Sharh.Trim();
+        RizMetre.TajmieItem = TajmieItem;
+        RizMetre.Sharh = Sharh;
         RizMetre.Tedad = Tedad;
         RizMetre.Tool = Tool;
         RizMetre.Arz = Arz;
         RizMetre.Ertefa = Ertefa;
         RizMetre.Vazn = Vazn;
-        RizMetre.Des = Des.Trim();
+        RizMetre.Des = Des;
         RizMetre.FBId = FBId;
         RizMetre.OperationsOfHamlId = 1;
         RizMetre.Type = "1";
