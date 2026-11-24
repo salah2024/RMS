@@ -1081,7 +1081,8 @@ function UpdateRizMetreFromRow(el, rizMetreId, Shomareh, rizId1, FBId, Code) {
     const rizId = row.data('id');
 
     const inputs = row.find('input');
-    const MeghdarJoz = row.find('#spanMeghdarJoz');
+    // ID تکراری بین ردیف‌های ریزمتره است؛ عنصر را از ستون همین ردیف انتخاب می‌کنیم.
+    const MeghdarJoz = row.children('td').eq(8).find('span[id="spanMeghdarJoz"]');
 
     Check = false;
     const values = inputs.map(function () {
@@ -1143,7 +1144,7 @@ function UpdateRizMetreFromRow(el, rizMetreId, Shomareh, rizId1, FBId, Code) {
                     //let bahayeVahedFasl1 = parseFloat(convertPersianToEnglish(bahayeVahedFasl.text()));
 
 
-                    el.parent().parent().find('#spanMeghdarJoz').html(formatNumber(parseFloat(num).toFixed(2)));
+                    MeghdarJoz.text(formatNumber(parseFloat(num).toFixed(2)));
 
                     var meghdarFasl = $('#meghdarFasl_' + Shomareh);
                     meghdarFasl.html(formatNumber(parseFloat(info[2]).toFixed(3)));
