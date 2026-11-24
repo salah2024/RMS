@@ -2568,7 +2568,6 @@ function CheckOperationHasAddedOperations(object, AddedOperationId, ItemsFBShoma
         $('#HDFItemsFBShomareh').val(ItemsFBShomareh);
         BarAvordUserID = $('#HDFBarAvordUserID').val();
         Year = $('#HDFYear').val();
-        BarAvordUserID = $('#HDFBarAvordUserID').val();
         NoeFB = parseInt($('#HDFNoeFB').val());
         var vardata = new Object();
         vardata.AddedOperationId = AddedOperationId;
@@ -2764,6 +2763,8 @@ function UpdateRMUClick(Id) {
     }
     else Vazn = undefined;
 
+    BarAvordUserID = $('#HDFBarAvordUserID').val();
+
     if (firstObjectHasFocus != null)
         firstObjectHasFocus.focus();
     var vardata = new Object();
@@ -2779,6 +2780,7 @@ function UpdateRMUClick(Id) {
     vardata.Year = Year;
     vardata.FBId = FBId;
     vardata.OperationId = OperationId;
+    vardata.BarAvordUserId = BarAvordUserID;
     vardata.LevelNumber = 1;
     if (Check) {
         $.ajax({
