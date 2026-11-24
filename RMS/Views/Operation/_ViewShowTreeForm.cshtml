@@ -486,8 +486,7 @@
                             ResetTreeBranchCache($otherBranches);
                             $otherBranches.stop(true, true).slideUp(250);
 
-                            if ($target.attr('data-tree-lazy') === 'true' &&
-                                $target.data('tree-loaded') !== true) {
+                            if ($target.attr('data-tree-lazy') === 'true') {
                                 LoadTreeChildren(currentId, $target);
                             }
 
