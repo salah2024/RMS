@@ -685,6 +685,19 @@ function DeleteTajhizKargahDarsad() {
 
 
 function GetBarAvord(ItemId, Code, faslName, faslAsli) {
+    // فصل ۲۰ (حمل) ممکن است در اثر تغییر فصل‌های دیگر، بین دو بار بازشدن تغییر کند.
+    // بنابراین محتوای قبلی آن را نگه نمی‌داریم و هر بار پاسخ تازه سرور را نمایش می‌دهیم.
+    var isTransportChapter = String(Code) === '20';
+    var requestKey = String(ItemId);
+    window.__showBarAvordRequestVersions = window.__showBarAvordRequestVersions || {};
+    var requestVersion = (window.__showBarAvordRequestVersions[requestKey] || 0) + 1;
+    window.__showBarAvordRequestVersions[requestKey] = requestVersion;
+
+    if (isTransportChapter) {
+        $('#barAvordContainer-' + ItemId).empty()
+            .html('<div class="text-center p-3"><i class="fa fa-spinner fa-spin"></i> در حال دریافت مجدد اطلاعات حمل...</div>');
+    }
+
     BarAvordUserId = $('#HDFBarAvordUserID').val();
     NoeFB = parseInt($('#HDFNoeFB').val());
     Year = parseInt($('#HDFYear').val());
@@ -704,7 +717,12 @@ function GetBarAvord(ItemId, Code, faslName, faslAsli) {
         data: JSON.stringify(vardata),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
+        // درخواست فصل حمل نباید از پاسخ cache شده استفاده کند.
+        cache: !isTransportChapter,
         success: function (response) {
+            // اگر درخواست جدیدتری برای همین فصل ارسال شده، پاسخ قدیمی نباید روی آن بنشیند.
+            if (window.__showBarAvordRequestVersions[requestKey] !== requestVersion) return;
+
             var chapterResponseReceivedAt = window.performance.now();
             console.debug("[ShowBarAvord][PERF] GetUserBarAvord AJAX ms:",
                 (chapterResponseReceivedAt - chapterRequestStartedAt).toFixed(1),
@@ -740,7 +758,11 @@ function GetBarAvord(ItemId, Code, faslName, faslAsli) {
             });
         },
         error: function (response) {
-            toastr.error('خطا', 'خطا');
+            if (window.__showBarAvordRequestVersions[requestKey] !== requestVersion) return;
+            if (isTransportChapter) {
+                $('#barAvordContainer-' + ItemId).empty();
+            }
+            toastr.error('خطا در دریافت مجدد اطلاعات فصل', 'خطا');
         }
     });
 }
