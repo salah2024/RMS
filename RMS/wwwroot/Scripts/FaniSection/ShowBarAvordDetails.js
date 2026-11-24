@@ -1161,7 +1161,7 @@ function UpdateRizMetreFromRow(el, rizMetreId, Shomareh, rizId1, FBId, Code) {
                     //GetRizMetreUsers();
                     toastr.success('ریزه متره انتخابی بدرستی ویرایش گردید', 'موفقیت');
                     cancelEditRow(row, rizMetreId, Shomareh, rizId1, FBId);
-                    refreshBaseItem(el, Shomareh, Code);
+                    refreshBaseItemAndHaml(el, Shomareh, Code);
                     GetJamBarAvordAll();
                     GetJamFosoulAll();
                 }
@@ -1509,7 +1509,7 @@ object.parent().parent().find('input[type=text]').each(function () {
 
                     var bahayeKolFasl = $('#bahayeKolFasl_' + Shomareh);
                     bahayeKolFasl.html(formatNumber(parseFloat(dBahayeItem).toFixed(0)));
-                    refreshBaseItem(object, Shomareh, Code);
+                    refreshBaseItemAndHaml(object, Shomareh, Code);
 
                     GetCurrentRizMetreUsers(Shomareh, rizId, FBId, Code);
                     //////////////////
@@ -1552,6 +1552,16 @@ object.parent().parent().find('input[type=text]').each(function () {
         firstObj.focus().select();
         object.removeAttr('disabled');
         toastr.warning('مقادیر مشخص شده را وارد نمایید', 'هشدار');
+    }
+}
+
+// پس از هر تغییر ریزمتره، جمع فصل مربوطه و جمع فصل ۲۰ (حمل) تازه‌سازی می‌شود.
+function refreshBaseItemAndHaml(object, Shomareh, Code) {
+    refreshBaseItem(object, Shomareh, Code);
+
+    // اگر خود آیتم در فصل ۲۰ باشد، همان درخواست اول جمع حمل را به‌روز کرده است.
+    if (String(Code) !== '20') {
+        refreshBaseItem(object, '20', '20');
     }
 }
 
@@ -1994,7 +2004,7 @@ function DeleteRizMetre(object, RizMetreId, Shomareh, rizId, FBId, Code) {
                 GetCurrentRizMetreUsers(Shomareh, rizId, FBId, Code);
                 GetJamBarAvordAll();
                 GetJamFosoulAll();
-                refreshBaseItem(object, Shomareh, Code);
+                refreshBaseItemAndHaml(object, Shomareh, Code);
             }
         },
         error: function () {
