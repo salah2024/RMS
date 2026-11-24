@@ -93,16 +93,16 @@ function createTree(data, parentId, lazyMode) {
                         <span>واحد</span>
                     </div>
                     <div class="col-2 HamlTableStyle"  style="background-color: #d5c4f1;">
-                        <span>مقدار</span>
+                        <span>مقدار مصالح</span>
                     </div>
                     <div class="col-2 HamlTableStyle" style="background-color: #d5c4f1;" >
-                        <span>فاصله حمل (کیلومتر)</span>
+                        <span>فاصله حمل واقعی (کیلومتر)</span>
                     </div>
                     <div class="col-2 HamlTableStyle" style="background-color: #d5c4f1;" >
-                        <span>فاصله حمل محاسباتی </span>
+                        <span>فاصله حمل قابل پرداخت </span>
                     </div>
                     <div class="col-2 HamlTableStyle" style="padding: 1px;background-color: #d5c4f1">
-                        <span>حداقل فاصله حمل محاسباتی</span>
+                        <span>فاصله حمل منظور شده در بهای واحد</span>
                     </div>
                     <div class="col-2 HamlTableStyle" style="padding: 1px;background-color: #d5c4f1">
                         <span>حداکثر فاصله حمل قابل قبول</span>
