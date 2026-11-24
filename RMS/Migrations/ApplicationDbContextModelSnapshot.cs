@@ -3806,7 +3806,7 @@ namespace RMS.Migrations
                     b.Property<Guid?>("UserRemover")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal>("Value")
+                    b.Property<decimal?>("Value")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("ID");
