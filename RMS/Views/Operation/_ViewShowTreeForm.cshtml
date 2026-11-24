@@ -320,9 +320,33 @@
         setTimeout(function () { observer.disconnect(); }, 30000);
     }
 
-    function LoadTreeChildren(parentId, $target) {
-        if ($target.data('tree-loading') || $target.data('tree-loaded') === true) return;
+    // با هر بار باز شدن شاخه، اطلاعات فرزندان از سرور دریافت می‌شود.
+    // درخواست قبلیِ شاخه‌ای که بسته شده نیز نباید بتواند پاسخ قدیمی را دوباره نمایش دهد.
+    function ResetTreeBranchCache($branches) {
+        $branches.each(function () {
+            var $branch = $(this);
+            if ($branch.attr('data-tree-lazy') !== 'true') return;
 
+            var pendingRequest = $branch.data('tree-request');
+            if (pendingRequest && pendingRequest.readyState !== 4) {
+                pendingRequest.abort();
+            }
+
+            var requestVersion = ($branch.data('tree-request-version') || 0) + 1;
+            $branch.data('tree-request-version', requestVersion);
+            $branch.removeData('tree-request');
+            $branch.removeData('tree-loading');
+            $branch.data('tree-loaded', false);
+            $branch.empty();
+        });
+    }
+
+    function LoadTreeChildren(parentId, $target) {
+        if ($target.data('tree-loading')) return;
+
+        // عمداً tree-loaded را مانع دریافت مجدد نمی‌کنیم؛ هر بازشدن باید دیتای تازه بگیرد.
+        var requestVersion = ($target.data('tree-request-version') || 0) + 1;
+        $target.data('tree-request-version', requestVersion);
         $target.data('tree-loading', true);
         $target.html('<li class="tree-loading" style="padding:5px;color:#777;">در حال بارگذاری...</li>');
 
@@ -333,13 +357,15 @@
             ParentId: parentId
         };
 
-        $.ajax({
+        var request = $.ajax({
             type: "POST",
             url: "@Url.Action("GetTree")",
             data: JSON.stringify(vardata),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (data) {
+                if ($target.data('tree-request-version') !== requestVersion) return;
+
                 if (!data || !data.newOperation) {
                     $target.empty().data('tree-loaded', true);
                     return;
@@ -352,14 +378,19 @@
                 $target.data('tree-loaded', true);
                 ScrollTreeContentIntoView($target);
             },
-            error: function (response) {
+            error: function (response, status) {
+                if (status === 'abort' || $target.data('tree-request-version') !== requestVersion) return;
                 $target.html('<li class="tree-load-error" style="padding:5px;color:#b00;">خطا در دریافت اطلاعات؛ برای تلاش مجدد دوباره روی شاخه کلیک کنید.</li>');
-                //console.error('GetTree child loading failed:', response);
             },
             complete: function () {
-                $target.removeData('tree-loading');
+                if ($target.data('tree-request-version') === requestVersion) {
+                    $target.removeData('tree-loading');
+                    $target.removeData('tree-request');
+                }
             }
         });
+
+        $target.data('tree-request', request);
     }
 
     function ShowTree() {
@@ -445,11 +476,15 @@
                             var $ancestors = $this.parents('ul[id^="ula"]');
 
                             if ($target.is(':visible')) {
-                                $target.find('ul[id^="ula"]').addBack().slideUp(250);
+                                var $closingBranches = $target.find('ul[id^="ula"]').addBack('ul[id^="ula"]');
+                                ResetTreeBranchCache($closingBranches);
+                                $closingBranches.stop(true, true).slideUp(250);
                                 return;
                             }
 
-                            $branches.not($ancestors).not($target).slideUp(250);
+                            var $otherBranches = $branches.not($ancestors).not($target);
+                            ResetTreeBranchCache($otherBranches);
+                            $otherBranches.stop(true, true).slideUp(250);
 
                             if ($target.attr('data-tree-lazy') === 'true' &&
                                 $target.data('tree-loaded') !== true) {
