@@ -539,7 +539,11 @@ public class Operation_ItemsFBController(ApplicationDbContext context) : Control
                                     UseItem = RUsers.UseItem,
                                     BarAvordId = fb.BarAvordId,
                                     FBId = RUsers.FBId,
-                                    MeghdarJoz = RUsers.MeghdarJoz,
+                                    MeghdarJoz = Math.Round(
+                                    RUsers.MeghdarJoz ?? 0m,
+                                    3,
+                                    MidpointRounding.AwayFromZero
+                                    ),
                                     strEzafeBaha = ""
                                 })
                                 .Where(x => x.FBId == request.FBId)

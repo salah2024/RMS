@@ -178,25 +178,56 @@ public class OperationController(ApplicationDbContext context) : Controller
                 .ToDictionary(g => g.Key, g => g.First());
 
             // ریزمتره‌های تمام آیتم‌های این سطح در یک درخواست دریافت می‌شوند.
+            //var rizMetreLookup = _context.RizMetreUserses
+            //    .AsNoTracking()
+            //    .Include(x => x.FB)
+            //    .Where(x => x.FB.BarAvordId == request.BarAvordUserId
+            //        && noeFBIds.Contains(x.FB.NoeFBId)
+            //        && hamlNumbers.Contains(x.FB.Shomareh))
+            //    .ToList()
+            //    .GroupBy(x => (x.FB.NoeFBId, Shomareh: x.FB.Shomareh))
+            //    .ToDictionary(g => g.Key, g =>
+            //    {
+            //        decimal? sum = 0;
+            //        long count = 0;
+            //        foreach (var rm in g)
+            //        {
+            //            sum += (rm.Tool ?? 1) * (rm.Arz ?? 1) * (rm.Ertefa ?? 1) * (rm.Vazn ?? 1);
+            //            count++;
+            //        }
+            //        return (Count: count,
+            //                Sum: Math.Round(sum, 3, MidpointRounding.AwayFromZero));
+            //    });
+
+
             var rizMetreLookup = _context.RizMetreUserses
-                .AsNoTracking()
-                .Include(x => x.FB)
-                .Where(x => x.FB.BarAvordId == request.BarAvordUserId
-                    && noeFBIds.Contains(x.FB.NoeFBId)
-                    && hamlNumbers.Contains(x.FB.Shomareh))
-                .ToList()
-                .GroupBy(x => (x.FB.NoeFBId, Shomareh: x.FB.Shomareh))
-                .ToDictionary(g => g.Key, g =>
-                {
-                    decimal? sum = 0;
-                    long count = 0;
-                    foreach (var rm in g)
-                    {
-                        sum += (rm.Tool ?? 1) * (rm.Arz ?? 1) * (rm.Ertefa ?? 1) * (rm.Vazn ?? 1);
-                        count++;
-                    }
-                    return (Count: count, Sum: sum);
-                });
+    .AsNoTracking()
+    .Include(x => x.FB)
+    .Where(x => x.FB.BarAvordId == request.BarAvordUserId
+        && noeFBIds.Contains(x.FB.NoeFBId)
+        && hamlNumbers.Contains(x.FB.Shomareh))
+    .ToList()
+    .GroupBy(x => (x.FB.NoeFBId, Shomareh: x.FB.Shomareh))
+    .ToDictionary(g => g.Key, g =>
+    {
+        decimal sum = 0m;
+        long count = 0;
+
+        foreach (var rm in g)
+        {
+            sum += (rm.Tool ?? 1m)
+                 * (rm.Arz ?? 1m)
+                 * (rm.Ertefa ?? 1m)
+                 * (rm.Vazn ?? 1m);
+
+            count++;
+        }
+
+        return (
+            Count: count,
+            Sum: Math.Round(sum, 3, MidpointRounding.AwayFromZero)
+        );
+    });
 
             // محدودیت حمل نیز به‌صورت گروهی خوانده می‌شود.
             var necessaryLimitNoeFBs = _context.BarAvordHamlNecessaryLimits
