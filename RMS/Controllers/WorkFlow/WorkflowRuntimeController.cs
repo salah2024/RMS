@@ -145,6 +145,69 @@ public class WorkflowRuntimeController : Controller
         });
     }
 
+    private async Task<List<WorkflowStepUsersForCheckDto>> GetStepReceiverUsersAsync(Guid stepId)
+    {
+        var step = await _context.WorkflowSteps
+            .Include(x => x.Users)
+            .Include(x => x.Roles)
+            .FirstOrDefaultAsync(x => x.ID == stepId);
+
+        if (step == null)
+            return new List<WorkflowStepUsersForCheckDto>();
+
+        // گیرندگان مستقیم و اعضای نقش‌های مرحله، هر دو مجاز هستند.
+        var userIds = step.Users
+            .Select(x => x.UserId)
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .ToList();
+
+        var roleIds = step.Roles
+            .Select(x => x.RoleId)
+            .Distinct()
+            .ToList();
+
+        if (roleIds.Count > 0)
+        {
+            var roleUserIds = await _context.UserRoles
+                .Where(x => roleIds.Contains(x.RoleId))
+                .Select(x => x.UserId)
+                .ToListAsync();
+
+            userIds.AddRange(roleUserIds);
+        }
+
+        userIds = userIds
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Distinct()
+            .ToList();
+
+        if (userIds.Count == 0)
+            return new List<WorkflowStepUsersForCheckDto>();
+
+        var users = await _context.Users
+            .Where(x => userIds.Contains(x.Id))
+            .Select(x => new WorkflowStepUsersForCheckDto
+            {
+                Id = x.Id,
+                FullName = x.FullName
+            })
+            .ToListAsync();
+
+        var details = await _context.UserDetails
+            .Where(x => userIds.Contains(x.UserId))
+            .Include(x => x.Company)
+            .ToListAsync();
+
+        foreach (var user in users)
+        {
+            var detail = details.FirstOrDefault(x => x.UserId == user.Id);
+            if (detail?.Company != null)
+                user.FullName += "(" + detail.Company.CompanyName + ")";
+        }
+
+        return users;
+    }
+
     [HttpPost]
     public async Task<IActionResult> CheckCurrentStepForNeedUsers(Guid entityId, int proccesType)
     {
@@ -231,16 +294,13 @@ public class WorkflowRuntimeController : Controller
             });
         }
 
-        var users = await
-            (from su in _context.WorkflowStepUsers
-             join u in _context.Users
-                 on su.UserId equals u.Id
-             where su.WorkflowStepId == nextStep.ID
-             select new
-             {
-                 id = u.Id,
-                 fullName = u.FullName
-             }).ToListAsync();
+        var receiverUsers = await GetStepReceiverUsersAsync(nextStep.ID);
+
+        var users = receiverUsers.Select(x => new
+        {
+            id = x.Id,
+            fullName = x.FullName
+        }).ToList();
 
         return Json(new
         {
