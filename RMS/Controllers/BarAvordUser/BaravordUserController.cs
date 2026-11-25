@@ -78,6 +78,21 @@ public class BaravordUserController(ApplicationDbContext context, UserManager<Ap
                                               a.UserId == user.Id &&
                                               !a.IsCompleted)),
 
+                                      // ارسال به پیمانکار فقط پس از تکمیل گردش برآورد اولیه مجاز است.
+                                      CanSendToContractors =
+                                          BU.Type == NoeBarAvord.PishnahadGhaimat &&
+                                          _context.BarAvordProjectionWorkFlows.Any(p =>
+                                              p.BarAvordUserId == BU.ID &&
+                                              !p.IsComplete &&
+                                              p.proccesType == ProccesType.BarAvordAvalieh) &&
+                                          _context.WorkflowInstances
+                                              .Where(w =>
+                                                  w.EntityId == BU.ID &&
+                                                  w.Workflow.proccesType == ProccesType.BarAvordAvalieh)
+                                              .OrderByDescending(w => w.InsertDateTime)
+                                              .Select(w => w.Status)
+                                              .FirstOrDefault() == WorkflowInstanceStatus.Completed,
+
                                       WorkflowStatusTitle = _context.BarAvordProjectionWorkFlows
                                           .Where(p => p.BarAvordUserId == BU.ID && !p.IsComplete)
                                           .OrderByDescending(p => p.InsertDateTime)
@@ -175,6 +190,31 @@ public class BaravordUserController(ApplicationDbContext context, UserManager<Ap
 
         if (!baravordExists)
             return new JsonResult(new { success = false, message = "برآورد موردنظر یافت نشد." });
+
+        // گردش پیشنهاد قیمت تنها بعد از اتمام گردش برآورد اولیه قابل شروع است.
+        var hasActiveInitialProjection = await _context.BarAvordProjectionWorkFlows
+            .AnyAsync(p =>
+                p.BarAvordUserId == entityId &&
+                !p.IsComplete &&
+                p.proccesType == ProccesType.BarAvordAvalieh);
+
+        var lastInitialWorkflowStatus = await _context.WorkflowInstances
+            .Where(w =>
+                w.EntityId == entityId &&
+                w.Workflow.proccesType == ProccesType.BarAvordAvalieh)
+            .OrderByDescending(w => w.InsertDateTime)
+            .Select(w => w.Status)
+            .FirstOrDefaultAsync();
+
+        if (!hasActiveInitialProjection ||
+            lastInitialWorkflowStatus != WorkflowInstanceStatus.Completed)
+        {
+            return new JsonResult(new
+            {
+                success = false,
+                message = "ابتدا باید گردش برآورد اولیه به‌طور کامل تایید و خاتمه یابد."
+            });
+        }
 
         var workflow = await _context.Workflows
             .Where(x =>
