@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,6 +12,7 @@ namespace RMS.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20261124074655_j9")]
+
     partial class j9
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
