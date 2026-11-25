@@ -394,21 +394,11 @@ assignment.CompletedDate = DateTime.Now;
 
 
     private async Task GoPreviousStepAsync(
-    clsWorkflowInstance instance,
-    string senderUserId)
+        clsWorkflowInstance instance,
+        string senderUserId)
     {
-        //---------------------------------------
-        // مرحله جاری
-        //---------------------------------------
-
         var currentStep = await _context.WorkflowSteps
-            .Include(x => x.Users)
-            .Include(x => x.Roles)
             .FirstAsync(x => x.ID == instance.CurrentStepId);
-
-        //---------------------------------------
-        // مرحله قبل
-        //---------------------------------------
 
         if (currentStep.PreviousStepId == null)
             throw new Exception("مرحله قبلی وجود ندارد.");
@@ -418,90 +408,44 @@ assignment.CompletedDate = DateTime.Now;
             .Include(x => x.Roles)
             .FirstAsync(x => x.ID == currentStep.PreviousStepId);
 
-        //---------------------------------------
-        // تغییر مرحله جاری
-        //---------------------------------------
-
         instance.CurrentStepId = previousStep.ID;
-
-        //---------------------------------------
-        // حذف دسترسی‌های فعلی
-        //---------------------------------------
 
         await RemoveCurrentAccesses(instance.EntityId);
 
-        //---------------------------------------
-        // کاربران مرحله قبل
-        //---------------------------------------
-
         var users = await GetStepUsers(previousStep);
+        if (users.Count == 0)
+            throw new Exception("برای مرحله قبلی هیچ گیرنده‌ای تعریف نشده است.");
 
-        //---------------------------------------
-        // ایجاد Assignment
-        //---------------------------------------
-
-        foreach (var userId in users.Distinct())
+        foreach (var userId in users)
         {
             _context.WorkflowAssignments.Add(
                 new clsWorkflowAssignment
                 {
                     ID = Guid.NewGuid(),
-
                     WorkflowInstanceId = instance.ID,
-
                     WorkflowStepId = previousStep.ID,
-
                     UserId = userId,
-
                     AssignedByUserId = senderUserId,
-
                     AssignDate = DateTime.Now,
-
                     IsCompleted = false,
-
                     Result = WorkflowAssignmentResult.Pending
                 });
+        }
 
-            //---------------------------------------
-            // دسترسی پروژه
-            //---------------------------------------
+        await SetUserAccess(
+            instance.EntityId,
+            senderUserId,
+            ProjectAccessType.View);
 
-            //bool hasAccess = await _context.BaravordUserAccesses.AnyAsync(x =>
-            //    x.BaravordUserId == instance.EntityId &&
-            //    x.UserId == userId &&
-            //    (x.IsDeleted == false || x.IsDeleted == null));
-
-            //if (!hasAccess)
-            //{
-            //    _context.BaravordUserAccesses.Add(
-            //        new clsBaravordUserAccess
-            //        {
-            //            ID = Guid.NewGuid(),
-
-            //            BaravordUserId = instance.EntityId,
-
-            //            UserId = userId,
-
-            //            AccessType = ProjectAccessType.Edit,
-
-            //            InsertDateTime = DateTime.Now
-            //        });
-            //}
-
+        foreach (var userId in users)
+        {
             await SetUserAccess(
                 instance.EntityId,
-                senderUserId,
-                ProjectAccessType.View);
-
-            foreach (var userId1 in users.Distinct())
-            {
-                await SetUserAccess(
-                    instance.EntityId,
-                    userId1,
-                    ProjectAccessType.Edit);
-            }
+                userId,
+                ProjectAccessType.Edit);
         }
     }
+
 
     private async Task RemoveCurrentAccesses(Guid entityId)
     {
@@ -512,11 +456,8 @@ assignment.CompletedDate = DateTime.Now;
                 (x.IsDeleted == false || x.IsDeleted == null))
             .ToListAsync();
 
-        //foreach (var item in accesses)
-        //{
-        //    item.IsDeleted = true;
-        //    item.RemoveDateTime = DateTime.Now;
-        //}
+        foreach (var access in accesses)
+            access.AccessType = ProjectAccessType.View;
     }
 
 
@@ -577,7 +518,10 @@ assignment.CompletedDate = DateTime.Now;
     WorkflowAction action,
     string? comment)
     {
-        clsWorkflowHistory? workflowHistory = _context.WorkflowHistories.Where(x => x.WorkflowInstanceId == instance.ID).OrderByDescending(x => x.ActionDate).FirstOrDefault();
+        clsWorkflowHistory? workflowHistory = await _context.WorkflowHistories
+            .Where(x => x.WorkflowInstanceId == instance.ID)
+            .OrderByDescending(x => x.ActionDate)
+            .FirstOrDefaultAsync();
         int roundNo = 1;
         if (workflowHistory != null)
         {
@@ -677,8 +621,7 @@ assignment.CompletedDate = DateTime.Now;
                     var previousInstances = await _context.WorkflowInstances
                         .Where(x =>
                             x.EntityId == entityId &&
-                            x.Status == WorkflowInstanceStatus.Running &&
-                            previousTypes.Contains(x.Workflow.proccesType))
+                            x.Status == WorkflowInstanceStatus.Running)
                         .ToListAsync();
 
                     var previousInstanceIds = previousInstances
