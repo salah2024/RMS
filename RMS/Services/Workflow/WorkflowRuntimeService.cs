@@ -611,41 +611,34 @@ assignment.CompletedDate = DateTime.Now;
 
                 // گردش‌های قبلی بسته می‌شوند و اجرای بازمانده آن‌ها نیز لغو می‌شود
                 // تا گیرندگان قبلی نتوانند روی گردش قدیمی اقدام کنند.
-                var previousTypes = activeProjections
-                    .Select(x => x.proccesType)
-                    .Distinct()
+                // تمام اجراهای باز قبلی این برآورد بسته می‌شوند؛ حتی اگر Projection قدیمی نداشته باشند.
+                var previousInstances = await _context.WorkflowInstances
+                    .Where(x =>
+                        x.EntityId == entityId &&
+                        x.Status == WorkflowInstanceStatus.Running)
+                    .ToListAsync();
+
+                var previousInstanceIds = previousInstances
+                    .Select(x => x.ID)
                     .ToList();
 
-                if (previousTypes.Count > 0)
+                foreach (var previousInstance in previousInstances)
+                    previousInstance.Status = WorkflowInstanceStatus.Cancelled;
+
+                if (previousInstanceIds.Count > 0)
                 {
-                    var previousInstances = await _context.WorkflowInstances
+                    var pendingAssignments = await _context.WorkflowAssignments
                         .Where(x =>
-                            x.EntityId == entityId &&
-                            x.Status == WorkflowInstanceStatus.Running)
+                            previousInstanceIds.Contains(x.WorkflowInstanceId) &&
+                            !x.IsCompleted)
                         .ToListAsync();
 
-                    var previousInstanceIds = previousInstances
-                        .Select(x => x.ID)
-                        .ToList();
-
-                    foreach (var previousInstance in previousInstances)
-                        previousInstance.Status = WorkflowInstanceStatus.Cancelled;
-
-                    if (previousInstanceIds.Count > 0)
+                    foreach (var assignment in pendingAssignments)
                     {
-                        var pendingAssignments = await _context.WorkflowAssignments
-                            .Where(x =>
-                                previousInstanceIds.Contains(x.WorkflowInstanceId) &&
-                                !x.IsCompleted)
-                            .ToListAsync();
-
-                        foreach (var assignment in pendingAssignments)
-                        {
-                            assignment.IsCompleted = true;
-                            assignment.Result = WorkflowAssignmentResult.Cancelled;
-                            assignment.CompletedDate = now;
-                            assignment.Comment = "به دلیل شروع گردش جدید بسته شد.";
-                        }
+                        assignment.IsCompleted = true;
+                        assignment.Result = WorkflowAssignmentResult.Cancelled;
+                        assignment.CompletedDate = now;
+                        assignment.Comment = "به دلیل شروع گردش جدید بسته شد.";
                     }
                 }
 
