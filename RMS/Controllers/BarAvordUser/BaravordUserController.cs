@@ -57,35 +57,47 @@ public class BaravordUserController(ApplicationDbContext context, UserManager<Ap
                                       IsOwner = BU.UserId == UserId,
                                       //IsCompleted = BU.IsCompleted,
                                       CanOpen = true,
-                                      hasWorkflow = _context.WorkflowInstances.Any(a => a.EntityId == BU.ID),
-                                      CanApprove =
-                                      _context.WorkflowAssignments.Any(a =>
-                                            a.WorkflowInstance.EntityId == BU.ID
-                                            &&
-                                            a.UserId == user.Id
-                                            &&
-                                            !a.IsCompleted),
+                                      hasWorkflow = _context.BarAvordProjectionWorkFlows
+                                          .Any(p => p.BarAvordUserId == BU.ID && !p.IsComplete),
 
-                                      CanReturn =
-                                      _context.WorkflowAssignments.Any(a =>
-                                            a.WorkflowInstance.EntityId == BU.ID
-                                            &&
-                                            a.UserId == user.Id
-                                            &&
-                                            !a.IsCompleted),
+                                      CanApprove = _context.BarAvordProjectionWorkFlows
+                                          .Where(p => p.BarAvordUserId == BU.ID && !p.IsComplete)
+                                          .Any(p => _context.WorkflowAssignments.Any(a =>
+                                              a.WorkflowInstance.EntityId == BU.ID &&
+                                              a.WorkflowInstance.Workflow.proccesType == p.proccesType &&
+                                              a.WorkflowInstance.Status == WorkflowInstanceStatus.Running &&
+                                              a.UserId == user.Id &&
+                                              !a.IsCompleted)),
 
-                                      WorkflowStatusTitle =
-                                        _context.WorkflowInstances
-                                        .Where(w => w.EntityId == BU.ID)
-                                        .OrderByDescending(w => w.InsertDateTime)
-                                        .Select(w =>
-                                         w.Status == WorkflowInstanceStatus.Completed
-                                            ? "تایید نهایی شده"
-                                        : w.Status == WorkflowInstanceStatus.Rejected
-                                            ? "رد شده"
-                                        : w.Status == WorkflowInstanceStatus.Cancelled
-                                            ? "لغو شده"
-                                        : w.CurrentStep.Title).FirstOrDefault() ?? "",
+                                      CanReturn = _context.BarAvordProjectionWorkFlows
+                                          .Where(p => p.BarAvordUserId == BU.ID && !p.IsComplete)
+                                          .Any(p => _context.WorkflowAssignments.Any(a =>
+                                              a.WorkflowInstance.EntityId == BU.ID &&
+                                              a.WorkflowInstance.Workflow.proccesType == p.proccesType &&
+                                              a.WorkflowInstance.Status == WorkflowInstanceStatus.Running &&
+                                              a.UserId == user.Id &&
+                                              !a.IsCompleted)),
+
+                                      WorkflowStatusTitle = _context.BarAvordProjectionWorkFlows
+                                          .Where(p => p.BarAvordUserId == BU.ID && !p.IsComplete)
+                                          .OrderByDescending(p => p.InsertDateTime)
+                                          .Select(p => _context.WorkflowInstances
+                                              .Where(w =>
+                                                  w.EntityId == BU.ID &&
+                                                  w.Workflow.proccesType == p.proccesType)
+                                              .OrderByDescending(w => w.InsertDateTime)
+                                              .Select(w =>
+                                                  w.Status == WorkflowInstanceStatus.Completed
+                                                      ? "تایید نهایی شده"
+                                                  : w.Status == WorkflowInstanceStatus.Rejected
+                                                      ? "رد شده"
+                                                  : w.Status == WorkflowInstanceStatus.Cancelled
+                                                      ? "لغو شده"
+                                                  : w.Status == WorkflowInstanceStatus.Running
+                                                      ? w.CurrentStep.Title
+                                                      : "")
+                                              .FirstOrDefault())
+                                          .FirstOrDefault() ?? "",
 
                                   }).OrderByDescending(x => x.BUNum).OrderByDescending(x => x.BUInsertDate).ToListAsync();
 
@@ -150,52 +162,51 @@ public class BaravordUserController(ApplicationDbContext context, UserManager<Ap
 
 
     [HttpPost]
-    public async Task<JsonResult> PishnahadGhyamatWorkFlow(Guid entityId, List<string>? selectedUsers = null)
+    public async Task<JsonResult> PishnahadGhyamatWorkFlow(
+        Guid entityId,
+        List<string>? selectedUsers = null)
     {
-        //--------------------------------------------------
-        // Workflow
-        //--------------------------------------------------
-        string userId = _userManager.GetUserId(User)!;
-
-        ApplicationUser? currentUser =
-            await _userManager.FindByIdAsync(userId);
-
+        var currentUser = await _userManager.GetUserAsync(User);
         if (currentUser == null)
-            return new JsonResult("NOK_");
+            return new JsonResult(new { success = false, message = "کاربر جاری شناسایی نشد." });
 
-        Guid currentUserId = Guid.Parse(currentUser.Id);
+        var baravordExists = await _context.BaravordUsers
+            .AnyAsync(x => x.ID == entityId);
 
+        if (!baravordExists)
+            return new JsonResult(new { success = false, message = "برآورد موردنظر یافت نشد." });
 
+        var workflow = await _context.Workflows
+            .Where(x =>
+                x.proccesType == ProccesType.PishnahadGhaimat &&
+                x.IsActive)
+            .OrderByDescending(x => x.IsDefault)
+            .ThenByDescending(x => x.InsertDateTime)
+            .FirstOrDefaultAsync();
 
-        clsWorkflow? workflow =
-            await _context.Workflows
-            .FirstOrDefaultAsync(x =>
-                x.proccesType ==
-                ProccesType.PishnahadGhaimat);
+        if (workflow == null)
+            return new JsonResult(new { success = false, message = "گردش فعال پیشنهاد قیمت تعریف نشده است." });
 
-        if (workflow != null)
+        try
         {
-
-            clsBarAvordProjectionWorkFlow barAvordProjectionWorkFlow = new clsBarAvordProjectionWorkFlow
-            {
-                BarAvordUserId = entityId,
-                proccesType = ProccesType.PishnahadGhaimat
-            };
-            _context.BarAvordProjectionWorkFlows.Add(barAvordProjectionWorkFlow);
-
-
-            await _workflowRuntimeService.StartWorkflowAsync(
+            // ایجاد و بستن Projectionها فقط در StartWorkflowAsync انجام می‌شود.
+            var instanceId = await _workflowRuntimeService.StartWorkflowAsync(
                 workflow.ID,
                 entityId,
                 nameof(clsBaravordUser),
-                currentUserId,
+                Guid.Parse(currentUser.Id),
                 selectedUsers);
-        }
 
-        return Json(new
+            return new JsonResult(new
+            {
+                success = true,
+                workflowInstanceId = instanceId
+            });
+        }
+        catch (Exception ex)
         {
-            success = true
-        });
+            return new JsonResult(new { success = false, message = ex.Message });
+        }
     }
 
     [HttpPost]
