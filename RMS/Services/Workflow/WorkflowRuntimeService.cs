@@ -657,6 +657,7 @@ public class WorkflowRuntimeService
                         BarAvordUserId = entityId,
                         proccesType = workflow.proccesType,
                         IsComplete = false,
+                        IsDeleted = false,
                         UserInserter = senderUserId,
                         InsertDateTime = now
                     });
