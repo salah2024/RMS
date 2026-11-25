@@ -586,8 +586,10 @@ assignment.CompletedDate = DateTime.Now;
             // Projection تنها مرجع تشخیص گردش جاری برآورد است.
             if (entityType == nameof(clsBaravordUser))
             {
-                var baravordExists = await _context.BaravordUsers
-                    .AnyAsync(x => x.ID == entityId);
+                var baravordExists = _context.BaravordUsers.Local
+                    .Any(x => x.ID == entityId)
+                    || await _context.BaravordUsers
+                        .AnyAsync(x => x.ID == entityId);
 
                 if (!baravordExists)
                     throw new Exception("برآورد موردنظر یافت نشد.");
