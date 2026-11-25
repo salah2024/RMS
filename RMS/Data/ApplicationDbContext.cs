@@ -141,7 +141,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<clsWorkflowInstance> WorkflowInstances { get; set; }
     public DbSet<clsWorkflowAssignment> WorkflowAssignments { get; set; }
     public DbSet<clsWorkflowHistory> WorkflowHistories { get; set; }
-    public DbSet<clsBaravordWorkflow> BaravordWorkflows { get; set; }
     public DbSet<clsBaravordUserAccess> BaravordUserAccesses { get; set; }
     public DbSet<clsBarAvordUserTajmie> BarAvordUserTajmies { get; set; }
     public DbSet<clsTajmieFBItems> TajmieFBItemses { get; set; }
@@ -505,6 +504,13 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
              .HasForeignKey(x => x.PermissionId)
              .OnDelete(DeleteBehavior.Cascade);
         });
+
+        // برای هر برآورد فقط یک Projection فعال مجاز است.
+        modelBuilder.Entity<clsBarAvordProjectionWorkFlow>()
+            .HasIndex(x => x.BarAvordUserId)
+            .IsUnique()
+            .HasFilter("[IsComplete] = 0")
+            .HasDatabaseName("UX_tblBarAvordProjectionWorkFlow_Active_BarAvordUserId");
 
         modelBuilder.Entity<clsWorkflowInstance>()
             .HasOne(x => x.CurrentStep)
