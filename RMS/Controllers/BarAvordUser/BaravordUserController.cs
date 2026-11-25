@@ -1139,9 +1139,12 @@ public class BaravordUserController(ApplicationDbContext context, UserManager<Ap
 
             clsWorkflow? workflow =
                 await _context.Workflows
-                .FirstOrDefaultAsync(x =>
-                    x.proccesType ==
-                    ProccesType.BarAvordAvalieh);
+                .Where(x =>
+                    x.proccesType == ProccesType.BarAvordAvalieh &&
+                    x.IsActive)
+                .OrderByDescending(x => x.IsDefault)
+                .ThenByDescending(x => x.InsertDateTime)
+                .FirstOrDefaultAsync();
 
             if (workflow != null)
             {
