@@ -412,9 +412,21 @@ public class WorkflowRuntimeService
 
         await RemoveCurrentAccesses(instance.EntityId);
 
-        var users = await GetStepUsers(previousStep);
+        // در زمان عودت، ابتدا همان کاربرانی را برگردان که قبلاً همین مرحله
+        // را دریافت کرده بودند؛ نقش‌ها نباید باعث ارجاع مجدد به تمام اعضا شوند.
+        var users = await _context.WorkflowAssignments
+            .Where(x =>
+                x.WorkflowInstanceId == instance.ID &&
+                x.WorkflowStepId == previousStep.ID)
+            .Select(x => x.UserId)
+            .Distinct()
+            .ToListAsync();
+
         if (users.Count == 0)
-            throw new Exception("برای مرحله قبلی هیچ گیرنده‌ای تعریف نشده است.");
+            users = await GetStepUsers(previousStep);
+
+        if (users.Count == 0)
+            throw new Exception("برای مرحله قبلی گیرنده مشخصی ثبت نشده است.");
 
         foreach (var userId in users)
         {
