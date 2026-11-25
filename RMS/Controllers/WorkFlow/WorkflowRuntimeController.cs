@@ -253,9 +253,17 @@ public class WorkflowRuntimeController : Controller
             }
         }
 
+        if (proccesType != 3)
+            return Json(new
+            {
+                success = false,
+                needSelectReceiver = false,
+                message = "این عملیات فقط برای ProcessType=3 تعریف شده است."
+            });
+
         var workflow = await _context.Workflows
             .Where(x =>
-                x.proccesType == (ProccesType)proccesType &&
+                x.proccesType == (ProccesType)3 &&
                 x.IsActive)
             .OrderByDescending(x => x.IsDefault)
             .ThenByDescending(x => x.InsertDateTime)
@@ -283,7 +291,12 @@ public class WorkflowRuntimeController : Controller
             });
 
         if (!firstStep.NeedSelectReceiver)
-            return Json(new { success = true, needSelectReceiver = false });
+            return Json(new
+            {
+                success = false,
+                needSelectReceiver = false,
+                message = "گام اول گردش ProcessType=3 باید نیازمند انتخاب پیمانکار باشد."
+            });
 
         var users = await GetStepReceiverUsersAsync(firstStep.ID);
 
