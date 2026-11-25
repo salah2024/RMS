@@ -296,6 +296,21 @@ public class WorkflowRuntimeService
     {
         var instance = await GetInstance(workflowInstanceId);
 
+        // فقط گردش متناظر با Projection فعال اجازه دریافت اقدام دارد.
+        if (instance.EntityType == nameof(clsBaravordUser))
+        {
+            var currentProjection = await _context.BarAvordProjectionWorkFlows
+                .SingleOrDefaultAsync(x =>
+                    x.BarAvordUserId == instance.EntityId &&
+                    !x.IsComplete);
+
+            if (currentProjection == null ||
+                currentProjection.proccesType != instance.Workflow.proccesType)
+            {
+                throw new Exception("این گردش دیگر گردش جاری برآورد نیست.");
+            }
+        }
+
         var assignment = await GetCurrentAssignment(
             workflowInstanceId,
             instance.CurrentStepId,
@@ -303,18 +318,7 @@ public class WorkflowRuntimeService
 
         assignment.IsCompleted = true;
 
-        clsWorkflowInstance? workflowInstance = await _context.WorkflowInstances.FirstOrDefaultAsync(x => x.ID == workflowInstanceId);
-        if (workflowInstance!=null)
-        {
-            clsBarAvordProjectionWorkFlow? barAvordProjectionWorkFlow= await _context.BarAvordProjectionWorkFlows.FirstOrDefaultAsync(x => x.BarAvordUserId == workflowInstance.EntityId);
-            if (barAvordProjectionWorkFlow!=null)
-            {
-                barAvordProjectionWorkFlow.IsComplete = true;
-            }
-        }
-
-
-        assignment.CompletedDate = DateTime.Now;
+assignment.CompletedDate = DateTime.Now;
 
         assignment.Comment = comment;
 
@@ -614,45 +618,148 @@ public class WorkflowRuntimeService
         var workflow = await _context.Workflows
             .Include(x => x.WorkflowSteps).ThenInclude(x => x.Users)
             .Include(x => x.WorkflowSteps).ThenInclude(x => x.Roles)
-            .FirstOrDefaultAsync(x => x.ID == workflowId);
+            .FirstOrDefaultAsync(x => x.ID == workflowId && x.IsActive);
 
         if (workflow == null)
-            throw new Exception("گردش کار یافت نشد.");
+            throw new Exception("گردش کار فعال یافت نشد.");
 
         var firstStep = workflow.WorkflowSteps
             .OrderBy(x => x.Order)
-            .First();
+            .FirstOrDefault();
 
-        var instance = new clsWorkflowInstance
+        if (firstStep == null)
+            throw new Exception("برای این گردش هیچ مرحله‌ای تعریف نشده است.");
+
+        var ownsTransaction = _context.Database.CurrentTransaction == null;
+        await using var transaction = ownsTransaction
+            ? await _context.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable)
+            : null;
+
+        try
         {
-            ID = Guid.NewGuid(),
+            var now = DateTime.Now;
 
-            WorkflowId = workflow.ID,
+            // Projection تنها مرجع تشخیص گردش جاری برآورد است.
+            if (entityType == nameof(clsBaravordUser))
+            {
+                var baravordExists = await _context.BaravordUsers
+                    .AnyAsync(x => x.ID == entityId);
 
-            EntityId = entityId,
+                if (!baravordExists)
+                    throw new Exception("برآورد موردنظر یافت نشد.");
 
-            EntityType = entityType,
+                var activeProjections = await _context.BarAvordProjectionWorkFlows
+                    .Where(x => x.BarAvordUserId == entityId && !x.IsComplete)
+                    .ToListAsync();
 
-            CurrentStepId = firstStep.ID,
+                // شروع مجدد همان گردش در حالی که اجرای قبلی هنوز فعال است، مجاز نیست.
+                if (activeProjections.Any(x => x.proccesType == workflow.proccesType))
+                {
+                    var sameProcessRunning = await _context.WorkflowInstances
+                        .AnyAsync(x =>
+                            x.EntityId == entityId &&
+                            x.Status == WorkflowInstanceStatus.Running &&
+                            x.Workflow.proccesType == workflow.proccesType);
 
-            Status = WorkflowInstanceStatus.Running
-        };
+                    if (sameProcessRunning)
+                        throw new Exception("این نوع گردش هم‌اکنون برای برآورد در حال اجراست.");
+                }
 
-        _context.WorkflowInstances.Add(instance);
+                // گردش‌های قبلی بسته می‌شوند و اجرای بازمانده آن‌ها نیز لغو می‌شود
+                // تا گیرندگان قبلی نتوانند روی گردش قدیمی اقدام کنند.
+                var previousTypes = activeProjections
+                    .Select(x => x.proccesType)
+                    .Distinct()
+                    .ToList();
 
-        await AssignStepAsync(
-            instance,
-            firstStep,
-            senderUserId.ToString(),
-            selectedUsers);
+                if (previousTypes.Count > 0)
+                {
+                    var previousInstances = await _context.WorkflowInstances
+                        .Where(x =>
+                            x.EntityId == entityId &&
+                            x.Status == WorkflowInstanceStatus.Running &&
+                            previousTypes.Contains(x.Workflow.proccesType))
+                        .ToListAsync();
 
-        await UpdateProjectAccessAsync(
-            entityId,
-            firstStep);
+                    var previousInstanceIds = previousInstances
+                        .Select(x => x.ID)
+                        .ToList();
 
-        await _context.SaveChangesAsync();
+                    foreach (var previousInstance in previousInstances)
+                        previousInstance.Status = WorkflowInstanceStatus.Cancelled;
 
-        return instance.ID;
+                    if (previousInstanceIds.Count > 0)
+                    {
+                        var pendingAssignments = await _context.WorkflowAssignments
+                            .Where(x =>
+                                previousInstanceIds.Contains(x.WorkflowInstanceId) &&
+                                !x.IsCompleted)
+                            .ToListAsync();
+
+                        foreach (var assignment in pendingAssignments)
+                        {
+                            assignment.IsCompleted = true;
+                            assignment.Result = WorkflowAssignmentResult.Cancelled;
+                            assignment.CompletedDate = now;
+                            assignment.Comment = "به دلیل شروع گردش جدید بسته شد.";
+                        }
+                    }
+                }
+
+                foreach (var projection in activeProjections)
+                    projection.IsComplete = true;
+
+                _context.BarAvordProjectionWorkFlows.Add(
+                    new clsBarAvordProjectionWorkFlow
+                    {
+                        ID = Guid.NewGuid(),
+                        BarAvordUserId = entityId,
+                        proccesType = workflow.proccesType,
+                        IsComplete = false,
+                        UserInserter = senderUserId,
+                        InsertDateTime = now
+                    });
+            }
+
+            var instance = new clsWorkflowInstance
+            {
+                ID = Guid.NewGuid(),
+                WorkflowId = workflow.ID,
+                EntityId = entityId,
+                EntityType = entityType,
+                CurrentStepId = firstStep.ID,
+                Status = WorkflowInstanceStatus.Running,
+                UserInserter = senderUserId,
+                InsertDateTime = now
+            };
+
+            _context.WorkflowInstances.Add(instance);
+
+            await AssignStepAsync(
+                instance,
+                firstStep,
+                senderUserId.ToString(),
+                selectedUsers);
+
+            await UpdateProjectAccessAsync(
+                entityId,
+                firstStep,
+                selectedUsers);
+
+            await _context.SaveChangesAsync();
+
+            if (ownsTransaction)
+                await transaction!.CommitAsync();
+
+            return instance.ID;
+        }
+        catch
+        {
+            if (ownsTransaction && transaction != null)
+                await transaction.RollbackAsync();
+
+            throw;
+        }
     }
 
 
@@ -677,7 +784,13 @@ public class WorkflowRuntimeService
             users = await GetStepUsers(step);
         }
 
-        users = users.Distinct().ToList();
+        users = users
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Distinct()
+            .ToList();
+
+        if (users.Count == 0)
+            throw new Exception("برای مرحله اول هیچ گیرنده‌ای تعریف نشده است.");
 
         foreach (var userId in users)
         {
@@ -737,7 +850,8 @@ public class WorkflowRuntimeService
 
     private async Task UpdateProjectAccessAsync(
     Guid entityId,
-    clsWorkflowStep step)
+    clsWorkflowStep step,
+    List<string>? selectedUsers = null)
     {
         var accesses = await _context.BaravordUserAccesses
 
@@ -751,7 +865,10 @@ public class WorkflowRuntimeService
                 access.AccessType = ProjectAccessType.View;
         }
 
-        var users = await GetStepUsers(step);
+        var users = (selectedUsers ?? await GetStepUsers(step))
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Distinct()
+            .ToList();
 
         foreach (var userId in users)
         {
