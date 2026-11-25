@@ -697,6 +697,7 @@ function SendToContractors(id, receiversUserId) {
     $.ajax({
         url: "/BaravordUser/PishnahadGhyamatWorkFlow",
         type: "POST",
+        traditional: true,
         data: {
             entityId: id,
             selectedUsers: receiversUserId
