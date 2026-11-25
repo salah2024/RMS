@@ -30,107 +30,121 @@ public class WorkflowRuntimeController : Controller
     [HttpPost]
     public async Task<IActionResult> StartWorkFlow(Guid EntityId)
     {
-        string userId = _userManager.GetUserId(User)!;
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+            return Unauthorized();
 
-        ApplicationUser? currentUser =
-            await _userManager.FindByIdAsync(userId);
+        var workflow = await _context.Workflows
+            .Where(x =>
+                x.proccesType == ProccesType.BarAvordAvalieh &&
+                x.IsActive)
+            .OrderByDescending(x => x.IsDefault)
+            .ThenByDescending(x => x.InsertDateTime)
+            .FirstOrDefaultAsync();
 
-        if (currentUser == null)
-            return new JsonResult("NOK_");
+        if (workflow == null)
+            return Json(new { success = false, message = "گردش فعال برآورد اولیه تعریف نشده است." });
 
-        Guid currentUserId = Guid.Parse(currentUser.Id);
-
-        clsWorkflow? workflow =
-                await _context.Workflows
-                .FirstOrDefaultAsync(x =>
-                    x.proccesType ==
-                    ProccesType.BarAvordAvalieh);
-
-        clsBarAvordProjectionWorkFlow barAvordProjectionWorkFlow = new clsBarAvordProjectionWorkFlow
+        try
         {
-            BarAvordUserId = EntityId,
-            proccesType = ProccesType.BarAvordAvalieh
-        };
-        _context.BarAvordProjectionWorkFlows.Add(barAvordProjectionWorkFlow);
+            var instanceId = await _runtime.StartWorkflowAsync(
+                workflow.ID,
+                EntityId,
+                nameof(clsBaravordUser),
+                Guid.Parse(user.Id));
 
-
-        await _workflowRuntimeService.StartWorkflowAsync(
-            workflow.ID,
-            EntityId,
-            nameof(clsBaravordUser),
-            currentUserId);
-
-        return Json(new
+            return Json(new
+            {
+                success = true,
+                workflowInstanceId = instanceId,
+                message = "گردش کار آغاز شد."
+            });
+        }
+        catch (Exception ex)
         {
-            success = false,
-            message = "مرحله یافت نشد."
-        });
+            return Json(new { success = false, message = ex.Message });
+        }
+    }
+
+    private async Task<clsBarAvordProjectionWorkFlow?> GetCurrentProjectionAsync(Guid entityId)
+    {
+        var projections = await _context.BarAvordProjectionWorkFlows
+            .Where(x => x.BarAvordUserId == entityId && !x.IsComplete)
+            .OrderByDescending(x => x.InsertDateTime)
+            .ToListAsync();
+
+        if (projections.Count > 1)
+            throw new InvalidOperationException("برای این برآورد بیش از یک گردش فعال ثبت شده است.");
+
+        return projections.SingleOrDefault();
+    }
+
+    private Task<clsWorkflowInstance?> GetCurrentInstanceAsync(
+        clsBarAvordProjectionWorkFlow projection)
+    {
+        return _context.WorkflowInstances
+            .Include(x => x.Workflow)
+            .Include(x => x.CurrentStep)
+                .ThenInclude(x => x.WorkflowAction)
+            .Where(x =>
+                x.EntityId == projection.BarAvordUserId &&
+                x.Workflow.proccesType == projection.proccesType &&
+                x.Status == WorkflowInstanceStatus.Running)
+            .OrderByDescending(x => x.InsertDateTime)
+            .FirstOrDefaultAsync();
     }
 
     [HttpGet]
     public async Task<IActionResult> Open(Guid entityId)
     {
-        var instance = await _context.WorkflowInstances
-            .Include(x => x.CurrentStep)
-                .ThenInclude(x => x.WorkflowAction)
-            .FirstOrDefaultAsync(x => x.EntityId == entityId);
+        var projection = await GetCurrentProjectionAsync(entityId);
+        if (projection == null)
+            return NotFound("گردش جاری برای این برآورد ثبت نشده است.");
 
+        var instance = await GetCurrentInstanceAsync(projection);
         if (instance == null)
-            return NotFound();
+            return NotFound("اجرای فعالی برای گردش جاری پیدا نشد.");
 
         if (instance.CurrentStep?.WorkflowAction == null)
             return BadRequest("برای این مرحله فرم عملیاتی تعریف نشده است.");
 
-        TempData["BAId"] = entityId;
-        clsBaravordUser? BA = _context.BaravordUsers.FirstOrDefault(x => x.ID == entityId);
-        if (BA != null)
-        {
-            TempData["BAType"] = BA.Type;
-            TempData["Year"] = BA.Year;
+        var baravord = await _context.BaravordUsers
+            .FirstOrDefaultAsync(x => x.ID == entityId);
 
-            return RedirectToAction(
-                instance.CurrentStep.WorkflowAction.Action,
-                instance.CurrentStep.WorkflowAction.Controller,
-                new { entityId });
-        }
-        else
+        if (baravord == null)
             return NotFound();
+
+        TempData["BAId"] = entityId;
+        TempData["BAType"] = baravord.Type;
+        TempData["Year"] = baravord.Year;
+
+        return RedirectToAction(
+            instance.CurrentStep.WorkflowAction.Action,
+            instance.CurrentStep.WorkflowAction.Controller,
+            new { entityId });
     }
 
     [HttpPost]
     public async Task<IActionResult> Submit(
         Guid entityId,
         List<string>? receiversUserId,
-        string? comment
-        , int proccesType)
+        string? comment,
+        int proccesType)
     {
+        var projection = await GetCurrentProjectionAsync(entityId);
+        if (projection == null)
+            return Json(new { success = false, message = "گردش جاری برآورد یافت نشد." });
 
-        ProccesType currentProccesType = (ProccesType)proccesType;
+        if (projection.proccesType != (ProccesType)proccesType)
+            return Json(new { success = false, message = "نوع گردش ارسالی با گردش جاری برآورد مطابقت ندارد." });
 
-        clsBarAvordProjectionWorkFlow? barAvordProjectionWorkFlow = await _context.BarAvordProjectionWorkFlows.FirstOrDefaultAsync(x => x.BarAvordUserId == entityId && x.IsComplete == false);
-        if (barAvordProjectionWorkFlow != null)
-        {
-            currentProccesType = (ProccesType)barAvordProjectionWorkFlow.proccesType;
-        }
-
-
-
-        //var instance = await _context.WorkflowInstances
-        //.FirstOrDefaultAsync(x => x.EntityId == entityId);
-
-        var instance = await _context.WorkflowInstances.Include(x => x.Workflow)
-            .Include(x => x.CurrentStep)
-            .FirstOrDefaultAsync(x => x.EntityId == entityId && x.Workflow.proccesType == currentProccesType);
-
-
+        var instance = await GetCurrentInstanceAsync(projection);
         if (instance == null)
-            return Json(new
-            {
-                success = false,
-                message = "گردش یافت نشد."
-            });
+            return Json(new { success = false, message = "اجرای فعالی برای گردش جاری یافت نشد." });
 
         var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+            return Unauthorized();
 
         await _runtime.SubmitAsync(
             instance.ID,
@@ -211,74 +225,23 @@ public class WorkflowRuntimeController : Controller
     [HttpPost]
     public async Task<IActionResult> CheckCurrentStepForNeedUsers(Guid entityId, int proccesType)
     {
-        clsWorkflowStep? WorkFlowStep = await _context.WorkflowSteps
-                        .Include(x => x.Workflow).FirstOrDefaultAsync(x => x.Workflow.proccesType == (ProccesType)proccesType);
+        var firstStep = await _context.WorkflowSteps
+            .Include(x => x.Workflow)
+            .Where(x =>
+                x.Workflow.proccesType == (ProccesType)proccesType &&
+                x.Workflow.IsActive)
+            .OrderByDescending(x => x.Workflow.IsDefault)
+            .ThenByDescending(x => x.Workflow.InsertDateTime)
+            .ThenBy(x => x.Order)
+            .FirstOrDefaultAsync();
 
-        if (WorkFlowStep != null)
-        {
+        if (firstStep == null)
+            return Json(new { success = false, needSelectReceiver = false });
 
-            var users = await GetStepReceiverUsersAsync(WorkFlowStep.ID);
+        if (!firstStep.NeedSelectReceiver)
+            return Json(new { success = true, needSelectReceiver = false });
 
-            return Json(new
-            {
-                success = true,
-                needSelectReceiver = true,
-                users
-            });
-        }
-        else
-            return Json(new
-            {
-                success = false,
-                needSelectReceiver = false
-            });
-    }
-
-
-    [HttpPost]
-    public async Task<IActionResult> CheckNextStepForNeedUsers(Guid entityId, int proccesType)
-    {
-        ProccesType currentProccesType = (ProccesType)proccesType;
-
-        clsWorkflowInstance? instance = await _context.WorkflowInstances.Include(x => x.Workflow)
-            .Include(x => x.CurrentStep)
-            .FirstOrDefaultAsync(x => x.EntityId == entityId && x.Workflow.proccesType == currentProccesType);
-
-        if (instance == null)
-
-            return Json(new { success = false });
-
-
-        var currentStep = await _context.WorkflowSteps
-            .FirstAsync(x => x.ID == instance.CurrentStepId);
-
-        if (currentStep.NextStepId == null)
-            return Json(new
-            {
-                success = true,
-                needSelectReceiver = false
-            });
-
-        var nextStep = await _context.WorkflowSteps
-            .Include(x => x.Users)
-            .FirstAsync(x => x.ID == currentStep.NextStepId);
-
-        if (!nextStep.NeedSelectReceiver)
-        {
-            return Json(new
-            {
-                success = true,
-                needSelectReceiver = false
-            });
-        }
-
-        var receiverUsers = await GetStepReceiverUsersAsync(nextStep.ID);
-
-        var users = receiverUsers.Select(x => new
-        {
-            id = x.Id,
-            fullName = x.FullName
-        }).ToList();
+        var users = await GetStepReceiverUsersAsync(firstStep.ID);
 
         return Json(new
         {
@@ -288,107 +251,114 @@ public class WorkflowRuntimeController : Controller
         });
     }
 
-
     [HttpPost]
-    public async Task<IActionResult> Approve(
-        Guid EntityId,
-        string? comment)
+    public async Task<IActionResult> CheckNextStepForNeedUsers(Guid entityId, int proccesType)
     {
-        clsWorkflowInstance? workflowInstance = _context.WorkflowInstances.FirstOrDefault(x => x.EntityId == EntityId);
+        var projection = await GetCurrentProjectionAsync(entityId);
+        if (projection == null || projection.proccesType != (ProccesType)proccesType)
+            return Json(new { success = false, needSelectReceiver = false });
 
-        if (workflowInstance != null)
+        var instance = await GetCurrentInstanceAsync(projection);
+        if (instance == null)
+            return Json(new { success = false, needSelectReceiver = false });
+
+        var currentStep = instance.CurrentStep;
+        if (currentStep == null || currentStep.NextStepId == null)
+            return Json(new { success = true, needSelectReceiver = false });
+
+        var nextStep = await _context.WorkflowSteps
+            .FirstOrDefaultAsync(x => x.ID == currentStep.NextStepId);
+
+        if (nextStep == null || !nextStep.NeedSelectReceiver)
+            return Json(new { success = true, needSelectReceiver = false });
+
+        var users = await GetStepReceiverUsersAsync(nextStep.ID);
+
+        return Json(new
         {
-            var user = await _userManager.GetUserAsync(User);
-
-            if (user == null)
-                return Unauthorized();
-
-            await _runtime.ApproveAsync(
-                workflowInstance.ID,
-                user.Id,
-                comment);
-
-            return Json(new
-            {
-                success = true,
-                message = "مرحله تایید شد."
-            });
-        }
-        else
-            return Json(new
-            {
-                success = false,
-                message = "مرحله یافت نشد."
-            });
+            success = true,
+            needSelectReceiver = true,
+            users = users.Select(x => new { id = x.Id, fullName = x.FullName }).ToList()
+        });
     }
 
     [HttpPost]
-    public async Task<IActionResult> Revision(
-        Guid EntityId,
-        string? comment)
+    public async Task<IActionResult> Approve(Guid EntityId, string? comment)
     {
-        clsWorkflowInstance? workflowInstance = _context.WorkflowInstances.FirstOrDefault(x => x.EntityId == EntityId);
+        var projection = await GetCurrentProjectionAsync(EntityId);
+        if (projection == null)
+            return Json(new { success = false, message = "گردش جاری یافت نشد." });
 
-        if (workflowInstance != null)
+        var instance = await GetCurrentInstanceAsync(projection);
+        if (instance == null)
+            return Json(new { success = false, message = "اجرای فعالی برای گردش جاری یافت نشد." });
+
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+            return Unauthorized();
+
+        await _runtime.ApproveAsync(instance.ID, user.Id, comment);
+
+        return Json(new
         {
-
-            var user = await _userManager.GetUserAsync(User);
-
-            if (user == null)
-                return Unauthorized();
-
-            await _runtime.RevisionAsync(
-                workflowInstance.ID,
-                user.Id,
-                comment);
-
-            return Json(new
-            {
-                success = true,
-                message = "برای اصلاح بازگردانده شد."
-            });
-        }
-        else
-            return Json(new
-            {
-                success = false,
-                message = "مرحله یافت نشد."
-            });
+            success = true,
+            message = "مرحله تایید شد."
+        });
     }
+
+
 
     [HttpPost]
-    public async Task<IActionResult> Reject(
-        Guid EntityId,
-        string? comment)
+    public async Task<IActionResult> Revision(Guid EntityId, string? comment)
     {
-        clsWorkflowInstance? workflowInstance = _context.WorkflowInstances.FirstOrDefault(x => x.EntityId == EntityId);
+        var projection = await GetCurrentProjectionAsync(EntityId);
+        if (projection == null)
+            return Json(new { success = false, message = "گردش جاری یافت نشد." });
 
-        if (workflowInstance != null)
+        var instance = await GetCurrentInstanceAsync(projection);
+        if (instance == null)
+            return Json(new { success = false, message = "اجرای فعالی برای گردش جاری یافت نشد." });
+
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+            return Unauthorized();
+
+        await _runtime.RevisionAsync(instance.ID, user.Id, comment);
+
+        return Json(new
         {
-
-            var user = await _userManager.GetUserAsync(User);
-
-            if (user == null)
-                return Unauthorized();
-
-            await _runtime.RejectAsync(
-                workflowInstance.ID,
-                user.Id,
-                comment);
-
-            return Json(new
-            {
-                success = true,
-                message = "درخواست رد شد."
-            });
-        }
-        else
-            return Json(new
-            {
-                success = false,
-                message = "مرحله یافت نشد."
-            });
+            success = true,
+            message = "برای اصلاح بازگردانده شد."
+        });
     }
+
+
+
+    [HttpPost]
+    public async Task<IActionResult> Reject(Guid EntityId, string? comment)
+    {
+        var projection = await GetCurrentProjectionAsync(EntityId);
+        if (projection == null)
+            return Json(new { success = false, message = "گردش جاری یافت نشد." });
+
+        var instance = await GetCurrentInstanceAsync(projection);
+        if (instance == null)
+            return Json(new { success = false, message = "اجرای فعالی برای گردش جاری یافت نشد." });
+
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+            return Unauthorized();
+
+        await _runtime.RejectAsync(instance.ID, user.Id, comment);
+
+        return Json(new
+        {
+            success = true,
+            message = "درخواست رد شد."
+        });
+    }
+
+
 
     [HttpPost]
     public async Task<IActionResult> Cancel(
