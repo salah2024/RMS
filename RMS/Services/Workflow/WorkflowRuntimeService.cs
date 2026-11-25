@@ -205,13 +205,19 @@ public class WorkflowRuntimeService
         // کاربران مرحله بعد
         //---------------------------------------
 
-        var users = selectedUsers ?? await GetStepUsers(nextStep);
+        var users = (selectedUsers ?? await GetStepUsers(nextStep))
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Distinct()
+            .ToList();
+
+        if (users.Count == 0)
+            throw new Exception("برای مرحله بعد هیچ گیرنده‌ای تعریف نشده است.");
 
         //---------------------------------------
         // Assignment
         //---------------------------------------
 
-        foreach (var userId in users.Distinct())
+        foreach (var userId in users)
         {
             _context.WorkflowAssignments.Add(
                 new clsWorkflowAssignment
@@ -263,20 +269,20 @@ public class WorkflowRuntimeService
             //}
 
 
-            // ارسال کننده فقط مشاهده داشته باشد
+        }
+
+        // ارسال‌کننده فقط مشاهده داشته باشد و تمام گیرندگان ویرایش داشته باشند.
+        await SetUserAccess(
+            instance.EntityId,
+            senderUserId,
+            ProjectAccessType.View);
+
+        foreach (var userId in users)
+        {
             await SetUserAccess(
                 instance.EntityId,
-                senderUserId,
-                ProjectAccessType.View);
-
-            // گیرندگان مرحله بعد ویرایش داشته باشند
-            foreach (var userId1 in users.Distinct())
-            {
-                await SetUserAccess(
-                    instance.EntityId,
-                    userId1,
-                    ProjectAccessType.Edit);
-            }
+                userId,
+                ProjectAccessType.Edit);
         }
     }
 
@@ -700,31 +706,30 @@ public class WorkflowRuntimeService
     private async Task<List<string>> GetStepUsers(
     clsWorkflowStep step)
     {
-        List<string> users = new();
+        // کاربران مستقیم مرحله و کاربران تمام نقش‌های تعریف‌شده
+        // باید با هم در فهرست گیرندگان قرار بگیرند.
+        List<string> users = step.Users
+            .Select(x => x.UserId)
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .ToList();
 
-        if (step.Users.Count != 0)
+        var roleIds = step.Roles
+            .Select(x => x.RoleId)
+            .Distinct()
+            .ToList();
+
+        if (roleIds.Count > 0)
         {
-            users.AddRange(
-                step.Users
-                    .Select(x => x.UserId));
-        }
-        else
-        {
-            foreach (var role in step.Roles)
-            {
-                var roleUsers = await _context.UserRoles
+            var roleUsers = await _context.UserRoles
+                .Where(x => roleIds.Contains(x.RoleId))
+                .Select(x => x.UserId)
+                .ToListAsync();
 
-                    .Where(x => x.RoleId == role.RoleId)
-
-                    .Select(x => x.UserId)
-
-                    .ToListAsync();
-
-                users.AddRange(roleUsers);
-            }
+            users.AddRange(roleUsers);
         }
 
         return users
+            .Where(x => !string.IsNullOrWhiteSpace(x))
             .Distinct()
             .ToList();
     }
