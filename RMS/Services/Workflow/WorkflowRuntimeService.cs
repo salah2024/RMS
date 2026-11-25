@@ -318,7 +318,8 @@ public class WorkflowRuntimeService
 
         assignment.IsCompleted = true;
 
-assignment.CompletedDate = DateTime.Now;
+
+        assignment.CompletedDate = DateTime.Now;
 
         assignment.Comment = comment;
 
@@ -794,10 +795,18 @@ assignment.CompletedDate = DateTime.Now;
     List<string>? selectedUsers = null)
     {
         var accesses = await _context.BaravordUserAccesses
-
             .Where(x => x.BaravordUserId == entityId)
-
             .ToListAsync();
+
+        // دسترسی‌های ثبت‌نشده در همین DbContext (مثلاً مالک برآورد تازه‌ساخته‌شده)
+        // نیز باید در محاسبه لحاظ شوند تا رکورد تکراری ایجاد نشود.
+        var localAccesses = _context.BaravordUserAccesses.Local
+            .Where(x =>
+                x.BaravordUserId == entityId &&
+                accesses.All(dbAccess => dbAccess.ID != x.ID))
+            .ToList();
+
+        accesses.AddRange(localAccesses);
 
         foreach (var access in accesses)
         {
