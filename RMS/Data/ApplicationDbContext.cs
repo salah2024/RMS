@@ -509,7 +509,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         modelBuilder.Entity<clsBarAvordProjectionWorkFlow>()
             .HasIndex(x => x.BarAvordUserId)
             .IsUnique()
-            .HasFilter("[IsComplete] = 0 AND ([IsDeleted] IS NULL OR [IsDeleted] = 0)")
+            .HasFilter("[IsComplete] = 0 AND [IsDeleted] = 0")
             .HasDatabaseName("UX_tblBarAvordProjectionWorkFlow_Active_BarAvordUserId");
 
         modelBuilder.Entity<clsWorkflowInstance>()
