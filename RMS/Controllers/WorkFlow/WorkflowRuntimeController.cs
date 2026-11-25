@@ -217,29 +217,7 @@ public class WorkflowRuntimeController : Controller
         if (WorkFlowStep != null)
         {
 
-            var users = await
-            (from su in _context.WorkflowStepUsers
-             join u in _context.Users
-                on su.UserId equals u.Id
-             where su.WorkflowStepId == WorkFlowStep.ID
-             select new WorkflowStepUsersForCheckDto
-             {
-                 Id = u.Id,
-                 FullName = u.FullName,
-             }).ToListAsync();
-
-            List<string> lstUserIds = users.Select(x => x.Id).ToList();
-
-            List<clsUserDetail> lstUserDetails = await _context.UserDetails.Where(x => lstUserIds.Contains(x.UserId)).Include(x => x.Company).ToListAsync();
-
-            foreach (var user in users)
-            {
-                clsUserDetail? currentUserDetails = lstUserDetails.Where(x => x.UserId == user.Id).FirstOrDefault();
-                if (currentUserDetails != null)
-                {
-                    user.FullName += "(" + currentUserDetails.Company.CompanyName + ")";
-                }
-            }
+            var users = await GetStepReceiverUsersAsync(WorkFlowStep.ID);
 
             return Json(new
             {
