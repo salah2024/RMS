@@ -617,7 +617,9 @@ assignment.CompletedDate = DateTime.Now;
                 var previousInstances = await _context.WorkflowInstances
                     .Where(x =>
                         x.EntityId == entityId &&
-                        x.Status == WorkflowInstanceStatus.Running)
+                        x.Status != WorkflowInstanceStatus.Completed &&
+                        x.Status != WorkflowInstanceStatus.Rejected &&
+                        x.Status != WorkflowInstanceStatus.Cancelled)
                     .ToListAsync();
 
                 var previousInstanceIds = previousInstances
