@@ -567,8 +567,8 @@ function ViewBarAvordClick() {
                 }
 
 
-                // ارسال به پیمانکار جهت پیشنهاد قیمت
-                if ($(this)[0].buType==2) {
+                // ارسال به پیمانکار فقط پس از تکمیل گردش برآورد اولیه فعال می‌شود.
+                if ($(this)[0].buType == 2 && $(this)[0].canSendToContractors) {
 
                     actions += `
                         <a href="javascript:void(0)"
@@ -664,6 +664,7 @@ function CheckCurrentStepForNeedUsers(id,proccesType)
         url: "/WorkflowRuntime/CheckCurrentStepForNeedUsers",
         type: "POST",
         data: {
+            entityId: id,
             proccesType: proccesType
         },
         success: function(res) {
@@ -677,7 +678,7 @@ function CheckCurrentStepForNeedUsers(id,proccesType)
                     DoSubmit(id, null, proccesType);
                 }
                 else if (proccesType == 3) {
-                    SendToContractors(entityId,null);
+                    SendToContractors(id, null);
                 }
                 return;
             }
@@ -703,10 +704,11 @@ function SendToContractors(id, receiversUserId) {
         success: function (res) {
             debugger;
             if (res.success) {
-                //SubmitWorkflow(id, receiversUserId, proccesType)
+                toastr.success("گردش پیشنهاد قیمت با موفقیت آغاز شد.");
+                ViewBarAvordClick();
+            } else {
+                toastr.info(res.message || "امکان ارسال به پیمانکار وجود ندارد.");
             }
-            if (!res.success)
-                return;
 
         },
         error: function () {
