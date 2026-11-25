@@ -140,7 +140,7 @@ public class WorkflowRuntimeService
                 InsertDateTime = DateTime.Now
             });
         }
-        else
+        else if (access.AccessType != ProjectAccessType.Owner)
         {
             access.AccessType = accessType;
         }
