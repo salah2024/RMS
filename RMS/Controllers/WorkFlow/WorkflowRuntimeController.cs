@@ -225,23 +225,75 @@ public class WorkflowRuntimeController : Controller
     [HttpPost]
     public async Task<IActionResult> CheckCurrentStepForNeedUsers(Guid entityId, int proccesType)
     {
-        var firstStep = await _context.WorkflowSteps
-            .Include(x => x.Workflow)
+        if (proccesType == (int)ProccesType.PishnahadGhaimat)
+        {
+            var hasActiveInitialProjection = await _context.BarAvordProjectionWorkFlows
+                .AnyAsync(p =>
+                    p.BarAvordUserId == entityId &&
+                    !p.IsComplete &&
+                    p.proccesType == ProccesType.BarAvordAvalieh);
+
+            var lastInitialWorkflowStatus = await _context.WorkflowInstances
+                .Where(w =>
+                    w.EntityId == entityId &&
+                    w.Workflow.proccesType == ProccesType.BarAvordAvalieh)
+                .OrderByDescending(w => w.InsertDateTime)
+                .Select(w => w.Status)
+                .FirstOrDefaultAsync();
+
+            if (!hasActiveInitialProjection ||
+                lastInitialWorkflowStatus != WorkflowInstanceStatus.Completed)
+            {
+                return Json(new
+                {
+                    success = false,
+                    needSelectReceiver = false,
+                    message = "ابتدا باید گردش برآورد اولیه به‌طور کامل تایید و خاتمه یابد."
+                });
+            }
+        }
+
+        var workflow = await _context.Workflows
             .Where(x =>
-                x.Workflow.proccesType == (ProccesType)proccesType &&
-                x.Workflow.IsActive)
-            .OrderByDescending(x => x.Workflow.IsDefault)
-            .ThenByDescending(x => x.Workflow.InsertDateTime)
-            .ThenBy(x => x.Order)
+                x.proccesType == (ProccesType)proccesType &&
+                x.IsActive)
+            .OrderByDescending(x => x.IsDefault)
+            .ThenByDescending(x => x.InsertDateTime)
+            .FirstOrDefaultAsync();
+
+        if (workflow == null)
+            return Json(new
+            {
+                success = false,
+                needSelectReceiver = false,
+                message = "گردش کار فعالی برای این عملیات تعریف نشده است."
+            });
+
+        var firstStep = await _context.WorkflowSteps
+            .Where(x => x.WorkflowId == workflow.ID)
+            .OrderBy(x => x.Order)
             .FirstOrDefaultAsync();
 
         if (firstStep == null)
-            return Json(new { success = false, needSelectReceiver = false });
+            return Json(new
+            {
+                success = false,
+                needSelectReceiver = false,
+                message = "مرحله اول گردش کار تعریف نشده است."
+            });
 
         if (!firstStep.NeedSelectReceiver)
             return Json(new { success = true, needSelectReceiver = false });
 
         var users = await GetStepReceiverUsersAsync(firstStep.ID);
+
+        if (users.Count == 0)
+            return Json(new
+            {
+                success = false,
+                needSelectReceiver = false,
+                message = "برای مرحله اول گردش پیشنهاد قیمت، پیمانکار قابل انتخابی تعریف نشده است."
+            });
 
         return Json(new
         {
