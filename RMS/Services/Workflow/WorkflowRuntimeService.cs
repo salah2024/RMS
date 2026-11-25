@@ -205,10 +205,9 @@ public class WorkflowRuntimeService
         // کاربران مرحله بعد
         //---------------------------------------
 
-        var users = (selectedUsers ?? await GetStepUsers(nextStep))
-            .Where(x => !string.IsNullOrWhiteSpace(x))
-            .Distinct()
-            .ToList();
+        // اگر انتخاب گیرنده فعال باشد فقط کاربران انتخاب‌شده (از فهرست مجاز)
+        // ارجاع می‌گیرند؛ در غیر این صورت فقط کاربران صریحاً ثبت‌شده در مرحله.
+        var users = await ResolveStepReceiversAsync(nextStep, selectedUsers);
 
         if (users.Count == 0)
             throw new Exception("برای مرحله بعد هیچ گیرنده‌ای تعریف نشده است.");
@@ -712,24 +711,9 @@ public class WorkflowRuntimeService
         string senderUserId,
         List<string>? selectedUsers = null)
     {
-        List<string> users;
-
-        if (step.NeedSelectReceiver)
-        {
-            if (selectedUsers == null || !selectedUsers.Any())
-                throw new Exception("گیرنده مرحله انتخاب نشده است.");
-
-            users = selectedUsers;
-        }
-        else
-        {
-            users = await GetStepUsers(step);
-        }
-
-        users = users
-            .Where(x => !string.IsNullOrWhiteSpace(x))
-            .Distinct()
-            .ToList();
+        // نقش‌ها فقط فهرست کاربران مجاز برای انتخاب را مشخص می‌کنند؛
+        // هیچ‌گاه به‌تنهایی باعث ارجاع خودکار به تمام اعضای نقش نمی‌شوند.
+        var users = await ResolveStepReceiversAsync(step, selectedUsers);
 
         if (users.Count == 0)
             throw new Exception("برای مرحله اول هیچ گیرنده‌ای تعریف نشده است.");
@@ -758,18 +742,32 @@ public class WorkflowRuntimeService
         }
     }
 
-    private async Task<List<string>> GetStepUsers(
-    clsWorkflowStep step)
+    /// <summary>
+    /// گیرندگان ثابت مرحله؛ فقط کاربرانی که مستقیماً در خود مرحله ثبت شده‌اند.
+    /// وجود نقش به معنی ارجاع خودکار تمام اعضای آن نقش نیست.
+    /// </summary>
+    private Task<List<string>> GetStepUsers(clsWorkflowStep step)
     {
-        // کاربران مستقیم مرحله و کاربران تمام نقش‌های تعریف‌شده
-        // باید با هم در فهرست گیرندگان قرار بگیرند.
-        List<string> users = step.Users
+        var users = step.Users
             .Select(x => x.UserId)
             .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Distinct()
             .ToList();
+
+        return Task.FromResult(users);
+    }
+
+    /// <summary>
+    /// کاربران مجاز برای انتخاب دستی: کاربران صریح مرحله به‌علاوه اعضای نقش‌های
+    /// تعریف‌شده به‌عنوان دامنه مجاز انتخاب.
+    /// </summary>
+    private async Task<List<string>> GetSelectableStepUsersAsync(clsWorkflowStep step)
+    {
+        var users = (await GetStepUsers(step)).ToHashSet();
 
         var roleIds = step.Roles
             .Select(x => x.RoleId)
+            .Where(x => !string.IsNullOrWhiteSpace(x))
             .Distinct()
             .ToList();
 
@@ -778,15 +776,41 @@ public class WorkflowRuntimeService
             var roleUsers = await _context.UserRoles
                 .Where(x => roleIds.Contains(x.RoleId))
                 .Select(x => x.UserId)
+                .Distinct()
                 .ToListAsync();
 
-            users.AddRange(roleUsers);
+            users.UnionWith(roleUsers.Where(x => !string.IsNullOrWhiteSpace(x)));
         }
 
-        return users
+        return users.ToList();
+    }
+
+    /// <summary>
+    /// گیرندگان واقعی مرحله را با توجه به تنظیم انتخاب دستی تعیین می‌کند.
+    /// </summary>
+    private async Task<List<string>> ResolveStepReceiversAsync(
+        clsWorkflowStep step,
+        List<string>? selectedUsers)
+    {
+        if (!step.NeedSelectReceiver)
+            return await GetStepUsers(step);
+
+        if (selectedUsers == null || selectedUsers.Count == 0)
+            throw new Exception("حداقل یک گیرنده برای این مرحله انتخاب کنید.");
+
+        var allowedUsers = await GetSelectableStepUsersAsync(step);
+        var receivers = selectedUsers
             .Where(x => !string.IsNullOrWhiteSpace(x))
             .Distinct()
             .ToList();
+
+        if (receivers.Count == 0)
+            throw new Exception("گیرنده معتبری انتخاب نشده است.");
+
+        if (receivers.Any(x => !allowedUsers.Contains(x)))
+            throw new Exception("یکی از گیرندگان انتخاب‌شده در فهرست مجاز این مرحله نیست.");
+
+        return receivers;
     }
 
 
@@ -815,10 +839,7 @@ public class WorkflowRuntimeService
                 access.AccessType = ProjectAccessType.View;
         }
 
-        var users = (selectedUsers ?? await GetStepUsers(step))
-            .Where(x => !string.IsNullOrWhiteSpace(x))
-            .Distinct()
-            .ToList();
+        var users = await ResolveStepReceiversAsync(step, selectedUsers);
 
         foreach (var userId in users)
         {
