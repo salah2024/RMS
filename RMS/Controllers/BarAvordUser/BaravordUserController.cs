@@ -218,14 +218,32 @@ public class BaravordUserController(ApplicationDbContext context, UserManager<Ap
 
         var workflow = await _context.Workflows
             .Where(x =>
-                x.proccesType == ProccesType.PishnahadGhaimat &&
+                x.proccesType == (ProccesType)3 &&
                 x.IsActive)
             .OrderByDescending(x => x.IsDefault)
             .ThenByDescending(x => x.InsertDateTime)
             .FirstOrDefaultAsync();
 
         if (workflow == null)
-            return new JsonResult(new { success = false, message = "گردش فعال پیشنهاد قیمت تعریف نشده است." });
+            return new JsonResult(new { success = false, message = "گردش فعال با ProcessType=3 تعریف نشده است." });
+
+        var firstStep = await _context.WorkflowSteps
+            .Where(x => x.WorkflowId == workflow.ID)
+            .OrderBy(x => x.Order)
+            .FirstOrDefaultAsync();
+
+        if (firstStep == null)
+            return new JsonResult(new { success = false, message = "گام اول گردش پیشنهاد قیمت تعریف نشده است." });
+
+        if (!firstStep.NeedSelectReceiver)
+            return new JsonResult(new
+            {
+                success = false,
+                message = "گام اول گردش پیشنهاد قیمت باید روی انتخاب پیمانکاران تنظیم شده باشد."
+            });
+
+        if (selectedUsers == null || selectedUsers.Count == 0)
+            return new JsonResult(new { success = false, message = "حداقل یک پیمانکار را انتخاب کنید." });
 
         try
         {
