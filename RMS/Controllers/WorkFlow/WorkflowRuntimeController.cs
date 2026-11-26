@@ -258,7 +258,7 @@ public class WorkflowRuntimeController : Controller
             {
                 success = false,
                 needSelectReceiver = false,
-                message = "این عملیات فقط برای ProcessType=3 تعریف شده است."
+                message = "این عملیات فقط برای پیشنهاد قیمت تعریف شده است."
             });
 
         var workflow = await _context.Workflows
@@ -295,7 +295,7 @@ public class WorkflowRuntimeController : Controller
             {
                 success = false,
                 needSelectReceiver = false,
-                message = "گام اول گردش ProcessType=3 باید نیازمند انتخاب پیمانکار باشد."
+                message = "گام اول گردش پیشنهاد قیمت باید نیازمند انتخاب پیمانکار باشد."
             });
 
         var users = await GetStepReceiverUsersAsync(firstStep.ID);

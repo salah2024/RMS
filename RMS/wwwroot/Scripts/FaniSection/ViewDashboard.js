@@ -669,8 +669,10 @@ function CheckCurrentStepForNeedUsers(id,proccesType)
         },
         success: function(res) {
             debugger;
-            if (!res.success)
+            if (!res.success) {
+                toastr.error(res.message);
                 return;
+            }
 
             if (!res.needSelectReceiver) {
 
