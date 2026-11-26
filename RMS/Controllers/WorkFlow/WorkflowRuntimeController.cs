@@ -72,7 +72,7 @@ public class WorkflowRuntimeController : Controller
             .Where(x =>
                 x.BarAvordUserId == entityId &&
                 !x.IsComplete &&
-                !x.IsDeleted)
+                x.IsDeleted != true)
             .OrderByDescending(x => x.InsertDateTime)
             .ToListAsync();
 
