@@ -192,22 +192,26 @@ public class BaravordUserController(ApplicationDbContext context, UserManager<Ap
             return new JsonResult(new { success = false, message = "برآورد موردنظر یافت نشد." });
 
         // گردش پیشنهاد قیمت تنها بعد از اتمام گردش برآورد اولیه قابل شروع است.
-        var hasActiveInitialProjection = await _context.BarAvordProjectionWorkFlows
-            .AnyAsync(p =>
+        var currentProjection = await _context.BarAvordProjectionWorkFlows
+            .Where(p =>
                 p.BarAvordUserId == entityId &&
                 !p.IsComplete &&
-                p.proccesType == ProccesType.BarAvordAvalieh);
-
-        var lastInitialWorkflowStatus = await _context.WorkflowInstances
-            .Where(w =>
-                w.EntityId == entityId &&
-                w.Workflow.proccesType == ProccesType.BarAvordAvalieh)
-            .OrderByDescending(w => w.InsertDateTime)
-            .Select(w => w.Status)
+                !p.IsDeleted)
+            .OrderByDescending(p => p.InsertDateTime)
             .FirstOrDefaultAsync();
 
-        if (!hasActiveInitialProjection ||
-            lastInitialWorkflowStatus != WorkflowInstanceStatus.Completed)
+        var currentInitialInstance = currentProjection?.proccesType == ProccesType.BarAvordAvalieh
+            ? await _context.WorkflowInstances
+                .Where(w =>
+                    w.EntityId == entityId &&
+                    w.EntityType == nameof(clsBaravordUser) &&
+                    w.Workflow.proccesType == currentProjection.proccesType)
+                .OrderByDescending(w => w.InsertDateTime)
+                .FirstOrDefaultAsync()
+            : null;
+
+        if (currentProjection?.proccesType != ProccesType.BarAvordAvalieh ||
+            currentInitialInstance?.Status != WorkflowInstanceStatus.Completed)
         {
             return new JsonResult(new
             {
