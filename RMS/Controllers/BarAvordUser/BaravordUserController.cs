@@ -196,7 +196,7 @@ public class BaravordUserController(ApplicationDbContext context, UserManager<Ap
             .Where(p =>
                 p.BarAvordUserId == entityId &&
                 !p.IsComplete &&
-                !p.IsDeleted)
+                p.IsDeleted != true)
             .OrderByDescending(p => p.InsertDateTime)
             .FirstOrDefaultAsync();
 
