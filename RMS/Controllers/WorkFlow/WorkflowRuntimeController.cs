@@ -69,7 +69,10 @@ public class WorkflowRuntimeController : Controller
     private async Task<clsBarAvordProjectionWorkFlow?> GetCurrentProjectionAsync(Guid entityId)
     {
         var projections = await _context.BarAvordProjectionWorkFlows
-            .Where(x => x.BarAvordUserId == entityId && !x.IsComplete)
+            .Where(x =>
+                x.BarAvordUserId == entityId &&
+                !x.IsComplete &&
+                !x.IsDeleted)
             .OrderByDescending(x => x.InsertDateTime)
             .ToListAsync();
 
@@ -94,6 +97,23 @@ public class WorkflowRuntimeController : Controller
             .FirstOrDefaultAsync();
     }
 
+    // برای مشاهده، آخرین اجرای متناظر با Projection جاری لازم است؛
+    // حتی اگر وضعیت آن Completed یا Cancelled شده باشد.
+    private Task<clsWorkflowInstance?> GetProjectionInstanceAsync(
+        clsBarAvordProjectionWorkFlow projection)
+    {
+        return _context.WorkflowInstances
+            .Include(x => x.Workflow)
+            .Include(x => x.CurrentStep)
+                .ThenInclude(x => x.WorkflowAction)
+            .Where(x =>
+                x.EntityId == projection.BarAvordUserId &&
+                x.EntityType == nameof(clsBaravordUser) &&
+                x.Workflow.proccesType == projection.proccesType)
+            .OrderByDescending(x => x.InsertDateTime)
+            .FirstOrDefaultAsync();
+    }
+
     [HttpGet]
     public async Task<IActionResult> Open(Guid entityId)
     {
@@ -101,9 +121,9 @@ public class WorkflowRuntimeController : Controller
         if (projection == null)
             return NotFound("گردش جاری برای این برآورد ثبت نشده است.");
 
-        var instance = await GetCurrentInstanceAsync(projection);
+        var instance = await GetProjectionInstanceAsync(projection);
         if (instance == null)
-            return NotFound("اجرای فعالی برای گردش جاری پیدا نشد.");
+            return NotFound("اجرایی برای گردش جاری پیدا نشد.");
 
         if (instance.CurrentStep?.WorkflowAction == null)
             return BadRequest("برای این مرحله فرم عملیاتی تعریف نشده است.");
@@ -227,22 +247,23 @@ public class WorkflowRuntimeController : Controller
     {
         if (proccesType == (int)ProccesType.PishnahadGhaimat)
         {
-            var hasActiveInitialProjection = await _context.BarAvordProjectionWorkFlows
-                .AnyAsync(p =>
-                    p.BarAvordUserId == entityId &&
-                    !p.IsComplete &&
-                    p.proccesType == ProccesType.BarAvordAvalieh);
+            // گردش مبنا برای شروع پیشنهاد قیمت باید همان Projection جاری برآورد اولیه باشد.
+            var currentProjection = await GetCurrentProjectionAsync(entityId);
+            if (currentProjection == null ||
+                currentProjection.proccesType != ProccesType.BarAvordAvalieh)
+            {
+                return Json(new
+                {
+                    success = false,
+                    needSelectReceiver = false,
+                    message = "گردش جاری برآورد اولیه یافت نشد یا قبلاً به گردش دیگری منتقل شده است."
+                });
+            }
 
-            var lastInitialWorkflowStatus = await _context.WorkflowInstances
-                .Where(w =>
-                    w.EntityId == entityId &&
-                    w.Workflow.proccesType == ProccesType.BarAvordAvalieh)
-                .OrderByDescending(w => w.InsertDateTime)
-                .Select(w => w.Status)
-                .FirstOrDefaultAsync();
+            var initialInstance = await GetProjectionInstanceAsync(currentProjection);
+            var lastInitialWorkflowStatus = initialInstance?.Status;
 
-            if (!hasActiveInitialProjection ||
-                lastInitialWorkflowStatus != WorkflowInstanceStatus.Completed)
+            if (lastInitialWorkflowStatus != WorkflowInstanceStatus.Completed)
             {
                 return Json(new
                 {
