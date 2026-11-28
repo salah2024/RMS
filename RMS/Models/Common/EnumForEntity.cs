@@ -138,7 +138,9 @@ public class EnumForEntity
 
         Rejected = 4,
 
-        Cancelled = 5
+        Cancelled = 5,
+
+        Approved = 6
     }
 
     public enum WorkflowReceiverMode
