@@ -824,6 +824,9 @@ function SubmitWorkflow(id, proccesType) {
         },
 
         success: function (res) {
+
+            debugger;
+
             if (!res.success)
                 return;
 

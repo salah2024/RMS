@@ -155,8 +155,8 @@ public class WorkflowRuntimeController : Controller
         if (projection == null)
             return Json(new { success = false, message = "گردش جاری برآورد یافت نشد." });
 
-        if (projection.proccesType != (ProccesType)proccesType)
-            return Json(new { success = false, message = "نوع گردش ارسالی با گردش جاری برآورد مطابقت ندارد." });
+        //if (projection.proccesType != (ProccesType)proccesType)
+        //    return Json(new { success = false, message = "نوع گردش ارسالی با گردش جاری برآورد مطابقت ندارد." });
 
         var instance = await GetCurrentInstanceAsync(projection);
         if (instance == null)
@@ -189,31 +189,30 @@ public class WorkflowRuntimeController : Controller
         if (step == null)
             return new List<WorkflowStepUsersForCheckDto>();
 
-        // گیرندگان مستقیم و اعضای نقش‌های مرحله، هر دو مجاز هستند.
+        // ابتدا گیرندگان مستقیم مرحله بررسی می‌شوند.
         var userIds = step.Users
             .Select(x => x.UserId)
             .Where(x => !string.IsNullOrWhiteSpace(x))
-            .ToList();
-
-        var roleIds = step.Roles
-            .Select(x => x.RoleId)
             .Distinct()
             .ToList();
 
-        if (roleIds.Count > 0)
+        // فقط در صورت نبود گیرنده مستقیم، اعضای نقش‌ها مجاز هستند.
+        if (userIds.Count == 0)
         {
-            var roleUserIds = await _context.UserRoles
-                .Where(x => roleIds.Contains(x.RoleId))
-                .Select(x => x.UserId)
-                .ToListAsync();
+            var roleIds = step.Roles
+                .Select(x => x.RoleId)
+                .Distinct()
+                .ToList();
 
-            userIds.AddRange(roleUserIds);
+            if (roleIds.Count > 0)
+            {
+                userIds = await _context.UserRoles
+                    .Where(x => roleIds.Contains(x.RoleId))
+                    .Select(x => x.UserId)
+                    .Distinct()
+                    .ToListAsync();
+            }
         }
-
-        userIds = userIds
-            .Where(x => !string.IsNullOrWhiteSpace(x))
-            .Distinct()
-            .ToList();
 
         if (userIds.Count == 0)
             return new List<WorkflowStepUsersForCheckDto>();
@@ -235,13 +234,13 @@ public class WorkflowRuntimeController : Controller
         foreach (var user in users)
         {
             var detail = details.FirstOrDefault(x => x.UserId == user.Id);
+
             if (detail?.Company != null)
                 user.FullName += "(" + detail.Company.CompanyName + ")";
         }
 
         return users;
     }
-
     [HttpPost]
     public async Task<IActionResult> CheckCurrentStepForNeedUsers(Guid entityId, int proccesType)
     {
@@ -337,34 +336,96 @@ public class WorkflowRuntimeController : Controller
         });
     }
 
+    //[HttpPost]
+    //public async Task<IActionResult> CheckNextStepForNeedUsers(Guid entityId, int proccesType)
+    //{
+    //    var projection = await GetCurrentProjectionAsync(entityId);
+    //    //if (projection == null || projection.proccesType != (ProccesType)proccesType)
+    //    //    return Json(new { success = false, needSelectReceiver = false });
+
+    //    var instance = await GetCurrentInstanceAsync(projection);
+    //    if (instance == null)
+    //        return Json(new { success = false, needSelectReceiver = false });
+
+    //    var currentStep = instance.CurrentStep;
+    //    if (currentStep == null || currentStep.NextStepId == null)
+    //        return Json(new { success = true, needSelectReceiver = false });
+
+    //    var nextStep = await _context.WorkflowSteps
+    //        .FirstOrDefaultAsync(x => x.ID == currentStep.NextStepId);
+
+    //    var users = await GetStepReceiverUsersAsync(nextStep.ID);
+
+
+    //    if (nextStep == null || !nextStep.NeedSelectReceiver)
+    //        return Json(new { success = true, needSelectReceiver = false });
+
+
+    //    return Json(new
+    //    {
+    //        success = true,
+    //        needSelectReceiver = true,
+    //        users = users.Select(x => new { id = x.Id, fullName = x.FullName }).ToList()
+    //    });
+    //}
     [HttpPost]
+
     public async Task<IActionResult> CheckNextStepForNeedUsers(Guid entityId, int proccesType)
     {
         var projection = await GetCurrentProjectionAsync(entityId);
-        if (projection == null || projection.proccesType != (ProccesType)proccesType)
+
+        if (projection == null)
             return Json(new { success = false, needSelectReceiver = false });
 
         var instance = await GetCurrentInstanceAsync(projection);
+
         if (instance == null)
             return Json(new { success = false, needSelectReceiver = false });
 
         var currentStep = instance.CurrentStep;
+
         if (currentStep == null || currentStep.NextStepId == null)
-            return Json(new { success = true, needSelectReceiver = false });
+        {
+            return Json(new
+            {
+                success = true,
+                needSelectReceiver = false,
+                users = new List<object>()
+            });
+        }
 
         var nextStep = await _context.WorkflowSteps
+            .Include(x => x.Users)
             .FirstOrDefaultAsync(x => x.ID == currentStep.NextStepId);
 
-        if (nextStep == null || !nextStep.NeedSelectReceiver)
-            return Json(new { success = true, needSelectReceiver = false });
+        if (nextStep == null)
+            return Json(new { success = false, needSelectReceiver = false });
 
         var users = await GetStepReceiverUsersAsync(nextStep.ID);
+
+        if (nextStep.NeedSelectReceiver)
+        {
+            return Json(new
+            {
+                success = true,
+                needSelectReceiver = true,
+                users = users.Select(x => new
+                {
+                    id = x.Id,
+                    fullName = x.FullName
+                }).ToList()
+            });
+        }
 
         return Json(new
         {
             success = true,
-            needSelectReceiver = true,
-            users = users.Select(x => new { id = x.Id, fullName = x.FullName }).ToList()
+            needSelectReceiver = false,
+            users = users.Select(x => new
+            {
+                id = x.Id,
+                fullName = x.FullName
+            }).ToList()
         });
     }
 

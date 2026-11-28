@@ -238,7 +238,7 @@ public class WorkflowStepController(ApplicationDbContext context, IWorkflowStepQ
         ProccesType proccessType = ProccesType.BarAvordAvalieh;
 
         var projection = await _context.BarAvordProjectionWorkFlows
-            .FirstOrDefaultAsync(x => x.BarAvordUserId == entityId);
+            .FirstOrDefaultAsync(x => x.BarAvordUserId == entityId && !x.IsComplete);
 
         if (projection != null)
             proccessType = projection.proccesType;
