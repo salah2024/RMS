@@ -14,6 +14,9 @@ function ShowZaribPP(OperationId, event) {
         return;
     }
 
+    // فقط یک پنل پیشنهاد قیمت در لحظه فعال باشد؛ توابع قدیمی از شناسه‌های ثابت استفاده می‌کنند.
+    $('.zaribpp-panel').closest('div[id^="ula"]').not($panel).empty();
+
     // اطلاعات برآورد در صفحه درخت قبلاً توسط GetViewBag تنظیم شده‌اند.
     var barAvordId = $('#HDFBarAvordUserID').val();
     var year = $('#HDFYear').val();
