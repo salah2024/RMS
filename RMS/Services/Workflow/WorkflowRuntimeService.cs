@@ -27,6 +27,7 @@ public class WorkflowRuntimeService
     List<string>? receiversUserId = null)
     {
         var instance = await _context.WorkflowInstances
+            .Include(x => x.Workflow)
             .FirstOrDefaultAsync(x => x.ID == workflowInstanceId);
 
         if (instance == null)
