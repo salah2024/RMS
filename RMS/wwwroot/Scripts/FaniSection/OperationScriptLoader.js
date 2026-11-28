@@ -82,6 +82,7 @@
             "ZaribManteghe.js"
         ],
         zaribpp: [
+            "PishnahadGhaymatScript.js",
             "ZaribPishnahadiPaymankar.js"
         ]
     };
