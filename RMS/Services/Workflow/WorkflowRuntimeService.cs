@@ -293,103 +293,120 @@ public class WorkflowRuntimeService
     string? comment,
     List<string>? selectedUsers = null)
     {
-        var instance = await GetInstance(workflowInstanceId);
+        var ownsTransaction = _context.Database.CurrentTransaction == null;
+        await using var transaction = ownsTransaction
+            ? await _context.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable)
+            : null;
 
-        // فقط گردش متناظر با Projection فعال اجازه دریافت اقدام دارد.
-        if (instance.EntityType == nameof(clsBaravordUser))
+        try
         {
-            var currentProjection = await _context.BarAvordProjectionWorkFlows
-                .SingleOrDefaultAsync(x =>
-                    x.BarAvordUserId == instance.EntityId &&
-                    !x.IsComplete);
+            var instance = await GetInstance(workflowInstanceId);
 
-            if (currentProjection == null ||
-                currentProjection.proccesType != instance.Workflow.proccesType)
+            // فقط گردش متناظر با Projection فعال اجازه دریافت اقدام دارد.
+            if (instance.EntityType == nameof(clsBaravordUser))
             {
-                throw new Exception("این گردش دیگر گردش جاری برآورد نیست.");
+                var currentProjection = await _context.BarAvordProjectionWorkFlows
+                    .SingleOrDefaultAsync(x =>
+                        x.BarAvordUserId == instance.EntityId &&
+                        !x.IsComplete);
+
+                if (currentProjection == null ||
+                    currentProjection.proccesType != instance.Workflow.proccesType)
+                {
+                    throw new Exception("این گردش دیگر گردش جاری برآورد نیست.");
+                }
             }
+
+            var currentStepId = instance.CurrentStepId;
+            var assignment = await GetCurrentAssignment(
+                workflowInstanceId,
+                currentStepId,
+                currentUserId);
+
+            assignment.IsCompleted = true;
+            assignment.CompletedDate = DateTime.Now;
+            assignment.Comment = comment;
+            assignment.Result = action switch
+            {
+                WorkflowAction.Submit => WorkflowAssignmentResult.Submitted,
+                WorkflowAction.Revision => WorkflowAssignmentResult.RevisionRequested,
+                WorkflowAction.Reject => WorkflowAssignmentResult.Rejected,
+                WorkflowAction.Cancel => WorkflowAssignmentResult.Cancelled,
+                _ => WorkflowAssignmentResult.Submitted
+            };
+
+            // در گردش پیشنهاد قیمت، تأیید اولین پیمانکار برای اقدام‌شده شدن
+            // مرحله کافی است؛ سایر ارجاع‌های همان مرحله دیگر در انتظار پاسخ نمی‌مانند.
+            if (action == WorkflowAction.Approve &&
+                instance.Workflow.proccesType == ProccesType.PishnahadGhaimat)
+            {
+                var otherPendingAssignments = await _context.WorkflowAssignments
+                    .Where(x =>
+                        x.WorkflowInstanceId == instance.ID &&
+                        x.WorkflowStepId == currentStepId &&
+                        x.ID != assignment.ID &&
+                        !x.IsCompleted)
+                    .ToListAsync();
+
+                var completedAt = DateTime.Now;
+                foreach (var otherAssignment in otherPendingAssignments)
+                {
+                    otherAssignment.IsCompleted = true;
+                    otherAssignment.Result = WorkflowAssignmentResult.Cancelled;
+                    otherAssignment.CompletedDate = completedAt;
+                    otherAssignment.Comment = "به دلیل تأیید اولین پیمانکار، مرحله خاتمه یافت.";
+                }
+            }
+
+            await AddHistory(
+                instance,
+                currentUserId,
+                action,
+                comment);
+
+            switch (action)
+            {
+                case WorkflowAction.Submit:
+                    await GoNextStepAsync(
+                        instance,
+                        currentUserId,
+                        selectedUsers);
+                    break;
+
+                case WorkflowAction.Revision:
+                    await GoPreviousStepAsync(
+                        instance,
+                        currentUserId);
+                    break;
+
+                case WorkflowAction.Approve:
+                    await GoNextStepAsync(
+                        instance,
+                        currentUserId,
+                        selectedUsers);
+                    break;
+
+                case WorkflowAction.Reject:
+                    instance.Status = WorkflowInstanceStatus.Rejected;
+                    break;
+
+                case WorkflowAction.Cancel:
+                    instance.Status = WorkflowInstanceStatus.Cancelled;
+                    break;
+            }
+
+            await _context.SaveChangesAsync();
+
+            if (ownsTransaction)
+                await transaction!.CommitAsync();
         }
-
-        var assignment = await GetCurrentAssignment(
-            workflowInstanceId,
-            instance.CurrentStepId,
-            currentUserId);
-
-        assignment.IsCompleted = true;
-
-
-        assignment.CompletedDate = DateTime.Now;
-
-        assignment.Comment = comment;
-
-        assignment.Result = action switch
+        catch
         {
-            WorkflowAction.Submit => WorkflowAssignmentResult.Submitted,
+            if (ownsTransaction && transaction != null)
+                await transaction.RollbackAsync();
 
-            WorkflowAction.Revision => WorkflowAssignmentResult.RevisionRequested,
-
-            WorkflowAction.Reject => WorkflowAssignmentResult.Rejected,
-
-            WorkflowAction.Cancel => WorkflowAssignmentResult.Cancelled,
-
-            _ => WorkflowAssignmentResult.Submitted
-        };
-
-        await AddHistory(
-            instance,
-            currentUserId,
-            action,
-            comment);
-
-
-        switch (action)
-        {
-            case WorkflowAction.Submit:
-
-                await GoNextStepAsync(
-                    instance,
-                    currentUserId,
-                    selectedUsers);
-
-                break;
-
-            case WorkflowAction.Revision:
-
-                await GoPreviousStepAsync(
-                    instance,
-                    currentUserId);
-
-                break;
-
-            case WorkflowAction.Approve:
-
-                //instance.Status = WorkflowInstanceStatus.Completed;
-
-
-                //await ChangeProjectAccessToReadOnly(instance.EntityId);
-
-                await GoNextStepAsync(
-                    instance,
-                    currentUserId,
-                    selectedUsers);
-
-                break;
-
-            case WorkflowAction.Reject:
-
-                instance.Status = WorkflowInstanceStatus.Rejected;
-
-                break;
-
-            case WorkflowAction.Cancel:
-
-                instance.Status = WorkflowInstanceStatus.Cancelled;
-
-                break;
+            throw;
         }
-
-
-        await _context.SaveChangesAsync();
     }
 
 
