@@ -80,6 +80,9 @@
         ],
         zaribmanteghe: [
             "ZaribManteghe.js"
+        ],
+        zaribpp: [
+            "ZaribPishnahadiPaymankar.js"
         ]
     };
 
@@ -100,6 +103,8 @@
         if (name.indexOf("zaribbala") >= 0) return featureScripts.zaribbala;
         if (name.indexOf("zaribmanteghe") >= 0 || name.indexOf("zaribmantaghe") >= 0)
             return featureScripts.zaribmanteghe;
+        if (name.indexOf("zaribpp") >= 0 || name.indexOf("zaribpp") >= 0)
+            return featureScripts.zaribpp;
 
         return [];
     }

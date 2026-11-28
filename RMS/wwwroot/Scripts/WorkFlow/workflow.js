@@ -437,77 +437,480 @@ function editWorkflow(id) {
     });
 
 }
-function renderWorkflowList(data) {
+// function renderWorkflowList(data) {
 
-    let html = "";
+//     let html = "";
 
-    if (data.length === 0) {
+//     if (data.length === 0) {
 
-        html = `
-            <li class="list-group-item text-center p-5">
+//         html = `
+//             <li class="list-group-item text-center p-5">
 
-                گردش کاری تعریف نشده است
+//                 گردش کاری تعریف نشده است
 
-            </li>`;
+//             </li>`;
 
-        $("#workflowList").html(html);
+//         $("#workflowList").html(html);
 
+//         return;
+//     }
+
+//     $.each(data, function (index, item) {
+
+//         html += `
+
+// <li class="list-group-item workflow-item"
+
+//     data-id="${item.id}">
+
+// <div class="d-flex justify-content-between align-items-center">
+
+//     <div>
+
+//         <i class="fa fa-sitemap text-primary"></i>
+
+//         ${item.name}
+
+//     </div>
+
+//     <span class="badge bg-secondary">
+
+//         ${item.stepCount}
+
+//     </span>
+
+//     <button class="btn btn-danger btn-sm"
+//                     onclick="deleteWorkflow('${item.id}')">
+
+//                 <i class="fa fa-trash"></i>
+
+//             </button>
+
+// </div>
+
+// </li>
+
+// `;
+
+//     });
+
+//     $("#workflowList").html(html);
+
+//     //-------------------------------------------------
+//     // انتخاب اولین گردش
+//     //-------------------------------------------------
+
+//     selectedWorkflowId = data[0].id;
+
+//     highlightSelectedWorkflow();
+
+//     loadSteps(selectedWorkflowId);
+
+//     $("#btnAddStep").prop("disabled", false);
+
+// }
+
+
+
+
+function RenderWorkflow(data) {
+
+    if (!data || !data.steps || data.steps.length === 0) {
+        $('#workflowSchimaTitle').html('');
+        $("#workflowViewer").html(
+            '<div class="alert alert-info">گردش کاری برای این پروژه ثبت نشده است.</div>'
+        );
+        $('#aworkflowSchimaShow').click();
         return;
     }
 
-    $.each(data, function (index, item) {
+    $('#workflowSchimaTitle').html(data.projectName ?? "");
+
+    let html = "";
+
+    let totalSteps = data.steps.length;
+
+    let completedSteps = data.steps.filter(step =>
+        step.assignments &&
+        step.assignments.length > 0 &&
+        step.assignments.every(a => a.isCompleted)
+    ).length;
+
+    let percent = totalSteps > 0
+        ? Math.round((completedSteps / totalSteps) * 100)
+        : 0;
+
+    html += `
+        <div class="workflow-container">
+
+            <div class="workflow-progress">
+                <div class="progress-info">
+                    <span>پیشرفت گردش کار</span>
+                    <strong>${percent.toLocaleString('fa-IR')}٪</strong>
+                </div>
+
+                <div class="progress">
+                    <div class="progress-bar"
+                         role="progressbar"
+                         style="width:${percent}%">
+                    </div>
+                </div>
+            </div>
+
+            <div class="workflow-flow">
+    `;
+
+    data.steps.forEach((step, index) => {
+
+        let assignments = step.assignments || [];
+        let histories = step.histories || [];
+        let potentialReceivers = step.potentialReceivers || [];
+
+        let current = step.isCurrent ? "current" : "";
+
+        // وضعیت ظاهری مرحله
+        let statusCss = "pending";
+        let statusIcon = "○";
+
+        if (
+            step.statusTitle === "اقدامات تکمیل شده" ||
+            step.statusTitle === "تأیید شده"
+        ) {
+            statusCss = "completed";
+            statusIcon = "✓";
+        }
+        else if (step.statusTitle === "رد شده") {
+            statusCss = "rejected";
+            statusIcon = "✕";
+        }
+        else if (step.statusTitle === "درخواست اصلاح") {
+            statusCss = "revision";
+            statusIcon = "↻";
+        }
+        else if (step.isCurrent) {
+            statusCss = "in-progress";
+            statusIcon = "●";
+        }
+
+        let roundText = step.roundNo != null
+            ? `مرحله ${step.order.toLocaleString('fa-IR')} - دور ${step.roundNo.toLocaleString('fa-IR')}`
+            : `مرحله ${step.order.toLocaleString('fa-IR')}`;
 
         html += `
+            <div class="workflow-step ${current}">
 
-<li class="list-group-item workflow-item"
+                <div class="step-card">
 
-    data-id="${item.id}">
+                    <div class="step-header">
 
-<div class="d-flex justify-content-between align-items-center">
+                        <span class="round-badge">
+                            ${roundText}
+                        </span>
 
-    <div>
+                        <span class="round-number">
+                            ${roundText}
+                        </span>
 
-        <i class="fa fa-sitemap text-primary"></i>
+                    </div>
 
-        ${item.name}
+                    <div class="step-title">
 
-    </div>
+                        <span class="step-status-icon ${statusCss}">
+                            ${statusIcon}
+                        </span>
 
-    <span class="badge bg-secondary">
+                        <h4>${step.stepTitle}</h4>
 
-        ${item.stepCount}
+                    </div>
 
-    </span>
+                    <div class="step-status ${statusCss}">
+                        ${step.statusTitle}
+                    </div>
+        `;
 
-    <button class="btn btn-danger btn-sm"
-                    onclick="deleteWorkflow('${item.id}')">
+        // =====================================
+        // افراد تعیین شده برای ارجاع
+        // فقط وقتی هنوز ارجاع واقعی وجود ندارد
+        // =====================================
 
-                <i class="fa fa-trash"></i>
+        if (assignments.length === 0 && potentialReceivers.length > 0) {
 
-            </button>
+            html += `
+                <div class="assignment-list">
 
-</div>
+                    <div class="section-title">
+                        <i class="fa fa-users"></i>
+                        فرد تعیین‌شده برای ارجاع
+                    </div>
+            `;
 
-</li>
+            potentialReceivers.forEach(user => {
 
-`;
+                html += `
+                    <div class="assignment-item waiting">
+
+                        <div class="assignment-user">
+
+                            <div class="user-icon">
+                                <i class="fa fa-user"></i>
+                            </div>
+
+                            <div class="user-info">
+
+                                <div class="user-name">
+                                    ${user.fullName}
+                                </div>
+
+                                <div class="company">
+                                    ${user.companyName || ""}
+                                </div>
+
+                            </div>
+
+                            <span class="user-status">
+                                در انتظار ارجاع
+                            </span>
+
+                        </div>
+
+                    </div>
+                `;
+
+            });
+
+            html += `</div>`;
+        }
+
+        // =====================================
+        // گیرندگان واقعی مرحله
+        // =====================================
+
+        if (assignments.length > 0) {
+
+            html += `
+                <div class="assignment-list">
+
+                    <div class="section-title">
+                        <i class="fa fa-users"></i>
+                        گیرندگان ارجاع
+                    </div>
+            `;
+
+            assignments.forEach(user => {
+
+                let userCss = "waiting";
+                let userIcon = "fa-clock";
+                let userStatus = "در انتظار اقدام";
+
+                // مقادیر واقعی WorkflowAssignmentResult
+                switch (user.result) {
+
+                    case 1: // Pending
+                        userCss = "waiting";
+                        userIcon = "fa-clock";
+                        userStatus = "در انتظار اقدام";
+                        break;
+
+                    case 2: // Submitted
+                        userCss = "completed";
+                        userIcon = "fa-paper-plane";
+                        userStatus = "ارسال شده";
+                        break;
+
+                    case 6: // Approved
+                        userCss = "completed";
+                        userIcon = "fa-check-circle";
+                        userStatus = "تأیید شده";
+                        break;
+
+                    case 3: // RevisionRequested
+                        userCss = "revision";
+                        userIcon = "fa-refresh";
+                        userStatus = "درخواست اصلاح";
+                        break;
+
+                    case 4: // Rejected
+                        userCss = "rejected";
+                        userIcon = "fa-times-circle";
+                        userStatus = "رد شده";
+                        break;
+
+                    case 5: // Cancelled
+                        userCss = "cancelled";
+                        userIcon = "fa-ban";
+                        userStatus = "لغو شده";
+                        break;
+
+                    default:
+                        userStatus = user.resultTitle || "نامشخص";
+                        break;
+                }
+
+                // فقط وضعیت‌های Pending و نامشخص
+                // در صورت تکمیل‌نشدن، در انتظار اقدام هستند.
+                // وضعیت‌های نهایی مثل Approved و Cancelled حفظ می‌شوند.
+                if (
+                    !user.isCompleted &&
+                    (user.result == null || user.result === 1)
+                ) {
+                    userCss = "waiting";
+                    userIcon = "fa-clock";
+                    userStatus = "در انتظار اقدام";
+                }
+
+                html += `
+                    <div class="assignment-item ${userCss}">
+
+                        <div class="assignment-user">
+
+                            <div class="user-icon">
+                                <i class="fa ${userIcon}"></i>
+                            </div>
+
+                            <div class="user-info">
+
+                                <div class="user-name">
+                                    ${user.fullName}
+                                </div>
+
+                                <div class="company">
+                                    ${user.companyName || ""}
+                                </div>
+
+                            </div>
+
+                            <span class="user-status">
+                                ${userStatus}
+                            </span>
+
+                        </div>
+                `;
+
+                if (user.assignDate) {
+                    html += `
+                        <div class="assignment-date">
+                            تاریخ ارجاع:
+                            ${user.assignDate}
+                        </div>
+                    `;
+                }
+
+                if (user.completedDate) {
+                    html += `
+                        <div class="assignment-date">
+                            تاریخ اقدام:
+                            ${user.completedDate}
+                        </div>
+                    `;
+                }
+
+                if (user.comment) {
+                    html += `
+                        <div class="assignment-comment">
+                            ${user.comment}
+                        </div>
+                    `;
+                }
+
+                html += `</div>`;
+
+            });
+
+            html += `</div>`;
+
+        }
+        else if (potentialReceivers.length === 0 && !step.isCurrent) {
+
+            html += `
+                <div class="no-assignment">
+                    هنوز ارجاعی برای این مرحله ثبت نشده است.
+                </div>
+            `;
+
+        }
+
+        // =====================================
+        // تاریخچه اقدامات
+        // =====================================
+
+        if (histories.length > 0) {
+
+            html += `
+                <div class="history-list">
+
+                    <div class="section-title">
+                        <i class="fa fa-history"></i>
+                        تاریخچه اقدامات
+                    </div>
+            `;
+
+            histories.forEach(history => {
+
+                let actionInfo = ActionInfo(history.action);
+
+                html += `
+                    <div class="history-item">
+
+                        <div class="history-action ${actionInfo.css}">
+                            ${actionInfo.icon}
+                        </div>
+
+                        <div class="history-content">
+
+                            <div class="history-user">
+                                ${history.fullName}
+                            </div>
+
+                            <div class="history-action-title">
+                                ${history.actionTitle}
+                            </div>
+
+                            <div class="history-date">
+                                ${history.actionDateShamsi || ""}
+                            </div>
+
+                            ${history.comment
+                        ? `<div class="history-comment">${history.comment}</div>`
+                        : ""
+                    }
+
+                        </div>
+
+                    </div>
+                `;
+
+            });
+
+            html += `</div>`;
+
+        }
+
+        html += `
+                </div>
+            </div>
+        `;
+
+        // فلش بین مراحل
+        if (index < data.steps.length - 1) {
+
+            html += `
+                <div class="arrow">
+                    <i class="fa fa-arrow-left"></i>
+                </div>
+            `;
+
+        }
 
     });
 
-    $("#workflowList").html(html);
+    html += `
+            </div>
+        </div>
+    `;
 
-    //-------------------------------------------------
-    // انتخاب اولین گردش
-    //-------------------------------------------------
+    $("#workflowViewer").html(html);
 
-    selectedWorkflowId = data[0].id;
-
-    highlightSelectedWorkflow();
-
-    loadSteps(selectedWorkflowId);
-
-    $("#btnAddStep").prop("disabled", false);
-
+    $('#aworkflowSchimaShow').click();
 }
 
 function highlightSelectedWorkflow() {
