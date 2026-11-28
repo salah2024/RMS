@@ -1464,13 +1464,19 @@ public class BaravordUserController(ApplicationDbContext context, UserManager<Ap
                 p.IsDeleted != true &&
                 p.proccesType == ProccesType.PishnahadGhaimat);
 
-        var proposalWorkflowCompleted = activeProposalProjection != null &&
-            await _context.WorkflowInstances
-                .AnyAsync(w =>
+        var latestProposalWorkflowStatus = activeProposalProjection == null
+            ? (WorkflowInstanceStatus?)null
+            : await _context.WorkflowInstances
+                .Where(w =>
                     w.EntityId == BaravordId &&
                     w.EntityType == nameof(clsBaravordUser) &&
-                    w.Workflow.proccesType == ProccesType.PishnahadGhaimat &&
-                    w.Status == WorkflowInstanceStatus.Completed);
+                    w.Workflow.proccesType == ProccesType.PishnahadGhaimat)
+                .OrderByDescending(w => w.InsertDateTime)
+                .Select(w => (WorkflowInstanceStatus?)w.Status)
+                .FirstOrDefaultAsync();
+
+        var proposalWorkflowCompleted =
+            latestProposalWorkflowStatus == WorkflowInstanceStatus.Completed;
 
         if (barAvordUser.Type != NoeBarAvord.PishnahadGhaimat ||
             !proposalWorkflowCompleted)
