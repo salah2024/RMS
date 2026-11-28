@@ -175,7 +175,9 @@ public class WorkflowRuntimeController : Controller
         return Json(new
         {
             success = true,
-            message = "ارسال شد."
+            message = projection.proccesType == ProccesType.PishnahadGhaimat
+                ? "مرحله تأیید شد."
+                : "ارسال شد."
         });
     }
 
