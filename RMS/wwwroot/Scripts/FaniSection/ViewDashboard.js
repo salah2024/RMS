@@ -620,10 +620,9 @@ function ViewBarAvordClick() {
                 <td width="5%"></td>
                 <td width="35%" style="text-wrap:auto;"></td>
                 <td width="30%"></td>
-                <td width="8%"></td>
-                <td width="8%"></td>
-                <td width="8%"></td>
-                <td width="15%"></td>
+                <td width="10%"></td>
+                <td width="10%"></td>
+                <td width="10%"></td>
                 <td class="action-cell">
                     <div class="action-menu">
                         <button class="action-btn">
@@ -647,8 +646,8 @@ function ViewBarAvordClick() {
                     $(this)[0].buType == 4 ? "صورت وضعیت" : "نامشخص"
                 );
                 row.find("td:nth-child(7)").html(toPersianDigits($(this)[0].buYear));
-                row.find("td:nth-child(8)").html($(this)[0].workflowStatusTitle);
-                row.find("td:nth-child(9)").html($(this)[0].buNoeFB);
+                //row.find("td:nth-child(8)").html($(this)[0].workflowStatusTitle);
+                row.find("td:nth-child(8)").html($(this)[0].buNoeFB);
                 $("[id*=tableBody]").append(row);
 
                 var rowFree = $(`<tr>
@@ -1826,7 +1825,7 @@ function MainTableClick(Obj, Type) {
     //$('#HDFNoeFB').val($(Obj).find("td:nth-child(8)").html());
 
     $('#aCurrentProject').html($(Obj).find("td:nth-child(7)").html() + " - " + $(Obj).find("td:nth-child(3)").html());
-    if (Type == 2) {
+    if (Type == 3) {
         GetSooratVaziat($(Obj).find("td:nth-child(1)").html());
     }
 }
