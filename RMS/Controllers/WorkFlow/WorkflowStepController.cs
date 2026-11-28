@@ -409,6 +409,11 @@ public class WorkflowStepController(ApplicationDbContext context, IWorkflowStepQ
                 statusTitle = "در انتظار اقدام";
             }
             else if (stepAssignments.Any(x =>
+                x.Result == WorkflowAssignmentResult.Approved))
+            {
+                statusTitle = "تأیید شده";
+            }
+            else if (stepAssignments.Any(x =>
                 x.Result == WorkflowAssignmentResult.Rejected))
             {
                 statusTitle = "رد شده";
@@ -487,6 +492,7 @@ public class WorkflowStepController(ApplicationDbContext context, IWorkflowStepQ
                         {
                             WorkflowAssignmentResult.Pending => "در انتظار اقدام",
                             WorkflowAssignmentResult.Submitted => "ارسال شده",
+                            WorkflowAssignmentResult.Approved => "تأیید شده",
                             WorkflowAssignmentResult.RevisionRequested => "درخواست اصلاح",
                             WorkflowAssignmentResult.Rejected => "رد شده",
                             WorkflowAssignmentResult.Cancelled => "لغو شده",
