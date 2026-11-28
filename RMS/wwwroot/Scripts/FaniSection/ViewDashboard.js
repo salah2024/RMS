@@ -643,7 +643,8 @@ function ViewBarAvordClick() {
                 row.find("td:nth-child(6)").html(
                     $(this)[0].buType == 1 ? "برآورد" :
                     $(this)[0].buType == 2 ? "پیشنهاد قیمت" :
-                    $(this)[0].buType == 3 ? "قرارداد" : "نامشخص"
+                    $(this)[0].buType == 3 ? "قرارداد" :
+                    $(this)[0].buType == 4 ? "صورت وضعیت" : "نامشخص"
                 );
                 row.find("td:nth-child(7)").html(toPersianDigits($(this)[0].buYear));
                 row.find("td:nth-child(8)").html($(this)[0].workflowStatusTitle);
