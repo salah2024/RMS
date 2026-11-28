@@ -578,8 +578,8 @@ function ViewBarAvordClick() {
                         </a>`;
                 }
 
-                // تبدیل به قرارداد
-                if ($(this)[0].buType == 3) {
+                // تبدیل به قرارداد فقط پس از تکمیل گردش پیشنهاد قیمت فعال می‌شود.
+                if ($(this)[0].canConvertToContract) {
 
                     actions += `
                         <a href="javascript:void(0)"
