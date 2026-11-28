@@ -62,12 +62,18 @@ public class WorkflowRuntimeService
         }
 
 
+        // در گردش پیشنهاد قیمت، دکمه «تأیید و ارسال» باید نتیجه تأیید ثبت کند؛
+        // Submit فقط برای گردش‌هایی است که ماهیت آن‌ها ارسال مرحله به مرحله است.
+        var action = instance.Workflow.proccesType == ProccesType.PishnahadGhaimat
+            ? WorkflowAction.Approve
+            : WorkflowAction.Submit;
+
         await ExecuteActionAsync(
-        workflowInstanceId,
-        currentUserId,
-        WorkflowAction.Submit,
-        comment,
-        selectedUsers);
+            workflowInstanceId,
+            currentUserId,
+            action,
+            comment,
+            selectedUsers);
     }
 
     public async Task ApproveAsync(
@@ -337,10 +343,12 @@ public class WorkflowRuntimeService
                 _ => WorkflowAssignmentResult.Pending
             };
 
-            // در مرحله پیشنهاد قیمت با الگوی FirstResponse، تأیید اولین پیمانکار
-            // مرحله را خاتمه می‌دهد و ارجاع‌های موازی دیگر نباید باز بمانند.
+            // در گام انتخاب‌شده برای پیمانکارانِ گردش پیشنهاد قیمت،
+            // تأیید اولین پیمانکار کل همین گام را خاتمه می‌دهد.
+            // این رفتار به مراحل بعدی (از جمله تأیید کارفرما) تعمیم داده نمی‌شود.
             if (action == WorkflowAction.Approve &&
-                instance.Workflow.proccesType == ProccesType.PishnahadGhaimat)
+                instance.Workflow.proccesType == ProccesType.PishnahadGhaimat &&
+                instance.CurrentStep.NeedSelectReceiver)
             {
                 var otherPendingAssignments = await _context.WorkflowAssignments
                     .Where(x =>
