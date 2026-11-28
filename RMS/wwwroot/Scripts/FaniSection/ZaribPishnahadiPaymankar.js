@@ -34,22 +34,15 @@ function ShowZaribPP(OperationId, event) {
 
     var currentNoeFB = String($('#HDFNoeFB').val() || '');
     var noeFBs = window.lstNoeFBs || [];
-    var radioHtml = '';
-
-    noeFBs.forEach(function (item, index) {
-        var value = String(item.id);
-        var checked = value === currentNoeFB || (!currentNoeFB && index === 0);
-        radioHtml +=
-            '<label class="zaribpp-fb-option">' +
-                '<input type="radio" class="zaribpp-fb-radio" name="radTypePishnahadi_' + OperationId + '" value="' + value + '" ' + (checked ? 'checked' : '') + ' /> ' +
-                $('<div>').text(item.name || '').html() +
-            '</label>';
-    });
-
     if (!currentNoeFB && noeFBs.length) {
         currentNoeFB = String(noeFBs[0].id);
         $('#HDFNoeFB').val(currentNoeFB);
     }
+
+    var selectedFB = noeFBs.find(function (item) {
+        return String(item.id) === currentNoeFB;
+    });
+    var selectedFBName = selectedFB ? $('<div>').text(selectedFB.name || '').html() : 'رشته انتخاب نشده است';
 
     var html = `
         <style>
@@ -103,15 +96,6 @@ function ShowZaribPP(OperationId, event) {
         </div>`;
 
     $panel.html(html);
-
-    // انتخاب رشته فقط جدول پیشنهاد قیمت را به‌روزرسانی می‌کند و بارگذاری درخت را دست‌کاری نمی‌کند.
-    $panel.off('change.zaribPP', '.zaribpp-fb-radio')
-        .on('change.zaribPP', '.zaribpp-fb-radio', function () {
-            $('#HDFNoeFB').val($(this).val());
-            $('#FaslBody').empty();
-            $('#zaribppStatus_' + OperationId).text('در حال دریافت اطلاعات...');
-            GetFosoulPishnahadGhaymat();
-        });
 
     if (!currentNoeFB) {
         $('#zaribppStatus_' + OperationId).text('برای نمایش فصل‌ها، رشته فهرست‌بها مشخص نشده است.');
