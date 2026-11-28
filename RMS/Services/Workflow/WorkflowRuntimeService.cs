@@ -172,12 +172,13 @@ public class WorkflowRuntimeService
             var baravord = await _context.BaravordUsers
                 .FirstOrDefaultAsync(x => x.ID == instance.EntityId);
 
-            if (baravord != null)
+            // فقط پایان گردش برآورد اولیه، نوع برآورد را به پیشنهاد قیمت تغییر می‌دهد.
+            // پایان گردش پیشنهاد قیمت نباید به‌صورت خودکار آن را به قرارداد تبدیل کند.
+            if (baravord != null &&
+                instance.Workflow.proccesType == ProccesType.BarAvordAvalieh)
             {
-                //baravord.IsCompleted = true;
                 baravord.Type++;
             }
-
 
             await ChangeProjectAccessToReadOnly(instance.EntityId);
 
