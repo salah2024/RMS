@@ -28,6 +28,8 @@ public class BaravordUserToShowDto
 
     public bool CanSendToContractors { get; set; }
 
+    public bool CanConvertToContract { get; set; }
+
     public string? WorkflowStatusTitle { get; set; }
     public bool IsCompleted { get; set; }
 

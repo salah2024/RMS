@@ -93,6 +93,23 @@ public class BaravordUserController(ApplicationDbContext context, UserManager<Ap
                                               .Select(w => w.Status)
                                               .FirstOrDefault() == WorkflowInstanceStatus.Completed,
 
+                                      // تبدیل به قرارداد فقط پس از تکمیل گردش پیشنهاد قیمت (تأیید مرحله نهایی) مجاز است.
+                                      CanConvertToContract =
+                                          BU.Type == NoeBarAvord.PishnahadGhaimat &&
+                                          _context.BarAvordProjectionWorkFlows.Any(p =>
+                                              p.BarAvordUserId == BU.ID &&
+                                              !p.IsComplete &&
+                                              p.IsDeleted != true &&
+                                              p.proccesType == ProccesType.PishnahadGhaimat) &&
+                                          _context.WorkflowInstances
+                                              .Where(w =>
+                                                  w.EntityId == BU.ID &&
+                                                  w.EntityType == nameof(clsBaravordUser) &&
+                                                  w.Workflow.proccesType == ProccesType.PishnahadGhaimat)
+                                              .OrderByDescending(w => w.InsertDateTime)
+                                              .Select(w => w.Status)
+                                              .FirstOrDefault() == WorkflowInstanceStatus.Completed,
+
                                       WorkflowStatusTitle = _context.BarAvordProjectionWorkFlows
                                           .Where(p => p.BarAvordUserId == BU.ID && !p.IsComplete)
                                           .OrderByDescending(p => p.InsertDateTime)
@@ -1436,7 +1453,41 @@ public class BaravordUserController(ApplicationDbContext context, UserManager<Ap
         Guid BaravordId = request.Id;
 
         clsBaravordUser? barAvordUser = await _context.BaravordUsers.FirstOrDefaultAsync(x => x.ID == BaravordId);
-        if (barAvordUser != null)
+        if (barAvordUser == null)
+            return new JsonResult(new { success = false, message = "برآورد موردنظر یافت نشد." });
+
+        // درخواست تبدیل فقط پس از تکمیل گردش پیشنهاد قیمت قابل انجام است.
+        var activeProposalProjection = await _context.BarAvordProjectionWorkFlows
+            .FirstOrDefaultAsync(p =>
+                p.BarAvordUserId == BaravordId &&
+                !p.IsComplete &&
+                p.IsDeleted != true &&
+                p.proccesType == ProccesType.PishnahadGhaimat);
+
+        var latestProposalWorkflowStatus = activeProposalProjection == null
+            ? (WorkflowInstanceStatus?)null
+            : await _context.WorkflowInstances
+                .Where(w =>
+                    w.EntityId == BaravordId &&
+                    w.EntityType == nameof(clsBaravordUser) &&
+                    w.Workflow.proccesType == ProccesType.PishnahadGhaimat)
+                .OrderByDescending(w => w.InsertDateTime)
+                .Select(w => (WorkflowInstanceStatus?)w.Status)
+                .FirstOrDefaultAsync();
+
+        var proposalWorkflowCompleted =
+            latestProposalWorkflowStatus == WorkflowInstanceStatus.Completed;
+
+        if (barAvordUser.Type != NoeBarAvord.PishnahadGhaimat ||
+            !proposalWorkflowCompleted)
+        {
+            return new JsonResult(new
+            {
+                success = false,
+                message = "تبدیل به قرارداد فقط پس از تأیید نهایی کارفرما در گردش پیشنهاد قیمت امکان‌پذیر است."
+            });
+        }
+
         {
             string NoeFBs = barAvordUser.NoeFBs;
 

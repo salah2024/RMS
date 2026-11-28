@@ -256,6 +256,13 @@ function ConvertToGharardad(id, row) {
                 toastr.success('بدرستی تبدیل صورت گرفت', 'موفق');
                 ViewBarAvordClick();
             }
+            else {
+                toastr.warning(
+                    response && response.message
+                        ? response.message
+                        : 'تبدیل به قرارداد در این مرحله مجاز نیست.'
+                );
+            }
         },
         error: function (response) {
             toastr.error('مشکل در تبدیل', 'خطا');
@@ -578,8 +585,8 @@ function ViewBarAvordClick() {
                         </a>`;
                 }
 
-                // تبدیل به قرارداد
-                if ($(this)[0].buType == 3) {
+                // تبدیل به قرارداد فقط پس از تکمیل گردش پیشنهاد قیمت فعال می‌شود.
+                if ($(this)[0].canConvertToContract) {
 
                     actions += `
                         <a href="javascript:void(0)"
