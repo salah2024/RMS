@@ -402,6 +402,13 @@ public class WorkflowStepController(ApplicationDbContext context, IWorkflowStepQ
             {
                 statusTitle = "شروع نشده";
             }
+            // در گردش پیشنهاد قیمت، تأیید هر پیمانکار به معنی تأیید کل مرحله است.
+            // این شرط باید قبل از بررسی ارجاع‌های باز قرار بگیرد.
+            else if (proccessType == ProccesType.PishnahadGhaimat &&
+                stepAssignments.Any(x => x.Result == WorkflowAssignmentResult.Approved))
+            {
+                statusTitle = "تأیید شده";
+            }
             else if (stepAssignments.Any(x =>
                 !x.IsCompleted ||
                 x.Result == WorkflowAssignmentResult.Pending))

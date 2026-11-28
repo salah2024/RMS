@@ -340,8 +340,7 @@ public class WorkflowRuntimeService
             // در مرحله پیشنهاد قیمت با الگوی FirstResponse، تأیید اولین پیمانکار
             // مرحله را خاتمه می‌دهد و ارجاع‌های موازی دیگر نباید باز بمانند.
             if (action == WorkflowAction.Approve &&
-                instance.Workflow.proccesType == ProccesType.PishnahadGhaimat &&
-                instance.CurrentStep.ReceiverMode == WorkflowReceiverMode.FirstResponse)
+                instance.Workflow.proccesType == ProccesType.PishnahadGhaimat)
             {
                 var otherPendingAssignments = await _context.WorkflowAssignments
                     .Where(x =>
