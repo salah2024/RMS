@@ -256,6 +256,13 @@ function ConvertToGharardad(id, row) {
                 toastr.success('بدرستی تبدیل صورت گرفت', 'موفق');
                 ViewBarAvordClick();
             }
+            else {
+                toastr.warning(
+                    response && response.message
+                        ? response.message
+                        : 'تبدیل به قرارداد در این مرحله مجاز نیست.'
+                );
+            }
         },
         error: function (response) {
             toastr.error('مشکل در تبدیل', 'خطا');
