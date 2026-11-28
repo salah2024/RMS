@@ -640,7 +640,11 @@ function ViewBarAvordClick() {
                 row.find("td:nth-child(3)").html(projectName);
                 row.find("td:nth-child(4)").html($(this)[0].noeFBName);
                 row.find("td:nth-child(5)").html(toPersianDigits($(this)[0].buInsertDateSolar));
-                row.find("td:nth-child(6)").html($(this)[0].buType == 1 ? "برآورد" : "قرارداد");
+                row.find("td:nth-child(6)").html(
+                    $(this)[0].buType == 1 ? "برآورد" :
+                    $(this)[0].buType == 2 ? "پیشنهاد قیمت" :
+                    $(this)[0].buType == 3 ? "قرارداد" : "نامشخص"
+                );
                 row.find("td:nth-child(7)").html(toPersianDigits($(this)[0].buYear));
                 row.find("td:nth-child(8)").html($(this)[0].workflowStatusTitle);
                 row.find("td:nth-child(9)").html($(this)[0].buNoeFB);
@@ -1501,6 +1505,12 @@ function RenderWorkflow(data) {
                         userCss = "completed";
                         userIcon = "fa-paper-plane";
                         userStatus = "ارسال شده";
+                        break;
+
+                    case 6: // Approved
+                        userCss = "completed";
+                        userIcon = "fa-check-circle";
+                        userStatus = "تأیید شده";
                         break;
 
                     case 3: // RevisionRequested
