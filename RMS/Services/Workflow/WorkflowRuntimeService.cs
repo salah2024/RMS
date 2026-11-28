@@ -330,17 +330,18 @@ public class WorkflowRuntimeService
             assignment.Result = action switch
             {
                 WorkflowAction.Submit => WorkflowAssignmentResult.Submitted,
+                WorkflowAction.Approve => WorkflowAssignmentResult.Approved,
                 WorkflowAction.Revision => WorkflowAssignmentResult.RevisionRequested,
                 WorkflowAction.Reject => WorkflowAssignmentResult.Rejected,
                 WorkflowAction.Cancel => WorkflowAssignmentResult.Cancelled,
-                _ => WorkflowAssignmentResult.Submitted
+                _ => WorkflowAssignmentResult.Pending
             };
 
-            // در گردش پیشنهاد قیمت، تأیید اولین پیمانکار برای اقدام‌شده شدن
-            // مرحله کافی است؛ سایر ارجاع‌های همان مرحله دیگر در انتظار پاسخ نمی‌مانند.
+            // در مرحله پیشنهاد قیمت با الگوی FirstResponse، تأیید اولین پیمانکار
+            // مرحله را خاتمه می‌دهد و ارجاع‌های موازی دیگر نباید باز بمانند.
             if (action == WorkflowAction.Approve &&
                 instance.Workflow.proccesType == ProccesType.PishnahadGhaimat &&
-                instance.CurrentStep.NeedSelectReceiver)
+                instance.CurrentStep.ReceiverMode == WorkflowReceiverMode.FirstResponse)
             {
                 var otherPendingAssignments = await _context.WorkflowAssignments
                     .Where(x =>
