@@ -61,7 +61,7 @@ function ShowZaribPP(OperationId, event) {
         <div class="zaribpp-panel">
             <div class="zaribpp-toolbar">
                 <span class="zaribpp-toolbar-title">رشته فهرست‌بها:</span>
-                <div class="zaribpp-fb-options">${radioHtml}</div>
+                <span>${selectedFBName}</span>
             </div>
             <div class="zaribpp-table-wrap">
                 <table id="fosoulTable" class="table table-bordered table-striped fixed-table">
