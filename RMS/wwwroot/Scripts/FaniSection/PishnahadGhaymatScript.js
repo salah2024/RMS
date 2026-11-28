@@ -86,6 +86,7 @@ function setMablaghPishnahadiTajhiz(Obj) {
                 $(Obj).val(formatNumber(parseFloat(txtValue).toFixed(0)));
                 Zarib = parseFloat(info[1]);
                 $('#tdZaribTajhiz').html(formatNumber(Zarib.toFixed(4)));
+                SumAll();
                 toastr.success('موفقیت', 'مبلغ پیشنهادی پیمانکار بدرستی ثبت گردید');
             }
         },
