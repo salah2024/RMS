@@ -338,7 +338,8 @@ public class WorkflowRuntimeService
             // در گردش پیشنهاد قیمت، تأیید اولین پیمانکار برای اقدام‌شده شدن
             // مرحله کافی است؛ سایر ارجاع‌های همان مرحله دیگر در انتظار پاسخ نمی‌مانند.
             if (action == WorkflowAction.Approve &&
-                instance.Workflow.proccesType == ProccesType.PishnahadGhaimat)
+                instance.Workflow.proccesType == ProccesType.PishnahadGhaimat &&
+                instance.CurrentStep.NeedSelectReceiver)
             {
                 var otherPendingAssignments = await _context.WorkflowAssignments
                     .Where(x =>
